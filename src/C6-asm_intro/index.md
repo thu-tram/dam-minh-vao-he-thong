@@ -1,94 +1,28 @@
+## 6. Dưới lớp C: Lặn sâu vào Assembly
 
+*Under the C, under the C*  
 
- 
+*Don't you know it's better*  
 
+*Dealing with registers*  
 
+*And assembly?*  
 
--   -  
+— Sebastian, có lẽ vậy  
 
+Trước khi **compiler** (trình biên dịch) ra đời trong những ngày đầu của ngành khoa học máy tính, nhiều lập trình viên viết mã bằng **assembly language** (ngôn ngữ hợp ngữ), ngôn ngữ mô tả trực tiếp tập lệnh mà máy tính sẽ thực thi. Assembly language là cấp độ gần nhất mà lập trình viên có thể tiếp cận khi lập trình ở mức máy mà không phải viết trực tiếp bằng các chuỗi 1 và 0, và nó là dạng dễ đọc hơn của **machine code** (mã máy). Để viết được mã assembly hiệu quả, lập trình viên phải hiểu tường tận cách thức hoạt động của kiến trúc máy tính bên dưới.  
 
+Sự ra đời của **compiler** đã thay đổi căn bản cách lập trình viên viết mã. Compiler dịch một ngôn ngữ lập trình có thể đọc được bởi con người (thường được viết bằng các từ tiếng Anh) sang một ngôn ngữ mà máy tính có thể hiểu (tức là machine code). Compiler thực hiện việc dịch này dựa trên các quy tắc của ngôn ngữ lập trình, đặc tả của hệ điều hành, và tập lệnh (instruction set) của máy, đồng thời cung cấp khả năng phát hiện lỗi và kiểm tra kiểu dữ liệu (type checking) trong quá trình dịch. Hầu hết các compiler hiện đại tạo ra mã assembly hiệu quả tương đương với mã assembly viết tay của những năm trước đây.  
 
+### Lợi ích của việc học Assembly
 
+Với tất cả những lợi ích mà compiler mang lại, có thể không rõ ràng tại sao việc học assembly lại hữu ích. Tuy nhiên, có một số lý do thuyết phục để học và hiểu mã assembly. Dưới đây là một vài ví dụ.  
 
+#### 1. Mức trừu tượng cao che giấu các chi tiết giá trị của chương trình
 
+Sự trừu tượng mà các ngôn ngữ lập trình bậc cao cung cấp là một lợi thế lớn trong việc giảm độ phức tạp của lập trình. Tuy nhiên, sự đơn giản hóa này cũng khiến lập trình viên dễ đưa ra các quyết định thiết kế mà không hiểu đầy đủ tác động của chúng ở mức máy. Thiếu kiến thức về assembly thường khiến lập trình viên không nắm bắt được những thông tin giá trị về cách chương trình chạy, và hạn chế khả năng hiểu rõ mã của mình thực sự đang làm gì.  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 6. Under the C: Diving into Assembly 
-
-*Under the C, under the C*
-
-
-*Don't you know it's better*
-
-
-*Dealing with registers*
-
-
-*And assembly?*
-
-
--Sebastian, probably
-
-
-Prior to the invention of the compiler in the early days of computing,
-many programmers coded in **assembly language**, which directly
-specifies the set of instructions that a computer follows during
-execution. Assembly language is the closest a programmer gets to coding
-at the machine level without writing code directly in 1s and 0s, and is
-a readable form of **machine code**. To write efficient assembly code,
-programmers must intimately understand the operation of the underlying
-machine architecture.
-
-
-The invention of the compiler fundamentally changed the way programmers
-write code. A **compiler** translates a human-readable programming
-language (usually written using English words) into a language that a
-computer understands (i.e., machine code). Compilers translate the
-human-readable code into machine code using the rules of the programming
-language, the specification of the operating system, and the instruction
-set of the machine, and provide some error detection and type checking
-in the process. Most modern compilers produce assembly code that is as
-efficient as the handwritten assembly code of yesteryear.
-
-
-### The Benefits of Learning Assembly {#_the_benefits_of_learning_assembly .discrete}
-
-Given all the benefits of compilers, it may not be obvious why learning
-assembly is useful. However, there are several compelling reasons to
-learn and understand assembly code. Here are a few examples.
-
-
-#### 1. Higher-Level Abstraction Hides Valuable Program Details {#_1_higher_level_abstraction_hides_valuable_program_details .discrete}
-
-The abstraction provided by high-level programming languages is a boon
-for reducing the complexity of programming. At the same time, this
-simplification makes it easy for programmers to make design decisions
-without fully understanding the ramifications of their choices at the
-machine level. Lacking knowledge of assembly often prevents a programmer
-from understanding valuable information on how a program runs, and
-limits their ability to understand what their code is actually doing.
-
-
-As an example, take a look at the following program:
-
-
-
+Ví dụ, hãy xem chương trình sau:  
 
 ```
 #include <stdio.h>
@@ -112,152 +46,62 @@ int main(void) {
 }
 ```
 
+Kết quả của chương trình này là gì? Nhìn qua, hàm `assign` dường như không có tác dụng, vì giá trị trả về của nó không được lưu vào bất kỳ biến nào trong `main`. Hàm `adder` trả về giá trị `a + 2`, mặc dù biến `a` chưa được khởi tạo (dù trên một số máy, compiler sẽ khởi tạo `a` bằng 0). Việc in ra `x` lẽ ra sẽ cho kết quả không xác định. Tuy nhiên, khi biên dịch và chạy trên hầu hết các máy 64-bit, kết quả lại luôn là `42`:  
 
-What is the program's output? At first glance, the `assign` function
-appears to have no effect, as its return value is not stored by any
-variable in `main`. The `adder` function returns the value of `a + 2`,
-although the variable `a` is uninitialized (though on some machines the
-compiler will initialize `a` to 0). Printing out `x` should result in an
-undefined value. However, compiling and running it on most 64-bit
-machines consistently produces an answer of `42`:
+```
+$ gcc -o example example.c
+$ ./example
+x is: 42
+```
 
+Kết quả này thoạt nhìn có vẻ vô lý, vì `adder` và `assign` dường như không liên quan. Việc hiểu về **stack frame** và cách các hàm thực thi ở tầng thấp sẽ giúp bạn lý giải tại sao kết quả lại là `42`. Chúng ta sẽ quay lại ví dụ này trong các chương tiếp theo.  
 
+#### 2. Một số hệ thống máy tính bị giới hạn tài nguyên, không thể dùng compiler
 
+Những loại “máy tính” phổ biến nhất lại thường là những thứ mà ta không dễ nhận ra là máy tính. Chúng xuất hiện ở khắp nơi, từ ô tô, máy pha cà phê, máy giặt cho đến đồng hồ thông minh. Các cảm biến, vi điều khiển (microcontroller) và các bộ xử lý nhúng (embedded processor) ngày càng đóng vai trò quan trọng trong cuộc sống, và tất cả đều cần phần mềm để hoạt động.  
 
-    $ gcc -o example example.c
-    $ ./example
-    x is: 42
+Tuy nhiên, các bộ xử lý trong những thiết bị này thường rất nhỏ, đến mức không thể chạy mã đã biên dịch từ các ngôn ngữ lập trình bậc cao. Trong nhiều trường hợp, các thiết bị này yêu cầu các chương trình assembly độc lập, không phụ thuộc vào các thư viện runtime mà các ngôn ngữ lập trình phổ biến cần.  
 
+---
 
-The output of this program seems nonsensical at first glance, as the
-`adder` and `assign` functions appear to be disconnected. Understanding
-stack frames and how functions execute under the hood will help you
-understand why the answer is `42`. We will revisit this example in the
-upcoming chapters.
+Nếu bạn muốn, ở phần tiếp theo mình có thể dịch luôn các mục còn lại của chương này để bạn có bản tiếng Việt hoàn chỉnh và thống nhất về thuật ngữ. Bạn có muốn mình tiếp tục không?
 
+#### 3. Phân tích lỗ hổng bảo mật (Vulnerability Analysis)
 
-#### 2. Some Computing Systems Are Too Resource-Constrained for Compilers {#_2_some_computing_systems_are_too_resource_constrained_for_compilers .discrete}
+Một nhóm nhỏ các chuyên gia bảo mật dành thời gian của họ để tìm kiếm các **vulnerabilities** (lỗ hổng) trong nhiều loại hệ thống máy tính khác nhau. Nhiều hướng tấn công vào một chương trình liên quan đến cách chương trình lưu trữ thông tin **runtime** (thời gian chạy). Việc học **assembly** giúp các chuyên gia bảo mật hiểu được cách các lỗ hổng xuất hiện và cách chúng có thể bị khai thác.  
 
-The most common types of \"computer\" are those we cannot readily
-identify as computers. These devices exist everywhere from cars and
-coffee makers to washing machines and smart watches. Sensors,
-microcontrollers, and other embedded processors play an increasingly
-dominant role in our lives, and all require software to operate.
-However, the processors contained in such devices are often so small
-that they cannot execute the compiled code written by higher-level
-programming languages. In many cases, these devices require standalone
-assembly programs that are not dependent on the runtime libraries
-required by common programming languages.
+Một số chuyên gia bảo mật khác dành thời gian để **reverse engineering** (kỹ thuật đảo ngược) mã độc trong **malware** (phần mềm độc hại) và các phần mềm nguy hại khác. Kiến thức thực hành về assembly là điều thiết yếu để các kỹ sư phần mềm này có thể nhanh chóng phát triển các **countermeasures** (biện pháp đối phó) nhằm bảo vệ hệ thống trước các cuộc tấn công. Cuối cùng, các lập trình viên không hiểu cách mã họ viết được dịch sang assembly có thể vô tình viết ra mã dễ bị tấn công.  
 
+---
 
-#### 3. Vulnerability Analysis {#_3_vulnerability_analysis .discrete}
+#### 4. Các đoạn mã quan trọng trong phần mềm cấp hệ thống (Critical Code Sequences in System-Level Software)
 
-A subset of security professionals spend their days trying to identify
-vulnerabilities in various types of computer systems. Many avenues for
-attacking a program involve the way the program stores its runtime
-information. Learning assembly enables security professionals to
-understand how vulnerabilities arise and how they can be exploited.
+Cuối cùng, có một số thành phần của hệ thống máy tính mà compiler không thể tối ưu hóa đủ tốt và cần phải viết assembly thủ công. Một số phần ở cấp hệ thống có mã assembly viết tay tại những khu vực mà tối ưu hóa chi tiết, phụ thuộc vào kiến trúc máy là rất quan trọng cho hiệu năng.  
 
+Ví dụ, **boot sequence** (trình tự khởi động) trên tất cả các máy tính đều được viết bằng assembly. **Operating system** (hệ điều hành) thường chứa mã assembly viết tay cho việc **thread** hoặc **process context-switching** (chuyển ngữ cảnh luồng hoặc tiến trình). Con người thường có thể tạo ra mã assembly được tối ưu hóa tốt hơn compiler cho những đoạn mã ngắn nhưng quan trọng về hiệu năng này.  
 
-Other security professionals spend time \"reverse engineering\"
-malicious code in malware and other malicious software. A working
-knowledge of assembly is essential to enable these software engineers to
-quickly develop countermeasures to protect systems against attack.
-Lastly, developers who lack an understanding of how the code they write
-translates to assembly may end up unwittingly writing vulnerable code.
+---
 
+### Bạn sẽ học gì trong các chương tiếp theo
 
-#### 4. Critical Code Sequences in System-Level Software {#_4_critical_code_sequences_in_system_level_software .discrete}
+Ba chương tiếp theo sẽ đề cập đến ba “hương vị” khác nhau của assembly.  
+[Chương 7](../C7-x86_64/index.html#_x64_assembly_chapter) và [Chương 8](../C8-IA32/index.html#_IA32_assembly_chapter) nói về **x86_64** và dạng trước đó của nó, **IA32**.  
+[Chương 9](../C9-ARM64/index.html#_a64_assembly_chapter) nói về **ARMv8-A assembly**, đây là **ISA** (Instruction Set Architecture — kiến trúc tập lệnh) được sử dụng trên hầu hết các thiết bị ARM hiện đại, bao gồm cả các máy tính bo mạch đơn như **Raspberry Pi**.  
+[Chương 10](../C10-asm_takeaways/index.html#_assembly_summary) chứa phần tóm tắt và một số điểm then chốt khi học assembly.  
 
-Lastly, there are some components of a computer system that just cannot
-be optimized sufficiently by compilers and require handwritten assembly.
-Some system levels have handwritten assembly code in areas where
-detailed machine-specific optimizations are critical for performance.
-For example, the boot sequence on all computers is written in assembly
-code. Operating systems often contain handwritten assembly for thread or
-process context-switching. Humans are often able to produce
-better-optimized assembly code than compilers for these short and
-performance-critical sequences.
+Mỗi “hương vị” assembly này triển khai một **ISA** khác nhau. Hãy nhớ rằng một [ISA](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) định nghĩa tập lệnh và cách mã hóa nhị phân của chúng, tập các **CPU registers** (thanh ghi CPU), và tác động của việc thực thi các lệnh lên trạng thái của CPU và bộ nhớ.  
 
+Trong ba chương tiếp theo, bạn sẽ thấy những điểm tương đồng chung giữa tất cả các ISA, bao gồm việc CPU registers được dùng làm toán hạng cho nhiều lệnh, và mỗi ISA cung cấp các loại lệnh tương tự nhau:  
 
-### What You Will Learn in the Coming Chapters {#_what_you_will_learn_in_the_coming_chapters .discrete}
+1. **Instructions** cho các phép toán số học và logic, như phép cộng hoặc **bitwise AND**.  
+2. **Instructions** cho điều khiển luồng (control flow) dùng để triển khai rẽ nhánh như `if-else`, vòng lặp, và lời gọi/trả về hàm.  
+3. **Instructions** cho di chuyển dữ liệu (data movement) để nạp và lưu giá trị giữa CPU registers và bộ nhớ.  
+4. **Instructions** để **push** và **pop** giá trị từ **stack**. Các lệnh này được dùng để triển khai **execution call stack**, nơi một **stack frame** mới (lưu trữ biến cục bộ và tham số của hàm đang chạy) được thêm vào đỉnh stack khi gọi hàm, và một frame được gỡ bỏ khỏi đỉnh stack khi hàm trả về.  
 
-The next three chapters cover three different flavors of assembly.
-[Chapter 7](../C7-x86_64/index.html#_x64_assembly_chapter) and
-[Chapter 8](../C8-IA32/index.html#_IA32_assembly_chapter) cover
-x86_64 and its earlier form, IA32. [Chapter
-9](../C9-ARM64/index.html#_a64_assembly_chapter) covers ARMv8-A
-assembly, which is the ISA found on most modern ARM devices, including
-single-board computers like the Raspberry Pi. [Chapter
-10](../C10-asm_takeaways/index.html#_assembly_summary) contains a
-summary and some key takeaways for learning assembly.
+Một **C compiler** dịch mã nguồn C sang tập lệnh ISA cụ thể. Compiler dịch các câu lệnh C, bao gồm vòng lặp, `if-else`, lời gọi hàm và truy cập biến, sang một tập lệnh cụ thể được định nghĩa bởi ISA và được thực thi bởi CPU được thiết kế để chạy các lệnh từ ISA đó. Ví dụ, compiler dịch C sang lệnh **x86** để chạy trên bộ xử lý Intel x86, hoặc dịch C sang lệnh **ARM** để chạy trên bộ xử lý ARM.  
 
+Khi đọc các chương thuộc phần assembly của cuốn sách, bạn có thể nhận thấy một số thuật ngữ quan trọng được định nghĩa lại và một số hình minh họa được lặp lại. Để hỗ trợ tốt nhất cho các giảng viên ngành Khoa học Máy tính, chúng tôi thiết kế mỗi chương có thể được sử dụng độc lập tại các trường cao đẳng và đại học. Mặc dù phần lớn nội dung trong mỗi chương là duy nhất, chúng tôi hy vọng những điểm chung giữa các chương sẽ giúp củng cố sự tương đồng giữa các “hương vị” assembly khác nhau trong tâm trí người đọc.  
 
-Each of these different flavors of assembly implement different
-instruction set architectures (ISAs). Recall that an
-[ISA](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture)
-defines the set of instructions and their binary encoding, the set of
-CPU registers, and the effects of executing instructions on the state of
-the CPU and memory.
+Sẵn sàng học assembly chưa? Hãy bắt đầu ngay thôi! Truy cập các liên kết dưới đây để đến những chương mà bạn quan tâm:
 
-
-In the following three chapters, you will see general similarities
-across all the ISAs, including that CPU registers are used as operands
-of many instructions, and that each ISA provides similar types of
-instructions:
-
-
-
-1.  instructions for computing arithmetic and logic operations, such as
-    addition or bitwise AND
-
-2.  instructions for control flow that are used to implement branching
-    such as if-else, loops, and function call and return
-
-3.  instructions for data movement that load and store values between
-    CPU registers and memory
-
-4.  instructions for pushing and popping values from the stack. These
-    instructions are used to implement the execution call stack, where a
-    new frame of stack memory (that stores a running function's local
-    variables and parameters) is added to the top of the stack on a
-    function call, and a frame is removed from the top of the stack on a
-    function return.
-
-
-A C compiler translates C source code to a specific ISA instruction set.
-The compiler translates C statements, including loops, `if`-`else`,
-function calls, and variable access, to a specific set of instructions
-that are defined by the ISA and implemented by a CPU that is designed to
-execute instructions from the specific ISA. For example, a compiler
-translates C to x86 instructions for execution on an Intel x86
-processor, or translates C to ARM instructions for execution on an ARM
-processor.
-
-
-As you read the chapters in the assembly part of the book, you may
-notice that some key terms are defined again and that some figures are
-reproduced. To best aid other CS educators, we designed each chapter to
-be used independently at particular colleges and universities. While
-most of the material in each chapter is unique, we hope the
-commonalities between the chapters help reinforce the similarities
-between the different flavors of assembly in the mind of readers.
-
-
-Ready to learn assembly? Let's dive right in! Follow the links below to
-visit particular chapters of interest:
-
-
-
--   [x86-64
-    Assembly](../C7-x86_64/index.html#_x64_assembly_chapter)
-
--   IA32 Assembly
-
--   [ARMv8-A
-    Assembly](../C9-ARM64/index.html#_a64_assembly_chapter)
-
-
-
-
-
+(Chưa thêm đâu nhé...)

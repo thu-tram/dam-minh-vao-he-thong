@@ -27,7 +27,7 @@ passing, using MPI as an example; and cloud computing, using MapReduce
 and Apache Spark as examples.
 
 
-### A Whole New World: Flynn's Taxonomy of Architecture {#_a_whole_new_world_flynns_taxonomy_of_architecture .discrete}
+### A Whole New World: Flynn's Taxonomy of Architecture
 
 **Flynn's taxonomy** is commonly used to describe the ecosystem of
 modern computing architecture (Figure 1).

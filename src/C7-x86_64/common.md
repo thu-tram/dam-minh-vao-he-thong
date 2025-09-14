@@ -1,385 +1,147 @@
+## 7.2. Các lệnh thông dụng (Common Instructions)
 
+Trong phần này, chúng ta sẽ thảo luận về một số **assembly instruction** (lệnh assembly) thường gặp. [Bảng 1](#Basic) liệt kê những lệnh nền tảng nhất trong assembly x86 (và do đó cả x64).
 
- 
+| Instruction  | Translation |
+|--------------|-------------|
+| `mov S, D`   | S → D (sao chép giá trị của S vào D) |
+| `add S, D`   | S + D → D (cộng S vào D và lưu kết quả vào D) |
+| `sub S, D`   | D - S → D (trừ S *khỏi* D và lưu kết quả vào D) |
 
+**Bảng 1.** Các lệnh thông dụng nhất
 
+Do đó, chuỗi lệnh:
 
+```
+mov    -0x4(%rbp),%eax
+add    $0x2,%eax
+```
 
+được dịch như sau:
 
+- Sao chép giá trị tại vị trí `%rbp` + (-0x4) trong **memory** (M[`%rbp` - 0x4]) vào thanh ghi `%eax`.
+- Cộng giá trị `0x2` vào thanh ghi `%eax` và lưu kết quả vào `%eax`.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 7.2. Common Instructions 
-
-In this section, we discuss several common assembly instructions. [Table
-1](#Basic) lists the most foundational instructions in x86 (and thus
-x64) assembly.
-
-
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+===================================+===================================+
-| `mov S, D`                        | S → D (copies value of S into D)  |
-+-----------------------------------+-----------------------------------+
-| `add S, D`                        | S + D → D (adds S to D and stores |
-|                                   | result in D)                      |
-+-----------------------------------+-----------------------------------+
-| `sub S, D`                        | D - S → D (subtracts S *from* D   |
-|                                   | and stores result in D)           |
-+-----------------------------------+-----------------------------------+
-
-: Table 1. Most Common Instructions
-
-Therefore, the sequence of instructions
-
-
-
-
-    mov    -0x4(%rbp),%eax
-    add    $0x2,%eax
-
-
-translates to:
-
-
-
--   Copy the value at location `%rbp` + -0x4 in *memory* (M\[`%rbp` -
-    0x4\]) to register `%eax`.
-
--   Add the value 0x2 to register `%eax`, and store the result in
-    register `%eax`.
-
-
-The three instructions shown in Table 1 also form the building
-blocks for instructions that maintain the organization of the program
-stack (i.e., the **call stack**). Recall that registers `%rbp` and
-`%rsp` refer to the *frame* pointer and *stack* pointer, respectively,
-and are reserved by the compiler for call stack management. Recall from
-our earlier discussion on [program
-memory](../C2-C_depth/scope_memory.html#_parts_of_program_memory_and_scope)
-that the call stack typically stores local variables and parameters and
-helps the program track its own execution (see [Figure
-1](#ProgramMemory)). On x86-64 systems, the execution stack grows toward
-*lower* addresses. Like all stack data structures, operations occur at
-the \"top\" of the stack.
-
-
-
+Ba lệnh trong **Bảng 1** cũng tạo thành nền tảng cho các lệnh duy trì tổ chức của **program stack** (ngăn xếp chương trình, hay **call stack**). Hãy nhớ rằng các thanh ghi `%rbp` và `%rsp` lần lượt là **frame pointer** và **stack pointer**, được compiler dành riêng cho việc quản lý call stack. Như đã đề cập trong phần trước về [program memory](../C2-C_depth/scope_memory.html#_parts_of_program_memory_and_scope), call stack thường lưu trữ các biến cục bộ và tham số, đồng thời giúp chương trình theo dõi quá trình thực thi của chính nó (xem [Hình 1](#ProgramMemory)). Trên hệ thống x86-64, **execution stack** phát triển về phía các địa chỉ *thấp hơn*. Giống như mọi cấu trúc dữ liệu stack, các thao tác diễn ra ở “đỉnh” của stack.
 
 ![The parts of a program's address space.](_images/memparts.png)
 
+**Hình 1.** Các phần của không gian địa chỉ của một chương trình
 
-Figure 1. The parts of a program's address space
+**x86-64 ISA** cung cấp hai lệnh (Bảng 2) để đơn giản hóa việc quản lý call stack.
 
+| Instruction | Translation |
+|-------------|-------------|
+| `push S`    | Đẩy một bản sao của S lên đỉnh stack. Tương đương với:  `sub $0x8, %rsp` và `mov S, (%rsp)` |
+| `pop D`     | Lấy phần tử ở đỉnh stack ra và đặt vào vị trí D. Tương đương với: `mov (%rsp), D` và `add $0x8, %rsp` |
 
-The x86-64 ISA provides two instructions (Table 2) to simplify
-call stack management.
+**Bảng 2.** Các lệnh quản lý stack
 
+Lưu ý rằng trong khi ba lệnh ở **Bảng 1** yêu cầu hai toán hạng, thì `push` và `pop` trong **Bảng 2** chỉ yêu cầu một toán hạng.
 
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+-----------------------------------+-----------------------------------+
-| `push S`                          |                        |
-|                                   | ::: paragraph                     |
-|                                   | Pushes a copy of S onto the top   |
-|                                   | of the stack. Equivalent to:      |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   |                   |
-|                                   |                        |
-|                                   |     sub $0x8, %rsp                |
-|                                   |     mov S, (%rsp)                 |
-|                                   | :::                               |
-|                                   | :::                               |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-| `pop D`                           |                        |
-|                                   | ::: paragraph                     |
-|                                   | Pops the top element off the      |
-|                                   | stack and places it in location   |
-|                                   | D. Equivalent to:                 |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   |                   |
-|                                   |                        |
-|                                   |     mov (%rsp), D                 |
-|                                   |     add $0x8, %rsp                |
-|                                   | :::                               |
-|                                   | :::                               |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
+---
 
-: Table 2. Stack Management Instructions
+### 7.2.1. Kết hợp tất cả: Một ví dụ cụ thể hơn
 
-Notice that while the three instructions in Table 1 require
-two operands, the `push` and `pop` instructions in Table 2
-require only one operand apiece.
+Hãy xem kỹ hơn hàm `adder2`:
 
-
-
-### 7.2.1. Putting It All Together: A More Concrete Example 
-
-Let's take a closer look at the `adder2` function:
-
-
-
-
-```
-//adds two to an integer and returns the result
+```c
+// adds two to an integer and returns the result
 int adder2(int a) {
     return a + 2;
 }
 ```
 
+và mã assembly tương ứng của nó:
 
-and its corresponding assembly code:
+```
+0000000000400526 <adder2>:
+    400526:       55                      push   %rbp
+    400527:       48 89 e5                mov    %rsp,%rbp
+    40052a:       89 7d fc                mov    %edi,-0x4(%rbp)
+    40052d:       8b 45 fc                mov    -0x4(%rbp),%eax
+    400530:       83 c0 02                add    $0x2,%eax
+    400533:       5d                      pop    %rbp
+    400534:       c3                      retq
+```
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
 
+---
 
+Mã assembly bao gồm một lệnh `push`, tiếp theo là ba lệnh `mov`, một lệnh `add`, một lệnh `pop` và cuối cùng là một lệnh `retq`.  
+Để hiểu CPU thực thi tập lệnh này như thế nào, chúng ta cần xem lại cấu trúc của [program memory](../C2-C_depth/scope_memory.html#_parts_of_program_memory_and_scope).  
+Hãy nhớ rằng mỗi khi một chương trình được thực thi, hệ điều hành sẽ cấp phát **address space** (không gian địa chỉ) mới cho chương trình đó (còn gọi là **virtual memory** — bộ nhớ ảo).  
+Virtual memory và khái niệm liên quan là [processes](../C13-OS/processes.html#_processes) sẽ được trình bày chi tiết hơn ở Chương 13; hiện tại, bạn chỉ cần hiểu rằng **process** là sự trừu tượng hóa của một chương trình đang chạy, và virtual memory là vùng bộ nhớ được cấp phát cho một process.  
+Mỗi process có một vùng bộ nhớ riêng gọi là **call stack**. Lưu ý rằng call stack nằm trong process/virtual memory, khác với các thanh ghi (registers) vốn nằm trên CPU.
 
-    0000000000400526 <adder2>:
-      400526:       55                      push   %rbp
-      400527:       48 89 e5                mov    %rsp,%rbp
-      40052a:       89 7d fc                mov    %edi,-0x4(%rbp)
-      40052d:       8b 45 fc                mov    -0x4(%rbp),%eax
-      400530:       83 c0 02                add    $0x2,%eax
-      400533:       5d                      pop    %rbp
-      400534:       c3                      retq
-
-
-The assembly code consists of a `push` instruction, followed by three
-`mov` instructions, an `add` instruction, a `pop` instruction, and
-finally a `retq` instruction. To understand how the CPU executes this
-set of instructions, we need to revisit the structure of [program
-memory](../C2-C_depth/scope_memory.html#_parts_of_program_memory_and_scope).
-Recall that every time a program executes, the operating system
-allocates the new program's address space (also known as **virtual
-memory**). Virtual memory
-and the related concept of
-[processes](../C13-OS/processes.html#_processes) are covered in
-greater detail in Chapter 13; for now, it suffices to think of a process
-as the abstraction of a running program and virtual memory as the memory
-that is allocated to a single process. Every process has its own region
-of memory called the **call stack**. Keep in mind that the call stack is
-located in process/virtual memory, unlike registers (which are located
-on the CPU).
-
-
-Figure 2 depicts a sample state of the call stack and
-registers prior to the execution of the `adder2` function.
-
-
-
+**Hình 2** minh họa trạng thái mẫu của call stack và các thanh ghi trước khi thực thi hàm `adder2`.
 
 ![frame1](_images/ex1_1.png)
 
+**Hình 2.** Execution stack trước khi thực thi
 
-Figure 2. Execution stack prior to execution
+Lưu ý rằng stack phát triển về phía các địa chỉ *thấp hơn*. Thanh ghi `%eax` chứa một giá trị rác. Tham số duy nhất của hàm `adder2` (`a`) theo quy ước được lưu trong thanh ghi `%rdi`. Vì `a` có kiểu `int`, nó được lưu trong **component register** `%edi` (như thể hiện trong Hình 2). Tương tự, vì hàm `adder2` trả về một giá trị `int`, nên **component register** `%eax` được dùng để chứa giá trị trả về thay vì `%rax`.
 
+Các địa chỉ gắn với các lệnh trong **code segment** của program memory (0x400526–0x400534) đã được rút gọn thành (0x526–0x534) để hình minh họa dễ đọc hơn. Tương tự, các địa chỉ gắn với **call stack segment** đã được rút gọn thành 0xd28–0xd1c từ 0x7fffffffdd28 – 0x7fffffffdd1c. Thực tế, địa chỉ của call stack nằm ở vùng địa chỉ cao hơn nhiều so với địa chỉ của code segment.
 
-Notice that the stack grows toward *lower* addresses. Register `%eax`
-contains a junk value. The single parameter to the `adder2` function
-(`a`) is stored in register `%rdi` by convention. Since `a` is of type
-`int`, it is stored in component register `%edi`, which is shown in
-Figure 2. Likewise, since the `adder2` function returns
-an `int`, component register `%eax` is used for the return value instead
-of `%rax`.
-
-
-The addresses associated with the instructions in the code segment of
-program memory (0x400526-0x400534) have been shortened to (0x526-0x534)
-to improve figure readability. Likewise, the addresses associated with
-the call stack segment of program memory have been shortened to
-0xd28-0xd1c from 0x7fffffffdd28 - 0x7fffffffdd1c. In truth, call stack
-addresses occur at much higher addresses in program memory than code
-segment addresses.
-
-
-Pay close attention to the initial values of registers `%rsp` and
-`%rbp`: they are 0xd28 and 0xd40, respectively. The red (upper-left)
-arrow in the following figures visually indicates the currently
-executing instruction. The `%rip` register (or instruction pointer)
-shows the next instruction to execute. Initially, `%rip` contains
-address 0x526, which corresponds to the first instruction in the
-`adder2` function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Hãy chú ý đến giá trị ban đầu của các thanh ghi `%rsp` và `%rbp`: lần lượt là 0xd28 và 0xd40. Mũi tên đỏ (góc trên bên trái) trong các hình tiếp theo biểu thị trực quan lệnh đang được thực thi. Thanh ghi `%rip` (hay instruction pointer) cho biết lệnh tiếp theo sẽ được thực hiện. Ban đầu, `%rip` chứa địa chỉ 0x526, tương ứng với lệnh đầu tiên trong hàm `adder2`.
 
 ![frame2](_images/ex1_2.png)
 
+Lệnh đầu tiên (`push %rbp`) đặt một bản sao giá trị trong `%rbp` (0xd40) lên đỉnh stack. Sau khi thực thi, `%rip` trỏ tới địa chỉ của lệnh tiếp theo (0x527). Lệnh `push` giảm giá trị stack pointer đi 8 (tức “mở rộng” stack thêm 8 byte), dẫn đến `%rsp` mới là 0xd20. Hãy nhớ rằng `push %rbp` tương đương với:
 
-The first instruction (`push %rbp`) places a copy of the value in `%rbp`
-(or 0xd40) on top of the stack. After it executes, the `%rip` register
-advances to the address of the next instruction to execute (0x527). The
-`push` instruction decrements the stack pointer by 8 (\"growing\" the
-stack by 8 bytes), resulting in a new `%rsp` value of 0xd20. Recall that
-the `push %rbp` instruction is equivalent to:
+```
+sub $8, %rsp
+mov %rbp, (%rsp)
+```
 
-
-
-
-    sub $8, %rsp
-    mov %rbp, (%rsp)
-
-
-In other words, subtract 8 from the stack pointer and place a copy of
-the contents of `%rbp` in the location pointed to by the dereferenced
-stack pointer, `(%rsp)`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Nói cách khác, trừ 8 khỏi stack pointer và đặt bản sao nội dung của `%rbp` vào vị trí được trỏ bởi `(%rsp)`.
 
 ![frame3](_images/ex1_3.png)
 
-
-Recall that the structure of the `mov` instruction is `mov S,D`, where S
-is the source location, and D is the destination. Thus, the next
-instruction (`mov %rsp, %rbp`) updates the value of `%rbp` to 0xd20. The
-register `%rip` advances to the address of the next instruction to
-execute, or 0x52a.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Hãy nhớ rằng cấu trúc của lệnh `mov` là `mov S, D`, trong đó S là nguồn (source) và D là đích (destination). Do đó, lệnh tiếp theo (`mov %rsp, %rbp`) cập nhật giá trị của `%rbp` thành 0xd20. `%rip` tăng lên để trỏ tới lệnh tiếp theo, 0x52a.
 
 ![frame4](_images/ex1_4.png)
 
+Tiếp theo, `mov %edi, -0x4(%rbp)` được thực thi. Lệnh này phức tạp hơn một chút so với lệnh `mov` trước. Trước hết, hãy nhớ rằng tham số đầu tiên của một hàm được lưu trong `%rdi`. Vì `a` có kiểu `int`, compiler lưu nó trong **component register** `%edi`. Toán hạng `-0x4(%rbp)` tương ứng với M[`%rbp` - 0x4]. Vì `%rbp` chứa 0xd20, trừ đi 4 sẽ ra 0xd1c. Do đó, lệnh `mov` này sao chép giá trị của `%edi` (0x28) vào vị trí 0xd1c trên stack. `%rip` tăng lên 0x52d.
 
-Next, `mov %edi, -0x4(%rbp)` is executed. This is a bit more complicated
-than the last `mov` instruction. Let's parse it piece by piece. First,
-recall that the first parameter to any function is stored in register
-`%rdi`. Since `a` is of type `int`, the compiler stores the first
-parameter in component register `%edi`. Next, the operand `-0x4(%rbp)`
-translates to M\[`%rbp` - 0x4\]. Since `%rbp` contains the value 0xd20,
-subtracting 4 from it yields 0xd1c. Therefore, the `mov` instruction
-copies the value of register `%edi` (or 0x28) to location 0xd1c on the
-stack. The instruction pointer advances to address 0x52d, the next
-address to be executed.
-
-
-Note that storing the value 0x28 does not affect the stack pointer
-(`%rsp`). Therefore, as far as the program is concerned, the \"top\" of
-this stack is still address 0xd20.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Lưu ý rằng việc lưu giá trị 0x28 này không ảnh hưởng đến `%rsp`. Vì vậy, “đỉnh” stack theo chương trình vẫn là địa chỉ 0xd20.
 
 ![frame5](_images/ex1_5.png)
 
-
-The next `mov` instruction (`mov -0x4(%rbp), %eax`) copies the value at
-stack location 0xd1c (i.e., M\[`%rbp` - 0x4\] or 0x28) and stores it in
-register `%eax`. Register `%rip` advances to the next instruction to be
-executed, or 0x530.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Lệnh `mov` tiếp theo (`mov -0x4(%rbp), %eax`) sao chép giá trị tại vị trí 0xd1c trên stack (M[`%rbp` - 0x4] = 0x28) vào `%eax`. `%rip` tăng lên 0x530.
 
 ![frame6](_images/ex1_6.png)
 
-
-Next, `add $0x2, %eax` is executed. Recall that the `add` instruction
-has the form `add S,D` and places the quantity S + D in the destination
-D. So, `add $0x2, %eax` adds the constant value 0x2 to the value stored
-in `%eax` (or 0x28), resulting in the value `0x2A` being stored in
-register `%eax`. Register `%rip` advances to point to the next
-instruction to be executed, or 0x533.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+Tiếp theo, `add $0x2, %eax` được thực thi. Hãy nhớ rằng `add S, D` sẽ tính S + D và lưu vào D. Do đó, `add $0x2, %eax` cộng hằng số 0x2 vào giá trị trong `%eax` (0x28), kết quả là 0x2A được lưu vào `%eax`. `%rip` tăng lên 0x533.
 
 ![frame7](_images/ex1_7.png)
 
+Lệnh tiếp theo là `pop %rbp`. Lệnh này “pop” giá trị ở đỉnh stack và đặt vào `%rbp`. Lệnh này tương đương với:
 
-The next instruction that executes is `pop %rbp`. This instruction
-\"pops\" the value off the top of the call stack and places it in
-destination register `%rbp`. Recall that this instruction is equivalent
-to the following sequence of two instructions:
+```
+mov (%rsp), %rbp
+add $8, %rsp
+```
 
+Vì đỉnh stack hiện tại là 0xd20 (`%rsp`), nên khi thực thi, giá trị tại M[0xd20] được sao chép vào `%rbp`, khiến `%rbp` trở lại 0xd40. Stack pointer tăng thêm 8 (vì stack thu nhỏ về phía địa chỉ cao hơn), nên `%rsp` trở lại 0xd28. `%rip` lúc này trỏ tới lệnh cuối cùng (0x534).
 
+Lệnh cuối cùng là `retq`. Chúng ta sẽ nói kỹ hơn về `retq` khi bàn về lời gọi hàm, nhưng hiện tại chỉ cần biết rằng nó chuẩn bị call stack để trả về từ một hàm. Theo quy ước, `%rax` luôn chứa giá trị trả về (nếu có). Trong trường hợp này, vì `adder2` trả về `int`, giá trị trả về nằm trong `%eax` và là 0x2A (42).
 
+Trước khi tiếp tục, hãy lưu ý rằng giá trị cuối cùng của `%rsp` và `%rbp` lần lượt là 0xd28 và 0xd40 — **giống hệt** khi hàm bắt đầu thực thi. Đây là hành vi bình thường và mong đợi của call stack: nó lưu trữ biến tạm và dữ liệu của mỗi hàm khi chạy, và khi hàm kết thúc, stack trở lại trạng thái trước khi hàm được gọi. Vì vậy, thường thấy hai lệnh sau ở đầu hàm:
 
-    mov (%rsp), %rbp
-    add $8, %rsp
+```
+push %rbp
+mov %rsp, %rbp
+```
 
+và hai lệnh sau ở cuối hàm:
 
-Recall that the top of the stack is 0xd20, since that is the value
-stored in `%rsp`. Therefore, once this instruction executes, the value
-`(%rsp)` (i.e., M\[0xd20\]) is copied into register `%rbp`. Thus, `%rbp`
-now contains the value 0xd40. The stack pointer *increments* by 8, since
-the stack grows toward lower addresses (and consequently *shrinks*
-toward higher ones). The new value of `%rsp` is 0xd28, and `%rip` now
-points to the address of the last instruction to execute (i.e., 0x534).
-
-
-The last instruction executed is `retq`. We will talk more about what
-happens with `retq` in future sections when we discuss function calls,
-but for now it suffices to know that it prepares the call stack for
-returning from a function. By convention, the register `%rax` always
-contains the return value (if one exists). In this case, because
-`adder2` is of type `int`, the return value is stored in component
-register `%eax`, and the function returns the value 0x2A, or 42.
-
-
-Before we continue, note that the final values in registers `%rsp` and
-`%rbp` are 0xd28 and 0xd40, respectively, which are the *same values as
-when the function started executing*! This is normal and expected
-behavior with the call stack. The purpose of the call stack is to store
-the temporary variables and data of each function as it executes in the
-context of a program. Once a function completes executing, the stack
-returns to the state it was in prior to the function call. As a result,
-it is common to see the following two instructions at the beginning of a
-function:
-
-
-
-
-    push %rbp
-    mov %rsp, %rbp
-
-
-and the following two instructions at the end of a function:
-
-
-
-
-    pop %rbp
-    retq
-
-
+```
+pop %rbp
+retq
+```
 
 
 

@@ -42,7 +42,7 @@ this book have spanned 64-bit Intel assembly (x86-64), 32-bit Intel
 Assembly (IA32), and 64-bit ARM assembly (ARMv8-A).
 
 
-### Common Features {#_common_features .discrete}
+### Common Features
 
 Regardless of the specific assembly language that one learns, there are
 some common features to *all* assembly languages worth highlighting.
@@ -126,7 +126,7 @@ Security
 
 : Table 1. C functions with Length Specifiers
 
-### Further Reading {#_further_reading .discrete}
+### Further Reading
 
 This book offers just a taste of some of the most popular assembly
 languages in use. For more in-depth understanding of assembly, we

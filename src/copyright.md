@@ -1,4 +1,4 @@
-# License: CC BY-NC-ND 4.0 {#_license_cc_by_nc_nd_4_0 .discrete}
+# License: CC BY-NC-ND 4.0
 
 This work is licensed under the [Creative Commons
 Attribution-NonCommercial-NoDerivatives 4.0
@@ -8,7 +8,7 @@ International](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 [![Creative Commons BY-NC-ND License](_images/copyright.png)](http://creativecommons.org/licenses/by-nc-nd/4.0/){.image}
 
 
-# Disclaimer {#_disclaimer .discrete}
+# Disclaimer
 
 The authors made every effort to ensure that the information in this
 book was correct. The programs in this book have been included for

@@ -103,7 +103,7 @@ pthread_mutex_destroy(&mutex);
 ```
 
 
-#### The Mutex: Locked and Loaded {#_the_mutex_locked_and_loaded .discrete}
+#### The Mutex: Locked and Loaded
 
 The initial state of a mutex is unlocked, meaning it's immediately
 usable by any thread. To enter a critical section, a thread must first
@@ -272,7 +272,7 @@ this manner guarantees that only one thread can execute the loop at a
 time, effectively serializing the program!
 
 
-#### The Mutex: Reloaded {#_the_mutex_reloaded .discrete}
+#### The Mutex: Reloaded
 
 Let's try another approach and place the mutex locking and unlocking
 functions within every iteration of the loop:
@@ -354,7 +354,7 @@ cost of the additional mutex operations slows down the loop's execution
 considerably.
 
 
-#### The Mutex: Revisited {#_the_mutex_revisited .discrete}
+#### The Mutex: Revisited
 
 In addition to protecting the critical section to achieve correct
 behavior, an ideal solution would use the lock and unlock functions as
@@ -494,7 +494,7 @@ hard work requiring parallelization is over, use a mutex to safely
 update any shared variable(s).
 
 
-#### Deadlock {#_deadlock .discrete}
+#### Deadlock
 
 In some programs, waiting threads have dependencies on one another. A
 situation called **deadlock** can arise when multiple synchronization

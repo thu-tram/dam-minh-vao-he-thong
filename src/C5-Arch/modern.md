@@ -1,248 +1,65 @@
+Dưới đây là bản dịch tiếng Việt của mục **5.9. Looking Ahead: CPUs Today** và **5.9.1. Instruction-Level Parallelism**, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
 
-## 5.9. Looking Ahead: CPUs Today 
+---
 
-CPU pipelining is one example of **instruction-level parallelism**
-(ILP), in which the CPU simultaneously executes multiple instructions in
-parallel. In a pipelined execution, the CPU simultaneously executes
-multiple instructions by overlapping their execution in the pipeline. A
-simple pipelined CPU can achieve a CPI of 1, completing the execution of
-one instruction every clock cycle. Modern microprocessors typically
-employ pipelining along with other ILP techniques and include multiple
-CPU cores to achieve processor CPI values of less than 1. For these
-microarchitectures, the average number of **instructions per cycle**
-(IPC) is the metric commonly used to describe their performance. A large
-IPC value indicates that a processor achieves a high sustained degree of
-simultaneous instruction execution.
+## 5.9. Nhìn về phía trước: CPU ngày nay
 
+Kỹ thuật pipeline trong CPU là một ví dụ của **instruction-level parallelism** (ILP – "song song ở cấp độ lệnh"), trong đó CPU thực thi đồng thời nhiều lệnh song song. Trong thực thi kiểu pipeline, CPU thực hiện đồng thời nhiều lệnh bằng cách chồng lấn quá trình thực thi của chúng trong pipeline. Một CPU pipeline đơn giản có thể đạt CPI bằng 1, tức là hoàn thành một lệnh mỗi chu kỳ xung nhịp. Các vi xử lý hiện đại thường sử dụng pipeline kết hợp với các kỹ thuật ILP khác và bao gồm nhiều nhân CPU để đạt CPI nhỏ hơn 1. Với các vi kiến trúc này, số lượng trung bình **instructions per cycle** (IPC – "lệnh mỗi chu kỳ") là chỉ số thường dùng để mô tả hiệu năng. IPC lớn cho thấy bộ xử lý đạt mức độ thực thi lệnh đồng thời cao và ổn định.
 
-Transistors are the building blocks of all circuitry on an integrated
-circuit (a chip). The processing and control units of modern CPUs are
-constructed from circuits, which are built from subcircuits and basic
-logic gates that are implemented with transistors. Transistors also
-implement the storage circuits used in CPU registers and in fast on-chip
-cache memory that stores copies of recently accessed data and
-instructions (we discuss cache memory in detail in [Chapter
-11](../C11-MemHierarchy/index.html#_storage_and_the_memory_hierarchy)).
+Transistor là khối xây dựng của mọi mạch trên mạch tích hợp (chip). Các đơn vị xử lý và điều khiển của CPU hiện đại được xây dựng từ các mạch, mà bản thân chúng được tạo thành từ các mạch con và cổng logic cơ bản, được triển khai bằng transistor. Transistor cũng được dùng để triển khai các mạch lưu trữ trong thanh ghi CPU và bộ nhớ đệm (cache) tốc độ cao trên chip, nơi lưu bản sao của dữ liệu và lệnh vừa được truy cập gần đây (ta sẽ thảo luận chi tiết về bộ nhớ cache trong [Chương 11](../C11-MemHierarchy/index.html#_storage_and_the_memory_hierarchy)).
 
+Số lượng transistor có thể đặt trên một chip là một chỉ số sơ bộ về hiệu năng của nó. **Định luật Moore** là một quan sát do Gordon Moore đưa ra năm 1975, rằng số lượng transistor trên mỗi mạch tích hợp sẽ tăng gấp đôi khoảng mỗi hai năm[^1,^2]. Việc số lượng transistor trên chip tăng gấp đôi mỗi hai năm có nghĩa là các kiến trúc sư máy tính có thể thiết kế chip mới với gấp đôi không gian dành cho mạch lưu trữ và tính toán, từ đó hiệu năng cũng tăng gần gấp đôi. Trong lịch sử, các kiến trúc sư máy tính đã sử dụng số transistor tăng thêm để thiết kế các bộ xử lý đơn phức tạp hơn, sử dụng các kỹ thuật ILP nhằm cải thiện hiệu năng tổng thể.
 
-The number of transistors that can fit on a chip is a rough measure of
-its performance. **Moore's Law** is the observation, made by Gordon
-Moore in 1975, that the number of transistors per integrated circuit
-doubles about every two years^1,2^. A doubling in the number of
-transistors per chip every two years means that computer architects can
-design a new chip with twice as much space for storage and computation
-circuitry, roughly doubling its power. Historically, computer architects
-used the extra transistors to design more complex single processors
-using ILP techniques to improve overall performance.
+---
 
+### 5.9.1. Song song ở cấp độ lệnh (Instruction-Level Parallelism)
 
+Instruction-level parallelism (ILP) là thuật ngữ chỉ tập hợp các kỹ thuật thiết kế dùng để hỗ trợ thực thi song song các lệnh của một chương trình đơn trên một bộ xử lý đơn. Các kỹ thuật ILP là minh bạch đối với lập trình viên, nghĩa là lập trình viên viết chương trình C tuần tự, nhưng bộ xử lý sẽ thực thi nhiều lệnh của chương trình đó đồng thời, song song, trên một hoặc nhiều đơn vị thực thi. Pipeline là một ví dụ của ILP, trong đó một chuỗi lệnh chương trình được thực thi đồng thời, mỗi lệnh ở một giai đoạn khác nhau trong pipeline. Một bộ xử lý pipeline có thể thực thi một lệnh mỗi chu kỳ (đạt IPC bằng 1). Các thiết kế vi xử lý ILP khác có thể thực thi nhiều hơn một lệnh mỗi chu kỳ xung nhịp và đạt IPC lớn hơn 1.
 
-### 5.9.1. Instruction-Level Parallelism 
+Một **vector processor** là một kiến trúc triển khai ILP thông qua các lệnh vector đặc biệt, nhận các mảng một chiều (vector) dữ liệu làm toán hạng. Các lệnh vector được thực thi song song bởi vector processor trên nhiều đơn vị thực thi, mỗi đơn vị thực hiện một phép toán trên từng phần tử của toán hạng vector. Trước đây, vector processor thường được sử dụng trong các máy tính song song quy mô lớn. Siêu máy tính Cray-1 ra mắt năm 1976 là siêu máy tính đầu tiên dựa trên vector processor, và Cray tiếp tục thiết kế các siêu máy tính dùng vector processor trong suốt thập niên 1990. Tuy nhiên, thiết kế này cuối cùng không thể cạnh tranh với các thiết kế siêu máy tính song song khác, và ngày nay vector processor chủ yếu xuất hiện trong các thiết bị tăng tốc như GPU (graphics processing unit – "bộ xử lý đồ họa"), vốn được tối ưu hóa đặc biệt để xử lý dữ liệu hình ảnh lưu dưới dạng mảng một chiều.
 
-Instruction level parallelism (ILP) is a term for a set of design
-techniques used to support parallel execution of a single program's
-instructions on a single processor. ILP techniques are transparent to
-the programmer, meaning that a programmer writes a sequential C program
-but the processor executes several of its instructions simultaneously,
-in parallel, on one or more execution units. Pipelining is one example
-of ILP, where a sequence of program instructions execute simultaneously,
-each in a different pipeline stage. A pipelined processor can execute
-one instruction per cycle (can achieve an IPC of 1). Other types of
-microprocessor ILP designs can execute more than a single instruction
-per clock cycle and achieve IPC values higher than 1.
+**Superscalar** là một ví dụ khác về thiết kế bộ xử lý ILP. Một bộ xử lý superscalar là bộ xử lý đơn có nhiều đơn vị thực thi và nhiều pipeline thực thi. Superscalar processor sẽ nạp một tập hợp lệnh từ dòng lệnh tuần tự của chương trình, và phân tách chúng thành nhiều dòng lệnh độc lập được thực thi song song bởi các đơn vị thực thi. Superscalar processor là một **out-of-order processor** ("bộ xử lý thực thi không theo thứ tự"), tức là nó thực thi các lệnh không theo thứ tự xuất hiện trong dòng lệnh tuần tự. Việc thực thi không theo thứ tự đòi hỏi phải xác định các chuỗi lệnh không có phụ thuộc, có thể thực thi song song một cách an toàn. Superscalar processor có chức năng tạo động các dòng lệnh độc lập để đưa vào các đơn vị thực thi. Chức năng này phải thực hiện phân tích phụ thuộc để đảm bảo thứ tự đúng của bất kỳ lệnh nào phụ thuộc vào kết quả của lệnh trước đó trong dòng lệnh tuần tự. Ví dụ, một superscalar processor với năm đơn vị thực thi có pipeline có thể thực thi năm lệnh từ một chương trình tuần tự trong một chu kỳ (đạt IPC bằng 5). Tuy nhiên, do phụ thuộc giữa các lệnh, không phải lúc nào superscalar processor cũng có thể giữ cho tất cả pipeline đều hoạt động.
 
+**Very long instruction word** (VLIW) là một thiết kế vi kiến trúc ILP khác, tương tự superscalar. Tuy nhiên, trong kiến trúc VLIW, trình biên dịch chịu trách nhiệm xây dựng các dòng lệnh độc lập được thực thi song song bởi bộ xử lý. Trình biên dịch cho kiến trúc VLIW sẽ phân tích các lệnh chương trình để xây dựng tĩnh một lệnh VLIW gồm nhiều lệnh, mỗi lệnh thuộc một dòng lệnh độc lập. VLIW dẫn đến thiết kế bộ xử lý đơn giản hơn so với superscalar, vì bộ xử lý VLIW không cần thực hiện phân tích phụ thuộc để xây dựng các dòng lệnh độc lập trong quá trình thực thi. Thay vào đó, bộ xử lý VLIW chỉ cần thêm mạch để nạp lệnh VLIW tiếp theo và tách nó thành các lệnh riêng biệt để đưa vào từng pipeline thực thi. Tuy nhiên, vì đẩy việc phân tích phụ thuộc sang trình biên dịch, kiến trúc VLIW đòi hỏi trình biên dịch chuyên biệt để đạt hiệu năng tốt.
 
-A **vector processor** is an architecture that implements ILP through
-special vector instructions that take one-dimensional arrays (vectors)
-of data as their operands. Vector instructions are executed in parallel
-by a vector processor on multiple execution units, each unit performing
-an arithmetic operation on single elements of its vector operands. In
-the past, vector processors were often used in large parallel computers.
-The 1976 Cray-1 was the first vector processor-based supercomputer, and
-Cray continued to design its supercomputers with vector processors
-throughout the 1990s. However, eventually this design could not compete
-with other parallel supercomputer designs, and today vector processors
-appear primarily in accelerator devices such as graphics processing
-units (GPUs) that are particularly optimized for performing computation
-on image data stored in 1D arrays.
+Một vấn đề chung của cả superscalar và VLIW là mức độ hiệu năng song song thường bị giới hạn đáng kể bởi bản chất tuần tự của các chương trình ứng dụng mà chúng thực thi. Các phụ thuộc giữa các lệnh trong chương trình làm hạn chế khả năng giữ cho tất cả pipeline đều hoạt động.
 
+Dưới đây là bản dịch tiếng Việt của các mục **5.9.2. Multicore and Hardware Multithreading** và **5.9.3. Some Example Processors**, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
 
-**Superscalar** is another example of an ILP processor design. A
-superscalar processor is a single processor with multiple execution
-units and multiple execution pipelines. A superscalar processor fetches
-a set of instructions from a sequential program's instruction stream,
-and breaks them up into multiple independent streams of instructions
-that are executed in parallel by its execution units. A superscalar
-processor is an **out-of-order processor**, or one that executes
-instructions out of the order in which they appear in a sequential
-instruction stream. Out-of-order execution requires identifying
-sequences of instructions without dependencies that can safely execute
-in parallel. A superscalar processor contains functionality to
-dynamically create the multiple streams of independent instructions to
-feed through its multiple execution units. This functionality must
-perform dependency analysis to ensure the correct ordering of any
-instruction whose execution depends on the result of a previous
-instruction in these sequential streams. As an example, a superscalar
-processor with five pipelined execution units can execute five
-instructions from a sequential program in a single cycle (can achieve an
-IPC of 5). However, due to instruction dependencies, it is not always
-the case that a superscalar processor can keep all of its pipelines
-full.
+---
 
+### 5.9.2. Bộ xử lý đa nhân và đa luồng phần cứng
 
-**Very long instruction word** (VLIW) is another ILP microarchitecture
-design that is similar to superscalar. In VLIW architectures, however,
-the compiler is responsible for constructing the multiple independent
-instruction streams executed in parallel by the processor. A compiler
-for a VLIW architecture analyzes the program instructions to statically
-construct a VLIW instruction that consists of multiple instructions, one
-from each independent stream. VLIW leads to simpler processor design
-than superscalar because the VLIW processor does not need to perform
-dependency analysis to construct the multiple independent instruction
-streams as part of its execution of program instructions. Instead, a
-VLIW processor just needs added circuitry to fetch the next VLIW
-instruction and break it up into its multiple instructions that it feeds
-into each of its execution pipelines. However, by pushing dependency
-analysis to the compiler, VLIW architectures require specialized
-compilers to achieve good performance.
+Bằng cách thiết kế các bộ xử lý đơn sử dụng ngày càng nhiều kỹ thuật ILP phức tạp và tăng tần số xung nhịp CPU để điều khiển các chức năng ngày càng phức tạp này, các kiến trúc sư máy tính đã tạo ra những bộ xử lý có hiệu năng theo kịp Định luật Moore cho đến đầu những năm 2000. Sau thời điểm đó, tần số xung nhịp CPU không thể tiếp tục tăng mà không làm tăng đáng kể mức tiêu thụ điện năng của bộ xử lý[^3]. Điều này dẫn đến kỷ nguyên hiện tại của các vi kiến trúc đa nhân (multicore) và đa luồng phần cứng (hardware multithreading), cả hai đều yêu cầu lập trình viên phải thực hiện *explicit parallel programming* ("lập trình song song tường minh") để tăng tốc độ thực thi của một chương trình đơn.
 
+**Hardware multithreading** là thiết kế bộ xử lý đơn hỗ trợ thực thi nhiều luồng phần cứng. Một **thread** (luồng) là một dòng thực thi độc lập. Ví dụ, hai chương trình đang chạy sẽ có hai luồng thực thi độc lập. Hai luồng này có thể được hệ điều hành lập lịch để chạy “đồng thời” trên một bộ xử lý đa luồng. Hardware multithreading có thể được triển khai bằng cách cho bộ xử lý luân phiên thực thi các lệnh từ mỗi dòng lệnh của các luồng trong mỗi chu kỳ. Trong trường hợp này, các lệnh từ các luồng phần cứng khác nhau không được thực thi đồng thời trong cùng một chu kỳ. Thay vào đó, bộ xử lý được thiết kế để chuyển đổi nhanh chóng giữa các dòng lệnh của các luồng khác nhau. Điều này thường giúp tăng tốc độ thực thi tổng thể so với khi chạy trên bộ xử lý đơn luồng.
 
-One problem with both superscalar and VLIW is that the degree of
-parallel performance is often significantly limited by the sequential
-application programs they execute. Dependencies between instructions in
-the program limit the ability to keep all of the pipelines full.
+Multithreading có thể được triển khai bằng phần cứng trên cả vi xử lý kiểu scalar và superscalar. Tối thiểu, phần cứng cần hỗ trợ việc nạp lệnh từ nhiều dòng lệnh riêng biệt (mỗi dòng tương ứng với một luồng thực thi), và có tập thanh ghi riêng cho mỗi dòng lệnh. Các kiến trúc này được gọi là **explicitly multithreaded**[^4] vì, khác với kiến trúc superscalar, mỗi dòng thực thi được hệ điều hành lập lịch độc lập để chạy một chuỗi lệnh chương trình riêng biệt. Các dòng thực thi này có thể đến từ nhiều chương trình tuần tự khác nhau hoặc từ nhiều luồng phần mềm của một chương trình song song đa luồng đơn (ta sẽ thảo luận về lập trình song song đa luồng trong [Chương 14](../C14-SharedMemory/multicore.html#_programming_multicore_systems)).
 
+Các vi kiến trúc đa luồng phần cứng dựa trên bộ xử lý superscalar có nhiều pipeline và nhiều đơn vị thực thi, do đó chúng có thể thực thi các lệnh từ nhiều luồng phần cứng đồng thời, song song, đạt IPC lớn hơn 1. Các kiến trúc đa luồng dựa trên bộ xử lý scalar đơn giản thường triển khai **interleaved multithreading** ("đa luồng xen kẽ"). Các vi kiến trúc này thường dùng chung một pipeline và luôn dùng chung ALU của bộ xử lý (CPU sẽ luân phiên thực thi các luồng trên cùng một ALU). Loại đa luồng này không thể đạt IPC lớn hơn 1. Đa luồng phần cứng được hỗ trợ bởi vi kiến trúc dựa trên superscalar thường được gọi là **simultaneous multithreading** (SMT – "đa luồng đồng thời")[^4]. Đáng tiếc là thuật ngữ SMT thường được dùng để chỉ cả hai loại đa luồng phần cứng, và bản thân thuật ngữ này không đủ để xác định liệu một vi kiến trúc đa luồng có thực sự triển khai đa luồng đồng thời hay chỉ là đa luồng xen kẽ.
 
-
-### 5.9.2. Multicore and Hardware Multithreading 
-
-By designing single processors that employed increasingly complicated
-ILP techniques and increasing the CPU clock speed to drive this
-increasingly complicated functionality, computer architects designed
-processors whose performance kept pace with Moore's Law until the early
-2000s. After this time, CPU clock speeds could no longer increase
-without greatly increasing a processor's power consumption^3^. This led
-to the current era of multicore and multithreaded microarchitectures,
-both of which require *explicit parallel programming* by a programmer to
-speed up the execution of a single program.
-
-
-**Hardware multithreading** is a single-processor design that supports
-executing multiple hardware threads. A **thread** is an independent
-stream of execution. For example, two running programs each have their
-own thread of independent execution. These two programs\' threads of
-execution could then be scheduled by the operating system to run \"at
-the same time\" on a multithreaded processor. Hardware multithreading
-may be implemented by a processor alternating between executing
-instructions from each of its threads\' instruction streams each cycle.
-In this case, the instructions of different hardware threads are not all
-executed simultaneously each cycle. Instead, the processor is designed
-to quickly switch between executing instructions from different
-threads\' execution streams. This usually results in a speed-up of their
-execution as a whole as compared to their execution on a singly threaded
-processor.
-
-
-Multithreading can be implemented in hardware on either scalar- or
-super-scalar type microprocessors. At a minimum, the hardware needs to
-support fetching instructions from multiple separate instruction streams
-(one for each thread of execution), and have separate register sets for
-each thread's execution stream. These architectures are **explicitly
-multithreaded**^4^ because, unlike superscalar architectures, each of
-the execution streams is independently scheduled by the operating system
-to run a separate logical sequence of program instructions. The multiple
-execution streams could come from multiple sequential programs or from
-multiple software threads from a single multithreaded parallel program
-(we discuss multithreaded parallel programming in [Chapter
-14](../C14-SharedMemory/multicore.html#_programming_multicore_systems)).
-
-
-Hardware multithreaded microarchitectures that are based on superscalar
-processors have multiple pipelines and multiple execution units, and
-thus they can execute instructions from several hardware threads
-simultaneously, in parallel, resulting in an IPC value greater than 1.
-Multithreaded architectures based on simple scalar processors implement
-**interleaved multithreading**. These microarchitectures typically share
-a pipeline and always share the processor's single ALU (the CPU switches
-between executing different threads on the ALU). This type of
-multithreading cannot achieve IPC values greater than 1. Hardware
-threading supported by superscalar-based microarchitectures is often
-called **simultaneous multithreading** (SMT)^4^. Unfortunately, SMT is
-often used to refer to both types of hardware multithreading, and the
-term alone is not always sufficient to determine whether a multithreaded
-microarchitecture implements true simultaneous or interleaved
-multithreading.
-
-
-**Multicore processors** contain multiple complete CPU cores. Like
-multithreaded processors, each core is independently scheduled by the
-OS. However, each core of a multicore processor is a full CPU core, one
-that contains its own complete and separate functionality to execute
-program instructions. A multicore processor contains replicas of these
-CPU cores with some additional hardware support for the cores to share
-cached data. Each core of a multicore processor could be scalar,
-superscalar, or hardware multithreaded. [Figure
-1](#Figmulticoreprocesor) shows an example of a multicore computer.
-
-
-
+**Multicore processors** (bộ xử lý đa nhân) chứa nhiều nhân CPU hoàn chỉnh. Giống như bộ xử lý đa luồng, mỗi nhân được hệ điều hành lập lịch độc lập. Tuy nhiên, mỗi nhân trong bộ xử lý đa nhân là một nhân CPU đầy đủ, có chức năng riêng biệt để thực thi lệnh chương trình. Một bộ xử lý đa nhân chứa các bản sao của các nhân CPU này, cùng với một số phần cứng bổ sung để các nhân chia sẻ dữ liệu cache. Mỗi nhân trong bộ xử lý đa nhân có thể là scalar, superscalar hoặc đa luồng phần cứng. [Hình 1](#Figmulticoreprocesor) minh họa một ví dụ về máy tính đa nhân.
 
 ![a multicore computer showing the processor chip with multiple CPU cores](_images/multicore.png)
 
+**Hình 1. Một máy tính với bộ xử lý đa nhân.**  
+Bộ xử lý chứa nhiều nhân CPU hoàn chỉnh, mỗi nhân có bộ nhớ cache riêng. Các nhân giao tiếp với nhau và chia sẻ bộ nhớ cache lớn hơn thông qua các bus trên chip.
 
-Figure 1. A computer with a multicore processor. The processor contains
-multiple complete CPU cores, each with its own private cache memory. The
-cores communicate with each and share a larger shared cached memory via
-on-chip buses.
+Thiết kế vi xử lý đa nhân là cách chính để hiệu năng kiến trúc bộ xử lý tiếp tục theo kịp Định luật Moore mà không cần tăng tần số xung nhịp. Một máy tính đa nhân có thể chạy đồng thời nhiều chương trình tuần tự, hệ điều hành sẽ lập lịch mỗi nhân với một dòng lệnh của chương trình khác nhau. Nó cũng có thể tăng tốc độ thực thi của một chương trình đơn nếu chương trình đó được viết dưới dạng chương trình song song đa luồng tường minh (luồng phần mềm). Ví dụ, hệ điều hành có thể lập lịch các luồng của một chương trình để chạy đồng thời trên các nhân riêng biệt của bộ xử lý đa nhân, giúp chương trình thực thi nhanh hơn so với phiên bản tuần tự của chính nó. Trong [Chương 14](../C14-SharedMemory/index.html#_leveraging_shared_memory_in_the_multicore_era), ta sẽ thảo luận về lập trình song song đa luồng tường minh cho hệ thống đa nhân và các hệ thống song song khác có bộ nhớ chính chia sẻ.
 
+---
 
-Multicore microprocessor design is the primary way in which the
-performance of processor architectures can continue to keep pace with
-Moore's Law without increasing the processor clock rate. A multicore
-computer can simultaneously run several sequential programs, the OS
-scheduling each core with a different program's instruction stream. It
-can speed up execution of a single program if the program is written as
-an explicitly multithreaded (software-level threads) parallel program.
-For example, the OS can schedule the threads of an individual program to
-run simultaneously on individual cores of the multicore processor,
-speeding up the execution of the program compared to its execution of a
-sequential version of the same program. In [Chapter
-14](../C14-SharedMemory/index.html#_leveraging_shared_memory_in_the_multicore_era),
-we discuss explicit multithreaded parallel programming for multicore and
-other types of parallel systems with shared main memory.
+### 5.9.3. Một số bộ xử lý tiêu biểu
 
+Ngày nay, các bộ xử lý được xây dựng bằng cách kết hợp các công nghệ ILP, đa luồng phần cứng và đa nhân. Thực tế, rất khó để tìm thấy một bộ xử lý không phải đa nhân. Các bộ xử lý dành cho máy tính để bàn thường có từ hai đến tám nhân, nhiều trong số đó cũng hỗ trợ mức đa luồng thấp trên mỗi nhân. Ví dụ, các bộ xử lý đa nhân AMD Zen[^5] và các bộ xử lý đa nhân Intel Xeon và Core có hỗ trợ hyperthreading[^6] đều hỗ trợ hai luồng phần cứng trên mỗi nhân. Các nhân hyperthreaded của Intel triển khai đa luồng xen kẽ. Do đó, mỗi nhân chỉ đạt IPC bằng 1, nhưng với nhiều nhân CPU trên mỗi chip, bộ xử lý vẫn có thể đạt IPC tổng thể cao hơn.
 
+Các bộ xử lý được thiết kế cho hệ thống cao cấp, như máy chủ và siêu máy tính, có nhiều nhân, mỗi nhân có mức độ đa luồng cao. Ví dụ, bộ xử lý Oracle SPARC M7[^7] dùng trong máy chủ cao cấp có 32 nhân. Mỗi nhân có tám luồng phần cứng, trong đó hai luồng có thể thực thi đồng thời, đạt IPC tối đa là 64 cho toàn bộ bộ xử lý. Hai siêu máy tính nhanh nhất thế giới (tính đến tháng 6 năm 2019)[^8] sử dụng bộ xử lý IBM Power 9[^9]. Bộ xử lý Power 9 có tối đa 24 nhân trên mỗi chip, và mỗi nhân hỗ trợ đa luồng đồng thời lên đến tám luồng. Phiên bản 24 nhân của Power 9 có thể đạt IPC tối đa là 192.
 
-### 5.9.3. Some Example Processors 
+---
 
-Today, processors are built using a mix of ILP, hardware multithreading,
-and multicore technologies. In fact, it is difficult to find a processor
-that is not multicore. Desktop-class processors typically have two to
-eight cores, many of which also support a low level of per-core
-multithreading. For example, AMD Zen multicore processors^5^ and Intel's
-hyperthreaded multicore Xeon and Core processors^6^ both support two
-hardware threads per core. Intel's hyperthreaded cores implement
-interleaved multithreading. Thus, each of its cores can only achieve an
-IPC of 1, but with multiple CPU cores per chip, the processor can
-achieve higher IPC levels.
+### Ghi chú
 
-
-Processors designed for high-end systems, such as those used in servers
-and supercomputers, contain many cores, where each core has a high
-degree of multithreading. For example, Oracle's SPARC M7 processor^7^,
-used in high-end servers, has 32 cores. Each of its cores has eight
-hardware threads, two of which can execute simultaneously, resulting in
-a maximum IPC value of 64 for the processor. The two fastest
-supercomputers in the world (as of June 2019)^8^, use IBM's Power 9
-processors^9^. Power 9 processors have up to 24 cores per chip, and each
-core supports up to eight-way simultaneous multithreading. A 24-core
-version of the Power 9 processor can achieve an IPC of 192.
-
-
-### Footnotes and References {#_footnotes_and_references .discrete}
-
-
-1.  Moore first observed a doubling every year in 1965, that he then
+[^1]:  Moore first observed a doubling every year in 1965, that he then
     updated in 1975 to every \> 2 years, which became known as Moore's
     Law.
 

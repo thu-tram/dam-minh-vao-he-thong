@@ -14,7 +14,7 @@ will learn how to evaluate the systems costs associated with program
 code and how to design programs to run efficiently.
 
 
-## What Is a Computer System? {#_what_is_a_computer_system .discrete}
+## What Is a Computer System?
 
 A **computer system** combines the computer hardware and special system
 software that together make the computer usable by users and programs.
@@ -98,7 +98,7 @@ For this reason, a microcontroller does not fit our definition of a
 computer system.
 
 
-## What Do Modern Computer Systems Look Like? {#_what_do_modern_computer_systems_look_like .discrete}
+## What Do Modern Computer Systems Look Like?
 
 Now that we have established what a computer system is (and isn't),
 let's discuss what computer systems typically look like. [Figure
@@ -179,7 +179,7 @@ computer. Together these different types of computer hardware running
 different general-purpose operating systems make up a computer system.
 
 
-## What You Will Learn In This Book {#_what_you_will_learn_in_this_book .discrete}
+## What You Will Learn In This Book
 
 By the end of this book, you will know the following:
 
@@ -238,13 +238,13 @@ evaluating the performance of systems and programs. You'll also master
 important skills, including C and assembly programming and debugging.
 
 
-## Getting Started with This Book {#_getting_started_with_this_book .discrete}
+## Getting Started with This Book
 
 A few notes about languages, book notation, and recommendations for
 getting started reading this book:
 
 
-### Linux, C, and the GNU Compiler {#_linux_c_and_the_gnu_compiler .discrete}
+### Linux, C, and the GNU Compiler
 
 We use the C programming language in examples throughout the book. C is
 a high-level programming language like Java and Python, but it is less
@@ -346,7 +346,7 @@ that can give readers a good overview. One recommendation is \"The Linux
 Command Line\"^1^.
 
 
-### Other Types of Notation and Callouts {#_other_types_of_notation_and_callouts .discrete}
+### Other Types of Notation and Callouts
 
 Aside from the command line and code snippets, we use several other
 types of \"callouts\" to represent content in this book.
@@ -461,7 +461,7 @@ representation, or continue with more advanced C programming in Chapter
 We hope you enjoy your journey with us!
 
 
-## References {#_references .discrete}
+## References
 
 
 1.  William Shotts. \"The Linux Command Line\", LinuxCommand.org,

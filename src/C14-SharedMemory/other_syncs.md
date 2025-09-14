@@ -154,7 +154,7 @@ variable:
     owns the mutex in which `pthread_cond_wait` is called.
 
 
-#### Condition Variable Example {#_condition_variable_example .discrete}
+#### Condition Variable Example
 
 Traditionally, condition variables are most useful when a subset of
 threads are waiting on another set to complete some action. In the

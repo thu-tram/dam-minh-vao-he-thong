@@ -52,7 +52,7 @@
 
 ### 8.4.1. Preliminaries 
 
-### Conditional Comparison Instructions {#_conditional_comparison_instructions .discrete}
+### Conditional Comparison Instructions
 
 Comparison instructions perform an arithmetic operation for the purpose
 of guiding the conditional execution of a program. [Table
@@ -147,7 +147,7 @@ and `test` enables the next set of instructions we cover (the *jump*
 instructions) to operate correctly.
 
 
-### The Jump Instructions {#_the_jump_instructions .discrete}
+### The Jump Instructions
 
 A jump instruction enables a program's execution to \"jump\" to a new
 position in the code. In the assembly programs we have traced through
@@ -157,7 +157,7 @@ instruction not yet seen (as in the case of an `if` statement) or to a
 previously executed instruction (as in the case of a loop).
 
 
-#### Direct jump instructions {#_direct_jump_instructions .discrete}
+#### Direct jump instructions
 
 +-----------------------------------+-----------------------------------+
 | Instruction                       | Description                       |
@@ -196,7 +196,7 @@ representing that it is 28 bytes away from the starting address of the
 `main` function. Executing this instruction sets `%eip` to 0x8048427.
 
 
-#### Conditional jump instructions {#_conditional_jump_instructions .discrete}
+#### Conditional jump instructions
 
 The behavior of conditional jump instructions depends on the condition
 code registers set by the `cmp` instruction. [Table
@@ -274,7 +274,7 @@ interpret the numerical comparison as a signed value, whereas *above*
 and *below* indicate that the numerical comparison is unsigned.
 
 
-### The `goto` Statement {#_the_goto_statement .discrete}
+### The `goto` Statement
 
 In the following subsections, we look at conditionals and loops in
 assembly and reverse engineer them back to C. When translating assembly
@@ -377,7 +377,7 @@ statements and loops in greater detail.
 -   loops
 
 
-### References {#_references .discrete}
+### References
 
 
 1.  Edsger Dijkstra. \"Go To Statement Considered Harmful\".

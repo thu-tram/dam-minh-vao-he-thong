@@ -6,4 +6,5 @@
 
 Mình sẽ bỏ qua Chương 1, 2, 3 (Học lập trình C) cũng như Appendix 1, 2 (Về Java, Unix).
 
-Hiện tại (14/09/2025), đã dịch tương đối Chương 4.
+Hiện tại (14/09/2025), đã dịch tương đối từ Chương 4 -> Chuwogn 8.
+

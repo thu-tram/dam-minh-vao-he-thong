@@ -1,337 +1,199 @@
-### 7.4.1. Preliminaries 
+### 7.4.1. Kiến thức chuẩn bị (Preliminaries)
 
-### Conditional Comparison Instructions {#_conditional_comparison_instructions .discrete}
+### Các lệnh so sánh có điều kiện (Conditional Comparison Instructions)
 
-Comparison instructions perform an arithmetic operation for the purpose
-of guiding the conditional execution of a program. [Table
-1](#ConditionalControl) lists the basic instructions associated with
-conditional control.
+Các **comparison instruction** (lệnh so sánh) thực hiện một phép toán số học nhằm phục vụ cho việc điều khiển thực thi có điều kiện của chương trình. [Bảng 1](#ConditionalControl) liệt kê các lệnh cơ bản liên quan đến **conditional control** (điều khiển có điều kiện).
 
+| Instruction   | Translation |
+|---------------|-------------|
+| `cmp R1, R2`  | So sánh R2 với R1 (tức tính R2 - R1) |
+| `test R1, R2` | Tính toán R1 & R2 (bitwise AND) |
 
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+===================================+===================================+
-| `cmp R1, R2`                      | Compares R2 with R1 (i.e.,        |
-|                                   | evaluates R2 - R1)                |
-+-----------------------------------+-----------------------------------+
-| `test R1, R2`                     | Computes R1 & R2                  |
-+-----------------------------------+-----------------------------------+
+**Bảng 1.** Các lệnh điều khiển có điều kiện.
 
-: Table 1. Conditional Control Instructions
-
-The `cmp` instruction compares the values of two registers, R2 and R1.
-Specifically, it subtracts R1 from R2. The `test` instruction performs
-bitwise AND. It is common to see an instruction like:
-
-
-
+Lệnh `cmp` so sánh giá trị của hai thanh ghi R2 và R1. Cụ thể, nó thực hiện phép trừ R1 khỏi R2.  
+Lệnh `test` thực hiện phép **bitwise AND**. Một ví dụ thường gặp:
 
 ```
 test %rax, %rax
 ```
 
-
-In this example, the bitwise AND of `%rax` with itself is zero only when
-`%rax` contains zero. In other words, this is a test for a zero value
-and is equivalent to:
-
-
-
+Trong ví dụ này, phép AND từng bit của `%rax` với chính nó sẽ cho kết quả bằng 0 **chỉ khi** `%rax` chứa giá trị 0. Nói cách khác, đây là cách kiểm tra giá trị zero và tương đương với:
 
 ```
 cmp $0, %rax
 ```
 
+Không giống các lệnh số học đã đề cập trước đó, `cmp` và `test` **không** thay đổi thanh ghi đích. Thay vào đó, cả hai lệnh này thay đổi một tập hợp các giá trị 1-bit gọi là **condition code flags** (cờ mã điều kiện).  
+Ví dụ, `cmp` sẽ thay đổi các cờ này dựa trên việc giá trị R2 - R1 là dương (greater), âm (less) hay bằng 0 (equal). Hãy nhớ rằng [condition code](../C5-Arch/cpu.html#_the_alu) lưu trữ thông tin về một phép toán trong ALU. Các condition code flags là một phần của thanh ghi `FLAGS` trên hệ thống x86.
 
-Unlike the arithmetic instructions covered thus far, `cmp` and `test` do
-not modify the destination register. Instead, both instructions modify a
-series of single-bit values known as **condition code flags**. For
-example, `cmp` will modify condition code flags based on whether the
-value R2 - R1 results in a positive (greater), negative (less), or zero
-(equal) value. Recall that [condition
-code](../C5-Arch/cpu.html#_the_alu) values encode information
-about an operation in the ALU. The condition code flags are part of the
-`FLAGS` register on x86 systems.
+| Flag  | Translation |
+|-------|-------------|
+| `ZF`  | Bằng 0 (1: đúng; 0: sai) |
+| `SF`  | Âm (1: đúng; 0: sai) |
+| `OF`  | Xảy ra tràn số (1: đúng; 0: sai) |
+| `CF`  | Xảy ra carry trong phép toán (1: đúng; 0: sai) |
 
+**Bảng 2.** Các cờ condition code thông dụng.
 
-+-----------------------------------+-----------------------------------+
-| Flag                              | Translation                       |
-+===================================+===================================+
-| `ZF`                              | Is equal to zero (1: yes; 0: no)  |
-+-----------------------------------+-----------------------------------+
-| `SF`                              | Is negative (1: yes; 0: no)       |
-+-----------------------------------+-----------------------------------+
-| `OF`                              | Overflow has occurred (1:yes; 0:  |
-|                                   | no)                               |
-+-----------------------------------+-----------------------------------+
-| `CF`                              | Arithmetic carry has occurred (1: |
-|                                   | yes; 0:no)                        |
-+-----------------------------------+-----------------------------------+
-
-: Table 2. Common Condition Code Flags.
-
-Table 2 depicts the common flags used for condition
-code operations. Revisiting the `cmp R1, R2` instruction:
-
-
-
--   The `ZF` flag is set to 1 if R1 and R2 are equal.
-
--   The `SF` flag is set to 1 if R2 is *less* than R1 (R2 - R1 results
-    in a negative value).
-
--   The `OF` flag is set to 1 if the operation R2 - R1 results in an
-    integer overflow (useful for signed comparisons).
-
--   The `CF` flag is set to 1 if the operation R2 - R1 results in a
-    carry operation (useful for unsigned comparisons).
-
-
-The `SF` and `OF` flags are used for comparison operations on signed
-integers, whereas the `CF` flag is used for comparisons on unsigned
-integers. Although an in-depth discussion of condition code flags is
-beyond the scope of this book, the setting of these registers by `cmp`
-and `test` enables the next set of instructions we cover (the *jump*
-instructions) to operate correctly.
-
-
-### The Jump Instructions {#_the_jump_instructions .discrete}
-
-A jump instruction enables a program's execution to \"jump\" to a new
-position in the code. In the assembly programs we have traced through
-thus far, `%rip` always points to the next instruction in program
-memory. The jump instructions enable `%rip` to be set to either a new
-instruction not yet seen (as in the case of an `if` statement) or to a
-previously executed instruction (as in the case of a loop).
-
-
-#### Direct jump instructions {#_direct_jump_instructions .discrete}
-
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Description                       |
-+===================================+===================================+
-| `jmp L`                           | Jump to location specified by L   |
-+-----------------------------------+-----------------------------------+
-| `jmp *addr`                       | Jump to specified address         |
-+-----------------------------------+-----------------------------------+
-
-: Table 3. Direct Jump Instructions
-
-Table 3 lists the set of direct jump instructions; `L`
-refers to a **symbolic label**, which serves as an identifier in the
-program's object file. All labels consist of some letters and digits
-followed by a colon. Labels can be *local* or *global* to an object
-file's scope. Function labels tend to be *global* and usually consist of
-the function name and a colon. For example, `main:` (or `<main>:`) is
-used to label a user-defined `main` function. By convention, labels
-whose scope are *local* are typically preceded by a period. One may
-encounter a local label with a name like `.L1` in the context of an `if`
-statement or loop.
-
-
-All labels have an associated address. When the CPU executes a `jmp`
-instruction, it modifies `%rip` to reflect the program address specified
-by label `L`. A programmer writing assembly can also specify a
-particular address to jump to using the `jmp *` instruction. Sometimes,
-local labels are shown as an offset from the start of a function.
-Therefore, an instruction whose address is 28 bytes away from the start
-of `main` may be represented with the label `<main+28>`.
-
-
-For example, the instruction `jmp 0x8048427 <main+28>` indicates a jump
-to address 0x8048427, which has the associated label `<main+28>`,
-representing that it is 28 bytes away from the starting address of the
-`main` function. Executing this instruction sets `%rip` to 0x8048427.
-
+Xét lại lệnh `cmp R1, R2`:
 
-#### Conditional jump instructions {#_conditional_jump_instructions .discrete}
-
-The behavior of conditional jump instructions depends on the condition
-code registers set by the `cmp` instruction. Table 4
-lists the set of common conditional jump instructions. Each instruction
-starts with the letter `j` denoting that it is a jump instruction. The
-suffix of each instruction indicates the *condition* for the jump. The
-jump instruction suffixes also determine whether to interpret numerical
-comparisons as signed or unsigned.
-
-
-+----------------------+----------------------+-----------------------+
-| Signed Comparison    | Unsigned Comparison  | Description           |
-+======================+======================+=======================+
-| `je` (`jz`)          |                      | jump if equal (==) or |
-|                      |                      | jump if zero          |
-+----------------------+----------------------+-----------------------+
-| `jne` (`jnz`)        |                      | jump if not equal     |
-|                      |                      | (!=)                  |
-+----------------------+----------------------+-----------------------+
-| `js`                 |                      | jump if negative      |
-+----------------------+----------------------+-----------------------+
-| `jns`                |                      | jump if non-negative  |
-+----------------------+----------------------+-----------------------+
-| `jg` (`jnle`)        | `ja` (`jnbe`)        | jump if greater (\>)  |
-+----------------------+----------------------+-----------------------+
-| `jge` (`jnl`)        | `jae` (`jnb`)        | jump if greater than  |
-|                      |                      | or equal (\>=)        |
-+----------------------+----------------------+-----------------------+
-| `jl` (`jnge`)        | `jb` (`jnae`)        | jump if less (\<)     |
-+----------------------+----------------------+-----------------------+
-| `jle` (`jng`)        | `jbe` (`jna`)        | jump if less than or  |
-|                      |                      | equal (\<=)           |
-+----------------------+----------------------+-----------------------+
-
-: Table 4. Conditional Jump Instructions; Synonyms Shown in Parentheses
-
-Instead of memorizing these different conditional jump instructions, it
-is more helpful to sound out the instruction suffixes. [Table
-5](#JmpSuffixes) lists the letters commonly found in jump instructions
-and their word correspondence.
-
-
-+-----------------------------------+-----------------------------------+
-| Letter                            | Word                              |
-+===================================+===================================+
-| `j`                               | jump                              |
-+-----------------------------------+-----------------------------------+
-| `n`                               | not                               |
-+-----------------------------------+-----------------------------------+
-| `e`                               | equal                             |
-+-----------------------------------+-----------------------------------+
-| `s`                               | signed                            |
-+-----------------------------------+-----------------------------------+
-| `g`                               | greater (signed interpretation)   |
-+-----------------------------------+-----------------------------------+
-| `l`                               | less (signed interpretation)      |
-+-----------------------------------+-----------------------------------+
-| `a`                               | above (unsigned interpretation)   |
-+-----------------------------------+-----------------------------------+
-| `b`                               | below (unsigned interpretation)   |
-+-----------------------------------+-----------------------------------+
-
-: Table 5. Jump Instruction Suffixes.
-
-Sounding it out, we can see that `jg` corresponds to *jump greater* and
-that its signed synonym `jnl` stands for *jump not less*. Likewise, the
-unsigned version `ja` stands for *jump above*, whereas its synonym
-`jnbe` stands for *jump not below or equal*.
-
-
-If you sound out the instructions, it helps to explain why certain
-synonyms correspond to particular instructions. The other thing to
-remember is that the terms *greater* and *less* instruct the CPU to
-interpret the numerical comparison as a signed value, whereas *above*
-and *below* indicate that the numerical comparison is unsigned.
-
-
-### The `goto` Statement {#_the_goto_statement .discrete}
-
-In the following subsections, we look at conditionals and loops in
-assembly and reverse engineer them back to C. When translating assembly
-code of conditionals and loops back into C, it is useful to understand
-the corresponding C language `goto` forms. The `goto` statement is a C
-primitive that forces program execution to switch to another line in the
-code. The assembly instruction associated with the `goto` statement is
-`jmp`.
-
-
-The `goto` statement consists of the `goto` keyword followed by a **goto
-label**, a type of program label that indicates where execution should
-continue. So, `goto done` means that the program execution should jump
-to the line marked by label `done`. Other examples of program labels in
-C include the [switch statement
-labels](../C2-C_depth/advanced_switch.html#_c_switch_stmt_)
-previously covered in Chapter 2.
-
-
-+-----------------------------------+-----------------------------------+
-| Regular C version                 | Goto version                      |
-+===================================+===================================+
-|                        |                        |
-|                   |                   |
-|                        |                        |
-| ```     | ```     |
-| int getSmallest(int x, int y) {   | int getSmallest(int x, int y) {   |
-|     int smallest;                 |     int smallest;                 |
-|                                   |                                   |
-| if ( x > y ) { //if (conditional) |     i                             |
-|                                   | f (x <= y ) { //if (!conditional) |
-|    smallest = y; //then statement |         goto else_statement;      |
-|     }                             |     }                             |
-|     else {                        |                                   |
-|                                   |    smallest = y; //then statement |
-|    smallest = x; //else statement |     goto done;                    |
-|     }                             |                                   |
-|     return smallest;              | else_statement:                   |
-| }                                 |                                   |
-| ```                               |    smallest = x; //else statement |
-| :::                               |                                   |
-| :::                               | done:                             |
-| :::                               |     return smallest;              |
-|                                   | }                                 |
-|                                   | ```                               |
-|                                   | :::                               |
-|                                   | :::                               |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-: Table 6. Comparison of a C function and its associated goto form.
-
-Table 6 depicts a function `getSmallest()` written in regular
-C code and its associated `goto` form in C. The `getSmallest()` function
-compares the value of two integers (`x` and `y`), and assigns the
-smaller value to variable `smallest`.
-
-
-The `goto` form of this function may seem counterintuitive, but let's
-discuss what exactly is going on. The conditional checks to see whether
-variable `x` is less than or equal to `y`.
-
-
-
--   If `x` is less than or equal to `y`, the program transfers control
-    to the label marked by `else_statement`, which contains the single
-    statement `smallest = x`. Since the program executes linearly, the
-    program continues on to execute the code under the label `done`,
-    which returns the value of `smallest` (`x`).
-
--   If `x` is greater than `y`, `smallest` is assigned the value `y`.
-    The program then executes the statement `goto done`, which transfers
-    control to the `done` label, which returns the value of `smallest`
-    (`y`).
-
-
-While `goto` statements were commonly used in the early days of
-programming, the use of `goto` statements in modern code is considered
-bad practice, as it reduces the overall readability of code. In fact,
-computer scientist Edsger Dijkstra wrote a famous paper lambasting the
-use of `goto` statements called *Go To Statement Considered Harmful*^1^.
-
-
-In general, well-designed C programs do not use `goto` statements and
-programmers are discouraged from using them to avoid writing code that
-is difficult to read, debug, and maintain. However, the C `goto`
-statement is important to understand, as GCC typically changes C code
-with conditionals into a `goto` form prior to translating it to
-assembly, including code that contains `if` statements and loops.
-
-
-The following subsections cover the assembly representation of `if`
-statements and loops in greater detail.
-
-
-
--   [If
-    Statements](if_statements.html#_if_statements_in_assembly)
-
--   Loops
-
-
-### References {#_references .discrete}
-
-
-1.  Edsger Dijkstra. \"Go To Statement Considered Harmful\".
-    *Communications of the ACM* 11(3) pp. 147---​148. 1968.
+- `ZF` được đặt thành 1 nếu R1 và R2 bằng nhau.
+- `SF` được đặt thành 1 nếu R2 *nhỏ hơn* R1 (R2 - R1 cho kết quả âm).
+- `OF` được đặt thành 1 nếu phép R2 - R1 gây tràn số nguyên (hữu ích cho so sánh số có dấu).
+- `CF` được đặt thành 1 nếu phép R2 - R1 gây carry (hữu ích cho so sánh số không dấu).
 
+`SF` và `OF` được dùng cho so sánh số nguyên có dấu, trong khi `CF` được dùng cho so sánh số nguyên không dấu.  
+Mặc dù việc tìm hiểu sâu về condition code flags vượt ra ngoài phạm vi cuốn sách này, nhưng việc `cmp` và `test` thiết lập các cờ này là điều kiện cần để nhóm lệnh tiếp theo (*jump instructions*) hoạt động chính xác.
 
+---
 
+### Các lệnh nhảy (Jump Instructions)
+
+**Jump instruction** cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh. Trong các chương trình assembly mà ta đã phân tích, `%rip` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép `%rip` được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
+
+#### Lệnh nhảy trực tiếp (Direct jump instructions)
+
+| Instruction  | Description |
+|--------------|-------------|
+| `jmp L`      | Nhảy tới vị trí được chỉ định bởi nhãn L |
+| `jmp *addr`  | Nhảy tới địa chỉ được chỉ định |
+
+**Bảng 3.** Các lệnh nhảy trực tiếp.
+
+Trong đó, `L` là **symbolic label** (nhãn ký hiệu), đóng vai trò định danh trong tệp đối tượng của chương trình.  
+Tất cả nhãn gồm một chuỗi chữ và số, theo sau là dấu hai chấm. Nhãn có thể là *local* hoặc *global* trong phạm vi tệp đối tượng. Nhãn của hàm thường là *global* và thường gồm tên hàm kèm dấu hai chấm, ví dụ `main:` (hoặc `<main>:`) dùng để đánh dấu hàm `main` do người dùng định nghĩa. Theo quy ước, nhãn *local* thường bắt đầu bằng dấu chấm, ví dụ `.L1` trong ngữ cảnh câu lệnh `if` hoặc vòng lặp.
+
+Mỗi nhãn đều có một địa chỉ gắn liền. Khi CPU thực thi lệnh `jmp`, nó sẽ thay đổi `%rip` thành địa chỉ chương trình được chỉ định bởi nhãn `L`. Lập trình viên cũng có thể chỉ định trực tiếp một địa chỉ để nhảy tới bằng `jmp *`.  
+Đôi khi, nhãn local được hiển thị dưới dạng offset so với đầu hàm. Ví dụ, một lệnh cách đầu hàm `main` 28 byte có thể được biểu diễn là `<main+28>`.
+
+Ví dụ:  
+`jmp 0x8048427 <main+28>` nghĩa là nhảy tới địa chỉ `0x8048427`, nhãn `<main+28>` cho biết nó cách địa chỉ bắt đầu của hàm `main` 28 byte. Thực thi lệnh này sẽ đặt `%rip` thành `0x8048427`.
+
+---
+
+#### Lệnh nhảy có điều kiện (Conditional jump instructions)
+
+Hành vi của **conditional jump instruction** phụ thuộc vào các thanh ghi condition code được thiết lập bởi lệnh `cmp`. **Bảng 4** liệt kê các lệnh nhảy có điều kiện thông dụng.  
+Mỗi lệnh bắt đầu bằng chữ `j` (jump). Hậu tố của lệnh cho biết *điều kiện* để nhảy. Hậu tố này cũng xác định việc so sánh số được hiểu là có dấu hay không dấu.
+
+| Signed Comparison | Unsigned Comparison | Description |
+|-------------------|---------------------|-------------|
+| `je` (`jz`)       |                     | Nhảy nếu bằng nhau (==) hoặc nếu zero |
+| `jne` (`jnz`)     |                     | Nhảy nếu không bằng (!=) |
+| `js`              |                     | Nhảy nếu âm |
+| `jns`             |                     | Nhảy nếu không âm |
+| `jg` (`jnle`)     | `ja` (`jnbe`)        | Nhảy nếu lớn hơn (>) |
+| `jge` (`jnl`)     | `jae` (`jnb`)        | Nhảy nếu lớn hơn hoặc bằng (>=) |
+| `jl` (`jnge`)     | `jb` (`jnae`)        | Nhảy nếu nhỏ hơn (<) |
+| `jle` (`jng`)     | `jbe` (`jna`)        | Nhảy nếu nhỏ hơn hoặc bằng (<=) |
+
+**Bảng 4.** Các lệnh nhảy có điều kiện thông dụng.
+
+**Bảng 4.** Các lệnh nhảy có điều kiện; các từ đồng nghĩa được hiển thị trong ngoặc đơn.
+
+Thay vì ghi nhớ tất cả các lệnh nhảy có điều kiện khác nhau này, sẽ hữu ích hơn nếu bạn “đọc thành tiếng” các hậu tố (suffix) của lệnh. [Bảng 5](#JmpSuffixes) liệt kê các chữ cái thường gặp trong lệnh nhảy và từ tương ứng của chúng.
+
+| Letter | Word |
+|--------|------|
+| `j`    | jump |
+| `n`    | not |
+| `e`    | equal |
+| `s`    | signed |
+| `g`    | greater (diễn giải theo số có dấu) |
+| `l`    | less (diễn giải theo số có dấu) |
+| `a`    | above (diễn giải theo số không dấu) |
+| `b`    | below (diễn giải theo số không dấu) |
+
+**Bảng 5.** Hậu tố của lệnh nhảy.
+
+Khi đọc thành tiếng, ta có thể thấy `jg` tương ứng với *jump greater* và từ đồng nghĩa trong so sánh có dấu của nó là `jnl`, nghĩa là *jump not less*. Tương tự, phiên bản so sánh không dấu `ja` nghĩa là *jump above*, trong khi từ đồng nghĩa `jnbe` nghĩa là *jump not below or equal*.
+
+Nếu bạn đọc thành tiếng các lệnh này, điều đó sẽ giúp giải thích tại sao một số từ đồng nghĩa lại tương ứng với những lệnh cụ thể. Một điều khác cần nhớ là các thuật ngữ *greater* và *less* yêu cầu CPU diễn giải phép so sánh số dưới dạng **có dấu**, trong khi *above* và *below* cho biết phép so sánh số là **không dấu**.
+
+---
+
+### Câu lệnh `goto`
+
+Trong các tiểu mục tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và phân tích ngược chúng trở lại thành C. Khi dịch mã assembly của các câu lệnh điều kiện và vòng lặp về C, sẽ hữu ích nếu hiểu được dạng `goto` tương ứng trong ngôn ngữ C.  
+
+Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã. Lệnh assembly tương ứng với câu lệnh `goto` là `jmp`.
+
+Câu lệnh `goto` bao gồm từ khóa `goto` theo sau là một **goto label** (nhãn goto), là một loại nhãn chương trình cho biết nơi thực thi sẽ tiếp tục. Ví dụ, `goto done` nghĩa là chương trình sẽ nhảy tới dòng được đánh dấu bằng nhãn `done`.  
+
+Các ví dụ khác về nhãn chương trình trong C bao gồm [nhãn của câu lệnh switch](../C2-C_depth/advanced_switch.html#_c_switch_stmt_) đã được đề cập trong Chương 2.
+
+<table>
+  <thead>
+    <tr>
+      <th>Regular C version</th>
+      <th>Goto version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+<pre><code>
+int getSmallest(int x, int y) {
+    int smallest;
+
+    if ( x > y ) { //if (conditional)
+        smallest = y; //then statement
+    }
+    else {
+        smallest = x; //else statement
+    }
+    return smallest;
+}
+</code></pre>
+      </td>
+      <td>
+<pre><code>
+int getSmallest(int x, int y) {
+    int smallest;
+
+    if (x &lt;= y ) { //if (!conditional)
+        goto else_statement;
+    }
+
+    smallest = y; //then statement
+    goto done;
+else_statement:
+    smallest = x; //else statement
+done:
+    return smallest;
+}
+</code></pre>
+
+  </tbody>
+</table>
+
+
+**Bảng 6.** So sánh một hàm C và dạng `goto` tương ứng.
+
+**Bảng 6** minh họa hàm `getSmallest()` được viết bằng C thông thường và dạng `goto` tương ứng trong C. Hàm `getSmallest()` so sánh giá trị của hai số nguyên (`x` và `y`), và gán giá trị nhỏ hơn cho biến `smallest`.
+
+Dạng `goto` của hàm này có thể trông hơi phản trực giác, nhưng hãy phân tích chính xác điều gì đang diễn ra. Câu lệnh điều kiện kiểm tra xem biến `x` có nhỏ hơn hoặc bằng `y` hay không.
+
+- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa câu lệnh duy nhất `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục thực thi phần mã dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
+
+- Nếu `x` lớn hơn `y`, `smallest` được gán giá trị `y`. Sau đó, chương trình thực thi câu lệnh `goto done`, chuyển quyền điều khiển tới nhãn `done`, trả về giá trị của `smallest` (`y`).
+
+---
+
+Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng `goto` trong mã hiện đại được coi là **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
+
+Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng để không viết ra mã khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh `goto` trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi mã C có điều kiện sang dạng `goto` trước khi dịch sang assembly, bao gồm cả mã chứa câu lệnh `if` và vòng lặp.
+
+Các tiểu mục tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh `if` và vòng lặp trong assembly:
+
+- [If Statements](if_statements.html#_if_statements_in_assembly)  
+- Loops
+
+---
+
+### Tài liệu tham khảo
+
+[^1]: Edsger Dijkstra. "Go To Statement Considered Harmful". *Communications of the ACM* 11(3), trang 147–148, 1968.
 
 

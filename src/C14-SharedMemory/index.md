@@ -171,7 +171,7 @@ independent streams of instructions at once.
 +-----------------------------------+-----------------------------------+
 
 
-### Taking a Closer Look: How Many Cores? {#_taking_a_closer_look_how_many_cores .discrete}
+### Taking a Closer Look: How Many Cores?
 
 Almost all modern computer systems have multiple cores, including small
 devices like the [Raspberry Pi](https://www.raspberrypi.org/).

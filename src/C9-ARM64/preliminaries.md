@@ -36,7 +36,7 @@
 
 ### 9.4.1. Preliminaries 
 
-### Conditional Comparison Instructions {#_conditional_comparison_instructions .discrete}
+### Conditional Comparison Instructions
 
 Comparison instructions perform an arithmetic operation for the purpose
 of guiding the conditional execution of a program. [Table
@@ -127,7 +127,7 @@ the next set of instructions we cover (the *branch* instructions) to
 operate correctly.
 
 
-### The Branch Instructions {#_the_branch_instructions .discrete}
+### The Branch Instructions
 
 A branch instruction enables a program's execution to \"jump\" to a new
 position in the code. In the assembly programs we have traced through
@@ -137,7 +137,7 @@ instruction not yet seen (as in the case of an `if` statement) or to a
 previously executed instruction (as in the case of a loop).
 
 
-#### Direct branch instructions {#_direct_branch_instructions .discrete}
+#### Direct branch instructions
 
 +-----------------------------------+-----------------------------------+
 | Instruction                       | Description                       |
@@ -201,7 +201,7 @@ instructions, which enable the compiler or assembly writer to pick a
 custom suffix that indicates the condition on which a branch is taken.
 
 
-#### Conditional branch instruction suffixes {#_conditional_branch_instruction_suffixes .discrete}
+#### Conditional branch instruction suffixes
 
 Table 4 lists the set of common conditional branch
 suffixes (c). When used in conjunction with a branch, each instruction
@@ -246,7 +246,7 @@ in the next section.
 : Table 4. Conditional Branch Instruction Suffixes (synonyms shown in
 parentheses)
 
-### The goto Statement {#_the_goto_statement .discrete}
+### The goto Statement
 
 In the following subsections, we look at conditionals and loops in
 assembly and reverse engineer them back to C. When translating assembly
@@ -349,7 +349,7 @@ statements and loops in greater detail.
 -   Loops
 
 
-### References {#_references .discrete}
+### References
 
 
 1.  Edsger Dijkstra. \"Go To Statement Considered Harmful\".

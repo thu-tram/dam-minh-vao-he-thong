@@ -1,10 +1,10 @@
-# Acknowledgements {#acknowledgements .page}
+# Acknowledgements
 
 The authors would like to acknowledge the following individuals for
 helping make *Dive into Systems* a success:
 
 
-## Formal Reviewers {#_formal_reviewers .discrete}
+## Formal Reviewers
 
 Each chapter in *Dive into Systems* was peer-reviewed by several CS
 professors around the United States. We are extremely grateful to those
@@ -89,7 +89,7 @@ of:
     many* typos.
 
 
-## Additional Feedback {#_additional_feedback .discrete}
+## Additional Feedback
 
 The following people caught random typos and other sundries. We are
 grateful for your help in finding typos!
@@ -158,7 +158,7 @@ grateful for your help in finding typos!
 -   Alyssa Zhang (Swarthmore College)
 
 
-## Early Adopters {#_early_adopters .discrete}
+## Early Adopters
 
 An alpha release of *Dive into Systems* was piloted at West Point in
 Fall 2018; The beta release of the textbook was piloted at West Point
@@ -172,7 +172,7 @@ and strengthen the content of *Dive into Systems*, and are very thankful
 to everyone who completed our student and faculty surveys.
 
 
-### 2019-2020 Early Adopters {#_2019_2020_early_adopters .discrete}
+### 2019-2020 Early Adopters
 
 The following individuals piloted *Dive into Systems* as a textbook at
 their institutions during the Fall 2019- Spring 2020 Academic Year:

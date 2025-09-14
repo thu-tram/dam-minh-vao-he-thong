@@ -1,210 +1,77 @@
+### 5.4.2. Mạch Điều khiển
 
+Mạch điều khiển (control circuits – "mạch điều khiển") được sử dụng xuyên suốt trong toàn bộ hệ thống. Trên bộ xử lý (processor), chúng điều khiển quá trình thực thi các lệnh chương trình trên dữ liệu chương trình. Chúng cũng kiểm soát việc nạp và lưu giá trị giữa các cấp độ lưu trữ khác nhau (giữa các thanh ghi, bộ nhớ đệm cache và RAM), và điều khiển các thiết bị phần cứng trong hệ thống. Tương tự như mạch số học và logic, các mạch điều khiển thực hiện chức năng phức tạp được xây dựng bằng cách kết hợp các mạch đơn giản hơn và các cổng logic.
 
+Một ví dụ về mạch điều khiển là **multiplexer** (MUX – "bộ chọn"), dùng để lựa chọn một trong nhiều giá trị. CPU có thể sử dụng mạch multiplexer để chọn thanh ghi nào trong CPU sẽ được đọc để lấy giá trị toán hạng của một lệnh.
 
+Một multiplexer *N*-ngõ vào có một tập hợp gồm *N* giá trị đầu vào và một đầu ra duy nhất được chọn từ một trong các đầu vào đó. Một đầu vào bổ sung, gọi là **Select** (S – "bit chọn"), mã hóa việc chọn đầu vào nào trong số *N* đầu vào để đưa ra đầu ra.
 
+Multiplexer cơ bản nhất là loại hai ngõ vào, chọn giữa hai đầu vào 1-bit, A và B. Đầu vào chọn của multiplexer hai ngõ vào là một bit duy nhất: nếu đầu vào S là 1, nó sẽ chọn A làm đầu ra; nếu S là 0, nó sẽ chọn B làm đầu ra. Bảng chân trị cho multiplexer 1-bit hai ngõ vào được hiển thị bên dưới. Giá trị của bit chọn (S) quyết định chọn giá trị của A hoặc B làm đầu ra của MUX.
 
-### 5.4.2. Control Circuits 
+| A | B | S | out             |
+|---|---|---|-----------------|
+| 0 | 0 | 0 | 0 (giá trị của B) |
+| 0 | 1 | 0 | 1 (giá trị của B) |
+| 1 | 0 | 0 | 0 (giá trị của B) |
+| 1 | 1 | 0 | 1 (giá trị của B) |
+| 0 | 0 | 1 | 0 (giá trị của A) |
+| 0 | 1 | 1 | 0 (giá trị của A) |
+| 1 | 0 | 1 | 1 (giá trị của A) |
+| 1 | 1 | 1 | 1 (giá trị của A) |
 
-Control circuits are used throughout a system. On the processor, they
-drive the execution of program instructions on program data. They also
-control loading and storing values to different levels of storage
-(between registers, cache, and RAM), and control hardware devices in the
-system. Just like arithmetic and logic circuits, control circuits that
-implement complicated functionality are built by combining simpler
-circuits and logic gates.
+*Bảng 1. Bảng chân trị cho multiplexer 1-bit*
 
-
-A **multiplexer** (MUX) is an example of a control circuit that selects,
-or chooses, one of several values. The CPU may use a multiplexer circuit
-to select from which CPU register to read an instruction operand value.
-
-
-An *N*-way multiplexer has a set of *N* input values and a single output
-value selected from one of its inputs. An additional input value,
-**Select** (S), encodes which of its *N* inputs is chosen for its
-output.
-
-
-The most basic two-way MUX selects between two 1-bit inputs, A and B.
-The select input for a two-way multiplexer is a single bit: if the S
-input is 1, it will select A for output; if it is 0 it will select B for
-output. The truth table for a two-way 1-bit multiplexer is shown below.
-The value of the selection bit (S) chooses either the value of A or B as
-the MUX output value.
-
-
-+-----------------+-----------------+-----------------+-----------------+
-| A               | B               | S               | out             |
-+=================+=================+=================+=================+
-| 0               | 0               | 0               | 0 (B's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 0               | 1               | 0               | 1 (B's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 1               | 0               | 0               | 0 (B's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 1               | 1               | 0               | 1 (B's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 0               | 0               | 1               | 0 (A's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 0               | 1               | 1               | 0 (A's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 1               | 0               | 1               | 1 (A's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-| 1               | 1               | 1               | 1 (A's value)   |
-+-----------------+-----------------+-----------------+-----------------+
-
-: Table 1. Truth table for 1 bit multiplexer
-
-Figure 1 shows the two-way multiplexer circuit for
-single-bit input.
-
-
-
+Hình 1 minh họa mạch multiplexer hai ngõ vào cho đầu vào 1-bit.
 
 ![1 bit mux](_images/1bitmux.png)
 
+**Hình 1. Mạch multiplexer 1-bit hai ngõ vào.** Giá trị của tín hiệu đầu vào (S) được dùng để chọn một trong hai đầu vào (A hoặc B) làm đầu ra của mạch: khi S là 1, A được chọn; khi S là 0, B được chọn.
 
-Figure 1. A two-way 1-bit multiplexer circuit. The value of the signal
-input (S) is used to pick which of its two inputs (A or B) will be the
-circuit's output value: when S is 1, A is chosen; when S is 0, B is
-chosen.
-
-
-Figure 2 shows how the multiplexer chooses A's output
-with an S input value of 1. For example, suppose that the input values
-are 1 for A, 0 for B, and 1 for S. S is negated before being sent to the
-top AND gate with B (0 AND B), resulting in a 0 output value from the
-top AND gate. S feeds into the bottom AND gate with A, resulting in (1
-AND A), which evaluates to the value of A being output from the bottom
-AND gate. The value of A (1 in our example) and 0 from the top AND gate
-feed as input to the OR gate, resulting in (0 OR A) being output. In
-other words, when S is 1, the MUX chooses the value of A as its output
-(A's value being 1 in our example). The value of B does not affect the
-final output of the MUX, because 0 will always be the output of the top
-AND gate when S is 1.
-
-
-
+Hình 2 minh họa cách multiplexer chọn đầu ra là A khi đầu vào S có giá trị là 1. Ví dụ, giả sử các giá trị đầu vào là: A = 1, B = 0, và S = 1. S được đảo (NOT) trước khi đưa vào cổng AND phía trên cùng với B (0 AND B), cho ra giá trị đầu ra là 0 từ cổng AND phía trên. S được đưa vào cổng AND phía dưới cùng với A, tạo ra (1 AND A), kết quả là giá trị của A được đưa ra từ cổng AND phía dưới. Giá trị của A (1 trong ví dụ này) và 0 từ cổng AND phía trên được đưa vào cổng OR, tạo ra đầu ra là (0 OR A). Nói cách khác, khi S là 1, MUX chọn giá trị của A làm đầu ra (giá trị A là 1 trong ví dụ). Giá trị của B không ảnh hưởng đến đầu ra cuối cùng của MUX, vì đầu ra của cổng AND phía trên luôn là 0 khi S là 1.
 
 ![when S is 1, the mux chooses A for its output](_images/muxA.png)
 
+**Hình 2. Mạch multiplexer 1-bit hai ngõ vào chọn (xuất ra) A khi S là 1.**
 
-Figure 2. A two-way 1-bit multiplexer circuit chooses (outputs) A when S
-is 1.
-
-
-Figure 3 shows the path through the multiplexer when
-the S input value 0 chooses B's output. If we consider the same input
-for A and B as the example above, but change S to 0, then the negation
-of 0 is input to the top AND gate resulting in (1 AND B), or B's value,
-output from the top AND gate. The input to the bottom AND gate is (0 AND
-A), resulting in 0 from the bottom AND gate. Thus, the input values to
-the OR gate are (B OR 0), which evaluates to B's value as the MUX's
-output (B's value being 0 in our example).
-
-
-
+Hình 3 minh họa đường đi qua multiplexer khi đầu vào S có giá trị là 0 và chọn đầu ra là B. Nếu ta giữ nguyên giá trị đầu vào của A và B như ví dụ trên, nhưng thay đổi S thành 0, thì phép đảo của 0 được đưa vào cổng AND phía trên, tạo ra (1 AND B), tức là giá trị của B được đưa ra từ cổng AND phía trên. Đầu vào của cổng AND phía dưới là (0 AND A), cho ra 0 từ cổng AND phía dưới. Do đó, đầu vào của cổng OR là (B OR 0), kết quả là giá trị của B được chọn làm đầu ra của MUX (giá trị B là 0 trong ví dụ).
 
 ![when S is 0, the mux chooses B for its output](_images/muxB.png)
 
+Dưới đây là bản dịch tiếng Việt của phần nội dung bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
 
-Figure 3. A two-way 1-bit multiplexer circuit chooses (outputs) B when S
-is 0.
+---
 
+**Hình 3. Mạch multiplexer 1-bit hai ngõ vào chọn (xuất ra) B khi S là 0.**
 
-A two-way 1- bit MUX circuit is a building block for constructing
-two-way *N*-bit MUX circuits. For example, Figure 4 shows
-a two-way 4-bit MUX built from four 1-bit two-way MUX circuits.
-
-
-
+Mạch multiplexer 1-bit hai ngõ vào là một khối xây dựng để tạo ra các mạch multiplexer *N*-bit hai ngõ vào. Ví dụ, Hình 4 minh họa một mạch multiplexer 4-bit hai ngõ vào được xây dựng từ bốn mạch multiplexer 1-bit hai ngõ vào.
 
 ![4 bit 2way-mux](_images/4bitmux.png)
 
+**Hình 4. Mạch multiplexer 4-bit hai ngõ vào được xây dựng từ bốn mạch multiplexer 1-bit hai ngõ vào.** Một bit tín hiệu duy nhất, S, được dùng để chọn A hoặc B làm đầu ra.
 
-Figure 4. A two-way 4-bit multiplexer circuit built from four two-way
-1-bit multiplexer circuits. A single signal bit, S, chooses either A or
-B as output.
-
-
-An *N*-way multiplexer chooses one of *N* inputs as output. It requires
-a slightly different MUX circuit than a two-way MUX, and needs
-log~2~(*N*) bits for its Select input. The additional selection bits are
-needed because with log~2~(*N*) bits, *N* distinct values can be
-encoded, one for selecting each of the *N* inputs. Each distinct
-permutation of the log~2~(*N*) Select bits is input with one of the *N*
-input values to an AND gate, resulting in exactly one MUX input value
-selected as the MUX output. Figure 5 shows an example of
-a 1-bit four-way MUX circuit.
-
-
-
+Một multiplexer *N*-ngõ vào sẽ chọn một trong *N* đầu vào làm đầu ra. Nó yêu cầu một thiết kế mạch MUX hơi khác so với loại hai ngõ vào, và cần log₂(*N*) bit cho đầu vào Select. Các bit chọn bổ sung này là cần thiết vì với log₂(*N*) bit, ta có thể mã hóa *N* giá trị khác nhau, mỗi giá trị tương ứng với một lựa chọn trong số *N* đầu vào. Mỗi tổ hợp khác biệt của các bit Select log₂(*N*) được đưa vào cùng với một trong các giá trị đầu vào *N* vào một cổng AND, kết quả là đúng một giá trị đầu vào được chọn làm đầu ra của MUX. Hình 5 minh họa một ví dụ về mạch multiplexer 1-bit bốn ngõ vào.
 
 ![N-way mux](_images/nwaymux.png)
 
+**Hình 5. Mạch multiplexer bốn ngõ vào có bốn đầu vào và hai bit chọn (log₂(4)) dùng để mã hóa đầu vào nào trong số bốn đầu vào sẽ được chọn làm đầu ra.**
 
-Figure 5. A four-way multiplexer circuit has four inputs and two
-(log(4)) select bits that encode which of the four inputs should be
-output by the multiplexer.
+Mạch multiplexer bốn ngõ vào sử dụng bốn cổng AND ba ngõ vào và một cổng OR bốn ngõ vào. Các phiên bản cổng nhiều ngõ vào có thể được xây dựng bằng cách nối chuỗi nhiều cổng AND (hoặc OR) hai ngõ vào. Ví dụ, một cổng AND ba ngõ vào được xây dựng từ hai cổng AND hai ngõ vào: cổng AND đầu tiên nhận hai giá trị đầu vào, và cổng AND thứ hai nhận giá trị đầu vào thứ ba cùng với đầu ra từ cổng AND đầu tiên. Biểu thức (x AND y AND z) tương đương với ((x AND y) AND z).
 
-
-The four-way MUX circuit uses four three-input AND gates and one
-four-input OR gate. Multi-input versions of gates can be built by
-chaining together multiple two-input AND (and OR) gates. For example, a
-three-input AND gate is built from two two-input AND gates, where the
-first AND gate takes two of the input values and the second AND gate
-takes the third input value and the output from the first AND gate: (x
-AND y AND z) is equivalent to ((x AND y) AND z).
-
-
-To see how the four-way MUX circuit works, consider an S input value of
-2 (0b10 in binary), as shown in Figure 6. The top AND
-gate gets as input (NOT(S~0~) AND NOT(S~1~) AND A), or (1 AND 0 AND A),
-resulting in 0 output from the top AND gate. The second AND gate gets
-input values (0 AND 0 AND B), resulting in 0 output. The third AND gate
-gets input values (1 AND 1 AND C), resulting in the value of C output.
-The last AND gate gets (0 AND 1 AND D), resulting in 0 output. The OR
-gate has inputs (0 OR 0 OR C OR 0), resulting in the value of C output
-by the MUX (an S value of 2 chooses C).
-
-
-
+Để hiểu cách mạch multiplexer bốn ngõ vào hoạt động, hãy xét trường hợp đầu vào S có giá trị là 2 (0b10 trong hệ nhị phân), như minh họa trong Hình 6. Cổng AND phía trên nhận đầu vào là (NOT(S₀) AND NOT(S₁) AND A), tức là (1 AND 0 AND A), cho ra đầu ra là 0. Cổng AND thứ hai nhận đầu vào là (0 AND 0 AND B), cho ra 0. Cổng AND thứ ba nhận đầu vào là (1 AND 1 AND C), cho ra giá trị của C. Cổng AND cuối cùng nhận đầu vào là (0 AND 1 AND D), cho ra 0. Cổng OR nhận các đầu vào là (0 OR 0 OR C OR 0), kết quả là giá trị của C được chọn làm đầu ra của MUX (giá trị S bằng 2 chọn C).
 
 ![4-way mux circuit selects C as output when S is 2 (0b10)](_images/4waychooseC.png)
 
+**Hình 6. Mạch multiplexer bốn ngõ vào chọn C làm đầu ra khi đầu vào Select, S, là 2 (0b10).**
 
-Figure 6. A four-way multiplexer circuit chooses C as output when the
-Select input, S, is 2 (0b10).
+**Demultiplexer** và **decoder** là hai ví dụ khác về mạch điều khiển.
 
+Một **demultiplexer** (DMUX – "bộ phân phối") là nghịch đảo của multiplexer. Trong khi multiplexer chọn một trong *N* đầu vào, thì demultiplexer chọn một trong *N* đầu ra. Một DMUX nhận một giá trị đầu vào duy nhất và một đầu vào chọn, và có *N* đầu ra. Dựa vào giá trị của S, nó gửi giá trị đầu vào đến đúng một trong số *N* đầu ra (giá trị đầu vào được định tuyến đến một trong *N* đường đầu ra). Mạch DMUX thường được dùng để chọn một trong *N* mạch để truyền giá trị.
 
-Demultiplexers and decoders are two other examples of control circuits.
-A **demultiplexer** (DMUX) is the inverse of a multiplexer. Whereas a
-multiplexer chooses one of *N* inputs, a demultiplexer chooses one of
-*N* outputs. A DMUX takes a single input value and a selection input,
-and has *N* outputs. Based on the value of S, it sends the input value
-to exactly one of its *N* outputs (the value of the input is routed on
-to one of *N* output lines). A DMUX circuit is often used to select one
-of *N* circuits to pass a value. A **decoder** circuit takes an encoded
-input and enables one of several outputs based on the input value. For
-example, a decoder circuit that has an *N*-bit input value, uses the
-value to enable (to set to 1) exactly one of its 2^N^ output lines (the
-one corresponding to the encoding of the *N*-bit value). [Figure
-7](#dmux) Shows an example of a two-way 1-bit DMUX circuit, whose
-selection input value (s) chooses which of its two outputs gets the
-input value A. It also shows an example of a 2-bit decoder circuit,
-whose input bits determine which of four outputs get set to 1. The truth
-tables for both circuits are also shown.
+Một mạch **decoder** nhận một đầu vào đã được mã hóa và kích hoạt một trong nhiều đầu ra dựa trên giá trị đầu vào. Ví dụ, một mạch decoder có đầu vào *N*-bit sẽ sử dụng giá trị đó để kích hoạt (đặt bằng 1) đúng một trong số các đường đầu ra 2^N^ (đường tương ứng với mã hóa của giá trị *N*-bit).
 
-
-
+[Hình 7](#dmux) minh họa một ví dụ về mạch demultiplexer 1-bit hai ngõ ra, trong đó giá trị đầu vào chọn (s) quyết định đầu ra nào trong hai đầu ra sẽ nhận giá trị đầu vào A. Hình cũng minh họa một ví dụ về mạch decoder 2-bit, trong đó các bit đầu vào xác định đầu ra nào trong bốn đầu ra sẽ được đặt bằng 1. Bảng chân trị của cả hai mạch cũng được hiển thị.
 
 ![2-way 1-bit dmux and 2-bit Decodercircuit](_images/dmuxdecoder.png)
 
-
-Figure 7. A two-way 1-bit demultiplexer, and a 2-bit decoder, along with
-their truth tables.
-
-
-
-
+**Hình 7. Mạch demultiplexer 1-bit hai ngõ ra, và mạch decoder 2-bit, cùng với bảng chân trị của chúng.**
 

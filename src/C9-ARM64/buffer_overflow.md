@@ -728,7 +728,7 @@ tried to beat the program yet with reverse engineering, we encourage you
 to do so now.
 
 
-### References {#_references .discrete}
+### References
 
 
 1.  Mohit Kumar. [Critical Skype Bug Lets Hackers Remotely Execute

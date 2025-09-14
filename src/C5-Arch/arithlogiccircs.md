@@ -1,41 +1,18 @@
-### 5.4.1. Arithmetic and Logic Circuits 
+### 5.4.1. Mạch Số học và Logic
 
-Arithmetic and Logic circuits implement the arithmetic and logic
-instructions of an ISA that together make up the **arithmetic logic
-unit** (ALU) of the processor. Arithmetic and logic circuits also
-implement parts of other functionality in the CPU. For example,
-arithmetic circuits are used to increment the program counter (PC) as
-part of the first step of instruction execution, and they are used to
-calculate memory addresses by combining instruction operand bits and
-register values.
+Các mạch số học và logic thực hiện các lệnh số học và logic của một ISA (instruction set architecture – "kiến trúc tập lệnh") mà cùng nhau tạo thành **arithmetic logic unit** (ALU – "bộ số học và logic") của bộ xử lý. Các mạch này cũng đảm nhiệm một phần chức năng khác trong CPU. Ví dụ, mạch số học được dùng để tăng giá trị của program counter (PC – "bộ đếm chương trình") như một phần của bước đầu tiên trong quá trình thực thi lệnh, và được dùng để tính toán địa chỉ bộ nhớ bằng cách kết hợp các bit toán hạng trong lệnh với giá trị của các thanh ghi.
 
+Thiết kế mạch thường bắt đầu bằng việc triển khai phiên bản 1-bit của một mạch đơn giản từ các cổng logic. Mạch 1-bit này sau đó được dùng làm khối xây dựng để triển khai phiên bản *M*-bit của mạch. Các bước thiết kế một mạch 1-bit từ các cổng logic cơ bản gồm:
 
-Circuit design often starts with implementing a 1-bit version of a
-simple circuit from logic gates. This 1-bit circuit is then used as a
-building block for implementing *M*-bit versions of the circuit. The
-steps for designing a 1-bit circuit from basic logic gates are:
+1. Thiết kế bảng chân trị (truth table – "bảng chân trị") cho mạch: xác định số lượng đầu vào và đầu ra, và thêm một dòng cho mỗi tổ hợp của các bit đầu vào, chỉ rõ giá trị của các bit đầu ra.
 
+2. Dựa vào bảng chân trị, viết biểu thức cho các trường hợp đầu ra của mạch bằng 1, sử dụng các phép toán AND, OR, NOT trên các giá trị đầu vào.
 
+3. Chuyển biểu thức thành chuỗi các cổng logic, trong đó mỗi cổng nhận đầu vào từ đầu vào của mạch hoặc từ đầu ra của một cổng logic trước đó.
 
-1.  Design the truth table for the circuit: determine the number of
-    inputs and outputs, and add a table entry for every permutation of
-    input bit(s) that specifies the value of the output bit(s).
+Ta sẽ theo các bước trên để triển khai một mạch *equals* (so sánh bằng) 1-bit: phép so sánh từng bit `A == B` sẽ cho ra 1 khi giá trị của `A` và `B` giống nhau, và cho ra 0 nếu khác nhau.
 
-2.  Using the truth table, write an expression for when each circuit
-    output is 1 in terms of its input values combined with AND, OR, NOT.
-
-3.  Translate the expression into a sequence of logic gates, where each
-    gate gets its inputs from either an input to the circuit or from the
-    output of a preceding logic gate.
-
-
-We follow these steps to implement a single-bit *equals* circuit:
-bitwise equals (`A == B`) outputs 1 when the values of `A` and `B` are
-the same, and it outputs 0 otherwise.
-
-
-First, design the truth table for the circuit:
-
+Đầu tiên, thiết kế bảng chân trị cho mạch:
 
 +----------------------+----------------------+-----------------------+
 | A                    | B                    | A == B output         |
@@ -49,12 +26,9 @@ First, design the truth table for the circuit:
 | 1                    | 1                    | 1                     |
 +----------------------+----------------------+-----------------------+
 
-: Table 1. Truth table for a simple equality circuit
+: Bảng 1. Bảng chân trị cho mạch so sánh bằng đơn giản
 
-Next, write expressions for when `A == B` is 1 in terms of `A` and `B`
-combined with AND, OR, and NOT. First, consider each row whose output is
-1 separately, starting with the first row in the truth table:
-
+Tiếp theo, viết biểu thức cho các trường hợp `A == B` bằng 1, sử dụng các phép toán AND, OR, NOT trên `A` và `B`. Trước tiên, xét từng dòng trong bảng chân trị mà đầu ra là 1, bắt đầu với dòng đầu tiên:
 
 +----------------------+----------------------+-----------------------+
 | A                    | B                    | A == B                |
@@ -62,31 +36,16 @@ combined with AND, OR, and NOT. First, consider each row whose output is
 | 0                    | 0                    | 1                     |
 +----------------------+----------------------+-----------------------+
 
-For the input values in this row, construct a *conjunction* of
-expressions of its inputs that evaluate to 1. A **conjunction** combines
-subexpressions that evaluate to 0 or 1 with AND, and is itself 1 only
-when both of its subexpressions evaluate to 1. Start by expressing when
-each input evaluates to 1:
+Với các giá trị đầu vào ở dòng này, ta xây dựng một *conjunction* (phép hội – kết hợp bằng AND) của các biểu thức đầu vào sao cho kết quả là 1. Một **conjunction** kết hợp các biểu thức con có giá trị 0 hoặc 1 bằng phép AND, và chỉ cho ra 1 khi tất cả các biểu thức con đều bằng 1. Bắt đầu bằng cách biểu diễn khi nào mỗi đầu vào bằng 1:
 
+> NOT(A)    # bằng 1 khi A là 0  
+> NOT(B)    # bằng 1 khi B là 0
 
+Sau đó, kết hợp chúng bằng AND để tạo biểu thức cho trường hợp dòng này trong bảng chân trị cho ra 1:
 
+> NOT(A) AND NOT(B)    # bằng 1 khi cả A và B đều là 0
 
-    NOT(A)    # is 1 when A is 0
-    NOT(B)    # is 1 when B is 0
-
-
-Then, create their conjunction (combine them with AND) to yield an
-expression for when this row of the truth table evaluates to 1:
-
-
-
-
-    NOT(A) AND NOT(B)    # is 1 when A and B are both 0
-
-
-We do the same thing for the last row in the truth table, whose output
-is also 1:
-
+Ta thực hiện tương tự với dòng cuối trong bảng chân trị, nơi đầu ra cũng là 1:
 
 +----------------------+----------------------+-----------------------+
 | A                    | B                    | A == B                |
@@ -94,106 +53,37 @@ is also 1:
 | 1                    | 1                    | 1                     |
 +----------------------+----------------------+-----------------------+
 
+> A AND B   # bằng 1 khi cả A và B đều là 1
 
+Cuối cùng, tạo một **disjunction** (phép tuyển – kết hợp bằng OR) của các conjunction tương ứng với các dòng trong bảng chân trị có đầu ra bằng 1:
 
-    A AND B   # is 1 when A and B are both 1
+> (NOT(A) AND NOT(B)) OR (A AND B)  # bằng 1 khi A và B đều là 0 hoặc đều là 1
 
+Tại thời điểm này, ta đã có một biểu thức cho `A == B` có thể được chuyển thành mạch. Ở bước này, các kỹ sư thiết kế mạch thường áp dụng các kỹ thuật để đơn giản hóa biểu thức nhằm tạo ra biểu thức tương đương tối giản (biểu thức có ít toán tử nhất và/hoặc độ dài đường đi qua các cổng ngắn nhất). Việc tối giản biểu thức cần được thực hiện cẩn thận để đảm bảo tính tương đương. Có các phương pháp chính quy để tối giản mạch, nhưng nằm ngoài phạm vi của chương này; tuy nhiên, ta sẽ sử dụng một vài phương pháp heuristic khi phát triển mạch.
 
-Finally, create a **disjunction** (an OR) of each conjunction
-corresponding to a row in the truth table that evaluates to 1:
+Trong ví dụ này, ta sẽ chuyển trực tiếp biểu thức trên thành mạch. Có thể ta sẽ muốn thay thế `(NOT(A) AND NOT(B))` bằng `(A NAND B)`, nhưng cần lưu ý rằng hai biểu thức này **không** tương đương: chúng không cho ra kết quả giống nhau với mọi tổ hợp của A và B. Ví dụ, khi A là 1 và B là 0, `(A == B)` là 0 còn `(A NAND B)` là 1.
 
-
-
-
-    (NOT(A) AND NOT(B)) OR (A AND B)  # is 1 when A and B are both 0 or both 1
-
-
-At this point we have an expression for `A == B` that can be translated
-to a circuit. At this step, circuit designers employ techniques to
-simplify the expression to create a minimal equivalent expression (one
-that corresponds to the fewest operators and/or shortest path length of
-gates through the circuit). Designers must take great care when
-minimizing a circuit design to ensure the equivalence of the translated
-expression. There are formal methods for circuit minimization that are
-beyond the scope of our coverage, but we will employ a few heuristics as
-we develop circuits.
-
-
-For our example, we directly translate the preceding expression to a
-circuit. We may be tempted to replace (NOT(A) AND NOT(B)) with (A NAND
-B), but note that these two expressions **are not** equivalent: they do
-not evaluate the same for all permutations of A and B. For example, when
-A is 1 and B is 0, (A == B) is 0 and (A NAND B) is 1.
-
-
-To translate the expression to a circuit, start from the innermost
-expression and work outward (the innermost will be the first gates,
-whose outputs will be inputs to subsequent gates). The first set of
-gates correspond to any negation of input values (NOT gates of inputs A
-and B). Next, for each conjunction, create parts of the circuit feeding
-input values into an AND gate. The AND gate outputs are then fed into OR
-gate(s) representing the disjunction. The resulting circuit is shown in
-Figure 1.
-
-
+Để chuyển biểu thức thành mạch, bắt đầu từ biểu thức trong cùng và làm việc ra ngoài (biểu thức trong cùng sẽ là các cổng đầu tiên, đầu ra của chúng sẽ là đầu vào cho các cổng tiếp theo). Bộ cổng đầu tiên sẽ là các cổng NOT cho các đầu vào A và B. Tiếp theo, với mỗi conjunction, tạo phần mạch đưa các giá trị đầu vào vào cổng AND. Đầu ra của các cổng AND sau đó được đưa vào cổng OR đại diện cho disjunction. Mạch kết quả được minh họa trong Hình 1.
 
 
 ![a 1-bit equality circuit](_images/1biteq.png)
 
 
-Figure 1. The 1-bit equality circuit (A == B) constructed from AND, OR,
-and NOT logic gates.
+**Hình 1. Mạch so sánh bằng 1-bit (A == B) được xây dựng từ các cổng logic AND, OR và NOT.**
 
-
-To verify the correctness of this circuit, simulate all possible
-permutations of input values A and B through the circuit and verify that
-the output of the circuit matches its corresponding row in the truth
-table for (A == B). For example, if A is 0 and B is 0, the two NOT gates
-negate their values before being fed through the top AND gate, so the
-input to this AND gate is (1, 1), resulting in an output of 1, which is
-the top input value to the OR gate. The values of A and B (0, 0) are fed
-directly though the bottom AND gate, resulting in output of 0 from the
-bottom AND gate, which is the lower input to the OR gate. The OR gate
-thus receives input values (1, 0) and outputs the value 1. So, when A
-and B are both 0, the circuit correctly outputs 1. [Figure
-2](#Fig1bitequalcircuitex) illustrates this example.
-
-
-
+Để kiểm tra tính đúng đắn của mạch này, ta mô phỏng tất cả các tổ hợp đầu vào có thể của A và B qua mạch, và xác minh rằng đầu ra của mạch khớp với dòng tương ứng trong bảng chân trị của phép so sánh (A == B). Ví dụ, nếu A là 0 và B là 0, hai cổng NOT sẽ đảo giá trị của chúng trước khi được đưa vào cổng AND phía trên, nên đầu vào của cổng AND này là (1, 1), cho ra đầu ra là 1, đây là đầu vào phía trên của cổng OR. Các giá trị A và B (0, 0) được đưa trực tiếp vào cổng AND phía dưới, cho ra đầu ra là 0 từ cổng AND phía dưới, đây là đầu vào phía dưới của cổng OR. Do đó, cổng OR nhận đầu vào là (1, 0) và cho ra giá trị 1. Vậy, khi A và B đều bằng 0, mạch cho ra đầu ra đúng là 1. [Hình 2](#Fig1bitequalcircuitex) minh họa ví dụ này.
 
 ![example values through a 1-bit equality circuit](_images/1biteqex.png)
 
+**Hình 2. Ví dụ minh họa cách mạch so sánh bằng 1-bit tính toán (A == B).** Bắt đầu với giá trị đầu vào là 0 cho A và 0 cho B, các giá trị này được truyền qua các cổng trong mạch để tính ra giá trị đầu ra đúng là 1 cho A == B.
 
-Figure 2. An example showing how the 1-bit equality circuit computes (A
-== B). Starting with input values 0 for A and 0 for B, the values
-propagate through the gates making up the circuit to compute the correct
-output value of 1 for A == B.
-
-
-Viewing the implementation of a 1-bit equality circuit as a unit allows
-it to be abstracted from its implementation, and thus it can be more
-easily used as a building block for other circuits. We represent this
-abstraction of the 1-bit equality circuit (shown in [Figure
-3](#Fig1bitequal)) as a box with its two inputs labeled *A* and *B* and
-its single output labeled *A == B*. The internal gates that implement
-the 1-bit equality circuit are hidden in this abstracted view of the
-circuit.
-
-
-
+Xem việc triển khai mạch so sánh bằng 1-bit như một đơn vị cho phép ta trừu tượng hóa nó khỏi phần triển khai chi tiết, từ đó dễ dàng sử dụng nó như một khối xây dựng cho các mạch khác. Ta biểu diễn phiên bản trừu tượng của mạch so sánh bằng 1-bit (hiển thị trong [Hình 3](#Fig1bitequal)) dưới dạng một hộp với hai đầu vào được gắn nhãn *A* và *B*, và một đầu ra duy nhất được gắn nhãn *A == B*. Các cổng bên trong thực hiện mạch so sánh bằng 1-bit được ẩn đi trong phiên bản trừu tượng này.
 
 ![1-bit equality as a circuit](_images/1biteqcircuit.png)
 
+**Hình 3. Phiên bản trừu tượng của mạch so sánh bằng 1-bit.** Mạch này có thể được sử dụng như một khối xây dựng trong các mạch khác.
 
-Figure 3. The 1-bit equality circuit abstraction. This circuit can be
-used as a building block in other circuits.
-
-
-Single-bit versions of NAND, NOR, and XOR circuits can be constructed
-similarly, using only AND, OR, and NOT gates, starting with their truth
-tables (Table 2) and applying the same steps as
-the 1-bit equality circuit.
-
+Các phiên bản 1-bit của mạch NAND, NOR và XOR cũng có thể được xây dựng tương tự, chỉ sử dụng các cổng AND, OR và NOT, bắt đầu từ bảng chân trị của chúng (Bảng 2) và áp dụng các bước giống như với mạch so sánh bằng 1-bit.
 
 +-------------+-------------+-------------+-------------+-------------+
 | A           | B           | A NAND B    | A NOR B     | A XOR B     |
@@ -207,24 +97,15 @@ the 1-bit equality circuit.
 | 1           | 1           | 0           | 0           | 0           |
 +-------------+-------------+-------------+-------------+-------------+
 
-: Table 2. Truth table for the NAND, NOR, and XOR circuits.
+Bảng 2. Bảng chân trị cho các mạch NAND, NOR và XOR.
 
-Multibit versions of these circuits are constructed from multiple
-single-bit versions of the circuits in a similar way to how the [4-bit
-AND](gates.html#_basic_logic_gates) gate was constructed from
-four 1-bit AND gates.
+Các phiên bản nhiều bit của các mạch này được xây dựng từ nhiều phiên bản 1-bit của mạch, tương tự như cách mạch [AND 4-bit](gates.html#_basic_logic_gates) được xây dựng từ bốn mạch AND 1-bit.
 
+---
 
+#### Mạch Số học
 
-#### Arithmetic Circuits 
-
-Arithmetic circuits are constructed using exactly the same method as we
-used for constructing the logic circuits. For example, to construct a
-1-bit adder circuit, start with the truth table for single-bit addition,
-which has two input values, A and B, and two output values, one for the
-SUM of A and B, and another output for overflow or CARRY OUT. [Table
-3](#Table1bitadder) shows the resulting truth table for 1-bit add.
-
+Các mạch số học được xây dựng theo đúng phương pháp mà ta đã dùng để xây dựng các mạch logic. Ví dụ, để xây dựng mạch cộng 1-bit, ta bắt đầu với bảng chân trị cho phép cộng từng bit, gồm hai đầu vào là A và B, và hai đầu ra: một cho tổng (SUM) của A và B, và một cho giá trị tràn (CARRY OUT). [Bảng 3](#Table1bitadder) hiển thị bảng chân trị kết quả cho phép cộng 1-bit.
 
 +-----------------+-----------------+-----------------+-----------------+
 | A               | B               | SUM             | CARRY OUT       |
@@ -238,111 +119,42 @@ SUM of A and B, and another output for overflow or CARRY OUT. [Table
 | 1               | 1               | 0               | 1               |
 +-----------------+-----------------+-----------------+-----------------+
 
-: Table 3. Truth table for a 1-bit adder circuit.
+: Bảng 3. Bảng chân trị cho mạch cộng 1-bit.
 
-In the next step, for each output, SUM and CARRY OUT, create logical
-expressions of when the output value is 1. These expressions are
-expressed as disjunctions of per-row conjunctions of input values:
+Ở bước tiếp theo, với mỗi đầu ra là SUM và CARRY OUT, ta tạo các biểu thức logic cho trường hợp đầu ra bằng 1. Các biểu thức này được biểu diễn dưới dạng phép tuyển (OR) của các phép hội (AND) theo từng dòng của bảng chân trị:
 
+> SUM: (NOT(A) AND B) OR (A AND NOT(B))     # bằng 1 khi chỉ một trong A hoặc B là 1  
+> CARRY OUT: A AND B                        # bằng 1 khi cả A và B đều là 1
 
+Biểu thức cho CARRY OUT không thể đơn giản hơn. Tuy nhiên, biểu thức cho SUM phức tạp hơn và có thể được đơn giản hóa, dẫn đến thiết kế mạch đơn giản hơn. Điều đầu tiên cần lưu ý là đầu ra SUM cũng có thể được biểu diễn dưới dạng (A XOR B). Nếu ta có cổng XOR hoặc mạch XOR, biểu diễn SUM dưới dạng (A XOR B) sẽ giúp thiết kế mạch cộng đơn giản hơn. Nếu không, ta sử dụng biểu thức với AND, OR và NOT như trên và triển khai bằng các cổng tương ứng.
 
-
-    SUM: (NOT(A) AND B) OR (A AND NOT(B))     # 1 when exactly one of A or B is 1
-    CARRY OUT:  A AND B                       # 1 when both A and B are 1
-
-
-The expression for CARRY OUT cannot be simplified. However, the
-expression for SUM is more complicated and can be simplified, leading to
-a simpler circuit design. The first thing to note is that the SUM output
-can also be expressed as (A XOR B). If we have an XOR gate or circuit,
-expressing SUM as (A XOR B) results in a simpler adder circuit design.
-If not, the expression using AND, OR, and NOT is used and implemented
-using AND, OR, and NOT gates.
-
-
-Let's assume that we have an XOR gate that we can use for implementing
-the 1-bit adder circuit. The resulting circuit is shown in [Figure
-4](#Fig1bitaddr).
-
-
-
+Giả sử ta có cổng XOR để sử dụng trong việc triển khai mạch cộng 1-bit. Mạch kết quả được hiển thị trong [Hình 4](#Fig1bitaddr).
 
 ![1-bit adder circuit](_images/1bitadder.png)
 
+**Hình 4. Mạch cộng 1-bit có hai đầu vào là A và B, và hai đầu ra là SUM và CARRY OUT.**
 
-Figure 4. The 1-bit adder circuit has two inputs, A and B, and two
-outputs, SUM and CARRY OUT.
+Mạch cộng 1-bit có thể được sử dụng như một khối xây dựng cho các mạch phức tạp hơn. Ví dụ, ta có thể muốn tạo các mạch cộng *N*-bit để thực hiện phép cộng trên các giá trị có kích thước khác nhau (ví dụ: mạch cộng 1-byte, 2-byte hoặc 4-byte). Tuy nhiên, việc tạo mạch cộng *N*-bit từ *N* mạch cộng 1-bit đòi hỏi sự cẩn trọng hơn so với việc tạo mạch logic *N*-bit từ *N* mạch logic 1-bit.
 
+Khi thực hiện phép cộng nhiều bit (hoặc phép trừ), các bit riêng lẻ được cộng theo thứ tự từ bit ít quan trọng nhất đến bit quan trọng nhất. Trong quá trình cộng từng bit này, nếu tổng của các bit thứ *i* tạo ra giá trị tràn bằng 1, thì một giá trị 1 bổ sung sẽ được cộng với hai bit thứ *(i+1)*. Nói cách khác, giá trị tràn của mạch cộng bit thứ *i* sẽ là đầu vào cho mạch cộng bit thứ *(i+1)*.
 
-The 1-bit adder circuit can be used as a building block for more
-complicated circuits. For example, we may want to create *N*-bit adder
-circuits for performing addition on values of different sizes (e.g.
-1-byte, 2-byte, or 4-byte adder circuits). However, creating an *N*-bit
-adder circuit from *N* 1-bit adder circuits requires more care than
-creating an *N*-bit logic circuits from *N* 1-bit logic circuits.
-
-
-When performing a multibit addition (or subtraction), individual bits
-are summed in order from the least significant bit to the most
-significant bit. As this bitwise addition proceeds, if the sum of the
-*ith* bits results in a carry out value of 1, then an additional 1 is
-added with the two *(i+1)st* bits. In other words, the carry out of the
-*ith* bit adder circuit is an input value to the *(i+1)st* bit adder
-circuit.
-
-
-Thus, to implement a multibit adder circuit, we need a new 1-bit adder
-circuit that has three inputs: A, B, and CARRY IN. To do this, follow
-the steps above for creating a 1-bit adder circuit, with three inputs
-(A, B, CARRY IN) and two outputs (SUM and CARRY OUT), starting with the
-truth table for all possible permutations of its three inputs. We leave
-the design of this circuit as an exercise for the reader, but we show
-its abstraction as a 1-bit adder circuit in Figure 5.
-
-
+Do đó, để triển khai mạch cộng nhiều bit, ta cần một mạch cộng 1-bit mới có ba đầu vào: A, B và CARRY IN. Để làm điều này, ta thực hiện lại các bước trên để tạo mạch cộng 1-bit, với ba đầu vào (A, B, CARRY IN) và hai đầu ra (SUM và CARRY OUT), bắt đầu với bảng chân trị cho tất cả các tổ hợp đầu vào có thể. Việc thiết kế mạch này được để lại như một bài tập cho người đọc, nhưng ta sẽ hiển thị phiên bản trừu tượng của mạch cộng 1-bit này trong Hình 5.
 
 
 ![1-bit adder circuit with carry in](_images/1bitaddcin.png)
 
+Dưới đây là bản dịch tiếng Việt của phần văn bản bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
 
-Figure 5. The 1-bit adder circuit with three inputs (A, B, and CARRY IN)
-and two outputs (SUM and CARRY OUT).
+---
 
+**Hình 5. Mạch cộng 1-bit với ba đầu vào (A, B và CARRY IN) và hai đầu ra (SUM và CARRY OUT).**
 
-Using this version of a 1-bit adder circuit as a building block, we can
-construct an *N*-bit adder circuit by feeding corresponding operand bits
-through individual 1-bit adder circuits, feeding the CARRY OUT value
-from the *ith* 1-bit adder circuit into the CARRY IN value of the
-*(i+1)st* 1-bit adder circuit. The 1-bit adder circuit for the 0th bits
-receives a value of 0 for its CARRY IN from another part of the CPU
-circuitry that decodes the ADD instruction.
+Sử dụng phiên bản mạch cộng 1-bit này như một khối xây dựng, ta có thể tạo ra mạch cộng *N*-bit bằng cách đưa các bit toán hạng tương ứng qua từng mạch cộng 1-bit riêng biệt, và truyền giá trị CARRY OUT từ mạch cộng 1-bit thứ *i* sang đầu vào CARRY IN của mạch cộng 1-bit thứ *(i+1)*. Mạch cộng 1-bit cho các bit thứ 0 nhận giá trị CARRY IN bằng 0 từ một phần khác trong mạch CPU, nơi thực hiện giải mã lệnh ADD.
 
-
-This type of *N*-bit adder circuit, built from *N* 1-bit adder circuits,
-is called a **ripple carry adder**, shown in Figure 6.
-The SUM result *ripples* or propagates through the circuit from the
-low-order to the high-order bits. Only after bit 0 of the SUM and CARRY
-OUT values are computed will the bit 1 of the SUM and CARRY OUT be
-correctly computed. This is because the 1st bit's CARRY IN gets its
-value from the 0th bit's CARRY OUT, and so on for subsequent
-higher-order bits of the result.
-
-
-
+Loại mạch cộng *N*-bit được xây dựng từ *N* mạch cộng 1-bit này được gọi là **ripple carry adder** ("mạch cộng lan truyền"), được minh họa trong Hình 6. Kết quả SUM sẽ *lan truyền* hoặc được truyền qua mạch từ các bit thấp đến các bit cao. Chỉ sau khi tính toán xong giá trị SUM và CARRY OUT của bit 0 thì giá trị SUM và CARRY OUT của bit 1 mới được tính đúng. Điều này là do CARRY IN của bit thứ 1 nhận giá trị từ CARRY OUT của bit thứ 0, và quá trình này tiếp tục cho các bit cao hơn trong kết quả.
 
 ![The Ripple adder circuit. The CARRY OUT output from ith bit's ith-bit's adder is the CARRY IN input to the i+1st bit's adder.](_images/rippleadder.png)
 
+**Hình 6. Mạch cộng lan truyền 4-bit được tạo từ bốn mạch cộng 1-bit.**
 
-Figure 6. A 4-bit ripple adder circuit created from four 1-bit adder
-circuits.
-
-
-Circuits for other arithmetic and logic functions are constructed in
-similar ways by combining circuits and logic gates. For example, a
-subtraction circuit that computes (A - B) can be built from adder and
-negation circuits that compute subtraction as (A + (-B)).
-
-
-
-
-
+Các mạch cho các phép toán số học và logic khác cũng được xây dựng theo cách tương tự bằng cách kết hợp các mạch và cổng logic. Ví dụ, một mạch trừ để tính (A - B) có thể được xây dựng từ mạch cộng và mạch đảo (negation – "phép phủ định") bằng cách tính phép trừ dưới dạng (A + (-B)).

@@ -136,9 +136,7 @@ currently executing instruction. Initially, `%eip` contains address
 `main` function. Let's trace through the program's execution together.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide2](_images/procedures/Slide2.png)
 
@@ -149,9 +147,7 @@ pointer `%esp` updates to 0x12c, which is 4 bytes less than 0x130.
 Register `%eip` advances to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide3](_images/procedures/Slide3.png)
 
@@ -162,9 +158,7 @@ start of the stack frame for the `main` function. `%eip` advances to the
 next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide4](_images/procedures/Slide4.png)
 
@@ -174,9 +168,7 @@ pointer, \"growing\" the stack by 20 bytes. Register `%eip` advances to
 the next instruction, which is the first `call` instruction.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide5](_images/procedures/Slide5.png)
 
@@ -195,9 +187,7 @@ continue into the callee function `assign` and not the next instruction
 in `main`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide6](_images/procedures/Slide6.png)
 
@@ -209,9 +199,7 @@ Recall that this address points to the beginning of the stack frame for
 `main`. `%eip` advances to the second instruction in `assign`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide7](_images/procedures/Slide7.png)
 
@@ -222,9 +210,7 @@ The instruction pointer (`%eip`) advances to the next instruction in the
 `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide8](_images/procedures/Slide8.png)
 
@@ -235,9 +221,7 @@ updating `%esp`. The instruction pointer again advances to the next
 instruction in the `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide9](_images/procedures/Slide9.png)
 
@@ -249,9 +233,7 @@ reference locations on the stack. `%eip` advances to the next
 instruction in the `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide10](_images/procedures/Slide10.png)
 
@@ -261,9 +243,7 @@ register `%eax`, which holds the return value of the function. `%eip`
 advances to the `leave` instruction in the `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide11](_images/procedures/Slide11.png)
 
@@ -289,9 +269,7 @@ located at 0x110 (in our example, the address 0x12c) and places it in
 `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide12](_images/procedures/Slide12.png)
 
@@ -314,9 +292,7 @@ Some important things to notice at this juncture:
     *not* removed. They still exist on the call stack.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide13](_images/procedures/Slide13.png)
 
@@ -328,9 +304,7 @@ next instruction to be executed after `adder` returns, or
 in `adder`, which is at address 0x41f.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide14](_images/procedures/Slide14.png)
 
@@ -339,9 +313,7 @@ The first instruction in the `adder` function saves the caller's frame
 pointer (`%ebp` of `main`) on the stack.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide15](_images/procedures/Slide15.png)
 
@@ -351,9 +323,7 @@ address 0x110. Together, these last two instructions establish the
 beginning of the stack frame for `adder`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide16](_images/procedures/Slide16.png)
 
@@ -364,9 +334,7 @@ created values on the stack. Again, old values will litter the stack
 until they are overwritten.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide20](_images/procedures/Slide17.png)
 
@@ -377,9 +345,7 @@ on the stack into register `%eax`! This is a direct result of the fact
 that the programmer forgot to initialize `a` in the function `adder`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide18](_images/procedures/Slide18.png)
 
@@ -397,9 +363,7 @@ return a + 2;
 ```
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide19](_images/procedures/Slide19.png)
 
@@ -409,9 +373,7 @@ of the stack frame for `main`, or address 0x12c. The stack pointer now
 stores the address 0x114.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide20](_images/procedures/Slide20.png)
 
@@ -421,9 +383,7 @@ the instruction pointer back to 0x440, or the address of the next
 instruction to execute in `main`. The address of `%esp` is now 0x118.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide21](_images/procedures/Slide21.png)
 
@@ -432,9 +392,7 @@ The `mov %eax, 0xc(%esp)` instruction places the value in `%eax` in a
 location 12 bytes (three spaces) below `%esp`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide23](_images/procedures/Slide23.png)
 
@@ -445,9 +403,7 @@ places 0x2A one spot below the top of the stack (address `%esp + 4`, or
 0x11c).
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide24](_images/procedures/Slide24.png)
 
@@ -459,9 +415,7 @@ pointer advances to the call to the `printf` function (which is denoted
 with the label `<printf@plt>`).
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide25](_images/procedures/Slide25.png)
 
@@ -519,9 +473,7 @@ After the call to `printf`, the value 0x2A is output to the user in
 integer format. Thus, the value 42 is printed to the screen!
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide26](_images/procedures/Slide26.png)
 
@@ -533,9 +485,7 @@ from `main`. Recall that a program returns 0 to indicate correct
 termination.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide27](_images/procedures/Slide27.png)
 

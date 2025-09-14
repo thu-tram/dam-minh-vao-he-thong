@@ -1,48 +1,11 @@
+## 7.1. Bắt đầu với Assembly: Những điều cơ bản
 
+Để có cái nhìn đầu tiên về **x64 assembly**, chúng ta sẽ chỉnh sửa hàm `adder` từ [Chương 6](index.html#_assembly_chapter) để đơn giản hóa hành vi của nó. Phiên bản đã chỉnh sửa (`adder2`) được hiển thị bên dưới:
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 7.1. Diving into Assembly: Basics 
-
-For a first look at x64 assembly, we modify the `adder` function from
-[Chapter 6](index.html#_assembly_chapter) to simplify its
-behavior. The modified function (`adder2`) is shown below:
-
-
-
-
-```
+```c
 #include <stdio.h>
 
-//adds two to an integer and returns the result
+// adds two to an integer and returns the result
 int adder2(int a) {
     return a + 2;
 }
@@ -55,456 +18,193 @@ int main(void){
 }
 ```
 
+Để biên dịch đoạn mã này, sử dụng lệnh sau:
 
-To compile this code, use the following command:
+```
+$ gcc -o adder adder.c
+```
 
+Tiếp theo, hãy xem mã assembly tương ứng của chương trình này bằng cách sử dụng lệnh `objdump`:
 
+```
+$ objdump -d adder > output
+$ less output
+```
 
+Tìm đoạn mã liên quan đến hàm `adder2` bằng cách gõ `/adder2` khi đang xem tệp `output` với `less`. Phần liên quan đến `adder2` sẽ trông tương tự như sau:
 
-    $ gcc -o adder adder.c
+**Kết quả assembly cho hàm `adder2`**
 
+```
+0000000000400526 <adder2>:
+  400526:       55                      push   %rbp
+  400527:       48 89 e5                mov    %rsp,%rbp
+  40052a:       89 7d fc                mov    %edi,-0x4(%rbp)
+  40052d:       8b 45 fc                mov    -0x4(%rbp),%eax
+  400530:       83 c0 02                add    $0x2,%eax
+  400533:       5d                      pop    %rbp
+  400534:       c3                      retq
+```
 
-Next, let's view the corresponding assembly of this code by using the
-`objdump` command:
+Đừng lo nếu bạn chưa hiểu chuyện gì đang xảy ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly trong các phần sau. Hiện tại, hãy nghiên cứu cấu trúc của từng lệnh riêng lẻ.
 
+Mỗi dòng trong ví dụ trên chứa **địa chỉ 64-bit** của lệnh trong bộ nhớ chương trình, **các byte** tương ứng với lệnh đó, và **dạng văn bản** (plaintext) của chính lệnh. Ví dụ, `55` là dạng **machine code** (mã máy) của lệnh `push %rbp`, và lệnh này nằm tại địa chỉ `0x400526` trong bộ nhớ chương trình. Lưu ý rằng `0x400526` là dạng rút gọn của địa chỉ 64-bit đầy đủ của lệnh `push %rbp`; các số 0 ở đầu bị lược bỏ để dễ đọc hơn.
 
+Điều quan trọng cần lưu ý là một dòng mã C thường được dịch thành nhiều lệnh assembly. Chẳng hạn, phép toán `a + 2` được biểu diễn bằng hai lệnh: `mov -0x4(%rbp), %eax` và `add $0x2, %eax`.
 
-
-    $ objdump -d adder > output
-    $ less output
-
-
-Search for the code snippet associated with `adder2` by typing `/adder2`
-while examining the file `output` using `less`. The section associated
-with `adder2` should look similar to the following:
-
-
-
-Assembly output for the `adder2` function
-
-
-
-    0000000000400526 <adder2>:
-      400526:       55                      push   %rbp
-      400527:       48 89 e5                mov    %rsp,%rbp
-      40052a:       89 7d fc                mov    %edi,-0x4(%rbp)
-      40052d:       8b 45 fc                mov    -0x4(%rbp),%eax
-      400530:       83 c0 02                add    $0x2,%eax
-      400533:       5d                      pop    %rbp
-      400534:       c3                      retq
-
-
-Don't worry if you don't understand what's going on just yet. We will
-cover assembly in greater detail in later sections. For now, let's study
-the structure of these individual instructions.
+> **Assembly của bạn có thể trông khác!**  
+> Nếu bạn đang biên dịch mã của mình cùng với chúng tôi, bạn có thể nhận thấy rằng một số ví dụ assembly của bạn trông khác so với những gì được hiển thị trong sách này. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành bên dưới. Hầu hết các ví dụ assembly trong sách này được tạo ra trên các hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).  
+>  
+> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ tệp ví dụ nào (`example.c`) bằng lệnh:  
+> `gcc -o example example.c`  
+> Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch mã dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong [một chương sau](../C12-CodeOpt/index.html#_code_optimization).
 
 
-Each line in the preceding example contains an instruction's 64-bit
-address in program memory, the bytes corresponding to the instruction,
-and the plaintext representation of the instruction itself. For example,
-`55` is the machine code representation of the instruction `push %rbp`,
-and the instruction occurs at address `0x400526` in program memory. Note
-that `0x400526` is an abbreviation of the full 64-bit address associated
-with the `push %rbp` instruction; the leading zeroes are ignored for
-readability.
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
-It is important to note that a single line of C code often translates to
-multiple instructions in assembly. The operation `a + 2` is represented
-by the two instructions `mov -0x4(%rbp), %eax` and `add $0x2, %eax`.
+### 7.1.1. Thanh ghi (Registers)
 
+Hãy nhớ rằng **register** (thanh ghi) là một đơn vị lưu trữ có kích thước bằng một từ (word-sized) nằm trực tiếp trên CPU. Có thể có các thanh ghi riêng cho dữ liệu, lệnh và địa chỉ. Ví dụ, CPU Intel có tổng cộng 16 thanh ghi để lưu trữ dữ liệu 64-bit:
 
+`%rax`, `%rbx`, `%rcx`, `%rdx`, `%rdi`, `%rsi`, `%rsp`, `%rbp`, và `%r8`–`%r15`. Tất cả các thanh ghi này, trừ `%rsp` và `%rbp`, đều chứa dữ liệu 64-bit đa dụng (general-purpose). Mặc dù một chương trình có thể diễn giải nội dung của một thanh ghi như một số nguyên hoặc một địa chỉ, bản thân thanh ghi không phân biệt điều đó. Chương trình có thể đọc hoặc ghi vào cả 16 thanh ghi này.
 
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Your assembly may look different! |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | If you are compiling your code    |
-|                                   | along with us, you may notice     |
-|                                   | that some of your assembly        |
-|                                   | examples look different from what |
-|                                   | is shown in this book. The        |
-|                                   | precise assembly instructions     |
-|                                   | that are output by any compiler   |
-|                                   | depend on that compiler's version |
-|                                   | and the underlying operating      |
-|                                   | system. Most of the assembly      |
-|                                   | examples in this book were        |
-|                                   | generated on systems running      |
-|                                   | Ubuntu or Red Hat Enterprise      |
-|                                   | Linux (RHEL).                     |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | In the examples that follow, we   |
-|                                   | do not use any optimization       |
-|                                   | flags. For example, we compile    |
-|                                   | any example file (`example.c`)    |
-|                                   | using the command                 |
-|                                   | `gcc -o example example.c`.       |
-|                                   | Consequently, there are many      |
-|                                   | seemingly redundant instructions  |
-|                                   | in the examples that follow.      |
-|                                   | Remember that the compiler is not |
-|                                   | \"smart\" --- it simply follows a |
-|                                   | series of rules to translate      |
-|                                   | human-readable code into machine  |
-|                                   | language. During this translation |
-|                                   | process, it is not uncommon for   |
-|                                   | some redundancy to occur.         |
-|                                   | Optimizing compilers remove many  |
-|                                   | of these redundancies during      |
-|                                   | optimization, which is covered in |
-|                                   | a [later                          |
-|                                   | chapter](../C12-CodeOpt/index     |
-|                                   | .html#_code_optimization). |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
+Thanh ghi `%rsp` và `%rbp` lần lượt được gọi là **stack pointer** (con trỏ stack) và **frame pointer** (hoặc **base pointer**). Compiler dành riêng các thanh ghi này cho các thao tác duy trì cấu trúc của **program stack** (ngăn xếp chương trình). Ví dụ, `%rsp` luôn trỏ tới đỉnh của stack. Trong các hệ thống x86 trước đây (ví dụ IA32), frame pointer thường theo dõi đáy của **stack frame** đang hoạt động và hỗ trợ tham chiếu các tham số. Tuy nhiên, trong các hệ thống x86-64, base pointer ít được sử dụng hơn. Compiler thường lưu 6 tham số đầu tiên của hàm vào các thanh ghi `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8` và `%r9`. Thanh ghi `%rax` lưu giá trị trả về từ một hàm.
 
+Thanh ghi cuối cùng đáng nhắc đến là `%rip` hay **instruction pointer** (đôi khi gọi là **program counter** — PC). Nó trỏ tới lệnh tiếp theo mà CPU sẽ thực thi. Không giống như 16 thanh ghi đã đề cập ở trên, chương trình không thể ghi trực tiếp vào `%rip`.
 
+---
 
-### 7.1.1. Registers 
+### 7.1.2. Cú pháp nâng cao của thanh ghi (Advanced Register Notation)
 
-Recall that a **register** is a word-sized storage unit located directly
-on the CPU. There may be separate registers for data, instructions, and
-addresses. For example, the Intel CPU has a total of 16 registers for
-storing 64-bit data:
+Vì **x86-64** là phần mở rộng của kiến trúc x86 32-bit (vốn là phần mở rộng của phiên bản 16-bit trước đó), **ISA** (Instruction Set Architecture — kiến trúc tập lệnh) cung cấp cơ chế truy cập 32 bit thấp, 16 bit thấp và các byte thấp của mỗi thanh ghi. **Bảng 1** liệt kê 16 thanh ghi và ký hiệu trong ISA để truy cập các phần byte thành phần của chúng.
 
+| 64-bit Register | 32-bit Register | Lower 16 Bits | Lower 8 Bits |
+|-----------------|-----------------|---------------|--------------|
+| `%rax`          | `%eax`          | `%ax`         | `%al`        |
+| `%rbx`          | `%ebx`          | `%bx`         | `%bl`        |
+| `%rcx`          | `%ecx`          | `%cx`         | `%cl`        |
+| `%rdx`          | `%edx`          | `%dx`         | `%dl`        |
+| `%rdi`          | `%edi`          | `%di`         | `%dil`       |
+| `%rsi`          | `%esi`          | `%si`         | `%sil`       |
+| `%rsp`          | `%esp`          | `%sp`         | `%spl`       |
+| `%rbp`          | `%ebp`          | `%bp`         | `%bpl`       |
+| `%r8`           | `%r8d`          | `%r8w`        | `%r8b`       |
+| `%r9`           | `%r9d`          | `%r9w`        | `%r9b`       |
+| `%r10`          | `%r10d`         | `%r10w`       | `%r10b`      |
+| `%r11`          | `%r11d`         | `%r11w`       | `%r11b`      |
+| `%r12`          | `%r12d`         | `%r12w`       | `%r12b`      |
+| `%r13`          | `%r13d`         | `%r13w`       | `%r13b`      |
+| `%r14`          | `%r14d`         | `%r14w`       | `%r14b`      |
+| `%r15`          | `%r15d`         | `%r15w`       | `%r15b`      |
 
-`%rax`, `%rbx`, `%rcx`, `%rdx`, `%rdi`, `%rsi`, `%rsp`, `%rbp`, and
-`%r8`-`%r15`. All the registers save for `%rsp` and `%rbp` hold
-general-purpose 64-bit data. While a program may interpret a register's
-contents as, say, an integer or an address, the register itself makes no
-distinction. Programs can read from or write to all sixteen registers.
+**Bảng 1.** Các thanh ghi x86-64 và cơ chế truy cập các byte thấp.
 
-
-The registers `%rsp` and `%rbp` are known as the **stack pointer** and
-the **frame pointer** (or **base pointer**), respectively. The compiler
-reserves these registers for operations that maintain the layout of the
-program stack. For example, register `%rsp` always points to the top of
-the stack. In earlier x86 systems (e.g., IA32), the frame pointer
-commonly tracked the base of the active stack frame and helped to
-reference parameters. However, the base pointer is less frequently used
-in x86-64 systems. Compilers typically store the first six parameters in
-registers `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8` and `%r9`, respectively.
-Register `%rax` stores the return value from a function.
-
-
-The last register worth mentioning is `%rip` or the **instruction
-pointer**, sometimes called the **program counter** (PC). It points to
-the next instruction to be executed by the CPU. Unlike the 16 registers
-mentioned previously, programs cannot write directly to register `%rip`.
-
-
-
-### 7.1.2. Advanced Register Notation 
-
-Since x86-64 is an extension of the 32-bit x86 architecture (which
-itself was an extension of an earlier 16-bit version), the ISA provides
-mechanisms to access the lower 32 bits, 16 bits, and lower bytes of each
-register. Table 1 lists each of the 16 registers and
-the ISA notations to access their component bytes.
-
-
-+-----------------+-----------------+-----------------+-----------------+
-| 64-bit Register | 32-bit Register | Lower 16 Bits   | Lower 8 Bits    |
-+=================+=================+=================+=================+
-| `%rax`          | `%eax`          | `%ax`           | `%al`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rbx`          | `%ebx`          | `%bx`           | `%bl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rcx`          | `%ecx`          | `%cx`           | `%cl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rdx`          | `%edx`          | `%dx`           | `%dl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rdi`          | `%edi`          | `%di`           | `%dil`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rsi`          | `%esi`          | `%si`           | `%sil`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rsp`          | `%esp`          | `%sp`           | `%spl`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%rbp`          | `%ebp`          | `%bp`           | `%bpl`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r8`           | `%r8d`          | `%r8w`          | `%r8b`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r9`           | `%r9d`          | `%r9w`          | `%r9b`          |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r10`          | `%r10d`         | `%r10w`         | `%r10b`         |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r11`          | `%r11d`         | `%r11w`         | `%r11b`         |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r12`          | `%r12d`         | `%r12w`         | `%r12b`         |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r13`          | `%r13d`         | `%r13w`         | `%r13b`         |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r14`          | `%r14d`         | `%r14w`         | `%r14b`         |
-+-----------------+-----------------+-----------------+-----------------+
-| `%r15`          | `%r15d`         | `%r15w`         | `%r15b`         |
-+-----------------+-----------------+-----------------+-----------------+
-
-: Table 1. x86-64 Registers and Mechanisms for Accessing Lower Bytes
-
-The first eight registers (`%rax`, `%rbx`, `%rcx`, `%rdx`, `%rdi`,
-`%rsi`, `%rsp`, and `%rbp`) are 64-bit extensions of 32-bit registers in
-x86 and have a common mechanism for accessing their lower 32 bits, lower
-16 bits, and least-significant byte. To access the lower 32 bits of the
-first eight registers, simply replace the `r` in the register name with
-`e`. Thus, the register corresponding to the lower 32 bits of register
-`%rax` is register `%eax`. To access the lower 16 bits of each of these
-eight registers, reference the last two letters of the register's name.
-So, the mechanism to access the lower two bytes of register `%rax` is
-`%ax`.
-
-
-
+Tám thanh ghi đầu tiên (`%rax`, `%rbx`, `%rcx`, `%rdx`, `%rdi`, `%rsi`, `%rsp`, và `%rbp`) là phần mở rộng 64-bit của các thanh ghi 32-bit trong x86 và có cơ chế chung để truy cập 32 bit thấp, 16 bit thấp và byte ít quan trọng nhất (least-significant byte). Để truy cập 32 bit thấp của tám thanh ghi này, chỉ cần thay chữ `r` trong tên thanh ghi bằng `e`. Ví dụ, thanh ghi tương ứng với 32 bit thấp của `%rax` là `%eax`. Để truy cập 16 bit thấp, sử dụng hai chữ cái cuối của tên thanh ghi. Do đó, cơ chế để truy cập hai byte thấp của `%rax` là `%ax`.
 
 ![Register %rax's names for accessing a subset of the register's bits. %eax refers to its lower 32 bits, %ax refers to its lower 16 bits, %al refers to the low-order byte (bits 0-7), and %ah refers to the second byte (bits 8-15).](_images/register.png)
 
+**Hình 1.** Các tên gọi tham chiếu đến các phần của thanh ghi `%rax`.
 
-Figure 1. The names that refer to subsets of register %rax.
+ISA cung cấp một cơ chế riêng để truy cập các thành phần 8-bit bên trong 16 bit thấp của bốn thanh ghi đầu tiên. [Hình 1](#Register) minh họa cơ chế truy cập cho `%rax`. **Higher byte** (byte cao) và **lower byte** (byte thấp) trong 16 bit thấp của bốn thanh ghi đầu tiên có thể được truy cập bằng cách lấy hai chữ cái cuối của tên thanh ghi và thay chữ cái cuối bằng `h` (cho *higher*) hoặc `l` (cho *lower*), tùy thuộc vào byte muốn truy cập. Ví dụ, `%al` tham chiếu đến 8 bit thấp của `%ax`, trong khi `%ah` tham chiếu đến 8 bit cao của `%ax`. Các thanh ghi 8-bit này thường được dùng để lưu trữ giá trị 1 byte cho một số thao tác nhất định, chẳng hạn như **bitwise shift** (dịch bit), vì một thanh ghi 32-bit không thể dịch quá 32 vị trí, và số 32 chỉ cần 1 byte để lưu trữ.
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-The ISA provides a separate mechanism to access the eight-bit components
-within the lower 16 bits of the first four listed registers. [Figure
-1](#Register) depicts the access mechanisms for register `%rax`. The
-*higher* and *lower* bytes within the lower 16 bits of the first four
-listed registers can be accessed by taking the last two letters of the
-register name and replacing the last letter with either an `h` (for
-*higher*) or an `l` (for *lower*) depending on which byte is desired.
-For example, `%al` references the lower eight-bits of register `%ax`,
-whereas `%ah` references the higher eight-bits of register `%ax`. These
-eight-bit registers are commonly used for storing single-byte values for
-certain operations, such as bitwise shifts (a 32-bit register cannot be
-shifted more than 32 places, and the number 32 requires only a single
-byte of storage).
+---
 
+> **Compiler có thể chọn component register tùy thuộc vào kiểu dữ liệu**  
+> Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng các **component register** 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.  
+> Ví dụ, trong hàm `adder2` ở ví dụ trước, compiler tham chiếu đến component register `%eax` thay vì `%rax` vì kiểu `int` thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm `adder2` có tham số kiểu `long` thay vì `int`, compiler sẽ lưu `a` trong thanh ghi `%rax` thay vì `%eax`.
 
+---
 
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Compiler may choose component     |
-|                                   | registers depending on type       |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | When reading assembly code, keep  |
-|                                   | in mind that the compiler         |
-|                                   | typically uses the 64-bit         |
-|                                   | registers when dealing with       |
-|                                   | 64-bit values (e.g., pointers or  |
-|                                   | `long` types) and the 32-bit      |
-|                                   | component registers when dealing  |
-|                                   | with 32-bit types (e.g., `int`).  |
-|                                   | In x86-64, it is very common to   |
-|                                   | see 32-bit component registers    |
-|                                   | intermixed with the full 64-bit   |
-|                                   | registers. For example, in the    |
-|                                   | `adder2` function shown in the    |
-|                                   | previous example, the compiler    |
-|                                   | references component register     |
-|                                   | `%eax` instead of `%rax` since    |
-|                                   | `int` types typically take up 32  |
-|                                   | bits (four bytes) of space on     |
-|                                   | 64-bit systems. If the `adder2`   |
-|                                   | function had a `long` parameter   |
-|                                   | instead of a `int`, the compiler  |
-|                                   | would store `a` in register       |
-|                                   | `%rax` instead of register        |
-|                                   | `%eax`.                           |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
+Tám thanh ghi cuối (`%r8`–`%r15`) không thuộc **IA32 ISA**. Tuy nhiên, chúng cũng có cơ chế để truy cập các thành phần byte khác nhau. Để truy cập 32 bit thấp, 16 bit thấp hoặc byte thấp nhất của tám thanh ghi này, lần lượt thêm các hậu tố `d`, `w` hoặc `b` vào cuối tên thanh ghi. Ví dụ, `%r9d` truy cập 32 bit thấp của `%r9`, `%r9w` truy cập 16 bit thấp, và `%r9b` truy cập byte thấp nhất của `%r9`.
 
+---
 
-The last eight registers (`%r8`-`%r15`) were not part of the IA32 ISA.
-However, they also have mechanisms to access their different byte
-components. To access the lower 32 bits, 16 bits, or byte of the last
-eight registers, append the letter `d`, `w`, or `b`, respectively, to
-the end of the register's name. Thus, `%r9d` accesses the lower 32 bits
-of register `%r9`, whereas `%r9w` accesses the lower 16 bits, and `%r9b`
-accesses the lowest byte of register `%r9`.
+### 7.1.3. Cấu trúc lệnh (Instruction Structure)
 
+Mỗi **instruction** (lệnh) bao gồm một **operation code** hay **opcode** (mã thao tác) xác định lệnh đó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết lệnh sẽ thực hiện như thế nào.  
+Ví dụ, lệnh `add $0x2, %eax` có opcode là `add` và các operand là `$0x2` và `%eax`.
 
+Mỗi operand tương ứng với một vị trí nguồn hoặc đích cho một thao tác cụ thể. Các lệnh có hai toán hạng thường tuân theo định dạng **source, destination** (`S`, `D`), trong đó toán hạng đầu tiên chỉ nguồn (source register) và toán hạng thứ hai chỉ đích (destination).
 
-### 7.1.3. Instruction Structure 
+Có nhiều loại operand:
 
-Each instruction consists of an operation code (or **opcode**) that
-specifies what it does, and one or more **operands** that tell the
-instruction how to do it. For example, the instruction `add $0x2, %eax`
-has the opcode `add` and the operands `$0x2` and `%eax`.
+- **Constant (literal)**: giá trị hằng, được đặt trước dấu `$`. Ví dụ, trong lệnh `add $0x2, %eax`, `$0x2` là một giá trị hằng, tương ứng với giá trị hexa 0x2.
+- **Register**: tham chiếu trực tiếp đến một thanh ghi. Ví dụ, lệnh `mov %rsp, %rbp` chỉ định rằng giá trị trong thanh ghi nguồn `%rsp` sẽ được sao chép vào thanh ghi đích `%rbp`.
+- **Memory**: tham chiếu đến một giá trị trong bộ nhớ chính (RAM) và thường được dùng để tra cứu địa chỉ. Dạng địa chỉ bộ nhớ có thể chứa sự kết hợp giữa thanh ghi và giá trị hằng. Ví dụ, trong lệnh `mov -0x4(%rbp), %eax`, toán hạng `-0x4(%rbp)` là một dạng địa chỉ bộ nhớ. Nó có thể hiểu nôm na là “cộng -0x4 vào giá trị trong thanh ghi `%rbp` (tức là trừ 0x4 khỏi `%rbp`), sau đó thực hiện truy xuất bộ nhớ”. Nếu điều này nghe giống như **pointer dereference** (giải tham chiếu con trỏ), thì đúng là như vậy.
 
+---
 
-Each operand corresponds to a source or destination location for a
-specific operation. Two operand instructions typically follow the
-source, destination (`S`, `D`) format, where the first operand specifies
-a source register, and the second operand specifies the destination.
+### 7.1.4. Ví dụ với các toán hạng (An Example with Operands)
 
+Cách tốt nhất để giải thích chi tiết về operand là đưa ra một ví dụ nhanh.  
+Giả sử bộ nhớ chứa các giá trị sau:
 
-There are multiple types of operands:
+| Address | Value |
+|---------|-------|
+| 0x804   | 0xCA  |
+| 0x808   | 0xFD  |
+| 0x80c   | 0x12  |
+| 0x810   | 0x1E  |
 
+Giả sử thêm rằng các thanh ghi sau chứa các giá trị như sau:
 
+| Register | Value |
+|----------|-------|
+| %rax     | 0x804 |
+| %rbx     | 0x10  |
+| %rcx     | 0x4   |
+| %rdx     | 0x1   |
 
--   **Constant (literal)** values are preceded by the `$` sign. For
-    example, in the instruction `add $0x2, %eax`, `$0x2` is a literal
-    value that corresponds to the hexadecimal value 0x2.
+Khi đó, các operand trong **Bảng 2** sẽ được đánh giá thành các giá trị tương ứng. Mỗi hàng trong bảng khớp một operand với dạng của nó (ví dụ: constant, register, memory), cách nó được dịch, và giá trị của nó.  
+Lưu ý rằng ký hiệu `M[x]` trong ngữ cảnh này biểu thị giá trị tại vị trí bộ nhớ có địa chỉ `x`.
 
--   **Register** forms refer to individual registers. The instruction
-    `mov  %rsp, %rbp` specifies that the value in the source register
-    (`%rsp`) should be copied to the destination location (register
-    `%rbp`).
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
--   **Memory** forms correspond to some value inside main memory (RAM)
-    and are commonly used for address lookups. Memory address forms can
-    contain a combination of registers and constant values. For example,
-    in the instruction `mov -0x4(%rbp),%eax`, the operand `-0x4(%rbp)`
-    is an example of a memory form. It loosely translates to \"add -0x4
-    to the value in register `%rbp` (i.e., subtract 0x4 from `%rbp`),
-    and then perform a memory lookup.\" If this sounds like a pointer
-    dereference, that's because it is!
+---
 
+| Operand         | Form       | Translation                  | Value   |
+|-----------------|------------|------------------------------|---------|
+| `%rcx`          | Register   | `%rcx`                       | 0x4     |
+| `(%rax)`        | Memory     | M[`%rax`] hoặc M[0x804]       | 0xCA    |
+| `$0x808`        | Constant   | 0x808                         | 0x808   |
+| `0x808`         | Memory     | M[0x808]                      | 0xFD    |
+| `0x8(%rax)`     | Memory     | M[`%rax` + 8] hoặc M[0x80c]   | 0x12    |
+| `(%rax, %rcx)`  | Memory     | M[`%rax` + `%rcx`] hoặc M[0x808] | 0xFD |
+| `0x4(%rax, %rcx)` | Memory   | M[`%rax` + `%rcx` + 4] hoặc M[0x80c] | 0x12 |
+| `0x800(,%rdx,4)` | Memory    | M[0x800 + `%rdx`×4] hoặc M[0x804] | 0xCA |
+| `(%rax, %rdx, 8)` | Memory   | M[`%rax` + `%rdx`×8] hoặc M[0x80c] | 0x12 |
 
+**Bảng 2.** Ví dụ về các toán hạng (operands).
 
-### 7.1.4. An Example with Operands 
+Trong **Bảng 2**, ký hiệu `%rcx` biểu thị giá trị được lưu trong thanh ghi `%rcx`. Ngược lại, M[`%rax`] biểu thị rằng giá trị bên trong `%rax` được coi là một địa chỉ, và cần **dereference** (giải tham chiếu) để lấy giá trị tại địa chỉ đó. Do đó, toán hạng `(%rax)` tương ứng với M[0x804], và giá trị tại địa chỉ này là 0xCA.
 
-The best way to explain operands in detail is to present a quick
-example. Suppose that memory contains the following values:
+Một vài lưu ý quan trọng trước khi tiếp tục: mặc dù **Bảng 2** cho thấy nhiều dạng toán hạng hợp lệ, nhưng không phải tất cả các dạng đều có thể dùng thay thế cho nhau trong mọi trường hợp. Cụ thể:
 
+- Dạng **constant** không thể được dùng làm toán hạng đích (destination operand).
+- Dạng **memory** không thể đồng thời là cả nguồn (source) và đích (destination) trong cùng một lệnh.
+- Trong các phép toán có **scaling** (tỉ lệ nhân — xem hai toán hạng cuối trong [Bảng 2](#Operands)), hệ số nhân là tham số thứ ba trong dấu ngoặc. Hệ số nhân có thể là 1, 2, 4 hoặc 8.
 
-+-----------------------------------+-----------------------------------+
-| Address                           | Value                             |
-+===================================+===================================+
-| 0x804                             | 0xCA                              |
-+-----------------------------------+-----------------------------------+
-| 0x808                             | 0xFD                              |
-+-----------------------------------+-----------------------------------+
-| 0x80c                             | 0x12                              |
-+-----------------------------------+-----------------------------------+
-| 0x810                             | 0x1E                              |
-+-----------------------------------+-----------------------------------+
+**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích mã assembly.
 
-Let's also assume that the following registers contain the values shown:
+---
 
+### 7.1.5. Hậu tố của lệnh (Instruction Suffixes)
 
-+-----------------------------------+-----------------------------------+
-| Register                          | Value                             |
-+===================================+===================================+
-| %rax                              | 0x804                             |
-+-----------------------------------+-----------------------------------+
-| %rbx                              | 0x10                              |
-+-----------------------------------+-----------------------------------+
-| %rcx                              | 0x4                               |
-+-----------------------------------+-----------------------------------+
-| %rdx                              | 0x1                               |
-+-----------------------------------+-----------------------------------+
+Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có một **suffix** (hậu tố) cho biết *kích thước* (gắn liền với *kiểu dữ liệu*) của dữ liệu được thao tác ở mức mã lệnh. Compiler sẽ tự động dịch mã sang các lệnh có hậu tố phù hợp. **Bảng 3** cho thấy các hậu tố thông dụng của lệnh trong x86-64.
 
-Then the operands in Table 2 evaluate to the values shown
-there. Each row of the table matches an operand with its form (e.g.,
-constant, register, memory), how it is translated, and its value. Note
-that the notation M\[x\] in this context denotes the value at the memory
-location specified by address x.
+| Suffix | C Type                         | Size (bytes) |
+|--------|--------------------------------|--------------|
+| b      | `char`                         | 1            |
+| w      | `short`                        | 2            |
+| l      | `int` hoặc `unsigned`          | 4            |
+| s      | `float`                        | 4            |
+| q      | `long`, `unsigned long`, tất cả con trỏ | 8 |
+| d      | `double`                       | 8            |
 
+**Bảng 3.** Ví dụ về hậu tố của lệnh.
 
-+-----------------+-----------------+-----------------+-----------------+
-| Operand         | Form            | Translation     | Value           |
-+=================+=================+=================+=================+
-| %rcx            | Register        | %rcx            | 0x4             |
-+-----------------+-----------------+-----------------+-----------------+
-| (%rax)          | Memory          | M\[%rax\] or    | 0xCA            |
-|                 |                 | M\[0x804\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| \$0x808         | Constant        | 0x808           | 0x808           |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x808           | Memory          | M\[0x808\]      | 0xFD            |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x8(%rax)       | Memory          | M\[%rax + 8\]   | 0x12            |
-|                 |                 | or M\[0x80c\]   |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| (%rax, %rcx)    | Memory          | M\[%rax +       | 0xFD            |
-|                 |                 | %rcx\] or       |                 |
-|                 |                 | M\[0x808\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x4(%rax, %rcx) | Memory          | M\[%rax +       | 0x12            |
-|                 |                 | %rcx + 4\] or   |                 |
-|                 |                 | M\[0x80c\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x800(,%rdx,4)  | Memory          | M\[0x800 +      | 0xCA            |
-|                 |                 | %rdx\*4\] or    |                 |
-|                 |                 | M\[0x804\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| (%rax, %rdx, 8) | Memory          | M\[%rax +       | 0x12            |
-|                 |                 | %rdx\*8\] or    |                 |
-|                 |                 | M\[0x80c\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-
-: Table 2. Example operands
-
-In Table 2, the notation `%rcx` indicates the value stored
-in register `%rcx`. In contrast, M\[`%rax`\] indicates that the value
-inside `%rax` should be treated as an address, and to dereference (look
-up) the value at that address. Therefore, the operand `(%rax)`
-corresponds to M\[0x804\] which corresponds to the value 0xCA.
-
-
-A few important notes before continuing. Although Table 2
-shows many valid operand forms, not all forms can be used
-interchangeably in all circumstances. Specifically:
-
-
-
--   Constant forms cannot serve as destination operands.
-
--   Memory forms cannot serve as *both* the source and destination
-    operand in a single instruction.
-
--   In cases of scaling operations (see the last two operands in [Table
-    2](#Operands)), the scaling factor is a third parameter in the
-    parentheses. Scaling factors can be one of 1, 2, 4, or 8.
-
-
-Table 2 is provided as a reference; however, understanding
-key operand forms will help improve the reader's speed in parsing
-assembly language.
-
-
-
-### 7.1.5. Instruction Suffixes 
-
-In several cases in upcoming examples, common and arithmetic
-instructions have a suffix that indicates the *size* (associated with
-the *type*) of the data being operated on at the code level. The
-compiler automatically translates code to instructions with the
-appropriate suffix. Table 3 shows the common suffixes for
-x86-64 instructions.
-
-
-+----------------------+----------------------+-----------------------+
-| Suffix               | C Type               | Size (bytes)          |
-+======================+======================+=======================+
-| b                    | `char`               | 1                     |
-+----------------------+----------------------+-----------------------+
-| w                    | `short`              | 2                     |
-+----------------------+----------------------+-----------------------+
-| l                    | `int` or `unsigned`  | 4                     |
-+----------------------+----------------------+-----------------------+
-| s                    | `float`              | 4                     |
-+----------------------+----------------------+-----------------------+
-| q                    | `long`,              | 8                     |
-|                      | `unsigned long`, all |                       |
-|                      | pointers             |                       |
-+----------------------+----------------------+-----------------------+
-| d                    | `double`             | 8                     |
-+----------------------+----------------------+-----------------------+
-
-: Table 3. Example Instruction Suffixes
-
-Note that instructions involved with conditional execution have
-different suffixes based on the evaluated condition. We cover
-instructions associated with conditional execution in a [later
-section](conditional_control_loops.html#_conditional_control_and_loops).
-
-
-
-
-
-
+Lưu ý rằng các lệnh liên quan đến **conditional execution** (thực thi có điều kiện) sẽ có hậu tố khác nhau tùy thuộc vào điều kiện được đánh giá. Chúng ta sẽ tìm hiểu các lệnh liên quan đến thực thi có điều kiện trong [một phần sau](conditional_control_loops.html#_conditional_control_and_loops).

@@ -1,184 +1,87 @@
+Dưới đây là bản dịch tiếng Việt của mục **5.3. Logic Gates** từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
 
-## 5.3. Logic Gates 
+---
 
-**Logic gates** are the building blocks of the digital circuitry that
-implements arithmetic, control, and storage functionality in a digital
-computer. Designing complicated digital circuits involves employing a
-high degree of abstraction: a designer creates simple circuits that
-implement basic functionality from a small set of basic logic gates;
-these simple circuits, abstracted from their implementation, are used as
-the building blocks for creating more complicated circuits (simple
-circuits are combined together to create new circuits with more
-complicated functionality); these more complicated circuits may be
-further abstracted and used as a building block for creating even more
-complicated functionality; and so on to build complete processing,
-storage, and control components of a processor.
+## 5.3. Cổng Logic
 
+**Logic gates** (cổng logic) là các khối xây dựng cơ bản của mạch số dùng để triển khai các chức năng số học, điều khiển và lưu trữ trong máy tính số. Việc thiết kế các mạch số phức tạp đòi hỏi mức độ trừu tượng cao: người thiết kế tạo ra các mạch đơn giản thực hiện chức năng cơ bản từ một tập nhỏ các cổng logic cơ bản; các mạch đơn giản này, sau khi được trừu tượng hóa khỏi phần triển khai chi tiết, sẽ được dùng làm khối xây dựng để tạo ra các mạch phức tạp hơn (các mạch đơn giản được kết hợp lại để tạo ra mạch mới có chức năng phức tạp hơn); các mạch phức tạp hơn này lại có thể được trừu tượng hóa tiếp và dùng làm khối xây dựng cho các chức năng phức tạp hơn nữa; và cứ thế tiếp tục để xây dựng nên các thành phần xử lý, lưu trữ và điều khiển hoàn chỉnh của một bộ xử lý.
 
->> Transistors
+> Transistors
 
+Các cổng logic được tạo ra từ các transistor được khắc lên vật liệu bán dẫn (ví dụ: chip silicon). Transistor hoạt động như công tắc điều khiển dòng điện chạy qua chip. Một transistor có thể chuyển trạng thái giữa bật và tắt (tương ứng với đầu ra điện áp cao hoặc thấp). Trạng thái đầu ra của nó phụ thuộc vào trạng thái hiện tại và trạng thái đầu vào (điện áp cao hoặc thấp). Các giá trị nhị phân được mã hóa bằng điện áp cao (1) và thấp (0), và các cổng logic được triển khai bằng cách sắp xếp một số transistor để thực hiện hành động chuyển mạch trên các đầu vào nhằm tạo ra đầu ra của cổng logic. Số lượng transistor có thể đặt trên một mạch tích hợp (chip) là một chỉ số sơ bộ về sức mạnh của nó; càng nhiều transistor trên mỗi chip thì càng có nhiều khối xây dựng để triển khai nhiều chức năng hoặc lưu trữ hơn.
 
-Logic gates are created from transistors that are etched into a
-semiconductor material (e.g. silicon chips). Transistors act as switches
-that control electrical flow through the chip. A transistor can switch
-its state between on or off (between a high or low voltage output). Its
-output state depends on its current state plus its input state (high or
-low voltage). Binary values are encoded with these high (1) and low (0)
-voltages, and logic gates are implemented by arrangements of a few
-transistors that perform switching actions on the inputs to produce the
-logic gate's output. The number of transistors that can fit on an
-integrated circuit (a chip) is a rough measure of its power; with more
-transistors per chip, there are more building blocks to implement more
-functionality or storage.
+---
 
+### 5.3.1. Cổng Logic Cơ Bản
 
+Ở cấp độ thấp nhất, tất cả các mạch đều được xây dựng bằng cách liên kết các cổng logic với nhau. Cổng logic thực hiện các phép toán boolean trên các toán hạng boolean (0 hoặc 1). Bộ ba cổng **AND**, **OR** và **NOT** tạo thành một tập đầy đủ các cổng logic từ đó có thể xây dựng bất kỳ mạch nào. Một cổng logic nhận một (NOT) hoặc hai (AND và OR) giá trị đầu vào nhị phân và tạo ra một giá trị đầu ra nhị phân là kết quả của phép toán logic từng bit trên đầu vào. Ví dụ, đầu vào 0 vào cổng NOT sẽ cho ra 1 (1 là NOT(0)). Một **truth table** (bảng chân trị – "bảng giá trị logic") của một phép toán logic liệt kê giá trị kết quả của phép toán với từng tổ hợp đầu vào. Bảng 1 dưới đây trình bày bảng chân trị của các cổng logic AND, OR và NOT.
 
-### 5.3.1. Basic Logic Gates 
+| A | B | A AND B | A OR B | NOT A |
+|---|---|----------|---------|--------|
+| 0 | 0 | 0        | 0       | 1      |
+| 0 | 1 | 0        | 1       | 1      |
+| 1 | 0 | 0        | 1       | 0      |
+| 1 | 1 | 1        | 1       | 0      |
 
-At the lowest level, all circuits are built from linking logic gates
-together. Logic gates implement boolean operations on boolean operands
-(0 or 1). **AND**, **OR**, and **NOT** form a complete set of logic
-gates from which any circuit can be constructed. A logic gate has one
-(NOT) or two (AND and OR) binary input values and produces a binary
-output value that is the bitwise logical operation on its input. For
-example, an input value of 0 to a NOT gate outputs 1 (1 is NOT(0)). A
-**truth table** for a logical operation lists the operation's value for
-each permutation of inputs. Table 1 shows the truth
-tables for the AND, OR, and NOT logic gates.
+: Bảng 1. Bảng chân trị cho các phép toán logic cơ bản.
 
-
-+-------------+-------------+-------------+-------------+-------------+
-| A           | B           | A AND B     | A OR B      | NOT A       |
-+=============+=============+=============+=============+=============+
-| 0           | 0           | 0           | 0           | 1           |
-+-------------+-------------+-------------+-------------+-------------+
-| 0           | 1           | 0           | 1           | 1           |
-+-------------+-------------+-------------+-------------+-------------+
-| 1           | 0           | 0           | 1           | 0           |
-+-------------+-------------+-------------+-------------+-------------+
-| 1           | 1           | 1           | 1           | 0           |
-+-------------+-------------+-------------+-------------+-------------+
-
-: Table 1. Truth Tables for Basic Logic Operations.
-
-Figure 1 shows how computer architects represent these
-gates in circuit drawings.
-
-
-
+Hình 1 minh họa cách các kiến trúc sư máy tính biểu diễn các cổng logic này trong sơ đồ mạch.
 
 ![AND, OR, and NOT logic gates.](_images/gates.png)
 
+Dưới đây là bản dịch tiếng Việt của phần nội dung bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
 
-Figure 1. The AND, OR, and NOT logic gates for single-bit inputs produce
-a single-bit output.
+---
 
+**Hình 1. Các cổng logic AND, OR và NOT với đầu vào 1-bit tạo ra đầu ra 1-bit.**
 
-A multi-bit version of a logic gate (for *M*-bit input and output) is a
-very simple circuit constructed using *M* one-bit logic gates.
-Individual bits of the *M*-bit input value are each input into a
-different one-bit gate that produces the corresponding output bit of the
-*M*-bit result. For example, Figure 2 shows a 4-bit AND
-circuit built from four 1-bit AND gates.
-
-
-
+Phiên bản nhiều bit của một cổng logic (với đầu vào và đầu ra *M*-bit) là một mạch rất đơn giản được xây dựng từ *M* cổng logic 1-bit. Mỗi bit riêng lẻ trong giá trị đầu vào *M*-bit được đưa vào một cổng logic 1-bit khác nhau, và mỗi cổng sẽ tạo ra bit đầu ra tương ứng trong kết quả *M*-bit. Ví dụ, Hình 2 minh họa một mạch AND 4-bit được xây dựng từ bốn cổng AND 1-bit.
 
 ![4-bit AND gate built from 1-bit AND gates.](_images/4bitand.png)
 
+**Hình 2. Mạch AND 4-bit được xây dựng từ bốn cổng AND 1-bit.**
 
-Figure 2. A 4-bit AND circuit built from four 1-bit AND gates.
+Loại mạch đơn giản này – chỉ mở rộng độ rộng bit của đầu vào và đầu ra cho một cổng logic – thường được gọi là cổng *M*-bit, với *M* là số bit đầu vào và đầu ra.
 
+---
 
-This type of very simple circuit, one that just expands input and output
-bit width for a logic gate, is often referred to as an *M*-bit gate for
-a particular value of *M* specifying the input and output bit width
-(number of bits).
+### 5.3.2. Các Cổng Logic Khác
 
+Mặc dù tập hợp các cổng logic gồm AND, OR và NOT là đủ để triển khai bất kỳ mạch nào, vẫn có một số cổng logic cơ bản khác thường được sử dụng trong thiết kế mạch số. Các cổng bổ sung này bao gồm:
 
+- **NAND** (phủ định của A AND B),
+- **NOR** (phủ định của A OR B),
+- **XOR** (exclusive OR – "hoặc độc quyền").
 
-### 5.3.2. Other Logic Gates 
+Bảng chân trị của các cổng này được trình bày trong Bảng 2.
 
-Even though the set of logic gates consisting of AND, OR, and NOT is
-sufficient for implementing any circuit, there are other basic logic
-gates that are often used to construct digital circuits. These
-additional logic gates include NAND (the negation of A AND B), NOR (the
-negation of A OR B), and XOR (exclusive OR). Their truth tables are
-shown in Table 2.
+| A | B | A NAND B | A NOR B | A XOR B |
+|---|---|-----------|----------|----------|
+| 0 | 0 | 1         | 1        | 0        |
+| 0 | 1 | 1         | 0        | 1        |
+| 1 | 0 | 1         | 0        | 1        |
+| 1 | 1 | 0         | 0        | 0        |
 
+: Bảng 2. Bảng chân trị của các cổng NAND, NOR và XOR.
 
-+-------------+-------------+-------------+-------------+-------------+
-| A           | B           | A NAND B    | A NOR B     | A XOR B     |
-+=============+=============+=============+=============+=============+
-| 0           | 0           | 1           | 1           | 0           |
-+-------------+-------------+-------------+-------------+-------------+
-| 0           | 1           | 1           | 0           | 1           |
-+-------------+-------------+-------------+-------------+-------------+
-| 1           | 0           | 1           | 0           | 1           |
-+-------------+-------------+-------------+-------------+-------------+
-| 1           | 1           | 0           | 0           | 0           |
-+-------------+-------------+-------------+-------------+-------------+
-
-: Table 2. NAND, NOR, XOR truth tables.
-
-The NAND, NOR, and XOR gates appear in circuit drawings, as shown in
-Figure 3.
-
-
-
+Các cổng NAND, NOR và XOR thường xuất hiện trong sơ đồ mạch, như minh họa trong Hình 3.
 
 ![XOR, NAND, and NOR logic gates.](_images/nandnorxor.png)
 
+**Hình 3. Các cổng logic NAND, NOR và XOR.**
 
-Figure 3. The NAND, NOR, and XOR logic gates.
+Vòng tròn ở cuối các cổng NAND và NOR biểu thị phép phủ định hoặc NOT. Ví dụ, cổng NOR trông giống như cổng OR với một vòng tròn ở cuối, biểu thị rằng NOR là phủ định của OR.
 
+> Tập hợp tối thiểu của các cổng logic
 
-The circle on the end of the NAND and NOR gates represents negation or
-NOT. For example, the NOR gate looks like an OR gate with a circle on
-the end, representing the fact that NOR is the negation of OR.
+Các cổng NAND, NOR và XOR không bắt buộc phải có để xây dựng mạch, nhưng chúng là các cổng bổ sung được thêm vào tập {AND, OR, NOT} và thường được sử dụng trong thiết kế mạch. Bất kỳ cổng nào trong số này đều có thể được triển khai từ transistor (khối xây dựng của cổng logic), hoặc từ tổ hợp các cổng logic khác.
 
+Trong tập hợp mở rộng {AND, OR, NOT, NAND, NOR, XOR}, tồn tại một số tập con tối thiểu đủ để xây dựng bất kỳ mạch nào. Ví dụ, tập con {AND, NOT} là một tập tối thiểu: biểu thức (A OR B) tương đương với NOT(NOT(A) AND NOT(B)). Tuy nhiên, thay vì sử dụng tập tối thiểu, ta sử dụng tập {AND, OR, NOT} vì đây là tập dễ hiểu nhất.
 
->> Minimal subsets of logic gates
-
-
-NAND, NOR, and XOR are not necessary for building circuits, but they are
-additional gates added to the set {AND, OR, NOT} that are commonly used
-in circuit design. Any of these gates can be implemented from
-transistors (the building block of logic gates), or can be implemented
-from combinations of other gates.
-
-
-Of the larger set {AND, OR, NOT, NAND, NOR, XOR}, there exist several
-minimal subsets of logic gates that alone are sufficient for building
-any circuit. For example, the subset {AND, NOT} is one minimal subset:
-(A OR B) is equivalent to NOT(NOT(A) AND NOT(B)). Rather than using a
-minimal subset of gates, we we use the set {AND, OR, NOT} because it is
-the easiest set to understand.
-
-
-Because NAND, NOR, and XOR are not necessary, their functionality can be
-implemented by combining AND, OR, and NOT gates into circuits that
-implement NAND, NOR, and XOR functions. For example, NOR can be built
-using a NOT combined with an OR gate, `(A NOR B) ≡ NOT(A OR B)`), as
-shown in Figure 4.
-
-
-
+Vì NAND, NOR và XOR không bắt buộc, nên chức năng của chúng có thể được triển khai bằng cách kết hợp các cổng AND, OR và NOT để tạo thành các mạch thực hiện chức năng tương ứng. Ví dụ, NOR có thể được xây dựng bằng cách kết hợp một cổng OR và một cổng NOT: `(A NOR B) ≡ NOT(A OR B)`, như minh họa trong Hình 4.
 
 ![NOR built from OR and NOT gates: OR output is input to NOT gate](_images/nornotor.png)
 
+**Hình 4. Cổng NOR có thể được triển khai bằng cách kết hợp một cổng OR và một cổng NOT.** Các đầu vào A và B được đưa qua cổng OR, và đầu ra của cổng OR được đưa vào cổng NOT (NOR là phủ định của OR).
 
-Figure 4. The NOR gate can be implemented using an OR and a NOT gate.
-The inputs, A and B, are first fed through an OR gate, and the OR gate's
-output is input to a NOT gate (NOR is the NOT of OR).
-
-
-Today's integrated circuits chips are built using CMOS technology, which
-uses NAND as the basic building block of circuits on the chip. The NAND
-gate by itself makes up another minimal subset of complete logic gates.
-
-
-
-
-
-
+Các chip mạch tích hợp hiện đại ngày nay được xây dựng bằng công nghệ CMOS, trong đó cổng NAND được sử dụng làm khối xây dựng cơ bản của các mạch trên chip. Cổng NAND tự nó tạo thành một tập hợp tối thiểu khác của các cổng logic đầy đủ.

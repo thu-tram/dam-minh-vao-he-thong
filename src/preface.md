@@ -1,4 +1,4 @@
-# Preface {#preface .page}
+# Preface
 
 In today's world, much emphasis is placed on learning to code, and
 programming is touted as a golden ticket to a successful life. Despite
@@ -26,7 +26,7 @@ first.
 If you're ready to proceed, please come in --- the water is warm!
 
 
-## What This Book Is About {#_what_this_book_is_about .discrete}
+## What This Book Is About
 
 Our book is titled *Dive into Systems* and is meant to be a gentle
 introduction to topics in computer systems, including C programming,
@@ -71,7 +71,7 @@ If you have feedback for us, please drop us a line. We would love to
 hear from you!
 
 
-## Ways to Use This Book {#_ways_to_use_this_book .discrete}
+## Ways to Use This Book
 
 Our textbook covers a broad range of topics related to computer systems,
 specifically targeting intermediate-level courses such as introduction
@@ -122,7 +122,7 @@ the entire chapter.
 ![Chapters 1 and 4 are independent of other chapters. Chapters 2, 3, 5, and 6-10 depend on chapter 1. Chapters 5 and 13 additionally depend on chapter 4. The remaining chapters depend on a combination of the above chapters.](_images/chaptdeps.png)
 
 
-### Summary of Chapter Topics {#_summary_of_chapter_topics .discrete}
+### Summary of Chapter Topics
 
 
 -   Chapter 0, *Introduction*: Introduction to computer systems and some
@@ -185,7 +185,7 @@ the entire chapter.
     computing and MapReduce.
 
 
-### Example Uses of This Book {#_example_uses_of_this_book .discrete}
+### Example Uses of This Book
 
 *Dive into Systems* can be used as a primary textbook for courses that
 introduce computer systems topics, or individual chapters can be used to
@@ -229,7 +229,7 @@ Finally, Chapters 2 and 3 are used as C programming and debugging
 references in many of our courses.
 
 
-### Available Online {#_available_online .discrete}
+### Available Online
 
 The free online version of our textbook is available at
 [https://diveintosystems.org/](https://diveintosystems.org/){.bare}.

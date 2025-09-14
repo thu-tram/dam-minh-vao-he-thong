@@ -40,7 +40,7 @@
 
 ## 14.9. Exercises 
 
-### Exercises for 14.2 Hello Threading! {#_exercises_for_14_2_hello_threading .discrete}
+### Exercises for 14.2 Hello Threading!
 
 
 1.  Implement the entirety of the scalar_multiply program. Time your
@@ -64,7 +64,7 @@
     of elements.
 
 
-### Exercises for 14.3 Synchronization {#_exercises_for_14_3_synchronization .discrete}
+### Exercises for 14.3 Synchronization
 
 
 1.  Implement a parallel version of the Step 2 of the CountSort
@@ -77,7 +77,7 @@
 3.  Time the total performance of the new CountSort program.
 
 
-### Exercises for 14.7 OpenMP {#_exercises_for_14_7_openmp .discrete}
+### Exercises for 14.7 OpenMP
 
 
 1.  OpenMP: The `writeElems()` function makes the assumption that the

@@ -32,7 +32,7 @@
 
 ## 9.11. Exercises 
 
-### Chapter 9 Interactive Exercises (Early Release) {#_chapter_9_interactive_exercises_early_release .discrete}
+### Chapter 9 Interactive Exercises (Early Release)
 
 
 -   [All Chapter 9

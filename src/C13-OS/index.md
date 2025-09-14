@@ -61,7 +61,7 @@ these other general-purpose operating systems implement similar
 functionality, albeit sometimes in different ways.
 
 
-### The Kernel {#_the_kernel .discrete}
+### The Kernel
 
 The term **operating system** is often used to refer to a large set of
 system-level software that performs some kind of resource management and

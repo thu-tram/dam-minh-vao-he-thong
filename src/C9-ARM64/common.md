@@ -245,9 +245,7 @@ red (upper-left) arrow in the following figures visually indicates the
 currently executing instruction.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame2](_images/ex1_2.png)
 
@@ -261,9 +259,7 @@ register contains the address of the next instruction to execute, or
 0x728.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame3](_images/ex1_3.png)
 
@@ -277,9 +273,7 @@ Once this instruction executes, `pc` advances to the address of the next
 instruction, or 0x72c.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame4](_images/ex1_4.png)
 
@@ -297,9 +291,7 @@ affected by the `str` operation. As far as the program is concerned, the
 executes, `pc` advances to address 0x730.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame5](_images/ex1_5.png)
 
@@ -312,9 +304,7 @@ in register `w0`. Register `pc` advances to the next instruction to be
 executed, or 0x734.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame6](_images/ex1_6.png)
 
@@ -335,9 +325,7 @@ As a result, it is common to see a `sub sp, sp, #v` instruction (where
 `add sp, sp, #v` at the end.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame7](_images/ex1_7.png)
 

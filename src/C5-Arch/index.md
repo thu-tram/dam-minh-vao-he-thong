@@ -1,128 +1,29 @@
-## 5. What von Neumann Knew: Computer Architecture 
+## 5. Những gì von Neumann đã biết: Kiến trúc Máy tính
 
-The term **computer architecture** may refer to the entire hardware
-level of the computer. However, it is often used to refer to the design
-and implementation of the digital processor part of the computer
-hardware, and we focus on the computer processor architecture in this
-chapter.
+Thuật ngữ **computer architecture** (kiến trúc máy tính) có thể dùng để chỉ toàn bộ tầng phần cứng của máy tính. Tuy nhiên, nó thường được dùng để chỉ việc thiết kế và triển khai phần bộ xử lý số trong phần cứng máy tính, và trong chương này ta sẽ tập trung vào kiến trúc bộ xử lý máy tính.
 
+**Central processing unit** (CPU – "bộ xử lý trung tâm", hay processor – "bộ xử lý") là phần của máy tính thực thi các lệnh chương trình trên dữ liệu chương trình. Lệnh chương trình và dữ liệu được lưu trong bộ nhớ truy cập ngẫu nhiên (RAM) của máy tính. Một bộ xử lý số cụ thể sẽ triển khai một **instruction set architecture** (ISA – "kiến trúc tập lệnh"), định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của chúng, tập hợp các thanh ghi của CPU, và ảnh hưởng của việc thực thi lệnh lên trạng thái của bộ xử lý. Có nhiều ISA khác nhau, bao gồm SPARC, IA32, MIPS, ARM, ARC, PowerPC và x86 (trong đó x86 bao gồm IA32 và x86-64). Một **microarchitecture** (vi kiến trúc) định nghĩa mạch điện của một triển khai cụ thể của ISA. Các triển khai microarchitecture của cùng một ISA có thể khác nhau miễn là chúng tuân thủ định nghĩa của ISA. Ví dụ, Intel và AMD đều sản xuất các bộ vi xử lý triển khai ISA IA32 theo cách riêng.
 
-The **central processing unit** (CPU, or processor) is the part of the
-computer that executes program instructions on program data. Program
-instructions and data are stored in the computer's random access memory
-(RAM). A particular digital processor implements a specific
-**instruction set architecture** (ISA), which defines the set of
-instructions and their binary encoding, the set of CPU registers, and
-the effects of executing instructions on the state of the processor.
-There are many different ISAs, including SPARC, IA32, MIPS, ARM, ARC,
-PowerPC, and x86 (the latter including IA32 and x86-64). A
-**microarchitecture** defines the circuitry of an implementation of a
-specific ISA. Microarchitecture implementations of the same ISA can
-differ as long as they implement the ISA definition. For example, Intel
-and AMD produce different microprocessor implementations of IA32 ISA.
+Một số ISA định nghĩa **reduced instruction set computer** (RISC – "máy tính tập lệnh rút gọn"), trong khi số khác định nghĩa **complex instruction set computer** (CISC – "máy tính tập lệnh phức tạp"). ISA kiểu RISC có một tập nhỏ các lệnh cơ bản, mỗi lệnh thực thi rất nhanh; mỗi lệnh thường hoàn tất trong một chu kỳ xung nhịp của bộ xử lý, và trình biên dịch sẽ kết hợp nhiều lệnh RISC cơ bản để triển khai các chức năng cấp cao hơn. Ngược lại, lệnh trong ISA kiểu CISC cung cấp chức năng cấp cao hơn so với lệnh RISC. Kiến trúc CISC cũng định nghĩa tập lệnh lớn hơn RISC, hỗ trợ các chế độ định địa chỉ phức tạp hơn (cách biểu diễn vị trí dữ liệu trong bộ nhớ chương trình), và hỗ trợ lệnh có độ dài biến đổi. Một lệnh CISC đơn lẻ có thể thực hiện một chuỗi các chức năng cấp thấp và mất nhiều chu kỳ xung nhịp để hoàn tất. Cùng chức năng đó trên kiến trúc RISC sẽ cần nhiều lệnh hơn.
 
+> Lịch sử của RISC và CISC
 
-Some ISAs define a **reduced instruction set computer** (RISC), and
-others define a **complex instruction set computer** (CISC). RISC ISAs
-have a small set of basic instructions that each execute quickly; each
-instruction executes in about a single processor clock cycle, and
-compilers combine sequences of several basic RISC instructions to
-implement higher-level functionality. In contrast, a CISC ISA's
-instructions provide higher-level functionality than RISC instructions.
-CISC architectures also define a larger set of instructions than RISC,
-support more complicated addressing modes (ways to express the memory
-locations of program data), and support variable-length instructions. A
-single CISC instruction may perform a sequence of low-level
-functionality and may take several processor clock cycles to execute.
-This same functionality would require multiple instructions on a RISC
-architecture.
+Vào đầu thập niên 1980, các nhà nghiên cứu tại Đại học Berkeley và Stanford đã phát triển RISC thông qua dự án Berkeley RISC và dự án Stanford MIPS. David Patterson (Berkeley) và John Hennessy (Stanford) đã nhận giải thưởng Turing năm 2017[^1] – giải thưởng cao nhất trong ngành điện toán – cho công trình phát triển kiến trúc RISC.
 
+Tại thời điểm đó, kiến trúc RISC là một bước ngoặt so với quan điểm phổ biến rằng ISA cần ngày càng phức tạp để đạt hiệu năng cao. “Cách tiếp cận RISC khác với các máy tính CISC phổ biến lúc bấy giờ ở chỗ nó yêu cầu một tập nhỏ các lệnh đơn giản và tổng quát (các chức năng mà máy tính cần thực hiện), sử dụng ít transistor hơn so với tập lệnh phức tạp và giảm khối lượng công việc mà máy tính phải xử lý.”[^2]
 
->> The History of RISC versus CISC
+ISA kiểu CISC biểu diễn chương trình bằng ít lệnh hơn so với RISC, thường dẫn đến tệp thực thi chương trình nhỏ hơn. Trên các hệ thống có bộ nhớ chính nhỏ, kích thước tệp thực thi là yếu tố quan trọng ảnh hưởng đến hiệu năng chương trình, vì tệp lớn sẽ chiếm nhiều không gian RAM, làm giảm bộ nhớ dành cho các phần khác của chương trình đang chạy. Các vi kiến trúc dựa trên CISC cũng thường được tối ưu hóa để thực thi hiệu quả các lệnh CISC có độ dài biến đổi và chức năng cao. Mạch điện chuyên biệt để thực thi các lệnh phức tạp có thể giúp thực thi hiệu quả hơn các chức năng cấp cao cụ thể, nhưng phải đánh đổi bằng việc tăng độ phức tạp cho toàn bộ quá trình thực thi lệnh.
 
+Khi so sánh RISC với CISC, chương trình RISC có nhiều lệnh hơn để thực thi, nhưng mỗi lệnh lại được thực thi hiệu quả hơn hầu hết các lệnh CISC, và RISC cho phép thiết kế vi kiến trúc đơn giản hơn CISC. Chương trình CISC có ít lệnh hơn, và vi kiến trúc CISC được thiết kế để thực thi hiệu quả các lệnh phức tạp hơn, nhưng lại yêu cầu thiết kế vi kiến trúc phức tạp hơn và xung nhịp cao hơn. Nhìn chung, bộ xử lý RISC mang lại thiết kế hiệu quả hơn và hiệu năng tốt hơn. Khi dung lượng bộ nhớ máy tính ngày càng tăng, kích thước tệp thực thi không còn là yếu tố quan trọng đối với hiệu năng chương trình. Tuy nhiên, CISC vẫn là ISA chiếm ưu thế, phần lớn là do được ngành công nghiệp triển khai và hỗ trợ.
 
-In the early 1980s, researchers at Berkeley and Stanford universities
-developed RISC through the Berkeley RISC project and the Stanford MIPS
-project. David Patterson of Berkeley and John Hennessy of Stanford won
-the 2017 Turing Award^1^ (the highest award in computing) for their work
-developing RISC architectures.
+Hiện nay, CISC vẫn là ISA chủ đạo cho máy tính để bàn và nhiều máy chủ cấp cao. Ví dụ, các ISA x86 của Intel đều dựa trên CISC. ISA kiểu RISC phổ biến hơn trong các máy chủ cao cấp (ví dụ: SPARC) và thiết bị di động (ví dụ: ARM) nhờ yêu cầu năng lượng thấp. Một triển khai vi kiến trúc cụ thể của ISA kiểu RISC hoặc CISC có thể kết hợp cả thiết kế RISC và CISC bên trong. Ví dụ, hầu hết các bộ xử lý CISC sử dụng microcode để mã hóa một số lệnh CISC thành tập lệnh giống RISC hơn mà bộ xử lý bên dưới sẽ thực thi, và một số tập lệnh RISC hiện đại cũng chứa một vài lệnh phức tạp hoặc chế độ định địa chỉ nâng cao hơn so với tập lệnh MIPS và Berkeley RISC ban đầu.
 
+Tất cả các bộ xử lý hiện đại, bất kể ISA của chúng là gì, đều tuân theo mô hình kiến trúc von Neumann. Thiết kế đa dụng của kiến trúc von Neumann cho phép nó thực thi bất kỳ loại chương trình nào. Nó sử dụng mô hình lưu trữ chương trình, nghĩa là lệnh chương trình được lưu trong bộ nhớ máy tính cùng với dữ liệu chương trình, và cả hai đều là đầu vào cho bộ xử lý.
 
-At the time of its development, the RISC architecture was a radical
-departure from the commonly held view that ISAs needed to be
-increasingly complex to achieve high performance. \"The RISC approach
-differed from the prevailing complex instruction set computer (CISC)
-computers of the time in that it required a small set of simple and
-general instructions (functions a computer must perform), requiring
-fewer transistors than complex instruction sets and reducing the amount
-of work a computer must perform.\"^2^
+Chương này giới thiệu kiến trúc von Neumann cùng với nguồn gốc và các thành phần nền tảng của kiến trúc máy tính hiện đại. Ta sẽ xây dựng một bộ xử lý số (CPU) ví dụ dựa trên mô hình kiến trúc von Neumann, thiết kế CPU từ các mạch số được xây dựng từ các khối cổng logic, và trình bày cách CPU thực thi các lệnh chương trình.
 
-
-CISC ISAs express programs in fewer instructions than RISC, often
-resulting in smaller program executables. On systems with small main
-memory, the size of the program executable is an important factor in the
-program's performance, since a large executable leaves less RAM space
-available for other parts of a running program's memory space.
-Microarchitectures based on CISC are also typically specialized to
-efficiently execute the CISC variable-length and higher-functionality
-instructions. Specialized circuitry for executing more complex
-instructions may result in more efficient execution of specific
-higher-level functionality, but at the cost of requiring more complexity
-for all instruction execution.
-
-
-In comparing RISC to CISC, RISC programs contain more total instructions
-to execute, but each instruction executes much more efficiently than
-most CISC instructions, and RISCs allow for simpler microarchitecture
-designs than CISC. CISC programs contain fewer instructions, and CISC
-microarchitectures are designed to execute more complicated instructions
-efficiently, but they require more complex microarchitecture designs and
-faster clock rates. In general, RISC processors result in more efficient
-design and better performance. As computer memory sizes have increased
-over time, the size of the program executable is less important to a
-program's performance. CISC, however, has been the dominant ISA due in
-large part to it being implemented by and supported by industry.
-
-
-Today, CISC remains the dominant ISA for desktop and many server-class
-computers. For example, Intel's x86 ISAs are CISC-based. RISC ISAs are
-more commonly seen in high-end servers (e.g. SPARC) and in mobile
-devices (e.g. ARM) due to their low power requirements. A particular
-microarchitecture implementation of a RISC or CISC ISA may incorporate
-both RISC and CISC design under the covers. For example, most CISC
-processors use microcode to encode some CISC instructions in a more
-RISC-like instruction set that the underlying processor executes, and
-some modern RISC instruction sets contain a few more complex
-instructions or addressing modes than the initial MIPS and Berkeley RISC
-instruction sets.
-
-
-All modern processors, regardless of their ISA, adhere to the von
-Neumann architecture model. The general-purpose design of the von
-Neumann architecture allows it to execute any type of program. It uses a
-stored-program model, meaning that the program instructions reside in
-computer memory along with program data, and both are inputs to the
-processor.
-
-
-This chapter introduces the von Neumann architecture and the ancestry
-and components that underpin modern computer architecture. We build an
-example digital processor (CPU) based on the von Neumann architecture
-model, design a CPU from digital circuits that are constructed from
-logic gate building blocks, and demonstrate how the CPU executes program
-instructions.
-
-
-### References {#_references .discrete}
-
-
-1.  ACM A. M. Turing Award Winners.
-    [https://amturing.acm.org/](https://amturing.acm.org/){.bare}
-
-2.  \"Pioneers of Modern Computer Architecture Receive ACM A.M. Turing
-    Award\", ACM Media Center Notice, March 2018.
-    [https://www.acm.org/media-center/2018/march/turing-award-2017](https://www.acm.org/media-center/2018/march/turing-award-2017){.bare}
-
+[^1]: ACM Turing Award 2017 – David Patterson & John Hennessy.  
+[^2]: Hennessy, John & Patterson, David. *Computer Architecture: A Quantitative Approach*. Morgan Kaufmann, 2017.
 
 
 

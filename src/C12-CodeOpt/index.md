@@ -58,7 +58,7 @@ cannot) do, and how programmers can partner with their compilers and
 profiling tools to help improve their code.
 
 
-### What Compilers Already Do {#_what_compilers_already_do .discrete}
+### What Compilers Already Do
 
 Several of the common optimizations performed by virtually every
 compiler are described briefly in the upcoming sections. Students should
@@ -200,7 +200,7 @@ the expression `total % 8` with `total & 7` given that bitwise
 operations are performed with a single fast instruction.
 
 
-### What Compilers Cannot Always Do: Benefits of Learning Code Optimization {#_what_compilers_cannot_always_do_benefits_of_learning_code_optimization .discrete}
+### What Compilers Cannot Always Do: Benefits of Learning Code Optimization
 
 Given the benefits of optimizing compilers, it may not be immediately
 obvious why learning code optimization is useful. It may be tempting to
@@ -459,7 +459,7 @@ the readability of the original `shiftAdd` function while enabling the
 compiler to optimize the function.
 
 
-### Partnering with Your Compiler: A Sample Program {#_partnering_with_your_compiler_a_sample_program .discrete}
+### Partnering with Your Compiler: A Sample Program
 
 In the following sections, we concentrate on learning more about popular
 types of optimizations and discuss programming and profiling strategies
@@ -546,7 +546,7 @@ we can modify our program to make it easier for the compiler to
 optimize.
 
 
-### References {#_references .discrete}
+### References
 
 
 1.  John Regehr. \"A Guide to Undefined Behavior in C and C++, Part 1\".

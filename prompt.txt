@@ -25,5 +25,6 @@ Một số quy ước trong bản dịch:
   - Giữ nguyên văn bản bên trong.
   - Đặt toàn bộ văn bản đó vào blockquote Markdown (`>`).
   - Nếu có xuống dòng trong đoạn văn thì giữ nguyên.
+- Định dạng lại bảng -> bảng markdown cho dễ đọc.
 
-Văn bản cần dịch ở trong tệp Markdown mà mình đã gửi.
+Văn bản cần dịch đây:

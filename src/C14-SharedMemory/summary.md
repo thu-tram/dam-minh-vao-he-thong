@@ -48,7 +48,7 @@ and OpenMP utilize the **shared memory** model of communication, as
 threads share data in a common memory space.
 
 
-### Key Takeaways {#_key_takeaways .discrete}
+### Key Takeaways
 
 ::: dlist
 
@@ -96,7 +96,7 @@ Not all components of a program are parallelizable
     scalability when ascertaining the performance of their programs.
 
 
-### Further Reading {#_further_reading .discrete}
+### Further Reading
 
 This chapter is meant to give a taste of concurrency topics with
 threads; it is by no means exhaustive. To learn more about programming

@@ -489,7 +489,7 @@ A deeper discussion of OpenMP is beyond the scope of this book, but
 there are useful free resources^1,2^ for learning OpenMP.
 
 
-### References: {#_references .discrete}
+### References:
 
 
 1.  Blaise Barney. \"OpenMP\".

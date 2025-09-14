@@ -1,124 +1,26 @@
+## 5.7. Pipelining: Làm cho CPU nhanh hơn
 
-## 5.7. Pipelining: Making the CPU Faster 
-
-Our four-stage CPU takes four cycles to execute one instruction: the
-first cycle is used to fetch the instruction from memory; the second to
-decode the instruction and read operands from the register file; the
-third for the ALU to execute the operation; and the fourth to write back
-the ALU result to a register in the register file. To execute a sequence
-of *N* instructions takes *4N* clock cycles, as each is executed one at
-a time, in order, by the CPU.
-
-
-
+CPU bốn giai đoạn của chúng ta cần bốn chu kỳ xung nhịp để thực thi một lệnh: chu kỳ đầu tiên dùng để nạp lệnh từ bộ nhớ; chu kỳ thứ hai để giải mã lệnh và đọc toán hạng từ register file; chu kỳ thứ ba để ALU thực hiện phép toán; và chu kỳ thứ tư để ghi kết quả từ ALU vào một thanh ghi trong register file. Để thực thi một chuỗi gồm *N* lệnh, CPU cần *4N* chu kỳ xung nhịp, vì mỗi lệnh được thực thi tuần tự, từng cái một.
 
 ![12 cycles to complete 3 instruction](_images/4instrcycles.png)
 
+**Hình 1. Thực thi ba lệnh cần tổng cộng 12 chu kỳ.**
 
-Figure 1. Executing three instructions takes 12 total cycles.
+Hình 1 minh họa ba lệnh cần tổng cộng 12 chu kỳ để thực thi, tức là bốn chu kỳ cho mỗi lệnh, dẫn đến CPI bằng 4 (CPI là số chu kỳ trung bình để thực thi một lệnh). Tuy nhiên, mạch điều khiển của CPU có thể được cải tiến để đạt giá trị CPI tốt hơn (thấp hơn).
 
+Khi xem xét mô hình thực thi mà mỗi lệnh cần bốn chu kỳ, rồi lệnh tiếp theo cũng cần bốn chu kỳ, và cứ thế tiếp tục, ta thấy rằng mạch CPU tương ứng với mỗi giai đoạn chỉ thực sự hoạt động một lần mỗi bốn chu kỳ. Ví dụ, sau giai đoạn Fetch, mạch fetch trong CPU không được sử dụng để thực hiện bất kỳ hành động hữu ích nào liên quan đến việc thực thi lệnh trong ba chu kỳ tiếp theo. Tuy nhiên, nếu mạch fetch có thể tiếp tục thực hiện giai đoạn Fetch của các lệnh tiếp theo trong ba chu kỳ đó, thì CPU có thể hoàn thành việc thực thi nhiều hơn một lệnh mỗi bốn chu kỳ.
 
-Figure 1 shows three instructions taking a total
-of 12 cycles to execute, four cycles per instruction, resulting in a CPI
-of 4 (CPI is the average number of cycles to execute an instruction).
-However, the control circuitry of the CPU can be improved to achieve a
-better (lower) CPI value.
-
-
-In considering the pattern of execution in which each instruction takes
-four cycles to execute, followed by the next instruction taking four
-cycles, and so on, the CPU circuitry associated with implementing each
-stage is only actively involved in instruction execution once every four
-cycles. For example, after the Fetch stage, the fetch circuitry in the
-CPU is not used to perform any useful action related to executing an
-instruction for the next three clock cycles. If, however, the fetch
-circuitry could continue to actively execute the Fetch parts of
-subsequent instructions in the next three cycles, the CPU could complete
-the execution of more than a single instruction every four cycles.
-
-
-CPU **pipelining** is this idea of starting the execution of the next
-instruction before the current instruction has fully completed its
-execution. CPU pipelining executes instructions in order, but it allows
-the execution of a sequence of instructions to overlap. For example, in
-the first cycle, the first instruction enters its Fetch stage of
-execution. In the second cycle, the first instruction moves to its
-Decode stage, and the second instruction simultaneously enters its Fetch
-stage. In the third cycle, the first instruction moves to its Execution
-stage, the second instruction to its Decode stage, and the third
-instruction is fetched from memory. In the fourth cycle, the first
-instruction moves to its WriteBack stage and completes, the second
-instruction moves to its Execution stage, the third to its Decode, and
-the fourth instruction enters its Fetch stage. At this point, the CPU
-pipeline of instructions is full---​every CPU stage is actively executing
-program instructions where each subsequent instruction is one stage
-behind its predecessor. When the pipeline is full, the CPU completes the
-execution of one instruction every clock cycle!
-
-
-
+**CPU pipelining** là ý tưởng bắt đầu thực thi lệnh tiếp theo trước khi lệnh hiện tại hoàn tất. CPU pipelining vẫn thực thi lệnh theo thứ tự, nhưng cho phép các lệnh trong chuỗi được thực thi chồng lấn nhau. Ví dụ, trong chu kỳ đầu tiên, lệnh đầu tiên bước vào giai đoạn Fetch. Trong chu kỳ thứ hai, lệnh đầu tiên chuyển sang giai đoạn Decode, và đồng thời lệnh thứ hai bước vào giai đoạn Fetch. Trong chu kỳ thứ ba, lệnh đầu tiên chuyển sang giai đoạn Execute, lệnh thứ hai sang Decode, và lệnh thứ ba được nạp từ bộ nhớ. Trong chu kỳ thứ tư, lệnh đầu tiên chuyển sang giai đoạn WriteBack và hoàn tất, lệnh thứ hai sang Execute, lệnh thứ ba sang Decode, và lệnh thứ tư bước vào giai đoạn Fetch. Tại thời điểm này, pipeline của CPU đã đầy — mỗi giai đoạn của CPU đang thực thi một lệnh chương trình, và mỗi lệnh tiếp theo cách lệnh trước đó một giai đoạn. Khi pipeline đầy, CPU hoàn tất việc thực thi một lệnh mỗi chu kỳ xung nhịp!
 
 ![pipelined execution of instructions](_images/pipeline.png)
 
+**Hình 2. Pipelining: chồng lấn việc thực thi lệnh để đạt một lệnh hoàn tất mỗi chu kỳ.**  
+Vòng tròn biểu thị trạng thái ổn định khi CPU hoàn tất một lệnh mỗi chu kỳ.
 
-Figure 2. Pipelining: overlapping instruction execution to achieve one
-instruction completed per cycle. The circle indicates that the CPU has
-reached the steady state of completing one instruction every cycle.
+Hình 2 minh họa ví dụ về thực thi lệnh kiểu pipeline trong CPU của chúng ta. Bắt đầu từ chu kỳ xung nhịp thứ tư, pipeline đầy, nghĩa là CPU hoàn tất một lệnh mỗi chu kỳ, đạt CPI bằng 1 (được biểu thị bằng vòng tròn trong Hình 2). Lưu ý rằng tổng số chu kỳ cần để thực thi một lệnh đơn (gọi là **latency** của lệnh) không giảm trong thực thi kiểu pipeline — mỗi lệnh vẫn cần bốn chu kỳ để hoàn tất. Thay vào đó, pipelining làm tăng **throughput** của lệnh — tức là số lượng lệnh CPU có thể thực thi trong một khoảng thời gian nhất định — bằng cách chồng lấn việc thực thi các lệnh tuần tự theo kiểu so le qua các giai đoạn khác nhau của pipeline.
 
+Từ những năm 1970, các kiến trúc sư máy tính đã sử dụng pipelining như một cách để cải thiện mạnh mẽ hiệu năng của vi xử lý. Tuy nhiên, pipelining phải đánh đổi bằng việc thiết kế CPU phức tạp hơn so với thiết kế không hỗ trợ thực thi kiểu pipeline. Cần thêm mạch lưu trữ và điều khiển để hỗ trợ pipelining. Ví dụ, có thể cần nhiều thanh ghi lệnh để lưu trữ các lệnh đang nằm trong pipeline. Mặc dù phức tạp hơn, nhưng lợi ích về CPI mà pipelining mang lại gần như luôn xứng đáng. Do đó, hầu hết các vi xử lý hiện đại đều triển khai thực thi kiểu pipeline.
 
-Figure 2 shows an example of pipelined instruction
-execution through our CPU. Starting with the fourth clock cycle the
-pipeline fills, meaning that the CPU completes the execution of one
-instruction every cycle, achieving a CPI of 1 (shown in the circle in
-Figure 2). Notice that the total number of cycles
-required to execute a single instruction (the instruction **latency**)
-has not decreased in pipelined execution---​it still takes four cycles
-for each instruction to execute. Instead, pipelining increases
-instruction **throughput**, or the number of instructions that the CPU
-can execute in a given period of time, by overlapping the execution of
-sequential instructions in a staggered manner, through the different
-stages of the pipeline.
+Ý tưởng pipelining cũng được sử dụng trong nhiều ngữ cảnh khác trong khoa học máy tính để tăng tốc độ thực thi, và cũng áp dụng cho nhiều lĩnh vực ngoài ngành CNTT. Ví dụ, hãy xem việc giặt nhiều mẻ quần áo bằng một máy giặt. Nếu mỗi mẻ giặt gồm bốn bước (giặt, sấy, gấp, cất quần áo), thì sau khi giặt xong mẻ đầu tiên, ta có thể cho mẻ thứ hai vào máy giặt trong khi mẻ đầu tiên đang được sấy — tức là chồng lấn việc giặt các mẻ để rút ngắn tổng thời gian giặt bốn mẻ. Dây chuyền lắp ráp trong nhà máy cũng là một ví dụ điển hình của pipelining.
 
-
-Since the 1970s, computer architects have used pipelining as a way to
-drastically improve the performance of microprocessors. However,
-pipelining comes at the cost of a more complicated CPU design than one
-that does not support pipelined execution. Additional storage and
-control circuitry is needed to support pipelining. For example, multiple
-instruction registers may be required to store the multiple instructions
-currently in the pipeline. This added complexity is almost always worth
-the large improvements in CPI that pipelining provides. As a result most
-modern microprocessors implement pipelined execution.
-
-
-The idea of pipelining is also used in other contexts in computer
-science to speed up execution, and the idea applies to many non-CS
-applications as well. Consider, for example, the task of doing multiple
-loads of laundry using a single washing machine. If completing one
-laundry consists of four steps (washing, drying, folding, and putting
-away clothes), then after washing the first load, the second load can go
-in the washing machine while the first load is in the dryer, overlapping
-the washing of individual laundry loads to speed up the total time it
-takes to wash four loads. Factory assembly lines are another example of
-pipelining.
-
-
-In our discussion of how a CPU executes program instructions and CPU
-pipelining, we used a simple four-stage pipeline and an example ADD
-instruction. To execute instructions that load and store values between
-memory and registers, a five-stage pipeline is used. A five-stage
-pipeline includes a Memory stage for memory access:
-Fetch-Decode-Execute-Memory-WriteBack. Different processors may have
-fewer or more pipeline stages than a typical five-stage pipeline. For
-example, the initial ARM architecture had three stages (Fetch, Decode,
-and Execute, wherein the Execute stage performed both the ALU execution
-and the register file WriteBack functionality). More recent ARM
-architectures have more than five stages in their pipelines. The initial
-Intel Pentium architectures had a five-stage pipeline, but later
-architectures had significantly more pipeline stages. For example, the
-Intel Core i7 has a 14-stage pipeline.
-
-
-
-
-
+Trong phần thảo luận về cách CPU thực thi lệnh chương trình và pipelining, ta đã sử dụng pipeline đơn giản gồm bốn giai đoạn và ví dụ lệnh ADD. Để thực thi các lệnh nạp và lưu dữ liệu giữa bộ nhớ và thanh ghi, cần dùng pipeline năm giai đoạn. Pipeline năm giai đoạn bao gồm thêm giai đoạn Memory để truy cập bộ nhớ: Fetch–Decode–Execute–Memory–WriteBack. Các bộ xử lý khác nhau có thể có ít hoặc nhiều giai đoạn pipeline hơn so với pipeline năm giai đoạn điển hình. Ví dụ, kiến trúc ARM ban đầu có ba giai đoạn (Fetch, Decode và Execute, trong đó giai đoạn Execute thực hiện cả phép toán ALU và ghi kết quả vào register file). Các kiến trúc ARM hiện đại có nhiều hơn năm giai đoạn trong pipeline. Kiến trúc Intel Pentium ban đầu có pipeline năm giai đoạn, nhưng các kiến trúc sau đó có số giai đoạn pipeline nhiều hơn đáng kể. Ví dụ, Intel Core i7 có pipeline gồm 14 giai đoạn.

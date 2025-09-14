@@ -1,45 +1,13 @@
+## 5.10. Tóm tắt
 
-## 5.10. Summary 
+Trong chương này, chúng ta đã trình bày kiến trúc của máy tính, tập trung vào thiết kế và triển khai bộ xử lý (CPU) nhằm hiểu cách nó thực thi một chương trình. Các bộ xử lý hiện đại ngày nay đều dựa trên kiến trúc von Neumann, vốn định nghĩa một máy tính đa dụng với chương trình được lưu trữ trong bộ nhớ. Thiết kế đa dụng của kiến trúc von Neumann cho phép nó thực thi bất kỳ loại chương trình nào.
 
-In this chapter, we presented the computer's architecture, focusing on
-its processor (CPU) design and implementation in order to understand how
-it runs a program. Today's modern processors are based on the von
-Neumann architecture, which defines a stored-program, universal
-computer. The general-purpose design of the von Neumann architecture
-allows it to execute any type of program.
+Để hiểu cách CPU thực thi các lệnh chương trình, ta đã xây dựng một CPU ví dụ, bắt đầu từ các khối xây dựng cơ bản là cổng logic để tạo thành các mạch số, từ đó triển khai một bộ xử lý số. Chức năng của bộ xử lý số được hình thành bằng cách kết hợp các mạch điều khiển, mạch lưu trữ và mạch số học/logic, và được điều khiển bởi mạch xung nhịp, vốn dẫn dắt các pha Fetch, Decode, Execute và WriteBack trong quá trình thực thi lệnh chương trình.
 
+Mọi kiến trúc bộ xử lý đều triển khai một **instruction set architecture** (ISA – "kiến trúc tập lệnh"), định nghĩa tập hợp các lệnh CPU, tập hợp các thanh ghi CPU, và ảnh hưởng của việc thực thi lệnh lên trạng thái của bộ xử lý. Có rất nhiều ISA khác nhau, và thường có nhiều phiên bản vi xử lý khác nhau cùng triển khai một ISA nhất định. Các vi xử lý hiện đại ngày nay cũng sử dụng nhiều kỹ thuật để cải thiện hiệu năng, bao gồm thực thi kiểu pipeline, song song ở cấp độ lệnh (instruction-level parallelism), và thiết kế đa nhân (multicore).
 
-To understand how the CPU executes program instructions, we built an
-example CPU, starting with basic logic-gate building blocks to create
-circuits that together implement a digital processor. A digital
-processor's functionality is built by combining control, storage, and
-arithmetic/logic circuits, and is run by a clock circuit that drives the
-Fetch, Decode, Execute, and WriteBack phases of its execution of program
-instructions.
+Để tìm hiểu sâu và rộng hơn về kiến trúc máy tính, chúng tôi khuyến nghị bạn đọc thêm các giáo trình chuyên sâu về kiến trúc máy tính[^1].
 
+### Ghi chú
 
-All processor architectures implement an instruction set architecture
-(ISA) that defines the set of CPU instructions, the set of CPU
-registers, and the effects of executing instructions on the state of the
-processor. There are many different ISAs, and there are often different
-microprocessor implementations of a given ISA. Today's microprocessors
-also use a variety of techniques to improve processor performance,
-including pipelined execution, instruction-level parallelism, and
-multicore design.
-
-
-For more breadth and depth of coverage on computer architecture, we
-recommend reading a computer architecture textbook^1^.
-
-
-### Footnotes {#_footnotes .discrete}
-
-
-1.  One suggestion is \"Computer Organization and Design: The Hardware
-    and Software Interface\", by David A. Patterson and John L.
-    Hennessy.
-
-
-
-
-
+[^1]: Một gợi ý là cuốn *Computer Organization and Design: The Hardware and Software Interface* của David A. Patterson và John L. Hennessy.

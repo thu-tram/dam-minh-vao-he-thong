@@ -882,7 +882,7 @@ of distributed applications. We characterize some of these frameworks in
 the next section.
 
 
-### MPI Resources {#_mpi_resources .discrete}
+### MPI Resources
 
 MPI is large and complex, and this section hardly scratches the surface.
 For more information about MPI, we suggest:

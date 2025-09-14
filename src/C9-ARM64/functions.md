@@ -121,9 +121,7 @@ function, or 0x750. Registers `x30` and `w0` are also highlighted in
 this example, and both contain initial junk values.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide2](_images/procedures/Slide2.png)
 
@@ -137,9 +135,7 @@ at locations `sp` and `sp+8`, respectively. The instruction pointer `pc`
 advances to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide3](_images/procedures/Slide3.png)
 
@@ -150,9 +146,7 @@ start of the stack frame for the `main` function. The instruction
 pointer `pc` advances to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide4](_images/procedures/Slide4.png)
 
@@ -164,9 +158,7 @@ updated with address 0x724, which indicates the address of the first
 instruction in the `assign` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide5](_images/procedures/Slide5.png)
 
@@ -177,9 +169,7 @@ that `x29` and `sp` now denote the active stack frame boundaries for the
 `assign` function. The program counter advances to the next instruction.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide6](_images/procedures/Slide6.png)
 
@@ -188,9 +178,7 @@ The `mov` instruction stores the constant value 0x28 in register `w0`.
 Register `pc` advances to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide7](_images/procedures/Slide7.png)
 
@@ -200,9 +188,7 @@ stack pointer, or at address 0xef2c. The instruction pointer advances to
 the next instruction.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide8](_images/procedures/Slide8.png)
 
@@ -211,9 +197,7 @@ The `ldr` instruction saves 0x28 from stack address 0xef2c into register
 `w0`. The instruction pointer advances to the next instruction.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide9](_images/procedures/Slide9.png)
 
@@ -222,9 +206,7 @@ The `add` instruction deallocates the current stack frame and reverts
 `sp` to its previous value, or 0xef30.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide10](_images/procedures/Slide10.png)
 
@@ -235,9 +217,7 @@ instruction in the `main` function immediately after the call to
 `assign`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide11](_images/procedures/Slide11.png)
 
@@ -248,9 +228,7 @@ The next instruction that executes is a function call to `adder` (or
 that program execution continues into the `adder` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide12](_images/procedures/Slide12.png)
 
@@ -262,9 +240,7 @@ function are designated by registers `sp` and `x29`. The instruction
 pointer advances to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide13](_images/procedures/Slide13.png)
 
@@ -276,9 +252,7 @@ function. The instruction pointer advances to the next instruction in
 sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide14](_images/procedures/Slide14.png)
 
@@ -288,9 +262,7 @@ result (0x2A) in register `w0`. The instruction pointer advances to the
 next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide15](_images/procedures/Slide15.png)
 
@@ -301,9 +273,7 @@ previous value. The instruction pointer advances to the next instruction
 in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide16](_images/procedures/Slide16.png)
 
@@ -313,9 +283,7 @@ register `x30`, indicating that program execution should continue in the
 `main` function at code segment address 0x760.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide20](_images/procedures/Slide17.png)
 
@@ -326,9 +294,7 @@ location that is 28 bytes from the frame pointer (`x29`). Therefore,
 0x2A is stored at stack address 0xef4c.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide18](_images/procedures/Slide19.png)
 
@@ -343,9 +309,7 @@ the end of these two instructions, register `x0` contains memory address
 `"x is %d\n"`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide20](_images/procedures/Slide20.png)
 
@@ -355,9 +319,7 @@ is located at an offset of 28 bytes from the frame pointer) into
 register `w1`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide21](_images/procedures/Slide21.png)
 
@@ -414,9 +376,7 @@ pointer reverts to its previous value, and `pc` updates to the value
 stored in register `x30`, or 0x774.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide23](_images/procedures/Slide22.png)
 
@@ -427,9 +387,7 @@ returned when `main` completes execution. The program counter advances
 to the next instruction in sequence.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide24](_images/procedures/Slide23.png)
 
@@ -446,9 +404,7 @@ their original values. The program counter advances to the last
 instruction in the `main` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![slide25](_images/procedures/Slide24.png)
 

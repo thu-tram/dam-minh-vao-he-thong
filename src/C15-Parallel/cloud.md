@@ -562,7 +562,7 @@ by the 2017 ACM Turing Award winners and computer architecture giants,
 John Hennessy and David Patterson^7^.
 
 
-### References: {#references .discrete}
+### References:
 
 
 1.  Armbrust et. al. \"A view of cloud computing\". CACM 53(4). 2010.

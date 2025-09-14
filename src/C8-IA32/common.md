@@ -234,9 +234,7 @@ contains address `0x40b` which corresponds to the first instruction in
 the `adder2` function.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame2](_images/ex1_2.png)
 
@@ -260,9 +258,7 @@ the contents of `%ebp` in the location pointed to by the dereferenced
 stack pointer, `(%esp)`.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame3](_images/ex1_3.png)
 
@@ -274,9 +270,7 @@ register `%eip` advances to the address of the next instruction to
 execute, or 0x40e.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame4](_images/ex1_4.png)
 
@@ -291,9 +285,7 @@ So, the value 0x28 is copied into register `%eax`. The instruction
 pointer advances to address 0x411, the next address to be executed.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame5](_images/ex1_5.png)
 
@@ -306,9 +298,7 @@ register `%eax`. Register `%eip` advances to point to the next
 instruction to be executed, or 0x414.
 
 
-------------------------------------------------------------------------
 
-::: imageblock
 
 ![frame6](_images/ex1_6.png)
 

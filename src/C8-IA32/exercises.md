@@ -48,7 +48,7 @@
 
 ## 8.11. Exercises 
 
-### Chapter 8 Interactive Exercises (Early Release) {#_chapter_8_interactive_exercises_early_release .discrete}
+### Chapter 8 Interactive Exercises (Early Release)
 
 
 -   [All Chapter 8

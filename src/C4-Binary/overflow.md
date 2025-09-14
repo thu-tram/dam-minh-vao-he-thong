@@ -69,10 +69,7 @@ Hình 3 minh họa cách sắp xếp các giá trị unsigned 4-bit trong một 
 
 Vì cách diễn giải unsigned không thể chứa giá trị âm, điểm gián đoạn lại nằm giữa giá trị lớn nhất và số 0.  
 Do đó, **unsigned overflow** xảy ra khi bất kỳ phép toán nào vượt qua ranh giới giữa \(2^N - 1\) và 0.  
-Nói một cách đơn giản:
-
-- Nếu thực hiện phép cộng (lẽ ra kết quả phải **lớn hơn**) nhưng lại cho ra kết quả nhỏ hơn, thì phép cộng đó gây ra unsigned overflow.  
-- Ngược lại, nếu thực hiện phép trừ (lẽ ra kết quả phải **nhỏ hơn**) nhưng lại cho ra kết quả lớn hơn, thì phép trừ đó gây ra unsigned overflow.
+Nói một cách đơn giản, nếu thực hiện phép cộng (lẽ ra kết quả phải **lớn hơn**) nhưng lại cho ra kết quả nhỏ hơn, thì phép cộng đó gây ra unsigned overflow. Ngược lại, nếu thực hiện phép trừ (lẽ ra kết quả phải **nhỏ hơn**) nhưng lại cho ra kết quả lớn hơn, thì phép trừ đó gây ra unsigned overflow.
 
 Một cách rút gọn để phát hiện unsigned overflow trong phép cộng và phép trừ là dựa vào bit **carry out** (số nhớ ra) và **carry in** (số nhớ vào) của các phép toán này:
 

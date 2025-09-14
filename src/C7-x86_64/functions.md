@@ -1,542 +1,346 @@
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
 
+---
 
- 
+## 7.5. Functions in Assembly
 
+Trong phần trước, chúng ta đã lần theo các hàm đơn giản trong assembly.  
+Trong phần này, chúng ta sẽ thảo luận về sự tương tác giữa nhiều hàm trong assembly trong bối cảnh của một chương trình lớn hơn. Chúng ta cũng sẽ giới thiệu một số lệnh mới liên quan đến việc quản lý hàm.
 
+Hãy bắt đầu bằng việc ôn lại cách **call stack** được quản lý. Hãy nhớ rằng `%rsp` là **stack pointer** và luôn trỏ tới đỉnh của stack. Thanh ghi `%rbp` đại diện cho **base pointer** (còn gọi là **frame pointer**) và trỏ tới đáy của **stack frame** hiện tại. **Stack frame** (còn gọi là **activation frame** hoặc **activation record**) là phần của stack được cấp phát cho một lần gọi hàm. Hàm đang thực thi luôn nằm ở đỉnh stack, và stack frame của nó được gọi là **active frame**. Active frame được giới hạn bởi stack pointer (ở đỉnh stack) và frame pointer (ở đáy frame). **Activation record** thường chứa các biến cục bộ của hàm.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 7.5. Functions in Assembly 
-
-In the previous section, we traced through simple functions in assembly.
-In this section, we discuss the interaction between multiple functions
-in assembly in the context of a larger program. We also introduce some
-new instructions involved with function management.
-
-
-Let's begin with a refresher on how the call stack is managed. Recall
-that `%rsp` is the **stack pointer** and always points to the top of the
-stack. The register `%rbp` represents the base pointer (also known as
-the **frame pointer**) and points to the base of the current stack
-frame. The **stack frame** (also known as the **activation frame** or
-the **activation record**) refers to the portion of the stack allocated
-to a single function call. The currently executing function is always at
-the top of the stack, and its stack frame is referred to as the **active
-frame**. The active frame is bounded by the stack pointer (at the top of
-stack) and the frame pointer (at the bottom of the frame). The
-activation record typically holds local variables for a function.
-
-
-Figure 1 shows the stack frames for `main` and a function
-it calls named `fname`. We will refer to the `main` function as the
-*caller* function and `fname` as the *callee* function.
-
-
-
+Hình 1 minh họa các stack frame của `main` và một hàm mà nó gọi tên là `fname`. Chúng ta sẽ gọi hàm `main` là hàm *caller* và `fname` là hàm *callee*.
 
 ![an illustration of stack frames](_images/stackFrame.png)
 
+**Hình 1.** Quản lý stack frame
 
-Figure 1. Stack frame management
+Trong Hình 1, active frame hiện tại thuộc về hàm callee (`fname`). Vùng nhớ giữa stack pointer và frame pointer được dùng cho các biến cục bộ. Stack pointer thay đổi khi các giá trị cục bộ được **push** và **pop** khỏi stack. Ngược lại, frame pointer hầu như không thay đổi, luôn trỏ tới phần bắt đầu (đáy) của stack frame hiện tại. Vì vậy, các compiler như GCC thường tham chiếu các giá trị trên stack tương đối so với frame pointer. Trong Hình 1, active frame được giới hạn phía dưới bởi base pointer của `fname`, là địa chỉ stack 0x418. Giá trị lưu tại địa chỉ 0x418 là giá trị `%rbp` đã “lưu” (0x42c), bản thân nó là một địa chỉ cho biết đáy của activation frame của hàm `main`. Đỉnh của activation frame của `main` được giới hạn bởi **return address**, cho biết vị trí trong hàm `main` mà chương trình sẽ tiếp tục thực thi khi hàm callee `fname` kết thúc.
 
+> **Return address** trỏ tới bộ nhớ của code segment, không phải stack memory.  
+> Hãy nhớ rằng vùng call stack (stack memory) của một chương trình khác với vùng code (code segment memory). Trong khi `%rbp` và `%rsp` trỏ tới địa chỉ trong stack memory, `%rip` trỏ tới một địa chỉ trong *code segment memory*. Nói cách khác, return address là một địa chỉ trong code segment memory, không phải stack memory:
+>
+> ![The parts of a program's address space.](_images/memparts.png)  
+> *Hình 2. Các phần của không gian địa chỉ của một chương trình*
 
-In Figure 1, the current active frame belongs to the
-callee function (`fname`). The memory between the stack pointer and the
-frame pointer is used for local variables. The stack pointer moves as
-local values are pushed and popped from the stack. In contrast, the
-frame pointer remains relatively constant, pointing to the beginning
-(the bottom) of the current stack frame. As a result, compilers like GCC
-commonly reference values on the stack relative to the frame pointer. In
-Figure 1, the active frame is bounded below by the base
-pointer of `fname`, which is stack address 0x418. The value stored at
-address 0x418 is the \"saved\" `%rbp` value (0x42c), which itself is an
-address that indicates the bottom of the activation frame for the `main`
-function. The top of the activation frame of `main` is bounded by the
-**return address**, which indicates where in the `main` function program
-execution resumes once the callee function `fname` finishes executing.
+**Bảng 1.** Một số lệnh quản lý hàm thông dụng
 
+| Instruction | Translation |
+|-------------|-------------|
+| `leaveq` | Chuẩn bị stack để thoát khỏi hàm. Tương đương với:<br>`mov %rbp, %rsp`<br>`pop %rbp` |
+| `callq addr <fname>` | Chuyển active frame sang hàm callee. Tương đương với:<br>`push %rip`<br>`mov addr, %rip` |
+| `retq` | Khôi phục active frame về hàm caller. Tương đương với:<br>`pop %rip` |
 
+Ví dụ, lệnh `leaveq` là một dạng viết tắt mà compiler dùng để khôi phục stack pointer và frame pointer khi chuẩn bị thoát khỏi hàm. Khi hàm callee kết thúc, `leaveq` đảm bảo frame pointer được **khôi phục** về giá trị trước đó.
 
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | The return address points to code |
-|                                   | segment memory, not stack memory  |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | Recall that the call stack region |
-|                                   | (stack memory) of a program is    |
-|                                   | different from its code region    |
-|                                   | (code segment memory). While      |
-|                                   | `%rbp` and `%rsp` point to        |
-|                                   | addresses in the stack memory,    |
-|                                   | `%rip` points to an address in    |
-|                                   | *code* segment memory. In other   |
-|                                   | words, the return address is an   |
-|                                   | address in code segment memory,   |
-|                                   | not stack memory:                 |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: {#Program                     |
-|                                   | Memory2 .imageblock .text-center} |
-|                                   |                        |
-|                                   | ![The parts of a program's        | |                                   | address                           | |                                   | space.](_                         | |                                   | images/memparts.png) | |                                   | :::                               | |                                   |                                   | |                                   |                          | |                                   | Figure 2. The parts of a          | |                                   | program's address space           | |                                   | :::                               | |                                   | :::                               | +-----------------------------------+-----------------------------------+ :::  Table 1 contains several additional instructions that the compiler uses for basic function management. :::  +-----------------------------------+-----------------------------------+ | Instruction                       | Translation                       | +===================================+===================================+ | `leaveq`                          |                        | |                                   | ::: paragraph                     | |                                   | Prepares the stack for leaving a  | |                                   | function. Equivalent to:          | |                                   | :::                               | |                                   |                                   | |                                   |                   | |                                   |                        | |                                   |     mov %rbp, %rsp                | |                                   |     pop %rbp                      | |                                   | :::                               | |                                   | :::                               | |                                   | :::                               | +-----------------------------------+-----------------------------------+ | `callq addr <fname>`              |                        | |                                   | ::: paragraph                     | |                                   | Switches active frame to callee   | |                                   | function. Equivalent to:          | |                                   | :::                               | |                                   |                                   | |                                   |                   | |                                   |                        | |                                   |     push %rip                     | |                                   |     mov addr, %rip                | |                                   | :::                               | |                                   | :::                               | |                                   | :::                               | +-----------------------------------+-----------------------------------+ | `retq`                            |                        | |                                   | ::: paragraph                     | |                                   | Restores active frame to caller   | |                                   | function. Equivalent to:          | |                                   | :::                               | |                                   |                                   | |                                   |                   | |                                   |                        | |                                   |     pop %rip                      | |                                   | :::                               | |                                   | :::                               | |                                   | :::                               | +-----------------------------------+-----------------------------------+  : Table 1. Common Function Management Instructions  For example, the `leaveq` instruction is a shorthand that the compiler uses to restore the stack and frame pointers as it prepares to leave a function. When the callee function finishes execution, `leaveq` ensures that the frame pointer is *restored* to its previous value. :::  The `callq` and `retq` instructions play a prominent role in the process where one function calls another. Both instructions modify the instruction pointer (register `%rip`). When the caller function executes the `callq` instruction, the current value of `%rip` is saved on the stack to represent the return address, or the program address at which the caller resumes executing once the callee function finishes. The `callq` instruction also replaces the value of `%rip` with the address of the callee function. :::  The `retq` instruction restores the value of `%rip` to the value saved on the stack, ensuring that the program resumes execution at the program address specified in the caller function. Any value returned by the callee is stored in `%rax` or one of its component registers (e.g., `%eax`). The `retq` instruction is usually the last instruction that executes in any function. :::   ### 7.5.1. Function Parameters   Unlike IA32, function parameters are typically preloaded into registers prior to a function call. Table 2 lists the parameters to a function and the register (if any) that they are loaded into prior to a function call. :::  +-----------------------------------+-----------------------------------+ | Parameter                         | Location                          | +===================================+===================================+ | Parameter 1                       | %rdi                              | +-----------------------------------+-----------------------------------+ | Parameter 2                       | %rsi                              | +-----------------------------------+-----------------------------------+ | Parameter 3                       | %rdx                              | +-----------------------------------+-----------------------------------+ | Parameter 4                       | %rcx                              | +-----------------------------------+-----------------------------------+ | Parameter 5                       | %r8                               | +-----------------------------------+-----------------------------------+ | Parameter 6                       | %r9                               | +-----------------------------------+-----------------------------------+ | Parameter 7+                      | on call stack                     | +-----------------------------------+-----------------------------------+  : Table 2. Locations of Function Parameters.  The first six parameters to a function are loaded into registers `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8`, and `%r9`, respectively. Any additional parameters are successively loaded into the call stack based on their size (4 byte offsets for 32-bit data, 8 byte offsets for 64-bit data).    ### 7.5.2. Tracing Through an Example   Using our knowledge of function management, let's trace through the code example first introduced at the beginning of this chapter. Note that the `void` keyword is added to the parameter list of each function definition to specify that the functions take no arguments. This change does not modify the output of the program; however, it does simplify the corresponding assembly. :::    ``` #include <stdio.h>  int assign(void) {     int y = 40;     return y; }  int adder(void) {     int a;     return a + 2; }  int main(void) {     int x;     assign();     x = adder();     printf("x is: %d\n", x);     return 0; } ```   We compile this code with the command `gcc -o prog prog.c` and use `objdump -d` to view the underlying assembly. The latter command outputs a pretty big file that contains a lot of information that we don't need. Use `less` and the search functionality to extract the `adder`, `assign`, and `main` functions: :::        0000000000400526 <assign>:       400526:       55                      push   %rbp       400527:       48 89 e5                mov    %rsp,%rbp       40052a:       c7 45 fc 28 00 00 00    movl   $0x28,-0x4(%rbp)       400531:       8b 45 fc                mov    -0x4(%rbp),%eax       400534:       5d                      pop    %rbp       400535:       c3                      retq      0000000000400536 <adder>:       400536:       55                      push   %rbp       400537:       48 89 e5                mov    %rsp,%rbp       40053a:       8b 45 fc                mov    -0x4(%rbp),%eax       40053d:       83 c0 02                add    $0x2,%eax       400540:       5d                      pop    %rbp       400541:       c3                      retq      0000000000400542 <main>:       400542:       55                      push   %rbp       400543:       48 89 e5                mov    %rsp,%rbp       400546:       48 83 ec 10             sub    $0x10,%rsp       40054a:       e8 e3 ff ff ff          callq  400526 <assign>       40054f:       e8 d2 ff ff ff          callq  400536 <adder>       400554:       89 45 fc                mov    %eax,-0x4(%rbp)       400557:       8b 45 fc                mov    -0x4(%rbp),%eax       40055a:       89 c6                   mov    %eax,%esi       40055c:       bf 04 06 40 00          mov    $0x400604,%edi       400561:       b8 00 00 00 00          mov    $0x0,%eax       400566:       e8 95 fe ff ff          callq  400400 <printf@plt>       40056b:       b8 00 00 00 00          mov    $0x0,%eax       400570:       c9                      leaveq       400571:       c3                      retq   Each function begins with a symbolic label that corresponds to its declared name in the program. For example, `<main>:` is the symbolic label for the `main` function. The address of a function label is also the address of the first instruction in that function. To save space in the figures below, we truncate addresses to the lower 12 bits. So, program address 0x400542 is shown as 0x542.    ### 7.5.3. Tracing Through main   Figure 3 shows the execution stack immediately prior to the execution of `main`. :::    ![slide1](_images/procedures/Slide1.png)
+Các lệnh `callq` và `retq` đóng vai trò quan trọng trong quá trình một hàm gọi hàm khác. Cả hai lệnh này đều thay đổi **instruction pointer** (`%rip`). Khi hàm caller thực thi lệnh `callq`, giá trị hiện tại của `%rip` sẽ được lưu trên stack để làm **return address** — tức địa chỉ trong chương trình mà caller sẽ tiếp tục thực thi khi callee kết thúc. Lệnh `callq` cũng thay thế giá trị `%rip` bằng địa chỉ của hàm callee.
 
+Lệnh `retq` khôi phục giá trị `%rip` từ giá trị đã lưu trên stack, đảm bảo chương trình tiếp tục thực thi tại địa chỉ được chỉ định trong hàm caller. Bất kỳ giá trị trả về nào của callee sẽ được lưu trong `%rax` hoặc một trong các **component register** của nó (ví dụ `%eax`). Lệnh `retq` thường là lệnh cuối cùng được thực thi trong bất kỳ hàm nào.
 
-Figure 3. The initial state of the CPU registers and call stack prior to
-executing the main function
+---
 
+### 7.5.1. Function Parameters
 
-Recall that the stack grows toward lower addresses. In this example,
-`%rbp` initially is stack address 0x830, and `%rsp` initially is stack
-address 0xd48. Both of these values are made up for this example.
+Không giống IA32, các tham số của hàm trong x86-64 thường được nạp sẵn vào các thanh ghi trước khi gọi hàm. **Bảng 2** liệt kê các tham số của hàm và thanh ghi (nếu có) mà chúng được nạp vào trước khi gọi hàm.
+
+**Bảng 2.** Vị trí lưu trữ tham số hàm
+
+| Parameter  | Location |
+|------------|----------|
+| Parameter 1 | %rdi |
+| Parameter 2 | %rsi |
+| Parameter 3 | %rdx |
+| Parameter 4 | %rcx |
+| Parameter 5 | %r8 |
+| Parameter 6 | %r9 |
+| Parameter 7+ | trên call stack |
+
+Sáu tham số đầu tiên của hàm lần lượt được nạp vào các thanh ghi `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8`, và `%r9`. Bất kỳ tham số bổ sung nào sẽ được nạp lần lượt vào call stack dựa trên kích thước của chúng (dịch 4 byte cho dữ liệu 32-bit, dịch 8 byte cho dữ liệu 64-bit).
+
+---
+
+### 7.5.2. Tracing Through an Example
+
+Dựa trên kiến thức về quản lý hàm, hãy lần theo ví dụ mã nguồn đã được giới thiệu ở đầu chương này. Lưu ý rằng từ khóa `void` được thêm vào danh sách tham số của mỗi định nghĩa hàm để chỉ rõ rằng các hàm này không nhận đối số nào. Thay đổi này không làm thay đổi kết quả của chương trình; tuy nhiên, nó giúp đơn giản hóa mã assembly tương ứng.
 
 
-Since the functions shown in the previous example utilize integer data,
-we highlight component registers `%eax` and `%edi`, which initially
-contain junk values. The red (upper-left) arrow indicates the currently
-executing instruction. Initially, `%rip` contains address 0x542, which
-is the program memory address of the first line in the `main` function.
+```c
+#include <stdio.h>
+
+int assign(void) {
+    int y = 40;
+    return y;
+}
+
+int adder(void) {
+    int a;
+    return a + 2;
+}
+
+int main(void) {
+    int x;
+    assign();
+    x = adder();
+    printf("x is: %d\n", x);
+    return 0;
+}
+```
 
 
-------------------------------------------------------------------------
+Chúng ta biên dịch đoạn mã này với lệnh:
 
-::: imageblock
+```
+gcc -o prog prog.c
+```
+
+và sử dụng:
+
+```
+objdump -d
+```
+
+để xem mã assembly bên dưới. Lệnh thứ hai sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
+
+```assembly
+0000000000400526 <assign>:
+  400526:       55                      push   %rbp
+  400527:       48 89 e5                mov    %rsp,%rbp
+  40052a:       c7 45 fc 28 00 00 00    movl   $0x28,-0x4(%rbp)
+  400531:       8b 45 fc                mov    -0x4(%rbp),%eax
+  400534:       5d                      pop    %rbp
+  400535:       c3                      retq
+
+0000000000400536 <adder>:
+  400536:       55                      push   %rbp
+  400537:       48 89 e5                mov    %rsp,%rbp
+  40053a:       8b 45 fc                mov    -0x4(%rbp),%eax
+  40053d:       83 c0 02                add    $0x2,%eax
+  400540:       5d                      pop    %rbp
+  400541:       c3                      retq
+
+0000000000400542 <main>:
+  400542:       55                      push   %rbp
+  400543:       48 89 e5                mov    %rsp,%rbp
+  400546:       48 83 ec 10             sub    $0x10,%rsp
+  40054a:       e8 e3 ff ff ff          callq  400526 <assign>
+  40054f:       e8 d2 ff ff ff          callq  400536 <adder>
+  400554:       89 45 fc                mov    %eax,-0x4(%rbp)
+  400557:       8b 45 fc                mov    -0x4(%rbp),%eax
+  40055a:       89 c6                   mov    %eax,%esi
+  40055c:       bf 04 06 40 00          mov    $0x400604,%edi
+  400561:       b8 00 00 00 00          mov    $0x0,%eax
+  400566:       e8 95 fe ff ff          callq  400400 <printf@plt>
+  40056b:       b8 00 00 00 00          mov    $0x0,%eax
+  400570:       c9                      leaveq
+  400571:       c3                      retq
+```
+
+Mỗi hàm bắt đầu bằng một **symbolic label** (nhãn ký hiệu) tương ứng với tên được khai báo của nó trong chương trình. Ví dụ, `<main>:` là symbolic label cho hàm `main`. Địa chỉ của một nhãn hàm cũng chính là địa chỉ của lệnh đầu tiên trong hàm đó. Để tiết kiệm không gian trong các hình minh họa bên dưới, chúng ta rút gọn địa chỉ xuống 12 bit thấp. Vì vậy, địa chỉ chương trình `0x400542` sẽ được hiển thị thành `0x542`.
+
+---
+
+### 7.5.3. Tracing Through main
+
+**Hình 3** cho thấy execution stack ngay trước khi thực thi `main`.
+
+![slide1](_images/procedures/Slide1.png)
+
+**Hình 3.** Trạng thái ban đầu của các thanh ghi CPU và call stack trước khi thực thi hàm `main`
+
+Hãy nhớ rằng stack phát triển về phía các địa chỉ thấp hơn. Trong ví dụ này, `%rbp` ban đầu là địa chỉ stack `0x830`, và `%rsp` ban đầu là địa chỉ stack `0xd48`. Cả hai giá trị này được giả định cho ví dụ.
+
+Vì các hàm trong ví dụ trước sử dụng dữ liệu kiểu số nguyên, chúng ta làm nổi bật các **component register** `%eax` và `%edi`, vốn ban đầu chứa giá trị rác. Mũi tên đỏ (góc trên bên trái) biểu thị lệnh đang được thực thi. Ban đầu, `%rip` chứa địa chỉ `0x542`, là địa chỉ trong bộ nhớ chương trình của dòng đầu tiên trong hàm `main`.
+
+---
 
 ![slide2](_images/procedures/Slide2.png)
 
+Lệnh đầu tiên lưu giá trị hiện tại của `%rbp` bằng cách **push** `0x830` lên stack. Vì stack phát triển về phía địa chỉ thấp hơn, stack pointer `%rsp` được cập nhật thành `0xd40`, tức nhỏ hơn `0xd48` 8 byte. `%rip` tăng tới lệnh tiếp theo.
 
-The first instruction saves the current value of `%rbp` by pushing 0x830
-onto the stack. Since the stack grows toward lower addresses, the stack
-pointer `%rsp` is updated to 0xd40, which is 8 bytes less than 0xd48.
-`%rip` advances to the next instruction in sequence.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide3](_images/procedures/Slide3.png)
 
+Lệnh tiếp theo (`mov %rsp, %rbp`) cập nhật giá trị `%rbp` thành bằng `%rsp`. Frame pointer (`%rbp`) giờ trỏ tới đầu stack frame của hàm `main`. `%rip` tăng tới lệnh tiếp theo.
 
-The next instruction (`mov %rsp, %rbp`) updates the value of `%rbp` to
-be the same as `%rsp`. The frame pointer (`%rbp`) now points to the
-start of the stack frame for the `main` function. `%rip` advances to the
-next instruction in sequence.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide4](_images/procedures/Slide4.png)
 
+Lệnh `sub` trừ `0x10` khỏi địa chỉ của stack pointer, về cơ bản làm stack “mở rộng” thêm 16 byte, được biểu diễn bằng hai ô nhớ 8 byte trên stack. `%rsp` giờ có giá trị mới là `0xd30`. `%rip` tăng tới lệnh tiếp theo.
 
-The `sub` instruction subtracts 0x10 from the address of our stack
-pointer, which essentially causes the stack to \"grow\" by 16 bytes,
-which we represent by showing two 8-byte locations on the stack.
-Register `%rsp` therefore has the new value of 0xd30. `%rip` advances to
-the next instruction in sequence.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide5](_images/procedures/Slide5.png)
 
+Lệnh `callq <assign>` **push** giá trị trong `%rip` (địa chỉ của lệnh *tiếp theo* sẽ thực thi) lên stack. Vì lệnh tiếp theo sau `callq <assign>` có địa chỉ `0x55f`, giá trị này được push lên stack làm **return address**. Hãy nhớ rằng return address cho biết địa chỉ chương trình sẽ tiếp tục thực thi khi quay lại `main`.
 
-The `callq <assign>` instruction pushes the value inside register `%rip`
-(which denotes the address of the *next* instruction to execute) onto
-the stack. Since the next instruction after `callq <assign>` has an
-address of 0x55f, that value is pushed onto the stack as the return
-address. Recall that the return address indicates the program address
-where execution should resume when program execution returns to `main`.
+Tiếp đó, lệnh `callq` đưa địa chỉ của hàm `assign` (`0x526`) vào `%rip`, báo hiệu chương trình sẽ tiếp tục thực thi trong hàm callee `assign` thay vì lệnh tiếp theo trong `main`.
 
-
-Next, the `callq` instruction moves the address of the `assign` function
-(0x526) into register `%rip`, signifying that program execution should
-continue into the callee function `assign` and not the next instruction
-in `main`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide6](_images/procedures/Slide6.png)
 
+Hai lệnh đầu tiên trong hàm `assign` là phần “dọn dẹp sổ sách” (book-keeping) mà mọi hàm đều thực hiện. Lệnh đầu tiên **push** giá trị trong `%rbp` (địa chỉ `0xd40`) lên stack. Hãy nhớ rằng địa chỉ này trỏ tới đầu stack frame của `main`. `%rip` tăng tới lệnh thứ hai trong `assign`.
 
-The first two instructions that execute in the `assign` function are the
-usual book-keeping that every function performs. The first instruction
-pushes the value stored in `%rbp` (memory address 0xd40) onto the stack.
-Recall that this address points to the beginning of the stack frame for
-`main`. `%rip` advances to the second instruction in `assign`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide7](_images/procedures/Slide7.png)
 
+Lệnh tiếp theo (`mov %rsp, %rbp`) cập nhật `%rbp` để trỏ tới đỉnh stack, đánh dấu đầu stack frame của `assign`. `%rip` tăng tới lệnh tiếp theo trong `assign`.
 
-The next instruction (`mov %rsp, %rbp`) updates `%rbp` to point to the
-top of the stack, marking the beginning of the stack frame for `assign`.
-The instruction pointer (`%rip`) advances to the next instruction in the
-`assign` function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide8](_images/procedures/Slide8.png)
 
+Lệnh `mov` tại địa chỉ `0x52a` đưa giá trị `$0x28` (tức 40) vào stack tại địa chỉ `-0x4(%rbp)`, tức 4 byte phía trên frame pointer. Frame pointer thường được dùng để tham chiếu các vị trí trên stack. Lưu ý rằng thao tác này **không** thay đổi `%rsp` — stack pointer vẫn trỏ tới `0xd20`. `%rip` tăng tới lệnh tiếp theo trong `assign`.
 
-The `mov` instruction at address 0x52a moves the value `$0x28` (or 40)
-onto the stack at address `-0x4(%rbp)`, which is four bytes above the
-frame pointer. Recall that the frame pointer is commonly used to
-reference locations on the stack. However, keep in mind that this
-operation does not change the value of `%rsp` --- the stack pointer
-still points to address 0xd20. Register `%rip` advances to the next
-instruction in the `assign` function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide9](_images/procedures/Slide9.png)
 
+Lệnh `mov` tại địa chỉ `0x531` đưa giá trị `$0x28` vào `%eax`, thanh ghi chứa giá trị trả về của hàm. `%rip` tăng tới lệnh `pop` trong `assign`.
 
-The `mov` instruction at address 0x531 places the value `$0x28` into
-register `%eax`, which holds the return value of the function. `%rip`
-advances to the `pop` instruction in the `assign` function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide10](_images/procedures/Slide10.png)
 
+Lúc này, hàm `assign` gần như đã hoàn tất. Lệnh tiếp theo là `pop %rbp`, khôi phục `%rbp` về giá trị trước đó (`0xd40`). Vì `pop` thay đổi stack pointer, `%rsp` được cập nhật thành `0xd28`.
 
-At this point, the `assign` function has almost completed execution. The
-next instruction that executes is `pop %rbp`, which restores `%rbp` to
-its previous value, or 0xd40. Since the `pop` instruction modifies the
-stack pointer, `%rsp` updates to 0xd28.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide11](_images/procedures/Slide11.png)
 
+Lệnh cuối cùng trong `assign` là `retq`. Khi `retq` thực thi, return address được **pop** khỏi stack vào `%rip`. Trong ví dụ này, `%rip` giờ trỏ tới lệnh `callq` trong `main` tại địa chỉ `0x55f`.
 
-The last instruction in `assign` is a `retq` instruction. When `retq`
-executes, the return address is popped off the stack into register
-`%rip`. In our example, `%rip` now advances to point to the `callq`
-instruction in `main` at address 0x55f.
+---
 
+Một số điểm quan trọng cần lưu ý:
 
-Some important things to notice at this juncture:
+- Stack pointer và frame pointer đã được khôi phục về giá trị trước khi gọi `assign`, cho thấy stack frame của `main` lại trở thành active frame.
+- Các giá trị cũ trên stack từ stack frame trước **không** bị xóa. Chúng vẫn tồn tại trên call stack.
 
-
-
--   The stack pointer and the frame pointer have been restored to their
-    values prior to the call to `assign`, reflecting that the stack
-    frame for `main` is once again the active frame.
-
--   The old values on the stack from the prior active stack frame are
-    *not* removed. They still exist on the call stack.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide12](_images/procedures/Slide12.png)
 
+Quay lại `main`, lệnh gọi `adder` **ghi đè** return address cũ trên stack bằng return address mới (`0x554`). Return address này trỏ tới lệnh sẽ thực thi sau khi `adder` trả về, tức `mov %eax, -0x4(%rbp)`. `%rip` được cập nhật trỏ tới lệnh đầu tiên trong `adder` tại địa chỉ `0x536`.
 
-Back in `main`, the call to `adder` *overwrites* the old return address
-on the stack with a new return address (0x554). This return address
-points to the next instruction to be executed after `adder` returns, or
-`mov %eax, -0x4(%rbp)`. Register `%rip` updates to point to the first
-instruction to execute in `adder`, which is at address 0x536.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide13](_images/procedures/Slide13.png)
 
+Lệnh đầu tiên trong `adder` lưu frame pointer của caller (`%rbp` của `main`) lên stack.
 
-The first instruction in the `adder` function saves the caller's frame
-pointer (`%rbp` of `main`) on the stack.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide14](_images/procedures/Slide14.png)
 
+Lệnh tiếp theo cập nhật `%rbp` bằng giá trị hiện tại của `%rsp` (`0xd20`). Hai lệnh này thiết lập đầu stack frame cho `adder`.
 
-The next instruction updates `%rbp` with the current value of `%rsp`, or
-address 0xd20. Together, these last two instructions establish the
-beginning of the stack frame for `adder`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide15](_images/procedures/Slide15.png)
 
+Hãy chú ý tới lệnh tiếp theo. Hãy nhớ rằng `$0x28` đã được đặt trên stack khi gọi `assign`. Lệnh `mov $-0x4(%rbp), %eax` di chuyển **giá trị cũ** trên stack vào `%eax`! Điều này sẽ không xảy ra nếu lập trình viên đã khởi tạo biến `a` trong `adder`.
 
-Pay close attention to the next instruction that executes. Recall that
-`$0x28` was placed on the stack during the call to `assign`. The
-`mov $-0x4(%rbp), %eax` instruction moves an *old* value that is on the
-stack into register `%eax`! This would not have occurred if the
-programmer had initialized variable `a` in the `adder` function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide16](_images/procedures/Slide16.png)
 
+Lệnh `add` tại địa chỉ `0x53d` cộng 2 vào `%eax`. Hãy nhớ rằng khi trả về một số nguyên 32-bit, x86-64 sử dụng `%eax` thay vì `%rax`. Hai lệnh cuối này tương đương với đoạn mã trong `adder`:
 
-The `add` instruction at address 0x53d adds 2 to register `%eax`. Recall
-that when a 32-bit integer is being returned, x86-64 utilizes component
-register `%eax` instead of `%rax`. Together the last two instructions
-are equivalent to the following code in `adder`:
-
-
-
-
-```
+```c
 int a;
 return a + 2;
 ```
 
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide20](_images/procedures/Slide17.png)
 
+Sau khi `pop` thực thi, frame pointer lại trỏ tới đầu stack frame của `main` (`0xd40`). Stack pointer lúc này chứa địa chỉ `0xd28`.
 
-After `pop` executes, the frame pointer again points to the beginning of
-the stack frame for `main`, or address 0xd40. The stack pointer now
-contains the address 0xd28.
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
 
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide18](_images/procedures/Slide18.png)
 
+Việc thực thi lệnh `retq` sẽ **pop** địa chỉ trả về (return address) ra khỏi stack, khôi phục **instruction pointer** về `0x554`, tức địa chỉ của lệnh tiếp theo sẽ được thực thi trong `main`. Địa chỉ chứa trong `%rsp` lúc này là `0xd30`.
 
-The execution of `retq` pops the return address off the stack, restoring
-the instruction pointer back to 0x554, or the address of the next
-instruction to execute in `main`. The address contained in `%rsp` is now
-0xd30.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide19](_images/procedures/Slide19.png)
 
+Quay lại `main`, lệnh `mov %eax, -0x4(%rbp)` đặt giá trị trong `%eax` vào vị trí bộ nhớ cách `%rbp` 4 byte, tức địa chỉ `0xd3c`. Lệnh tiếp theo lại đưa giá trị này trở lại vào thanh ghi `%eax`.
 
-Back in `main`, the `mov %eax, -0x4(%rbp)` instruction places the value
-in `%eax` at a location four bytes above `%rbp`, or at address 0xd3c.
-The next instruction replaces it back into register `%eax`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide21](_images/procedures/Slide21.png)
 
+Bỏ qua một vài bước, lệnh `mov` tại địa chỉ `0x55a` sao chép giá trị trong `%eax` (tức `0x2A`) vào thanh ghi `%esi`, là **component register** 32-bit của `%rsi` và thường lưu tham số thứ hai của một hàm.
 
-Skipping ahead a little, the `mov` instruction at address 0x55a copies
-the value in `%eax` (or 0x2A) to register `%esi`, which is the 32-bit
-component register associated with `%rsi` and typically stores the
-second parameter to a function.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide22](_images/procedures/Slide22.png)
 
+Lệnh tiếp theo (`mov $0x400604, %edi`) sao chép một giá trị hằng (một địa chỉ trong **code segment memory**) vào thanh ghi `%edi`. Hãy nhớ rằng `%edi` là **component register** 32-bit của `%rdi`, thường lưu tham số thứ nhất của một hàm. Địa chỉ `0x400604` trong code segment là địa chỉ bắt đầu của chuỗi `"x is %d\n"`.
 
-The next instruction (`mov $0x400604, %edi`) copies a constant value (an
-address in code segment memory) to register `%edi`. Recall that register
-`%edi` is the 32-bit component register of `%rdi`, which typically
-stores the first parameter to a function. The code segment memory
-address 0x400604 is the base address of the string `"x is %d\n"`.
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide23](_images/procedures/Slide23.png)
 
+Lệnh tiếp theo đặt lại giá trị của `%eax` thành 0. Instruction pointer lúc này trỏ tới lời gọi hàm `printf` (được ký hiệu là `<printf@plt>`).
 
-The next instruction resets register `%eax` with the value 0. The
-instruction pointer advances to the call to the `printf` function (which
-is denoted with the label `<printf@plt>`).
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide24](_images/procedures/Slide24.png)
 
-
-The next instruction calls the `printf` function. For the sake of
-brevity, we will not trace the `printf` function, which is part of
-`stdio.h`. However, we know from the manual page (`man -s3 printf`) that
-`printf` has the following format:
-
-
-
-
-    int printf(const char * format, ...)
-
-
-In other words, the first argument is a pointer to a string specifying
-the format, and the second argument onward specify the values that are
-used in that format. The instructions specified by addresses 0x55a -
-0x566 correspond to the following line in the `main` function:
-
-
-
+Lệnh tiếp theo gọi hàm `printf`. Để ngắn gọn, chúng ta sẽ không lần theo chi tiết hàm `printf` (thuộc `stdio.h`). Tuy nhiên, theo trang hướng dẫn (`man -s3 printf`), `printf` có dạng:
 
 ```
+int printf(const char * format, ...)
+```
+
+Nói cách khác, tham số đầu tiên là con trỏ tới chuỗi định dạng, và các tham số tiếp theo là các giá trị sẽ được chèn vào định dạng đó. Các lệnh từ địa chỉ `0x55a` đến `0x566` tương ứng với dòng lệnh trong hàm `main`:
+
+```c
 printf("x is %d\n", x);
 ```
 
+Khi hàm `printf` được gọi:
 
-When the `printf` function is called:
+- Một **return address** chỉ lệnh sẽ thực thi sau khi `printf` kết thúc được **push** lên stack.
+- Giá trị của `%rbp` được **push** lên stack, và `%rbp` được cập nhật để trỏ tới đỉnh stack, đánh dấu bắt đầu stack frame của `printf`.
 
+Tại một thời điểm nào đó, `printf` sẽ tham chiếu tới các đối số của nó: chuỗi `"x is %d\n"` và giá trị `0x2A`. Tham số thứ nhất được lưu trong `%edi`, tham số thứ hai được lưu trong `%esi`. Return address nằm ngay bên dưới `%rbp` tại vị trí `%rbp+8`.
 
+Với bất kỳ hàm nào có *n* tham số, GCC sẽ đặt 6 tham số đầu tiên vào các thanh ghi (như trong Bảng 2), và các tham số còn lại sẽ được đặt trên stack *bên dưới* return address.
 
--   A return address specifying the instruction that executes after the
-    call to `printf` is pushed onto the stack.
+Sau khi gọi `printf`, giá trị `0x2A` sẽ được in ra cho người dùng ở dạng số nguyên. Do đó, giá trị **42** được in ra màn hình.
 
--   The value of `%rbp` is pushed onto the stack, and `%rbp` is updated
-    to point to the top of the stack, indicating the beginning of the
-    stack frame for `printf`.
-
-
-At some point, `printf` references its arguments, which are the string
-`"x is %d\n"` and the value 0x2A. The first parameter is stored in
-component register `%edi`, and the second parameter is stored in
-component register `%esi`. The return address is located directly below
-`%rbp` at location `%rbp+8`.
-
-
-For any function with *n* arguments, GCC places the first six arguments
-in registers, as shown in Table 2, and the
-remaining arguments onto the stack *below* the return address.
-
-
-After the call to `printf`, the value 0x2A is output to the user in
-integer format. Thus, the value 42 is printed to the screen!
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide25](_images/procedures/Slide25.png)
 
+Sau khi gọi `printf`, một vài lệnh cuối sẽ dọn dẹp stack và chuẩn bị thoát sạch sẽ khỏi hàm `main`. Đầu tiên, lệnh `mov` tại địa chỉ `0x56b` đảm bảo rằng giá trị 0 nằm trong thanh ghi trả về (vì việc cuối cùng `main` làm là `return 0`).
 
-After the call to `printf`, the last few instructions clean up the stack
-and prepare a clean exit from the `main` function. First, the `mov`
-instruction at address 0x56b ensures that 0 is in the return register
-(since the last thing `main` does is return 0).
-
-
-------------------------------------------------------------------------
-
-::: imageblock
+---
 
 ![slide26](_images/procedures/Slide26.png)
 
+Lệnh `leaveq` chuẩn bị stack để trả về từ lời gọi hàm. Hãy nhớ rằng `leaveq` tương đương với cặp lệnh:
 
-The `leaveq` instruction prepares the stack for returning from the
-function call. Recall that `leaveq` is analogous to the following pair
-of instructions:
+```
+mov %rbp, %rsp
+pop %rbp
+```
 
+Nói cách khác, CPU ghi đè stack pointer bằng frame pointer. Trong ví dụ này, stack pointer được cập nhật từ `0xd30` thành `0xd40`. Tiếp đó, CPU thực thi `pop %rbp`, lấy giá trị tại `0xd40` (trong ví dụ này là địa chỉ `0x830`) và đặt vào `%rbp`. Sau khi `leaveq` thực thi, stack pointer và frame pointer trở lại giá trị ban đầu trước khi `main` chạy.
 
+Lệnh cuối cùng được thực thi là `retq`. Với giá trị `0x0` trong thanh ghi trả về `%eax`, chương trình trả về 0, báo hiệu kết thúc thành công.
 
+---
 
-    mov %rbp, %rsp
-    pop %rbp
-
-
-In other words, the CPU overwrites the stack pointer with the frame
-pointer. In our example, the stack pointer is initially updated from
-0xd30 to 0xd40. Next, the CPU executes `pop %rbp`, which takes the value
-located at 0xd40 (in our example, the address 0x830) and places it in
-`%rbp`. After `leaveq` executes, the stack and frame pointers revert to
-their original values prior to the execution of `main`.
-
-
-The last instruction that executes is `retq`. With 0x0 in the return
-register `%eax`, the program returns zero, indicating correct
-termination.
-
-
-If you have carefully read through this section, you should understand
-why our program prints out the value 42. In essence, the program
-inadvertently uses old values on the stack to cause it to behave in a
-way that we didn't expect. This example was pretty harmless; however, we
-discuss in future sections how hackers have misused function calls to
-make programs misbehave in truly malicious ways.
-
-
-
-
-
-
+Nếu bạn đã đọc kỹ phần này, bạn sẽ hiểu vì sao chương trình in ra giá trị **42**. Về bản chất, chương trình đã vô tình sử dụng các giá trị cũ trên stack, khiến nó hoạt động theo cách mà ta không ngờ tới. Ví dụ này khá vô hại; tuy nhiên, ở các phần sau, chúng ta sẽ thảo luận cách tin tặc lợi dụng lời gọi hàm để khiến chương trình hoạt động sai lệch theo những cách thực sự nguy hiểm.

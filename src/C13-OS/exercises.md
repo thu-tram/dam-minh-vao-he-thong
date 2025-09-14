@@ -8,7 +8,7 @@
 
 ## 13.6. Exercises 
 
-### Exercises for 13.2: Processes {#_exercises_for_13_2_processes .discrete}
+### Exercises for 13.2: Processes
 
 
 1.  Consider the code snippet below with calls to fork (and with error
@@ -49,7 +49,7 @@ b.  For each process in the hierarchy, indicate its output sequence (the
     order in which it executes printf's).
 
 
-#### Solutions {#_solutions .discrete}
+#### Solutions
 
 **If your browser supports hidden solutions, click here to reveal
 them.**
@@ -112,7 +112,7 @@ them.**
     Questions](https://diveintosystems.org/exercises/dive-into-systems-exercises-16.html)
 
 
-### Exercises for 13.3: Virtual Memory {#_exercises_for_13_3_virtual_memory .discrete}
+### Exercises for 13.3: Virtual Memory
 
 
 2.  Early Access [Interactive Virtual Memory

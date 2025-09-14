@@ -63,7 +63,7 @@ other common synchronization constructs: *semaphores*, *barriers* and
 *condition variables*.
 
 
-### CountSort {#_countsort .discrete}
+### CountSort
 
 Let's study a slightly more complicated example called CountSort. The
 CountSort algorithm is a simple linear (O(*N*)) sorting algorithm for
@@ -218,7 +218,7 @@ larger arrays for which we may want to run the program but not
 necessarily print out the output.
 
 
-### Parallelizing countElems: An Initial Attempt {#_parallelizing_countelems_an_initial_attempt .discrete}
+### Parallelizing countElems: An Initial Attempt
 
 CountSort consists of two primary steps, each of which benefits from
 being parallelized. In the remainder of the chapter, we primarily
@@ -376,7 +376,7 @@ working, let's delve deeper into what this program is doing and examine
 how we might fix it.
 
 
-### Data Races {#_data_races .discrete}
+### Data Races
 
 To understand what's going on, let's consider an example run with two
 threads on two separate cores of a multicore system. Recall that the

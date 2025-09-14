@@ -408,7 +408,7 @@ processors, including different protocols and how they are implemented,
 refer to a computer architecture textbook^1^.
 
 
-### Footnotes {#_footnotes .discrete}
+### Footnotes
 
 
 1.  One suggestion is \"Computer Organization and Design: The Hardware
