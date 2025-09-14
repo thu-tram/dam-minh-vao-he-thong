@@ -1,140 +1,75 @@
+Dưới đây là bản dịch tiếng Việt của mục **14.3.1. Mutual Exclusion**, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
+### 14.3.1. Loại trừ lẫn nhau (Mutual Exclusion)
 
+*Mutex là gì? Câu trả lời ở ngoài kia, nó đang tìm kiếm bạn, và nó sẽ tìm thấy bạn nếu bạn muốn.*  
 
+\~ Trinity giải thích về mutex cho Neo (Xin lỗi *The Matrix*)
 
+---
 
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
+Để khắc phục **data race** (tranh chấp dữ liệu), chúng ta sẽ sử dụng một cấu trúc đồng bộ hóa gọi là **mutual exclusion lock** (khóa loại trừ lẫn nhau), hay **mutex**.  
+Mutex là một loại **synchronization primitive** (nguyên thủy đồng bộ hóa) đảm bảo rằng tại bất kỳ thời điểm nào, chỉ **một** thread được phép vào và thực thi đoạn mã bên trong **critical section** (vùng tới hạn).
 
+---
 
+Trước khi sử dụng mutex, chương trình cần:
 
+1. **Khai báo** mutex trong vùng nhớ được chia sẻ giữa các thread (thường là biến toàn cục).
+2. **Khởi tạo** mutex trước khi các thread cần dùng (thường trong hàm `main`).
 
+---
 
+Thư viện **Pthreads** định nghĩa kiểu `pthread_mutex_t` cho mutex.  
+Để khai báo một biến mutex, thêm dòng:
 
-
-
-
-
-
-
-
-
-
-### 14.3.1. Mutual Exclusion 
-
-*What is the mutex? The answer is out there, and it's looking for you,
-and it will find you if you want it to.*
-
-
-\~Trinity, explaining mutexes to Neo (Apologies to *The Matrix*)
-
-
-To fix the data race, let's use a synchronization construct known as a
-mutual exclusion lock, or **mutex**. Mutual exclusion locks are a type
-of synchronization primitive that ensures that only one thread enters
-and executes the code inside the critical section at any given time.
-
-
-Before using a mutex, a program must first:
-
-
-
-1.  Declare the mutex in memory that's shared by threads (often as a
-    global variable).
-
-2.  Initialize the mutex before the threads need to use it (typically in
-    the `main` function).
-
-
-The Pthreads library defines a `pthread_mutex_t` type for mutexes. To
-declare a mutex variable, add this line:
-
-
-
-
-```
+```c
 pthread_mutex_t mutex;
 ```
 
+---
 
-To initialize the mutex use the `pthread_mutex_init` function, which
-takes the address of a mutex and an attribute structure, typically set
-to `NULL`:
+Để khởi tạo mutex, dùng hàm `pthread_mutex_init`, nhận vào địa chỉ của mutex và một cấu trúc thuộc tính (thường đặt là `NULL`):
 
-
-
-
-```
+```c
 pthread_mutex_init(&mutex, NULL);
 ```
 
+---
 
-When the mutex is no longer needed (typically at the end of the `main`
-function, after `pthread_join`), a program should release the mutex
-structure by invoking the `pthread_mutex_destroy` function:
+Khi không còn cần mutex nữa (thường ở cuối hàm `main`, sau khi gọi `pthread_join`), chương trình nên giải phóng cấu trúc mutex bằng cách gọi `pthread_mutex_destroy`:
 
-
-
-
-```
+```c
 pthread_mutex_destroy(&mutex);
 ```
 
+---
 
-#### The Mutex: Locked and Loaded
+#### Mutex: Khóa và sẵn sàng
 
-The initial state of a mutex is unlocked, meaning it's immediately
-usable by any thread. To enter a critical section, a thread must first
-acquire a lock. This is accomplished with a call to the
-`pthread_mutex_lock` function. After a thread has the lock, no other
-thread can enter the critical section until the thread with the lock
-releases it. If another thread calls `pthread_mutex_lock` and the mutex
-is already locked, the thread will **block** (or wait) until the mutex
-becomes available. Recall that [*blocking* implies that the thread will
-not be scheduled](../C13-OS/processes.html#_process_state) to use
-the CPU until the condition it's waiting for (the mutex being available)
-becomes true.
+Trạng thái ban đầu của mutex là **unlocked** (mở khóa), nghĩa là bất kỳ thread nào cũng có thể sử dụng ngay.  
+Để vào critical section, một thread phải **acquire** (giành) được khóa.  
+Điều này được thực hiện bằng cách gọi hàm `pthread_mutex_lock`.  
 
+Sau khi một thread đã giữ khóa, **không thread nào khác** có thể vào critical section cho đến khi thread giữ khóa **release** (nhả) nó.  
+Nếu một thread khác gọi `pthread_mutex_lock` khi mutex đang bị khóa, thread đó sẽ **block** (chờ) cho đến khi mutex khả dụng.  
+Hãy nhớ rằng [*blocking* nghĩa là thread sẽ không được lập lịch](../C13-OS/processes.html#_process_state) để sử dụng CPU cho đến khi điều kiện nó chờ (mutex khả dụng) trở thành đúng.
 
-When a thread exits the critical section it must call the
-`pthread_mutex_unlock` function to release the mutex, making it
-available for another thread. Thus, at most one thread may acquire the
-lock and enter the critical section at a time, which prevents multiple
-threads from *racing* to read and update shared variables.
+---
 
+Khi một thread thoát khỏi critical section, nó phải gọi `pthread_mutex_unlock` để nhả mutex, cho phép thread khác sử dụng.  
+Như vậy, tại một thời điểm, tối đa chỉ có **một thread** giữ khóa và vào critical section, ngăn chặn nhiều thread cùng “tranh” đọc và cập nhật biến chia sẻ.
 
-Having declared and initialized a mutex, the next question is where the
-lock and unlock functions should be placed to best enforce the critical
-section. Here is an initial attempt at augmenting the `countElems`
-function with a mutex (The full source can be downloaded from
-[countElems_p\_v2.c](_attachments/countElems_p_v2.c)):
+---
+
+Sau khi đã khai báo và khởi tạo mutex, câu hỏi tiếp theo là **đặt lệnh khóa và mở khóa ở đâu** để đảm bảo critical section được bảo vệ tốt nhất.  
+Dưới đây là một thử nghiệm ban đầu khi bổ sung mutex vào hàm `countElems`  
+(Toàn bộ mã nguồn có thể tải từ [countElems_p_v2.c](_attachments/countElems_p_v2.c)):
 
 
-
-
-```
+```c
 pthread_mutex_t mutex; //global declaration of mutex, initialized in main()
 
 /*parallel version of step 1 of CountSort algorithm (attempt 1 with mutexes):
@@ -171,234 +106,209 @@ void *countElems( void *args ) {
 }
 ```
 
+---
 
-The mutex initialize and destroy functions are placed in `main` around
-the thread creation and join functions:
+Các lệnh khởi tạo và hủy mutex được đặt trong `main`, bao quanh phần tạo và join thread:
 
+```c
+// trích từ hàm main():
 
-
-
-```
-//code snippet from main():
-
-pthread_mutex_init(&mutex, NULL); //initialize the mutex
+pthread_mutex_init(&mutex, NULL); // khởi tạo mutex
 
 for (t = 0; t < nthreads; t++) {
-    pthread_create( &thread_array[t], NULL, countElems, &thread_args[t] );
+    pthread_create(&thread_array[t], NULL, countElems, &thread_args[t]);
 }
 
 for (t = 0; t < nthreads; t++) {
     pthread_join(thread_array[t], NULL);
 }
-pthread_mutex_destroy(&mutex); //destroy (free) the mutex
+
+pthread_mutex_destroy(&mutex); // hủy (giải phóng) mutex
+```
+
+---
+
+Hãy biên dịch lại và chạy chương trình mới này với số lượng thread khác nhau:
+
+```
+$ ./countElems_p_v2 10000000 1 1
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+
+$ ./countElems_p_v2 10000000 1 2
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+
+$ ./countElems_p_v2 10000000 1 4
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+```
+
+Tuyệt vời — kết quả **cuối cùng** đã nhất quán bất kể số lượng thread!
+
+---
+
+Hãy nhớ rằng một mục tiêu quan trọng khác của multithreading là **giảm thời gian chạy** của chương trình khi số lượng thread tăng (tức là *tăng tốc* thực thi).  
+Hãy benchmark hiệu năng của hàm `countElems`.  
+
+Mặc dù có thể bạn muốn dùng lệnh `time -p`, nhưng hãy nhớ rằng `time -p` đo **wall-clock time** của **toàn bộ** chương trình (bao gồm cả phần sinh dữ liệu ngẫu nhiên), chứ **không chỉ** thời gian chạy của `countElems`.  
+Trong trường hợp này, tốt hơn là dùng system call `gettimeofday`, cho phép đo chính xác wall-clock time của một đoạn mã cụ thể.
+
+---
+
+Benchmark `countElems` trên 100 triệu phần tử cho kết quả:
+
+```
+$ ./countElems_p_v2 100000000 0 1
+Time for Step 1 is 0.368126 s
+
+$ ./countElems_p_v2 100000000 0 2
+Time for Step 1 is 0.438357 s
+
+$ ./countElems_p_v2 100000000 0 4
+Time for Step 1 is 0.519913 s
 ```
 
 
-Let's recompile and run this new program while varying the number of
-threads:
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
+Việc **tăng số lượng thread** lại khiến chương trình **chạy chậm hơn**! Điều này đi ngược lại mục tiêu sử dụng thread để làm chương trình **nhanh hơn**.
 
+---
 
-    $ ./countElems_p_v2 10000000 1 1
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+Để hiểu chuyện gì đang xảy ra, hãy xem vị trí đặt **lock** trong hàm `countElems`:
 
-    $ ./countElems_p_v2 10000000 1 2
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
-
-    $ ./countElems_p_v2 10000000 1 4
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
-
-
-Excellent, the output is *finally* consistent regardless of the number
-of threads used!
-
-
-Recall that another primary goal of threading is to reduce the runtime
-of a program as the number of threads increases (in other words, to
-*speed up* program execution). Let's benchmark the performance of the
-`countElems` function. Although it may be tempting to use a command line
-utility like `time -p`, recall that invoking `time -p` measures the
-wall-clock time of the *entire* program (including the generation of
-random elements) and *not* just the running of the `countElems`
-function. In this case, it is better to use a system call like
-`gettimeofday`, which allows a user to accurately measure the wall-clock
-time of a particular section of code. Benchmarking `countElems` on 100
-million elements yields the following run times:
-
-
-
-
-    $ ./countElems_p_v2 100000000 0 1
-    Time for Step 1 is 0.368126 s
-
-    $ ./countElems_p_v2 100000000 0 2
-    Time for Step 1 is 0.438357 s
-
-    $ ./countElems_p_v2 100000000 0 4
-    Time for Step 1 is 0.519913 s
-
-
-Adding more threads causes the program to get *slower*! This goes
-against the goal of making programs *faster* with threads.
-
-
-To understand what is going on, consider where the locks are placed in
-the `countsElems` function:
-
-
-
-
-```
-//code snippet from the countElems function from earlier
-//the heart of the program
-pthread_mutex_lock(&mutex); //acquire the mutex lock
+```c
+// trích đoạn code từ hàm countElems ở phần trước
+// phần lõi của chương trình
+pthread_mutex_lock(&mutex); // giành mutex lock
 for (i = start; i < end; i++){
     val = array[i];
     counts[val] = counts[val] + 1;
 }
-pthread_mutex_unlock(&mutex); //release the mutex lock
+pthread_mutex_unlock(&mutex); // nhả mutex lock
 ```
 
+Trong ví dụ này, chúng ta đặt lock bao quanh **toàn bộ** vòng lặp `for`.  
+Mặc dù cách đặt này giải quyết vấn đề **đúng đắn** (correctness), nhưng lại **rất tệ** về mặt hiệu năng — critical section giờ bao trùm toàn bộ thân vòng lặp.  
+Đặt lock như vậy đảm bảo rằng **chỉ một thread** có thể thực thi vòng lặp tại một thời điểm, về cơ bản là **tuần tự hóa** chương trình!
 
-In this example, we placed the lock around the *entirety* of the `for`
-loop. Even though this placement solves the correctness problems, it's
-an extremely poor decision from a performance perspective --- the
-critical section now encompasses the entire loop body. Placing locks in
-this manner guarantees that only one thread can execute the loop at a
-time, effectively serializing the program!
-
+---
 
 #### The Mutex: Reloaded
 
-Let's try another approach and place the mutex locking and unlocking
-functions within every iteration of the loop:
+Hãy thử một cách tiếp cận khác: đặt lệnh **lock** và **unlock** mutex **bên trong mỗi vòng lặp**:
 
-
-
-
-```
-/*modified code snippet of countElems function:
- *locks are now placed INSIDE the for loop!
-*/
-//the heart of the program
+```c
+/* phiên bản code đã chỉnh sửa của hàm countElems:
+ * lock được đặt BÊN TRONG vòng for!
+ */
+// phần lõi của chương trình
 for (i = start; i < end; i++) {
     val = array[i];
-    pthread_mutex_lock(&m); //acquire the mutex lock
+    pthread_mutex_lock(&m); // giành mutex lock
     counts[val] = counts[val] + 1;
-    pthread_mutex_unlock(&m); //release the mutex lock
+    pthread_mutex_unlock(&m); // nhả mutex lock
 }
 ```
 
+Thoạt nhìn, đây có vẻ là giải pháp tốt hơn vì mỗi thread có thể vào vòng lặp song song, chỉ tuần tự hóa khi chạm tới lock.  
+Critical section lúc này rất nhỏ, chỉ bao gồm dòng `counts[val] = counts[val] + 1`.
 
-This may initially look like a better solution because each thread can
-enter the loop in parallel, serializing only when reaching the lock. The
-critical section is very small, encompassing only the line
-`counts[val] = counts[val] + 1`.
+---
 
+Trước tiên, hãy kiểm tra tính đúng đắn của phiên bản này:
 
-Let's first perform a correctness check on this version of the program:
+```
+$ ./countElems_p_v3 10000000 1 1
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
 
+$ ./countElems_p_v3 10000000 1 2
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
 
+$ ./countElems_p_v3 10000000 1 4
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+```
 
+Tốt — phiên bản này cũng cho kết quả **nhất quán** bất kể số lượng thread.
 
-    $ ./countElems_p_v3 10000000 1 1
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+---
 
-    $ ./countElems_p_v3 10000000 1 2
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+Bây giờ, hãy xem hiệu năng:
 
-    $ ./countElems_p_v3 10000000 1 4
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
+```
+$ ./countElems_p_v3 100000000 0 1
+Time for Step 1 is 1.92225 s
 
+$ ./countElems_p_v3 100000000 0 2
+Time for Step 1 is 10.9704 s
 
-So far so good. This version of the program also produces consistent
-output regardless of the number of threads employed.
+$ ./countElems_p_v3 100000000 0 4
+Time for Step 1 is 9.13662 s
+```
 
+Chạy phiên bản này cho kết quả **chậm hơn đáng kể**!
 
-Now, let's look at performance:
+---
 
+Hóa ra, việc **lock** và **unlock** mutex là các thao tác **tốn kém**.  
+Hãy nhớ lại phần thảo luận về [tối ưu hóa lời gọi hàm](../C12-CodeOpt/loops_functions.html#_function_inlining):  
+gọi một hàm lặp đi lặp lại (và không cần thiết) trong vòng lặp có thể là nguyên nhân chính gây chậm chương trình.  
 
+Trong cách dùng mutex trước đây, mỗi thread chỉ lock và unlock **một lần**.  
+Trong giải pháp hiện tại, mỗi thread lock và unlock **n/t** lần, trong đó:
 
+- *n* là kích thước mảng
+- *t* là số lượng thread
+- *n/t* là số phần tử mảng được gán cho mỗi thread
 
-    $ ./countElems_p_v3 100000000 0 1
-    Time for Step 1 is 1.92225 s
+Kết quả là chi phí của các thao tác mutex bổ sung làm chậm đáng kể việc thực thi vòng lặp.
 
-    $ ./countElems_p_v3 100000000 0 2
-    Time for Step 1 is 10.9704 s
-
-    $ ./countElems_p_v3 100000000 0 4
-    Time for Step 1 is 9.13662 s
-
-
-Running this version of the code yields (amazingly enough) a
-*significantly slower* runtime!
-
-
-As it turns out, locking and unlocking a mutex are expensive operations.
-Recall what was covered in the discussion on [function call
-optimizations](../C12-CodeOpt/loops_functions.html#_function_inlining):
-calling a function repeatedly (and needlessly) in a loop can be a major
-cause of slowdown in a program. In our prior use of mutexes, each thread
-locks and unlocks the mutex exactly once. In the current solution, each
-thread locks and unlocks the mutex *n/t* times, where *n* is the size of
-the array, *t* is the number of threads, and *n/t* is the size of the
-array component assigned to each particular thread. As a result, the
-cost of the additional mutex operations slows down the loop's execution
-considerably.
-
+---
 
 #### The Mutex: Revisited
 
-In addition to protecting the critical section to achieve correct
-behavior, an ideal solution would use the lock and unlock functions as
-little as possible, and reduce the critical section to the smallest
-possible size.
+Ngoài việc bảo vệ critical section để đảm bảo tính đúng đắn, một giải pháp lý tưởng sẽ:
 
+1. Sử dụng lock và unlock **ít nhất có thể**.
+2. Giảm kích thước critical section xuống **nhỏ nhất có thể**.
 
-The original implementation satisfies the first requirement, whereas the
-second implementation tries to accomplish the second. At first glance,
-it appears that the two requirements are incompatible with each other.
-Is there a way to actually accomplish both (and while we are at it,
-speed up the execution of our program)?
+---
 
+Phiên bản đầu tiên đáp ứng yêu cầu (1), trong khi phiên bản thứ hai cố gắng đạt yêu cầu (2).  
+Thoạt nhìn, hai yêu cầu này có vẻ **mâu thuẫn**.  
+Liệu có cách nào để đạt được **cả hai** (và đồng thời tăng tốc chương trình) không?
 
-For the next attempt, each thread maintains a private, *local* array of
-counts on its stack. Because the array is local to each thread, a thread
-can access it without locking --- there's no risk of a race condition on
-data that isn't shared between threads. Each thread processes its
-assigned subset of the shared array and populates its local counts
-array. After counting up all the values within its subset, each thread:
+---
 
+Trong lần thử tiếp theo, mỗi thread sẽ duy trì một mảng đếm (*counts array*) **cục bộ** trên stack của nó.  
+Vì mảng này là **local** cho từng thread, thread có thể truy cập mà **không cần lock** — không có nguy cơ race condition trên dữ liệu không được chia sẻ.  
 
+Mỗi thread sẽ xử lý phần mảng được gán và điền vào mảng đếm cục bộ của mình.  
+Sau khi đếm xong tất cả giá trị trong phần dữ liệu của mình, mỗi thread sẽ:
 
-1.  Locks the shared mutex (entering a critical section).
+1. **Lock** mutex chia sẻ (vào critical section).
+2. Cộng giá trị từ mảng đếm cục bộ vào mảng `counts` chia sẻ.
+3. **Unlock** mutex chia sẻ (thoát critical section).
 
-2.  Adds the values from its local counts array to the shared counts
-    array.
+---
 
-3.  Unlocks the shared mutex (exiting the critical section).
+Việc giới hạn mỗi thread chỉ cập nhật mảng `counts` chia sẻ **một lần** giúp giảm đáng kể tranh chấp trên biến chia sẻ và giảm thiểu các thao tác mutex tốn kém.
 
+---
 
-Restricting each thread to update the shared counts array only once
-significantly reduces the contention for shared variables and minimizes
-expensive mutex operations.
-
-
-The following is our revised `countElems` function. The full source code
-for this final program can be accessed at
-([countElems_p\_v3.c](_attachments/countElems_p_v3.c)):
+Dưới đây là phiên bản `countElems` đã chỉnh sửa.  
+Toàn bộ mã nguồn của chương trình cuối cùng này có thể xem tại  
+([countElems_p_v3.c](_attachments/countElems_p_v3.c)):
 
 
 
-
-```
+```c
 /*parallel version of step 1 of CountSort algorithm (final attempt w/mutexes):
  * extracts arguments from args value
  * calculates component of the array that thread is responsible for counting
@@ -443,93 +353,74 @@ void *countElems( void *args ) {
 }
 ```
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-This version has a few additional features:
+---
 
+Phiên bản này có một vài đặc điểm bổ sung:
 
+- Sự xuất hiện của `local_counts`, một mảng **cục bộ** trong phạm vi của từng thread (tức là được cấp phát trên stack của thread đó). Giống như `counts`, `local_counts` chứa `MAX` phần tử, với `MAX` là giá trị lớn nhất mà bất kỳ phần tử nào trong mảng đầu vào có thể có.
 
--   The presence of `local_counts`, an array that is private to the
-    scope of each thread (i.e., allocated in the thread's stack). Like
-    `counts`, `local_counts` contains `MAX` elements, given that `MAX`
-    is the maximum value any element can hold in our input array.
+- Mỗi thread cập nhật `local_counts` theo tốc độ riêng của nó, **không** có tranh chấp (contention) đối với biến chia sẻ.
 
--   Each thread makes updates to `local_counts` at its own pace, without
-    any contention for shared variables.
+- Chỉ **một** lần gọi `pthread_mutex_lock` được dùng để bảo vệ việc mỗi thread cập nhật mảng `counts` toàn cục, và điều này chỉ diễn ra **một lần** ở cuối quá trình thực thi của thread.
 
--   A single call to `pthread_mutex_lock` protects each thread's update
-    to the global `counts` array, which happens only once at the end of
-    each thread's execution.
+---
 
+Bằng cách này, chúng ta giảm thời gian mỗi thread phải ở trong **critical section** xuống chỉ còn việc cập nhật mảng `counts` chia sẻ.  
+Mặc dù tại một thời điểm chỉ một thread có thể vào critical section, nhưng thời gian mỗi thread ở đó **tỷ lệ với `MAX`**, chứ không phải *n* (độ dài mảng toàn cục).  
+Vì `MAX` nhỏ hơn rất nhiều so với *n*, chúng ta kỳ vọng sẽ thấy cải thiện về hiệu năng.
 
-In this manner, we reduce the time each thread spends in a critical
-section to just updating the shared counts array. Even though only one
-thread can enter the critical section at a time, the time each thread
-spends there is proportional to `MAX`, not *n*, the length of the global
-array. Since `MAX` is much less than *n*, we should see an improvement
-in performance.
+---
 
+Bây giờ, hãy benchmark phiên bản này của chương trình:
 
-Let's now benchmark this version of our code:
+```
+$ ./countElems_p_v3 100000000 0 1
+Time for Step 1 is 0.334574 s
 
+$ ./countElems_p_v3 100000000 0 2
+Time for Step 1 is 0.209347 s
 
+$ ./countElems_p_v3 100000000 0 4
+Time for Step 1 is 0.130745 s
+```
 
+Thật tuyệt vời! Chương trình của chúng ta không chỉ cho ra kết quả **đúng**, mà còn chạy **nhanh hơn** khi tăng số lượng thread.
 
-    $ ./countElems_p_v3 100000000 0 1
-    Time for Step 1 is 0.334574 s
+---
 
-    $ ./countElems_p_v3 100000000 0 2
-    Time for Step 1 is 0.209347 s
+Bài học rút ra ở đây là: để **tối thiểu hóa** critical section một cách hiệu quả, hãy sử dụng **biến cục bộ** để thu thập các giá trị trung gian.  
+Sau khi hoàn thành phần công việc nặng cần song song hóa, hãy dùng mutex để cập nhật an toàn các biến chia sẻ.
 
-    $ ./countElems_p_v3 100000000 0 4
-    Time for Step 1 is 0.130745 s
-
-
-Wow, what a difference! Our program not only computes the correct
-answers, but also executes faster as we increase the number of threads.
-
-
-The lesson to take away here is this: to efficiently minimize a critical
-section, use local variables to collect intermediate values. After the
-hard work requiring parallelization is over, use a mutex to safely
-update any shared variable(s).
-
+---
 
 #### Deadlock
 
-In some programs, waiting threads have dependencies on one another. A
-situation called **deadlock** can arise when multiple synchronization
-constructs like mutexes are incorrectly applied. A deadlocked thread is
-blocked from execution by another thread, which *itself* is blocked on a
-blocked thread. Gridlock (in which cars in all directions cannot move
-forward due to being blocked by other cars) is a common real-world
-example of deadlock that occurs at busy city intersections.
+Trong một số chương trình, các thread đang chờ nhau có thể phụ thuộc lẫn nhau.  
+Một tình huống gọi là **deadlock** có thể xảy ra khi nhiều cấu trúc đồng bộ hóa như mutex được áp dụng **sai cách**.  
+Một thread bị deadlock sẽ bị chặn bởi một thread khác, và thread đó **cũng** đang bị chặn bởi một thread đang bị chặn khác.  
+**Kẹt xe** (gridlock), khi các xe ở mọi hướng không thể di chuyển vì bị chặn bởi các xe khác, là một ví dụ thực tế phổ biến của deadlock tại các giao lộ đông đúc.
 
+---
 
-To illustrate a deadlock scenario in code, let's consider an example
-where multithreading is used to implement a banking application. Each
-user's account is defined by a balance and its own mutex (ensuring that
-no race conditions can occur when updating the balance):
+Để minh họa deadlock trong code, hãy xét ví dụ sử dụng multithreading để triển khai một ứng dụng ngân hàng.  
+Mỗi tài khoản người dùng được định nghĩa bởi số dư (**balance**) và một mutex riêng (đảm bảo không có race condition khi cập nhật số dư):
 
-
-
-
-```
+```c
 struct account {
     pthread_mutex_t lock;
     int balance;
 };
 ```
 
+---
 
-Consider the following naive implementation of a `Transfer` function
-that moves money from one bank account to another:
+Xét một cài đặt đơn giản của hàm `Transfer` để chuyển tiền từ một tài khoản ngân hàng sang tài khoản khác:
 
-
-
-
-```
+```c
 void *Transfer(void *args){
-    //argument passing removed to increase readability
+    // bỏ phần truyền tham số để dễ đọc hơn
     //...
 
     pthread_mutex_lock(&fromAcct->lock);
@@ -545,42 +436,38 @@ void *Transfer(void *args){
 }
 ```
 
+---
 
-Suppose that Threads 0 and 1 are executing concurrently and represent
-users A and B, respectively. Now consider the situation in which A and B
-want to transfer money to each other: A wants to transfer 20 dollars to
-B, while B wants to transfer 40 to A.
+Giả sử Thread 0 và Thread 1 chạy đồng thời, lần lượt đại diện cho người dùng A và B.  
+Xét tình huống A và B muốn chuyển tiền cho nhau:  
+- A muốn chuyển 20 đô cho B  
+- B muốn chuyển 40 đô cho A
 
+---
 
-In the path of execution highlighted by Figure 1, both
-threads concurrently execute the `Transfer` function. Thread 0 acquires
-the lock of `acctA` while Thread 1 acquires the lock of `acctB`. Now
-consider what happens. To continue executing, Thread 0 needs to acquire
-the lock on `acctB`, which Thread 1 holds. Likewise, Thread 1 needs to
-acquire the lock on `acctA` to continue executing, which Thread 0 holds.
-Since both threads are blocked on each other, they are in deadlock.
+Trong luồng thực thi được minh họa ở **Hình 1**, cả hai thread cùng lúc thực thi hàm `Transfer`:
 
+- Thread 0 giữ khóa (`lock`) của `acctA`  
+- Thread 1 giữ khóa của `acctB`
 
+Để tiếp tục, Thread 0 cần giữ khóa của `acctB` — nhưng khóa này đang do Thread 1 giữ.  
+Tương tự, Thread 1 cần giữ khóa của `acctA` — nhưng khóa này đang do Thread 0 giữ.  
+
+Vì cả hai thread đều **chặn** nhau, chúng rơi vào trạng thái **deadlock**.
 
 
 ![Two threads deadlocked with each other](_images/deadlock.png)
 
+**Hình 1.** Ví dụ về deadlock  
 
-Figure 1. An example of deadlock
+---
 
+Mặc dù **OS** (hệ điều hành) cung cấp một số cơ chế bảo vệ chống lại deadlock, lập trình viên vẫn cần cẩn trọng khi viết mã có thể làm tăng khả năng xảy ra deadlock.  
+Ví dụ, kịch bản ở trên có thể tránh được bằng cách **sắp xếp lại** các thao tác khóa sao cho mỗi cặp **lock/unlock** chỉ bao quanh câu lệnh cập nhật số dư tương ứng:
 
-Although the OS provides some protection against deadlock, programmers
-should be mindful about writing code that increases the likelihood of
-deadlock. For example, the preceding scenario could have been avoided by
-rearranging the locks so that each lock/unlock pair surrounds only the
-balance update statement associated with it:
-
-
-
-
-```
+```c
 void *Transfer(void *args){
-    //argument passing removed to increase readability
+    // bỏ phần truyền tham số để dễ đọc hơn
     //...
 
     pthread_mutex_lock(&fromAcct->lock);
@@ -595,13 +482,8 @@ void *Transfer(void *args){
 }
 ```
 
+---
 
-Deadlock is not a situation that is unique to threads. Processes
-(especially those that are communicating with one another) can deadlock
-with one another. Programmers should be mindful of the synchronization
-primitives they use and the consequences of using them incorrectly.
-
-
-
-
-
+Deadlock không phải là tình huống chỉ xảy ra với **thread**.  
+Các **process** (đặc biệt là những process có giao tiếp với nhau) cũng có thể bị deadlock.  
+Lập trình viên cần chú ý đến các **synchronization primitive** (nguyên thủy đồng bộ hóa) mà họ sử dụng và hậu quả của việc sử dụng chúng **không đúng cách**.

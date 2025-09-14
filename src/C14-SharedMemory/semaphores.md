@@ -1,123 +1,52 @@
+### 14.3.2. Semaphores
 
+**Semaphore** thường được sử dụng trong **hệ điều hành** và các chương trình **concurrent** (chạy đồng thời), với mục tiêu quản lý việc truy cập đồng thời vào một **pool** (bể) tài nguyên.  
+Khi sử dụng semaphore, mục tiêu không phải là *ai* sở hữu cái gì, mà là *còn bao nhiêu* tài nguyên vẫn khả dụng.  
+Semaphore khác với **mutex** ở một số điểm sau:
 
+- Semaphore **không nhất thiết** phải ở trạng thái nhị phân (locked hoặc unlocked).  
+  Một loại đặc biệt gọi là **counting semaphore** (semaphore đếm) có giá trị từ 0 đến *r*, trong đó *r* là số lượng tài nguyên tối đa có thể có.  
+  Mỗi khi một tài nguyên được tạo ra, semaphore sẽ **tăng** giá trị.  
+  Mỗi khi một tài nguyên được sử dụng, semaphore sẽ **giảm** giá trị.  
+  Khi counting semaphore có giá trị 0, nghĩa là **không còn tài nguyên khả dụng**, và bất kỳ thread nào cố gắng lấy tài nguyên sẽ phải **chờ** (block).
 
+- Semaphore có thể **mặc định ở trạng thái khóa**.
 
+---
 
+Mặc dù mutex và **condition variable** có thể mô phỏng chức năng của semaphore, nhưng trong một số trường hợp, sử dụng semaphore có thể **đơn giản** và **hiệu quả** hơn.  
+Semaphore cũng có ưu điểm là **bất kỳ thread nào** cũng có thể mở khóa semaphore (khác với mutex, nơi thread gọi khóa phải là thread mở khóa).
 
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
+---
 
+Semaphore **không** phải là một phần của thư viện **Pthreads**, nhưng điều đó không có nghĩa là bạn không thể sử dụng chúng.  
+Trên hệ thống Linux và macOS, các primitive semaphore có thể được truy cập từ `semaphore.h` (thường nằm trong `/usr/include`).  
+Vì không có chuẩn chung, các lời gọi hàm có thể khác nhau giữa các hệ thống.  
+Tuy nhiên, thư viện semaphore có các khai báo tương tự như mutex:
 
+- **Khai báo** một semaphore (kiểu `sem_t`, ví dụ: `sem_t semaphore`).
 
+- **Khởi tạo** semaphore bằng `sem_init` (thường trong `main`).  
+  Hàm `sem_init` có 3 tham số:  
+  1. Địa chỉ của semaphore.  
+  2. Trạng thái khởi tạo (locked hoặc unlocked).  
+  3. Cho biết semaphore sẽ được chia sẻ giữa các thread của **một process** (ví dụ: giá trị 0) hay **giữa các process** (ví dụ: giá trị 1).  
 
+  Điều này hữu ích vì semaphore thường được dùng để đồng bộ hóa giữa các process.  
+  Ví dụ: `sem_init(&semaphore, 1, 0)` nghĩa là semaphore ban đầu **đang khóa** (tham số thứ hai là 1) và được chia sẻ giữa các thread của cùng một process (tham số thứ ba là 0).  
+  Ngược lại, mutex luôn bắt đầu ở trạng thái **unlocked**.  
+  Lưu ý: trên macOS, hàm tương đương là `sem_open`.
 
+- **Hủy** semaphore bằng `sem_destroy` (thường trong `main`).  
+  Hàm này chỉ nhận con trỏ tới semaphore: `sem_destroy(&semaphore)`.  
+  Lưu ý: trên macOS, hàm tương đương có thể là `sem_unlink` hoặc `sem_close`.
 
+- Hàm `sem_wait` cho biết một tài nguyên đang được sử dụng và **giảm** giá trị semaphore.  
+  Nếu giá trị semaphore > 0 (nghĩa là vẫn còn tài nguyên khả dụng), hàm sẽ trả về ngay và thread được phép tiếp tục.  
+  Nếu giá trị semaphore = 0, thread sẽ **block** cho đến khi có tài nguyên khả dụng (tức semaphore > 0).  
+  Ví dụ: `sem_wait(&semaphore)`.
 
-
-
-
-
-
-
-
-
-### 14.3.2. Semaphores 
-
-Semaphores are commonly used in operating systems and concurrent
-programs where the goal is to manage concurrent access to a pool of
-resources. When using a semaphore, the goal isn't *who* owns what, but
-*how many* resources are still available. Semaphores are different from
-mutexes in several ways:
-
-
-
--   Semaphores need not be in a binary (locked or unlocked) state. A
-    special type of semaphore called a *counting semaphore* can range in
-    value from 0 to some *r*, where *r* is the number of possible
-    resources. Any time a resource is produced, the semaphore is
-    incremented. Any time a resource is being used, the semaphore is
-    decremented. When a counting semaphore has a value of 0, it means
-    that no resources are available, and any other threads that attempt
-    to acquire a resource must wait (e.g., block).
-
--   Semaphores can be locked by default.
-
-
-While a mutex and condition variables can simulate the functionality of
-a semaphore, using a semaphore may be simpler and more efficient in some
-cases. Semaphores also have the advantage that *any* thread can unlock
-the semaphore (in contrast to a mutex, where the calling thread must
-unlock it).
-
-
-Semaphores are not part of the Pthreads library, but that does not mean
-that you cannot use them. On Linux and macOS systems, semaphore
-primitives can be accessed from `semaphore.h`, typically located in
-`/usr/include`. Since there is no standard, the function calls may
-differ on different systems. That said, the semaphore library has
-similar declarations to those of mutexes:
-
-
-
--   Declare a semaphore (type `sem_t`, e.g., `sem_t semaphore`).
-
--   Initialize a semaphore using `sem_init` (usually in `main`). The
-    `sem_init` function has three parameters: the first is the address
-    of a semaphore, the second is its initial state (locked or
-    unlocked), and the third parameter indicates whether the semaphore
-    should be shared with the threads of a process (e.g., with value 0)
-    or between processes (e.g., with value 1). This is useful because
-    semaphores are commonly used for process synchronization. For
-    example, initializing a semaphore with the call
-    `sem_init(&semaphore, 1, 0)` indicates that our semaphore is
-    initially locked (the second parameter is 1), and is to be shared
-    among the threads of a common process (the third parameter is 0). In
-    contrast, mutexes always start out unlocked. It is important to note
-    that in macOS, the equivalent function is `sem_open`.
-
--   Destroy a semaphore using `sem_destroy` (usually in `main`). This
-    function only takes a pointer to the semaphore
-    (`sem_destroy(&semaphore)`). Note that in macOS, the equivalent
-    function may be `sem_unlink` or `sem_close`.
-
--   The `sem_wait` function indicates that a resource is being used, and
-    decrements the semaphore. If the semaphore's value is greater than 0
-    (indicating there are still resources available), the function will
-    immediately return, and the thread is allowed to proceed. If the
-    semaphore's value is already 0, the thread will block until a
-    resource becomes available (i.e., the semaphore has a positive
-    value). A call to `sem_wait` typically looks like
-    `sem_wait(&semaphore)`.
-
--   The `sem_post` function indicates that a resource is being freed,
-    and increments the semaphore. This function returns immediately. If
-    there is a thread waiting on the semaphore (i.e., the semaphore's
-    value was previously 0), then the other thread will take ownership
-    of the freed resource. A call to `sem_post` looks like
-    `sem_post(&semaphore)`.
-
-
-
-
-
+- Hàm `sem_post` cho biết một tài nguyên được giải phóng và **tăng** giá trị semaphore.  
+  Hàm này trả về ngay lập tức.  
+  Nếu có thread đang chờ semaphore (tức giá trị semaphore trước đó là 0), thread đó sẽ nhận quyền sử dụng tài nguyên vừa được giải phóng.  
+  Ví dụ: `sem_post(&semaphore)`.

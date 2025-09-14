@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## {.anchor}15.3. To Exascale and Beyond: Cloud Computing, Big Data, and the Future of Computing
 
 Advances in technology have made it possible for humanity to produce

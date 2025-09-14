@@ -1,265 +1,149 @@
+Dưới đây là bản dịch tiếng Việt của mục **14. Leveraging Shared Memory in the Multicore Era**, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
+## 14. Tận dụng bộ nhớ chia sẻ trong kỷ nguyên đa lõi (Leveraging Shared Memory in the Multicore Era)
 
+*Thế giới đã thay đổi.*  
 
+*Tôi cảm nhận điều đó trong lớp silica.*  
 
+*Tôi cảm nhận điều đó trong transistor.*  
 
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
+*Tôi nhìn thấy điều đó trong lõi.*  
 
+\~ Xin lỗi Galadriel (*Chúa tể những chiếc nhẫn: Hiệp hội nhẫn thần*)  
 
+---
 
+Cho đến nay, phần thảo luận về kiến trúc của chúng ta tập trung vào một thế giới thuần **single-CPU** (CPU đơn).  
+Nhưng thế giới đã thay đổi. CPU ngày nay có nhiều **core** (lõi), hay đơn vị tính toán (**compute unit**).  
+Trong chương này, chúng ta sẽ thảo luận về **kiến trúc đa lõi** (**multicore architectures**) và cách tận dụng chúng để tăng tốc độ thực thi chương trình.
 
+---
 
+> **CPUs, Processors, and Cores**  
+>  
+> Trong nhiều trường hợp ở chương này, các thuật ngữ *processor* và *CPU* được dùng thay thế cho nhau.  
+> Ở mức cơ bản, **processor** (bộ xử lý) là bất kỳ mạch điện nào thực hiện một số phép tính trên dữ liệu bên ngoài.  
+> Theo định nghĩa này, **central processing unit** (CPU – bộ xử lý trung tâm) là một ví dụ của processor.  
+> Một processor hoặc CPU có nhiều **compute core** được gọi là **multicore processor** hoặc **multicore CPU**.  
+> **Core** là một đơn vị tính toán chứa nhiều thành phần tạo nên CPU cổ điển: một ALU, các thanh ghi (**registers**), và một phần bộ nhớ đệm (**cache**).  
+> Mặc dù *core* khác với *processor*, nhưng không hiếm khi thấy hai thuật ngữ này được dùng thay thế cho nhau trong các tài liệu (đặc biệt là những tài liệu ra đời khi multicore processor vẫn còn được coi là mới mẻ).
 
+---
 
+Năm 1965, nhà sáng lập Intel – **Gordon Moore** – dự đoán rằng số lượng transistor trong một **mạch tích hợp** sẽ tăng gấp đôi mỗi năm.  
+Dự đoán này, nay được biết đến với tên **Định luật Moore** (**Moore’s Law**), sau đó được điều chỉnh thành số lượng transistor tăng gấp đôi mỗi **hai** năm.  
 
+Bất chấp sự tiến hóa của các công tắc điện tử từ transistor của Bardeen đến các transistor siêu nhỏ trên chip hiện đại, Định luật Moore vẫn đúng trong suốt 50 năm qua.  
+Tuy nhiên, bước sang thiên niên kỷ mới, thiết kế bộ xử lý đã gặp phải một số **giới hạn hiệu năng** quan trọng:
 
+- **Memory wall**: Sự cải tiến của công nghệ bộ nhớ không theo kịp tốc độ tăng của xung nhịp CPU, khiến bộ nhớ trở thành **nút thắt cổ chai** về hiệu năng.  
+  Do đó, việc liên tục tăng tốc độ thực thi của CPU **không còn** cải thiện hiệu năng tổng thể của hệ thống.
 
-## 14. Leveraging Shared Memory in the Multicore Era 
+- **Power wall**: Việc tăng số lượng transistor trên một bộ xử lý tất yếu làm tăng nhiệt độ và mức tiêu thụ điện năng, kéo theo chi phí cấp điện và làm mát hệ thống.  
+  Với sự phổ biến của hệ thống đa lõi, **điện năng** giờ đây trở thành mối quan tâm hàng đầu trong thiết kế hệ thống máy tính.
 
-*The world is changed.*
+---
 
+Hai “bức tường” về điện năng và bộ nhớ đã buộc các kiến trúc sư máy tính phải thay đổi cách thiết kế bộ xử lý.  
+Thay vì thêm nhiều transistor để tăng tốc độ thực thi một luồng lệnh duy nhất, họ bắt đầu thêm nhiều **compute core** vào một CPU.  
 
-*I feel it in the silica.*
+Compute core là các đơn vị xử lý đơn giản hơn, chứa ít transistor hơn CPU truyền thống và thường dễ chế tạo hơn.  
+Kết hợp nhiều core trên một CPU cho phép CPU thực thi **nhiều** luồng lệnh độc lập cùng lúc.
 
+---
 
-*I feel it in the transistor.*
+> **More cores != better**  
+>  
+> Có thể bạn sẽ nghĩ rằng tất cả các core đều giống nhau và máy tính có càng nhiều core thì càng tốt.  
+> Điều này **không hẳn** đúng!  
+> Ví dụ: **graphics processing unit** (GPU – bộ xử lý đồ họa) có các core với số lượng transistor **ít hơn nhiều** so với CPU core, và được thiết kế chuyên biệt cho các tác vụ xử lý vector.  
+> Một GPU điển hình có thể có **5.000** core hoặc hơn.  
+> Tuy nhiên, GPU core bị giới hạn về loại phép toán mà chúng có thể thực hiện và **không phải lúc nào** cũng phù hợp cho tính toán tổng quát như CPU core.  
+> Việc tính toán bằng GPU được gọi là **manycore computing**.  
+> Trong chương này, chúng ta tập trung vào **multicore computing**.  
+> Xem [Chương 15](../C15-Parallel/gpu.html#_GPUs) để tìm hiểu về manycore computing.
 
+---
 
-*I see it in the core.*
+Nếu bạn muốn, tôi có thể dịch tiếp sang **14.1. Shared Memory Multiprocessing** để nối tiếp nội dung.
 
 
-\~ With apologies to Galadriel (*Lord of the Rings: Fellowship of the
-Ring*)
+Dưới đây là bản dịch tiếng Việt của mục **Taking a Closer Look: How Many Cores?**, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
-Until now, our discussion of architecture has focused on a purely
-single-CPU world. But the world has changed. Today's CPUs have multiple
-**cores**, or compute units. In this chapter, we discuss multicore
-architectures, and how to leverage them to speed up the execution of
-programs.
+### Xem xét kỹ hơn: Có bao nhiêu lõi?
 
+Hầu như tất cả các hệ thống máy tính hiện đại đều có nhiều **core** (lõi), bao gồm cả các thiết bị nhỏ như [Raspberry Pi](https://www.raspberrypi.org/).  
+Xác định số lượng core trên một hệ thống là điều quan trọng để đo lường chính xác hiệu năng của các chương trình **multicore** (đa lõi).  
 
+Trên máy tính Linux và macOS, lệnh `lscpu` cung cấp bản tóm tắt kiến trúc của hệ thống.  
+Trong ví dụ sau, chúng tôi hiển thị kết quả của lệnh `lscpu` khi chạy trên một máy mẫu (một số phần được lược bỏ để nhấn mạnh các thông tin chính):
 
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | CPUs, Processors, and Cores       |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | In many instances in this         |
-|                                   | chapter, the terms *processor*    |
-|                                   | and *CPU* are used                |
-|                                   | interchangeably. At a fundamental |
-|                                   | level, a **processor** is any     |
-|                                   | circuit that performs some        |
-|                                   | computation on external data.     |
-|                                   | Based on this definition, the     |
-|                                   | **central processing unit** (CPU) |
-|                                   | is an example of a processor. A   |
-|                                   | processor or a CPU with multiple  |
-|                                   | compute cores is referred to as a |
-|                                   | **multicore processor** or a      |
-|                                   | **multicore CPU**. A **core** is  |
-|                                   | a compute unit that contains many |
-|                                   | of the components that make up    |
-|                                   | the classical CPU: an ALU,        |
-|                                   | registers, and a bit of cache.    |
-|                                   | Although a *core* is different    |
-|                                   | from a processor, it is not       |
-|                                   | unusual to see these terms used   |
-|                                   | interchangeably in the literature |
-|                                   | (especially if the literature     |
-|                                   | originated at a time when         |
-|                                   | multicore processors were still   |
-|                                   | considered novel).                |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-In 1965, the founder of Intel, Gordon Moore, estimated that the number
-of transistors in an integrated circuit would double every year. His
-prediction, now known as **Moore's Law**, was later revised to
-transistor counts doubling every *two* years. Despite the evolution of
-electronic switches from Bardeen's transistor to the tiny chip
-transistors that are currently used in modern computers, Moore's Law has
-held true for the past 50 years. However, the turn of the millennium saw
-processor design hit several critical performance walls:
-
-
-
--   The **memory wall**: Improvements in memory technology did not keep
-    pace with improvements in clock speed, resulting in memory becoming
-    a bottleneck to performance. As a result, continuously speeding up
-    the execution of a CPU no longer improves its overall system
-    performance.
-
--   The **power wall**: Increasing the number of transistors on a
-    processor necessarily increases that processor's temperature and
-    power consumption, which in turn increases the required cost to
-    power and cool the system. With the proliferation of multicore
-    systems, power is now the dominant concern in computer system
-    design.
-
-
-The power and memory walls caused computer architects to change the way
-they designed processors. Instead of adding more transistors to increase
-the speed at which a CPU executes a single stream of instructions,
-architects began adding multiple **compute cores** to a CPU. Compute
-cores are simplified processing units that contain fewer transistors
-than traditional CPUs and are generally easier to create. Combining
-multiple cores on one CPU allows the CPU to execute *multiple*
-independent streams of instructions at once.
-
-
-
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | More cores != better              |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | It may be tempting to assume that |
-|                                   | all cores are equal and that the  |
-|                                   | more cores a computer has, the    |
-|                                   | better it is. This is not         |
-|                                   | necessarily the case! For         |
-|                                   | example, **graphics processing    |
-|                                   | unit** (GPU) cores have even      |
-|                                   | fewer transistors than CPU cores, |
-|                                   | and are specialized for           |
-|                                   | particular tasks involving        |
-|                                   | vectors. A typical GPU can have   |
-|                                   | 5,000 or more GPU cores. However, |
-|                                   | GPU cores are limited in the      |
-|                                   | types of operations that they can |
-|                                   | perform and are not always        |
-|                                   | suitable for general-purpose      |
-|                                   | computing like the CPU core.      |
-|                                   | Computing with GPUs is known as   |
-|                                   | **manycore** computing. In this   |
-|                                   | chapter, we concentrate on        |
-|                                   | **multicore** computing. See      |
-|                                   | [Chapter                          |
-|                                   | 15](../C1                         |
-|                                   | 5-Parallel/gpu.html#_GPUs) |
-|                                   | for a discussion of manycore      |
-|                                   | computing.                        |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-### Taking a Closer Look: How Many Cores?
-
-Almost all modern computer systems have multiple cores, including small
-devices like the [Raspberry Pi](https://www.raspberrypi.org/).
-Identifying the number of cores on a system is critical for accurately
-measuring the performance of multicore programs. On Linux and macOS
-computers, the `lscpu` command provides a summary of a system's
-architecture. In the following example, we show the output of the
-`lscpu` command when run on a sample machine (some output is omitted to
-emphasize the key features):
-
-
-
-
-    $ lscpu
-
-    Architecture:          x86_64
-    CPU op-mode(s):        32-bit, 64-bit
-    Byte Order:            Little Endian
-    CPU(s):                8
-    On-line CPU(s) list:   0-7
-    Thread(s) per core:    2
-    Core(s) per socket:    4
-    Socket(s):             1
-    Model name:            Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
-    CPU MHz:               1607.562
-    CPU max MHz:           3900.0000
-    CPU min MHz:           1600.0000
-    L1d cache:             32K
-    L1i cache:             32K
-    L2 cache:              256K
-    L3 cache:              8192K
-    ...
-
-
-The `lscpu` command gives a lot of useful information, including the
-type of processors, the core speed, and the number of cores. To
-calculate the number of **physical** (or actual) cores on a system,
-multiply the number of sockets by the number of cores per socket. The
-sample `lscpu` output shown above shows that the system has one socket
-with four cores per socket, or four physical cores in total.
-
-
->> Hyperthreading
-
-
-At first glance, it may appear that the system in the previous example
-has eight cores in total. After all, this is what the \"CPU(s)\" field
-seems to imply. However, that field actually indicates the number of
-**hyperthreaded** (logical) cores, not the number of physical cores.
-Hyperthreading, or simultaneous multithreading (SMT), enables the
-efficient processing of multiple threads on a single core. Although
-hyperthreading can decrease the overall runtime of a program,
-performance on hyperthreaded cores does not scale at the same rate as on
-physical cores. However, if one task idles (e.g., due to a [control
-hazard](../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards)),
-another task can still utilize the core. In short, hyperthreading was
-introduced to improve *process throughput* (which measures the number of
-processes that complete in a given unit of time) rather than *process
-speedup* (which measures the amount of runtime improvement of an
-individual process). Much of our discussion of performance in the coming
-chapter will focus on speedup.
-
-
->> Performance Cores and Efficiency Cores
-
-
-On some newer architectures (such as Intel's 12th generation processors
-and newer), multiplying the number of sockets by the numbers of cores
-and hardware threads yields a different (usually smaller) number than
-what is shown in the \"CPU(s)\" field. What's going on here? The answer
-lies in the new heterogeneous architectures being developed by chip
-makers. For example, starting with its 12th generation processors, Intel
-has introduced an architecture that consists of a mixture of
-\"Performance\" cores (**P-cores**) and \"Efficiency\" cores
-(**E-cores**). The goal of this hybrid design is to delegate smaller
-background tasks to the smaller power-sipping E-cores, freeing the
-larger power-hungry P-cores for compute-intensive tasks. A similar
-principle drives the design of the earlier big.LITTLE mobile
-architecture introduced by Arm. On heterogeneous architectures, the
-default output of `lscpu` only displays the available P-cores; the
-number of E-cores can typically be computed by subtracting the number of
-P-cores from the total cores shown in the \"CPU(s)\" field. Invoking the
-`lscpu` command with its `--all` and `--extended` flags will display a
-full mapping of the P-cores and E-cores on a system, with the E-core
-identifiable by their lower processor speeds.
+```bash
+$ lscpu
 
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                8
+On-line CPU(s) list:   0-7
+Thread(s) per core:    2
+Core(s) per socket:    4
+Socket(s):             1
+Model name:            Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
+CPU MHz:               1607.562
+CPU max MHz:           3900.0000
+CPU min MHz:           1600.0000
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              8192K
+...
+```
 
 
+Lệnh `lscpu` cung cấp nhiều thông tin hữu ích, bao gồm loại bộ xử lý, tốc độ core, và số lượng core.  
+Để tính số lượng **physical core** (lõi vật lý/thực tế) trên hệ thống, nhân số lượng **socket** với số lượng core trên mỗi socket.  
+Kết quả `lscpu` mẫu ở trên cho thấy hệ thống có **một socket** với **bốn core** trên mỗi socket, tức là tổng cộng **bốn physical core**.
 
+---
 
+#### Hyperthreading
 
+Thoạt nhìn, có thể thấy hệ thống trong ví dụ trước có **tám core**.  
+Xét cho cùng, đây là điều mà trường `"CPU(s)"` dường như ngụ ý.  
+Tuy nhiên, trường này thực tế cho biết số lượng **hyperthreaded core** (lõi logic), chứ không phải số lượng physical core.  
+
+**Hyperthreading** (hay **simultaneous multithreading – SMT**) cho phép xử lý hiệu quả nhiều **thread** trên cùng một core.  
+Mặc dù hyperthreading có thể giảm tổng thời gian chạy của một chương trình, hiệu năng trên hyperthreaded core **không** tăng tỷ lệ thuận như trên physical core.  
+
+Tuy nhiên, nếu một tác vụ bị **idle** (nhàn rỗi, ví dụ do [control hazard](../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards)), một tác vụ khác vẫn có thể tận dụng core đó.  
+
+Tóm lại, hyperthreading được giới thiệu để cải thiện **process throughput** (lượng tiến trình hoàn thành trong một đơn vị thời gian), chứ không phải **process speedup** (mức cải thiện thời gian chạy của một tiến trình đơn lẻ).  
+Phần lớn nội dung thảo luận về hiệu năng trong chương tiếp theo sẽ tập trung vào **speedup**.
+
+---
+
+#### Performance Cores và Efficiency Cores
+
+Trên một số kiến trúc mới hơn (chẳng hạn như bộ xử lý Intel thế hệ 12 trở lên), phép nhân số lượng socket với số lượng core và **hardware thread** cho ra một con số khác (thường nhỏ hơn) so với giá trị hiển thị trong trường `"CPU(s)"`.  
+Điều gì đang xảy ra ở đây?  
+
+Câu trả lời nằm ở các kiến trúc **heterogeneous** (không đồng nhất) mới đang được các hãng sản xuất chip phát triển.  
+Ví dụ: bắt đầu từ thế hệ CPU thứ 12, Intel đã giới thiệu kiến trúc kết hợp giữa **Performance core** (**P-core**) và **Efficiency core** (**E-core**).  
+
+Mục tiêu của thiết kế lai này là giao các tác vụ nền nhỏ hơn cho các E-core tiết kiệm điện, giải phóng các P-core mạnh mẽ nhưng tiêu thụ nhiều điện cho các tác vụ tính toán nặng.  
+Nguyên tắc tương tự cũng được áp dụng trong kiến trúc di động **big.LITTLE** trước đây của Arm.
+
+Trên các kiến trúc heterogeneous, kết quả mặc định của `lscpu` chỉ hiển thị các P-core khả dụng;  
+số lượng E-core thường có thể tính bằng cách lấy tổng số core trong trường `"CPU(s)"` trừ đi số lượng P-core.  
+
+Chạy lệnh `lscpu` với tùy chọn `--all` và `--extended` sẽ hiển thị **bản đồ đầy đủ** của P-core và E-core trên hệ thống, trong đó E-core có thể nhận diện nhờ tốc độ xử lý thấp hơn.
+
+---
+
+Bạn có muốn tôi dịch tiếp sang phần **14.1. Shared Memory Multiprocessing** để nối tiếp nội dung không?

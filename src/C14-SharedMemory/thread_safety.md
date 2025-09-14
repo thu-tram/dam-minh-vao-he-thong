@@ -1,94 +1,41 @@
+Dưới đây là bản dịch tiếng Việt của mục **14.6. Thread Safety**, tuân thủ đầy đủ các quy ước đã nêu:
+
+---
+
+## 14.6. Thread Safety (An toàn luồng)
+
+Cho đến nay, chúng ta đã tìm hiểu các cấu trúc đồng bộ hóa mà lập trình viên có thể sử dụng để đảm bảo chương trình đa luồng của mình hoạt động **nhất quán** và **đúng đắn** bất kể số lượng thread được dùng.  
+Tuy nhiên, **không phải lúc nào** cũng an toàn khi giả định rằng các hàm trong thư viện C chuẩn có thể được dùng “nguyên trạng” trong mọi ứng dụng đa luồng.  
+Không phải tất cả các hàm trong thư viện C đều **thread safe** (an toàn luồng) — tức là có thể được nhiều thread chạy đồng thời mà vẫn đảm bảo kết quả đúng và không gây ra tác dụng phụ ngoài ý muốn.  
+
+Để đảm bảo các chương trình *chúng ta* viết là thread safe, điều quan trọng là phải sử dụng [synchronization primitives](synchronization.html#_synchronizing_threads) như **mutex** và **barrier** để buộc chương trình đa luồng duy trì tính nhất quán và đúng đắn, bất kể số lượng thread thay đổi ra sao.
+
+---
+
+Một khái niệm liên quan chặt chẽ đến thread safety là **re-entrancy** (tái nhập).  
+Tất cả mã thread safe đều là re-entrant; tuy nhiên, **không phải** tất cả mã re-entrant đều thread safe.  
+Một hàm được gọi là **re-entrant** nếu nó có thể được thực thi lại hoặc thực thi một phần bởi chính nó mà không gây ra vấn đề.  
+Theo định nghĩa, mã re-entrant đảm bảo rằng mọi truy cập vào trạng thái toàn cục (global state) của chương trình đều giữ cho trạng thái đó nhất quán.  
+Mặc dù re-entrancy thường (một cách sai lầm) được dùng như từ đồng nghĩa với thread safety, vẫn có những trường hợp đặc biệt mà mã re-entrant **không** thread safe.
+
+---
+
+Khi viết mã đa luồng, hãy xác minh rằng các hàm thư viện C bạn sử dụng thực sự là thread safe.  
+May mắn thay, danh sách các hàm **không** thread safe trong thư viện C khá nhỏ.  
+**The Open Group** duy trì [danh sách các hàm không thread safe](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html).
+
+---
+
+### 14.6.1. Khắc phục các vấn đề về Thread Safety
+
+[Synchronization primitives](synchronization.html#_synchronizing_threads) là cách phổ biến nhất để khắc phục các vấn đề liên quan đến thread safety.  
+Tuy nhiên, việc vô tình sử dụng các hàm thư viện C **không** thread safe có thể gây ra những lỗi tinh vi, khó phát hiện.
+
+Hãy xem một phiên bản được chỉnh sửa nhẹ của hàm `countsElem` có tên `countElemsStr`, với mục tiêu đếm tần suất xuất hiện của các chữ số trong một chuỗi, trong đó mỗi chữ số được phân tách bằng dấu cách.  
+Chương trình dưới đây đã được rút gọn; mã nguồn đầy đủ có tại: [countElemsStr.c](_attachments/countElemsStr.c).
 
 
-
-
-
-
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
-
-
-
-
-
-
-
-
-
-
-
-## 14.6. Thread Safety 
-
-So far, we have covered synchronization constructs that programmers can
-use to ensure that their multithreaded programs are consistent and
-correct regardless of the number of threads employed. However, it is not
-always safe to make the assumption that standard C library functions can
-be used \"as is\" in the context of any multithreaded application. Not
-all functions in the C library are **thread safe**, or capable of being
-run by multiple threads while guaranteeing a correct result without
-unintended side effects. To ensure that the programs *we* write are
-thread safe, it is important to use [synchronization
-primitives](synchronization.html#_synchronizing_threads) like
-mutexes and barriers to enforce that multithreaded programs are
-consistent and correct regardless of how the number of threads varies.
-
-
-Another closely related concept related to thread safety is re-entrancy.
-All thread safe code is re-entrant; however, not all re-entrant code is
-thread safe. A function is **re-entrant** if it can be
-re-executed/partially executed by a function without causing issue. By
-definition, re-entrant code ensures that accesses to the global state of
-a program always result in that global state remaining consistent. While
-re-entrancy is often (incorrectly) used as a synonym for thread safety,
-there are special cases for which re-entrant code is not thread safe.
-
-
-When writing multithreaded code, verify that the C library functions
-used are indeed thread safe. Fortunately, the list of thread unsafe C
-library functions is fairly small. The Open Group kindly maintains [a
-list of thread-unsafe
-functions](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html).
-
-
-
-### 14.6.1. Fixing Issues of Thread Safety 
-
-[Synchronization
-primitives](synchronization.html#_synchronizing_threads) are the
-most common way to fix issues related to thread safety. However,
-unknowingly using thread-unsafe C library functions can cause subtle
-issues. Let's look at a slightly modified version of our `countsElem`
-function called `countElemsStr`, which attempts to count the frequency
-of digits in a given string, where each digit is separated by spaces.
-The following program has been edited for brevity; the full source of
-this program is available at:
-[countElemsStr.c](_attachments/countElemsStr.c).
-
-
-
-
-```
+```c
 /* computes the frequency of all the elements in the input string and stores
  * the associated counts of each element in the array called counts. */
 void countElemsStr(int *counts, char *input_str) {
@@ -118,35 +65,26 @@ int main( int argc, char **argv ) {
 }
 ```
 
+Hàm `countElemsStr` sử dụng hàm `strtok` (đã được phân tích trong [phần thảo luận về strings](../C2-C_depth/strings.html#_strtok_strtok_r)) để tách từng chữ số (lưu trong `token`) từ chuỗi, sau đó chuyển đổi sang số nguyên và cập nhật vào mảng `counts`.
 
-The `countElemsStr` function uses the `strtok` function (as examined in
-our [discussion on
-strings](../C2-C_depth/strings.html#_strtok_strtok_r)) to parse
-each digit (stored in `token`) in the string, before converting it to an
-integer and making the associated updates in the `counts` array.
+---
 
-
-Compiling and running this program on 100,000 elements yields the
-following output:
-
-
-
-
-    $ gcc -o countElemsStr countElemsStr.c
-
-    $ ./countElemsStr 100000 1
-    contents of counts array:
-    9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
-
-
-Now, let's take a look at a multithreaded version of `countElemsStr`
-(full source of the program viewable
-[here](_attachments/countElemsStr_p.c)):
-
-
+Biên dịch và chạy chương trình này với 100.000 phần tử cho ra kết quả:
 
 
 ```
+$ gcc -o countElemsStr countElemsStr.c
+
+$ ./countElemsStr 100000 1
+contents of counts array:
+9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+
+```
+---
+
+Bây giờ, hãy xem phiên bản đa luồng của `countElemsStr` (mã nguồn đầy đủ xem [tại đây](_attachments/countElemsStr_p.c)):
+
+```c
 /* parallel version of countElemsStr (First cut):
  * computes the frequency of all the elements in the input string and stores
  * the associated counts of each element in the array called counts
@@ -182,54 +120,47 @@ void *countElemsStr(void *args) {
 }
 ```
 
+Trong phiên bản này, mỗi thread xử lý một phần riêng của chuỗi `input_str`.  
+Mảng `local_counts` đảm bảo phần lớn các thao tác ghi diễn ra trên bộ nhớ cục bộ.  
+Một **mutex** được sử dụng để đảm bảo không có hai thread nào ghi vào biến chia sẻ `counts` cùng lúc.
 
-In this version of the program, each thread processes a separate section
-of the string referenced by `input_str`. The `local_counts` array
-ensures that the bulk of the write operations occur to local storage. A
-mutex is employed to ensure that no two threads write to the shared
-variable `counts`.
+---
 
-
-However, compiling and running this program yields the following
-results:
-
-
-
-
-    $ gcc -o countElemsStr_p countElemsStr_p.c -pthread
-
-    $ ./countElemsStr_p 100000 1 1
-    contents of counts array:
-    9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
-
-    $ ./countElemsStr_p 100000 1 2
-    contents of counts array:
-    498 459 456 450 456 471 446 462 450 463
-
-    $ ./countElemsStr_p 100000 1 4
-    contents of counts array:
-    5038 4988 4985 5042 5056 5013 5025 5035 4968 5065
-
-
-Even though mutex locks are used around accesses to the `counts` array,
-the results from separate runs are radically different. This issue
-arises because the `countsElemsStr` function is not thread safe, because
-the string library function `strtok` is *not thread safe*! Visiting the
-[OpenGroup](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html)
-website confirms that `strtok` is on the list of thread-unsafe
-functions.
-
-
-To fix this issue, it suffices to replace `strtok` with its thread-safe
-alternative, `strtok_r`. In the latter function, a pointer is used as
-the last parameter to help the thread keep track of where in the string
-it is parsing. Here is the fixed function with `strtok_r` (full source
-code here ([countsElemsStr_p\_v2.c](_attachments/countElemsStr_p_v2.c)):
-
-
-
+Tuy nhiên, biên dịch và chạy chương trình này cho ra kết quả:
 
 ```
+
+$ gcc -o countElemsStr_p countElemsStr_p.c -pthread
+
+$ ./countElemsStr_p 100000 1 1
+contents of counts array:
+9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+
+$ ./countElemsStr_p 100000 1 2
+contents of counts array:
+498 459 456 450 456 471 446 462 450 463
+
+$ ./countElemsStr_p 100000 1 4
+contents of counts array:
+5038 4988 4985 5042 5056 5013 5025 5035 4968 5065
+
+```
+
+---
+
+Mặc dù đã dùng mutex để khóa khi truy cập mảng `counts`, kết quả giữa các lần chạy lại **khác nhau hoàn toàn**.  
+Nguyên nhân là vì hàm `countsElemsStr` **không** thread safe, do hàm thư viện xử lý chuỗi `strtok` **không** thread safe!  
+Truy cập trang [OpenGroup](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html) xác nhận rằng `strtok` nằm trong danh sách các hàm không thread safe.
+
+---
+
+Để khắc phục, chỉ cần thay `strtok` bằng phiên bản thread safe của nó là `strtok_r`.  
+Trong `strtok_r`, một con trỏ được truyền làm tham số cuối để giúp thread theo dõi vị trí hiện tại trong chuỗi khi phân tách.  
+Dưới đây là hàm đã sửa với `strtok_r` (mã nguồn đầy đủ tại [countsElemsStr_p_v2.c](_attachments/countElemsStr_p_v2.c)):
+
+
+
+```c
 /* parallel version of countElemsStr (First cut):
  * computes the frequency of all the elements in the input string and stores
  * the associated counts of each element in the array called counts */
@@ -265,43 +196,34 @@ void* countElemsStr(void* args) {
 ```
 
 
-The only change in this version of the code is the declaration of the
-character pointer `saveptr` and replacing all instances of `strtok` with
-`strtok_r`. Rerunning the code with these changes yields the following
-output:
+Thay đổi duy nhất trong phiên bản này là khai báo thêm con trỏ ký tự `saveptr` và thay tất cả các lần gọi `strtok` bằng `strtok_r`.  
+Chạy lại chương trình sau khi thay đổi cho ra kết quả:
 
 
+```
+$ gcc -o countElemsStr_p_v2 countElemsStr_p_v2.c -pthread
+
+$ ./countElemsStr_p_v2 100000 1 1
+contents of counts array:
+9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+
+$ ./countElemsStr_p_v2 100000 1 2
+contents of counts array:
+9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+
+$ ./countElemsStr_p_v2 100000 1 4
+contents of counts array:
+9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
 
 
-    $ gcc -o countElemsStr_p_v2 countElemsStr_p_v2.c -pthread
+```
 
-    $ ./countElemsStr_p_v2 100000 1 1
-    contents of counts array:
-    9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+Giờ đây, chương trình cho ra **kết quả giống nhau ở mọi lần chạy**.  
+Việc sử dụng `saveptr` kết hợp với `strtok_r` đảm bảo mỗi thread có thể **độc lập** theo dõi vị trí của mình khi phân tách chuỗi.
 
-    $ ./countElemsStr_p_v2 100000 1 2
-    contents of counts array:
-    9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+---
 
-    $ ./countElemsStr_p_v2 100000 1 4
-    contents of counts array:
-    9963 9975 9953 10121 10058 10017 10053 9905 9915 10040
+**Kết luận**: Khi viết ứng dụng đa luồng, luôn kiểm tra [danh sách các hàm C không thread safe](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html).  
+Điều này có thể giúp lập trình viên tránh được nhiều rắc rối và tiết kiệm thời gian khi viết và gỡ lỗi chương trình đa luồng.
 
-
-Now the program produces the same result for every run. The use of
-`saveptr` in conjunction with `strtok_r` ensures that each thread can
-independently track their location when parsing the string.
-
-
-The takeaway from this section is that one should always check [the list
-of thread-unsafe functions in
-C](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html)
-when writing multithreaded applications. Doing so can save the
-programmer a lot of heartache and frustration when writing and debugging
-threaded applications.
-
-
-
-
-
-
+--- 

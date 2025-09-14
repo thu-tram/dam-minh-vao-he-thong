@@ -1,137 +1,75 @@
+## 14.3. Đồng bộ hóa các Thread (Synchronizing Threads)
 
+Trong các ví dụ mà chúng ta đã xem cho đến nay, mỗi **thread** thực thi mà **không chia sẻ dữ liệu** với bất kỳ thread nào khác.  
+Ví dụ, trong chương trình **nhân vô hướng** (scalar multiplication), mỗi phần tử của mảng hoàn toàn độc lập với các phần tử khác, nên không cần thiết để các thread chia sẻ dữ liệu.
 
+---
 
+Tuy nhiên, khả năng **dễ dàng chia sẻ dữ liệu** với các thread khác lại là một trong những đặc điểm chính của thread.  
+Hãy nhớ rằng tất cả các thread của một **process đa luồng** (multithreaded process) đều **chia sẻ vùng heap** chung của process đó.  
+Trong phần này, chúng ta sẽ nghiên cứu chi tiết các cơ chế chia sẻ và bảo vệ dữ liệu mà thread có thể sử dụng.
 
+---
 
+**Thread synchronization** (đồng bộ hóa thread) đề cập đến việc **ép** các thread thực thi theo một **thứ tự nhất định**.  
+Mặc dù việc đồng bộ hóa thread có thể làm tăng thời gian chạy của chương trình, nhưng nó thường **cần thiết** để đảm bảo **tính đúng đắn** của chương trình.  
 
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
+Trong phần này, chúng ta sẽ tập trung thảo luận cách một cấu trúc đồng bộ hóa — **mutex** — giúp đảm bảo tính đúng đắn của chương trình đa luồng.  
+Chúng ta sẽ kết thúc phần này bằng việc thảo luận một số cấu trúc đồng bộ hóa phổ biến khác: **semaphore**, **barrier** và **condition variable**.
 
-
-
-
-
-
-
-
-
-
-
-## 14.3. Synchronizing Threads 
-
-In the examples we've looked at thus far, each thread executes without
-sharing data with any other threads. In the scalar multiplication
-program, for instance, each element of the array is entirely independent
-of all the others, making it unnecessary for the threads to share data.
-
-
-However, a thread's ability to easily share data with other threads is
-one of its main features. Recall that all the threads of a multithreaded
-process share the heap common to the process. In this section, we study
-the data sharing and protection mechanisms available to threads in
-detail.
-
-
-**Thread synchronization** refers to forcing threads to execute in a
-particular order. Even though synchronizing threads can add to the
-runtime of a program, it is often necessary to ensure program
-correctness. In this section, we primarily discuss how one
-synchronization construct (a *mutex*) helps ensure the correctness of a
-threaded program. We conclude the section with a discussion of some
-other common synchronization constructs: *semaphores*, *barriers* and
-*condition variables*.
-
+---
 
 ### CountSort
 
-Let's study a slightly more complicated example called CountSort. The
-CountSort algorithm is a simple linear (O(*N*)) sorting algorithm for
-sorting a known small range of *R* values, where *R* is much smaller
-than *N*. To illustrate how CountSort works, consider an array `A` of 15
-elements, all of which contain random values between 0 and 9 (10
-possible values):
+Hãy nghiên cứu một ví dụ phức tạp hơn một chút có tên **CountSort**.  
+Thuật toán CountSort là một thuật toán sắp xếp tuyến tính đơn giản **O(*N*)** dùng để sắp xếp một tập giá trị nhỏ đã biết có kích thước *R*, trong đó *R* nhỏ hơn rất nhiều so với *N*.  
 
-
-
-
-    A = [9, 0, 2, 7, 9, 0, 1, 4, 2, 2, 4, 5, 0, 9, 1]
-
-
-For a particular array, CountSort works as follows:
-
-
-
-1.  It counts the frequency of each value in the array.
-
-2.  It overwrites the original array by enumerating each value by its
-    frequency.
-
-
-After step 1, the frequency of each value is placed in a `counts` array
-of length 10, where the value of `counts[i]` is the frequency of the
-value *i* in array `A`. For example, since there are three elements with
-value 2 in array `A`, `counts[2]` is 3.
-
-
-The corresponding `counts` array for the previous example looks like the
-following:
-
-
-
-
-    counts = [3, 2, 3, 0, 2, 1, 0, 1, 0, 3]
-
-
-Note that the sum of all the elements in the `counts` array is equal to
-the length of `A`, or 15.
-
-
-Step 2 uses the `counts` array to overwrite `A`, using the frequency
-counts to determine the set of indices in `A` that store each
-consecutive value in sorted order. So, since the `counts` array
-indicates that there are three elements with value 0 and two elements
-with value 1 in array `A`, the first three elements of the final array
-will be 0, and the next two will be 1.
-
-
-After running step 2, the final array looks like the following:
-
-
-
-
-    A = [0, 0, 0, 1, 1, 2, 2, 2, 4, 4, 5, 7, 9, 9, 9]
-
-
-Below is a serial implementation of the CountSort algorithm, with the
-`count` (step 1) and `overwrite` (step 2) functions clearly delineated.
-For brevity, we do not reproduce the whole program here, though you can
-download the source ([countSort.c](_attachments/countSort.c)).
-
-
-
+Để minh họa cách CountSort hoạt động, hãy xét một mảng `A` gồm 15 phần tử, mỗi phần tử chứa giá trị ngẫu nhiên từ 0 đến 9 (tức có 10 giá trị khả dĩ):
 
 ```
+A = [9, 0, 2, 7, 9, 0, 1, 4, 2, 2, 4, 5, 0, 9, 1]
+```
+
+---
+
+Với một mảng cụ thể, CountSort hoạt động như sau:
+
+1. **Đếm tần suất** xuất hiện của mỗi giá trị trong mảng.
+2. **Ghi đè** mảng ban đầu bằng cách liệt kê mỗi giá trị theo đúng tần suất của nó.
+
+---
+
+Sau bước 1, tần suất của mỗi giá trị được lưu trong mảng `counts` có độ dài 10, trong đó `counts[i]` là số lần giá trị *i* xuất hiện trong mảng `A`.  
+Ví dụ: vì có 3 phần tử có giá trị 2 trong mảng `A`, nên `counts[2]` = 3.
+
+Mảng `counts` tương ứng với ví dụ trên như sau:
+
+```
+counts = [3, 2, 3, 0, 2, 1, 0, 1, 0, 3]
+```
+
+Lưu ý rằng tổng tất cả các phần tử trong mảng `counts` bằng đúng độ dài của `A`, tức **15**.
+
+---
+
+Bước 2 sử dụng mảng `counts` để ghi đè `A`, dựa vào tần suất để xác định tập chỉ số trong `A` lưu trữ mỗi giá trị liên tiếp theo thứ tự đã sắp xếp.  
+Ví dụ: vì mảng `counts` cho biết có 3 phần tử giá trị 0 và 2 phần tử giá trị 1 trong `A`, nên 3 phần tử đầu tiên của mảng kết quả sẽ là 0, và 2 phần tử tiếp theo sẽ là 1.
+
+---
+
+Sau khi chạy bước 2, mảng cuối cùng sẽ như sau:
+
+```
+A = [0, 0, 0, 1, 1, 2, 2, 2, 4, 4, 5, 7, 9, 9, 9]
+```
+
+---
+
+Dưới đây là phần cài đặt **tuần tự** của thuật toán CountSort, với hai hàm `count` (bước 1) và `overwrite` (bước 2) được phân tách rõ ràng.  
+Để ngắn gọn, chúng tôi không đưa toàn bộ chương trình ở đây, nhưng bạn có thể tải mã nguồn tại: [countSort.c](_attachments/countSort.c).
+
+
+```c
 #define MAX 10 //the maximum value of an element. (10 means 0-9)
 
 /*step 1:
@@ -199,47 +137,42 @@ int main( int argc, char **argv ) {
 }
 ```
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-Running this program on an array of size 15 yields the following output:
+---
 
+Chạy chương trình này trên một mảng có kích thước 15 cho ra kết quả sau:
 
-
-
-    $ ./countSort 15 1
-    array before sort:
-    5 8 8 5 8 7 5 1 7 7 3 3 8 3 4
-    result after sort:
-    1 3 3 3 4 5 5 5 7 7 7 8 8 8 8
-
-
-The second parameter to this program is a *verbose* flag, which
-indicates whether the program prints output. This is a useful option for
-larger arrays for which we may want to run the program but not
-necessarily print out the output.
-
-
-### Parallelizing countElems: An Initial Attempt
-
-CountSort consists of two primary steps, each of which benefits from
-being parallelized. In the remainder of the chapter, we primarily
-concentrate on the parallelization of step 1, or the `countElems`
-function. Parallelizing the `writeArray` function is left as an exercise
-for the reader.
-
-
-The code block that follows depicts a first attempt at creating a
-threaded `countElems` function. Parts of the code (argument parsing,
-error handling) are omitted in this example for the sake of brevity, but
-the full source can be downloaded here
-([countElems_p.c](_attachments/countElems_p.c)). In the code that
-follows, each thread attempts to count the frequency of the array
-elements in its assigned component of the global array and updates a
-global count array with the discovered counts:
-
-
-
-
+```bash
+$ ./countSort 15 1
+array before sort:
+5 8 8 5 8 7 5 1 7 7 3 3 8 3 4
+result after sort:
+1 3 3 3 4 5 5 5 7 7 7 8 8 8 8
 ```
+
+
+Tham số thứ hai của chương trình là cờ *verbose*, cho biết chương trình có in kết quả ra hay không.  
+Tùy chọn này hữu ích với các mảng lớn, khi ta muốn chạy chương trình nhưng **không nhất thiết** phải in toàn bộ kết quả.
+
+---
+
+### Song song hóa `countElems`: Thử nghiệm ban đầu
+
+Thuật toán **CountSort** gồm hai bước chính, và cả hai đều có thể hưởng lợi từ việc song song hóa.  
+Trong phần còn lại của chương này, chúng ta sẽ tập trung vào song song hóa **bước 1**, tức hàm `countElems`.  
+Việc song song hóa hàm `writeArray` được để lại như một bài tập cho người đọc.
+
+---
+
+Đoạn mã dưới đây minh họa **lần thử đầu tiên** tạo phiên bản đa luồng của hàm `countElems`.  
+Một số phần của mã (phân tích tham số, xử lý lỗi) được lược bỏ để ngắn gọn, nhưng bạn có thể tải toàn bộ mã nguồn tại: [countElems_p.c](_attachments/countElems_p.c).
+
+Trong đoạn mã này, mỗi thread sẽ đếm tần suất xuất hiện của các phần tử trong **phần mảng** được gán cho nó từ mảng toàn cục, và cập nhật vào mảng đếm toàn cục `counts`:
+
+
+
+```c
 /*parallel version of step 1 (first cut) of CountSort algorithm:
  * extracts arguments from args value
  * calculates the portion of the array that thread is responsible for counting
@@ -273,14 +206,9 @@ void *countElems( void *args ) {
 }
 ```
 
+Hàm `main` gần như giống hệt các chương trình mẫu trước đây:
 
-The `main` function looks nearly identical to our earlier sample
-programs:
-
-
-
-
-```
+```c
 int main(int argc, char **argv) {
 
     if (argc != 4) {
@@ -331,233 +259,156 @@ int main(int argc, char **argv) {
     return 0;
 }
 ```
+---
 
+Để đảm bảo khả năng tái lập kết quả, bộ sinh số ngẫu nhiên được **seed** với giá trị cố định (10), nhằm đảm bảo mảng `array` (và do đó `counts`) luôn chứa cùng một tập giá trị ở mỗi lần chạy.  
+Một hàm bổ sung (`printCounts`) sẽ in nội dung của mảng `counts` toàn cục.  
+Kỳ vọng là, **bất kể** số lượng thread sử dụng, nội dung mảng `counts` phải luôn giống nhau.  
+Để ngắn gọn, phần xử lý lỗi đã được lược bỏ.
 
-For reproducibility purposes, the random number generator is seeded with
-a static value (10) to ensure that `array` (and therefore `counts`)
-always contains the same set of numbers. An additional function
-(`printCounts`) prints out the contents of the global `counts` array.
-The expectation is that, regardless of the number of threads used, the
-contents of the `counts` array should always be the same. For brevity,
-error handling has been removed from the listing.
+---
 
+Biên dịch chương trình và chạy với 1, 2 và 4 thread trên mảng 10 triệu phần tử cho kết quả:
 
-Compiling the program and running it with one, two, and four threads
-over 10 million elements produces the following:
+```bash
+$ gcc -o countElems_p countElems_p.c -pthread
 
+$./countElems_p 10000000 1 1
+Counts array:
+999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
 
+$./countElems_p 10000000 1 2
+Counts array:
+661756 661977 657828 658479 657913 659308 658561 656879 658070 657276
 
-
-    $ gcc -o countElems_p countElems_p.c -pthread
-
-    $./countElems_p 10000000 1 1
-    Counts array:
-    999170 1001044 999908 1000431 999998 1001479 999709 997250 1000804 1000207
-
-    $./countElems_p 10000000 1 2
-    Counts array:
-    661756 661977 657828 658479 657913 659308 658561 656879 658070 657276
-
-    $./countElems_p 10000000 1 4
-    Counts array:
-    579846 580814 580122 579772 582509 582713 582518 580917 581963 581094
-
-
-Note that the printed results change significantly on each run. In
-particular, they seem to change as we vary the number of threads! This
-should not happen, since our use of the static seed guarantees the same
-set of numbers every run. These results contradict one of the cardinal
-rules for threaded programs: the output of a program should be correct
-and consistent *regardless* of the number of threads used.
-
-
-Since our first attempt at parallelizing `countElems` doesn't seem to be
-working, let's delve deeper into what this program is doing and examine
-how we might fix it.
-
-
-### Data Races
-
-To understand what's going on, let's consider an example run with two
-threads on two separate cores of a multicore system. Recall that the
-execution of any thread can be preempted at any time by the OS, which
-means that each thread could be running different instructions of a
-particular function at any given time (or possibly the same
-instruction). Table 1 shows one possible path of
-execution through the `countElems` function. To better illustrate what
-is going on, we translated the line `counts[val] = counts[val] + 1` into
-the following sequence of equivalent instructions:
-
-
-
-1.  **Read** `counts[val]` and place into a register.
-
-2.  **Modify** the register by incrementing it by one.
-
-3.  **Write** the contents of the register to `counts[val]`.
-
-
-This is known as the **read-modify-write** pattern. In the example shown
-in Table 1, each thread executes on a separate core
-(Thread 0 on Core 0, Thread 1 on Core 1). We start inspecting the
-execution of the process at time step *i*, where both threads have a
-`val` of 1.
-
-
-+----------------------+----------------------+-----------------------+
-| Time                 | Thread 0             | Thread 1              |
-+======================+======================+=======================+
-| *i*                  | Read counts\[1\] and | ...​                   |
-|                      | place into Core 0's  |                       |
-|                      | register             |                       |
-+----------------------+----------------------+-----------------------+
-| *i+1*                | Increment register   | Read counts\[1\] and  |
-|                      | by 1                 | place into Core 1's   |
-|                      |                      | register              |
-+----------------------+----------------------+-----------------------+
-| *i+2*                | Overwrite            | Increment register by |
-|                      | counts\[1\] with     | 1                     |
-|                      | contents of register |                       |
-+----------------------+----------------------+-----------------------+
-| *i+3*                | ...​                  | Overwrite counts\[1\] |
-|                      |                      | with contents of      |
-|                      |                      | register              |
-+----------------------+----------------------+-----------------------+
-
-: Table 1. A Possible Execution Sequence of Two Threads Running
-countElems
-
-Suppose that, prior to the execution sequence in [Table
-1](#ExecSequence), `counts[1]` contains the value 60. In time step *i*,
-Thread 0 reads `counts[1]` and places the value 60 in Core 0's register.
-In time step *i+1*, while Thread 0 increments Core 0's register by one,
-the *current* value in `counts[1]` (60) is read into Core 1's register
-by Thread 1. In time step *i+2*, Thread 0 updates `counts[1]` with the
-value 61 while Thread 1 increments the value stored in its local
-register (60) by one. The end result is that during time step *i+3*, the
-value `counts[1]` is overwritten by Thread 1 with the value 61, not 62
-as we would expect! This causes `counts[1]` to essentially \"lose\" an
-increment!
-
-
-We refer to the scenario in which two threads attempt to write to the
-same location in memory as a **data race** condition. More generally, a
-**race condition** refers to any scenario in which the simultaneous
-execution of two operations gives an incorrect result. Note that a
-simultaneous read of the `counts[1]` location would *not* in and of
-itself constitute a race condition, because values can generally read
-alone from memory without issue. It was the combination of this step
-with the writes to `counts[1]` that caused the incorrect result. This
-read-modify-write pattern is a common source of a particular type of
-race condition, called a **data race**, in most threaded programs. In
-our discussion of race conditions and how to fix them, we focus on data
-races.
-
-
-
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Atomic operations                 |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | An operation is defined as being  |
-|                                   | **atomic** if a thread perceives  |
-|                                   | it as executing without           |
-|                                   | interruption (in other words, as  |
-|                                   | an \"all or nothing\" action). In |
-|                                   | some libraries, a keyword or type |
-|                                   | is used to specify that a block   |
-|                                   | of computation should be treated  |
-|                                   | as being atomic. In the previous  |
-|                                   | example, the line                 |
-|                                   | `counts[val] = counts[val] + 1`   |
-|                                   | (even if written as               |
-|                                   | `counts[val]++`) is *not* atomic, |
-|                                   | because this line actually        |
-|                                   | corresponds to several            |
-|                                   | instructions at the machine       |
-|                                   | level. A synchronization          |
-|                                   | construct like mutual exclusion   |
-|                                   | is needed to ensure that there    |
-|                                   | are no data races. In general,    |
-|                                   | all operations should be assumed  |
-|                                   | to be nonatomic unless mutual     |
-|                                   | exclusion is explicitly enforced. |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-Keep in mind that not all execution sequences of the two threads cause a
-race condition. Consider the sample execution sequence of Threads 0 and
-1 in Table 2.
-
-
-+----------------------+----------------------+-----------------------+
-| Time                 | Thread 0             | Thread 1              |
-+======================+======================+=======================+
-| *i*                  | Read counts\[1\] and | ...​                   |
-|                      | place into Core 0's  |                       |
-|                      | register             |                       |
-+----------------------+----------------------+-----------------------+
-| *i+1*                | Increment register   | ...​                   |
-|                      | by 1                 |                       |
-+----------------------+----------------------+-----------------------+
-| *i+2*                | Overwrite            | ...​                   |
-|                      | counts\[1\] with     |                       |
-|                      | contents of register |                       |
-+----------------------+----------------------+-----------------------+
-| *i+3*                | ...​                  | Read counts\[1\] and  |
-|                      |                      | place into Core 1's   |
-|                      |                      | register              |
-+----------------------+----------------------+-----------------------+
-| *i+4*                | ...​                  | Increment register by |
-|                      |                      | 1                     |
-+----------------------+----------------------+-----------------------+
-| *i+5*                | ...​                  | Overwrite counts\[1\] |
-|                      |                      | with contents of      |
-|                      |                      | register              |
-+----------------------+----------------------+-----------------------+
-
-: Table 2. Another Possible Execution Sequence of Two Threads Running
-countElems
-
-In this execution sequence, Thread 1 does not read from `counts[1]`
-until after Thread 0 updates it with its new value (61). The end result
-is that Thread 1 reads the value 61 from `counts[1]` and places it into
-Core 1's register during time step *i+3*, and writes the value 62 to
-`counts[1]` in time step *i+5*.
-
-
-To fix a data race, we must first isolate the **critical section**, or
-the subset of code that must execute **atomically** (in isolation) to
-ensure correct behavior. In threaded programs, blocks of code that
-update a shared resource are typically identified to be critical
-sections.
-
-
-In the `countElems` function, updates to the `counts` array should be
-put in a critical section to ensure that values are not lost due to
-multiple threads updating the same location in memory:
-
-
-
-
+$./countElems_p 10000000 1 4
+Counts array:
+579846 580814 580122 579772 582509 582713 582518 580917 581963 581094
 ```
+
+
+---
+
+Lưu ý rằng kết quả in ra **thay đổi đáng kể** ở mỗi lần chạy.  
+Đặc biệt, chúng thay đổi khi ta thay đổi số lượng thread!  
+Điều này **không nên xảy ra**, vì việc dùng seed tĩnh đảm bảo cùng một tập giá trị ở mỗi lần chạy.  
+
+Những kết quả này **vi phạm** một trong những nguyên tắc cơ bản của lập trình đa luồng:  
+> **Kết quả của chương trình phải đúng và nhất quán, bất kể số lượng thread sử dụng.**
+
+---
+
+Vì lần thử đầu tiên song song hóa `countElems` dường như **không hoạt động đúng**, hãy đi sâu hơn để xem chương trình đang làm gì và cách khắc phục.
+
+---
+
+### Data Races (Tranh chấp dữ liệu)
+
+Để hiểu chuyện gì đang xảy ra, hãy xét một ví dụ chạy với **hai thread** trên **hai core** riêng biệt của một hệ thống đa lõi.  
+Hãy nhớ rằng việc thực thi của bất kỳ thread nào cũng có thể bị **OS** tạm dừng (preempt) tại bất kỳ thời điểm nào, nghĩa là mỗi thread có thể đang chạy **các lệnh khác nhau** của cùng một hàm tại một thời điểm nhất định (hoặc thậm chí cùng một lệnh).
+
+Bảng 1 cho thấy một đường thực thi khả dĩ của hàm `countElems`.  
+Để minh họa rõ hơn, chúng ta dịch dòng:
+
+```c
+counts[val] = counts[val] + 1;
+```
+
+thành chuỗi lệnh tương đương sau:
+
+1. **Read** `counts[val]` và đưa vào một thanh ghi.  
+2. **Modify** thanh ghi bằng cách tăng giá trị lên 1.  
+3. **Write** nội dung của thanh ghi trở lại `counts[val]`.
+
+---
+
+Mẫu này được gọi là **read–modify–write**.  
+Trong ví dụ ở Bảng 1, mỗi thread chạy trên một core riêng (Thread 0 trên Core 0, Thread 1 trên Core 1).  
+Chúng ta bắt đầu quan sát quá trình tại thời điểm *i*, khi cả hai thread đều có `val` = 1.
+
+Dưới đây là bản dịch tiếng Việt của nội dung bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
+
+---
+
+| Thời điểm | Thread 0 | Thread 1 |
+|-----------|----------|----------|
+| *i*       | Đọc `counts[1]` và đưa vào thanh ghi của Core 0 | ... |
+| *i+1*     | Tăng giá trị trong thanh ghi lên 1 | Đọc `counts[1]` và đưa vào thanh ghi của Core 1 |
+| *i+2*     | Ghi đè `counts[1]` bằng nội dung của thanh ghi | Tăng giá trị trong thanh ghi lên 1 |
+| *i+3*     | ... | Ghi đè `counts[1]` bằng nội dung của thanh ghi |
+
+**Bảng 1.** Một trình tự thực thi khả dĩ của hai thread khi chạy `countElems`
+
+---
+
+Giả sử trước khi thực hiện trình tự trong [Bảng 1](#ExecSequence), `counts[1]` chứa giá trị **60**.  
+Tại thời điểm *i*, Thread 0 đọc `counts[1]` và đưa giá trị 60 vào thanh ghi của Core 0.  
+Tại thời điểm *i+1*, trong khi Thread 0 tăng giá trị trong thanh ghi của Core 0 lên 1, thì **giá trị hiện tại** của `counts[1]` (60) được Thread 1 đọc và đưa vào thanh ghi của Core 1.  
+Tại thời điểm *i+2*, Thread 0 cập nhật `counts[1]` thành 61, trong khi Thread 1 tăng giá trị trong thanh ghi cục bộ của nó (60) lên 1.  
+Kết quả cuối cùng là tại thời điểm *i+3*, giá trị `counts[1]` bị Thread 1 ghi đè thành 61, **không phải** 62 như mong đợi!  
+Điều này khiến `counts[1]` về cơ bản **bị mất** một lần tăng.
+
+---
+
+Chúng ta gọi tình huống hai thread cố gắng ghi vào cùng một vị trí bộ nhớ là **data race** (tranh chấp dữ liệu).  
+Nói chung hơn, **race condition** là bất kỳ tình huống nào mà việc thực thi đồng thời của hai thao tác dẫn đến kết quả sai.  
+Lưu ý rằng việc **đọc đồng thời** `counts[1]` **không** tự nó tạo thành race condition, vì việc đọc giá trị từ bộ nhớ thường không gây vấn đề.  
+Chính sự kết hợp của bước đọc này với các thao tác ghi vào `counts[1]` mới gây ra kết quả sai.  
+Mẫu **read–modify–write** này là một nguồn phổ biến gây ra **data race** trong hầu hết các chương trình đa luồng.  
+Trong phần thảo luận về race condition và cách khắc phục, chúng ta sẽ tập trung vào **data race**.
+
+---
+
+> **Atomic operations**  
+> Một thao tác được gọi là **atomic** nếu một thread nhận thấy nó được thực hiện **không bị gián đoạn** (nói cách khác, là một hành động “tất cả hoặc không gì cả”).  
+> Trong một số thư viện, có từ khóa hoặc kiểu dữ liệu để chỉ định rằng một khối tính toán nên được xử lý như một thao tác atomic.  
+> Trong ví dụ trước, dòng `counts[val] = counts[val] + 1` (ngay cả khi viết là `counts[val]++`) **không** phải là atomic, vì dòng này thực tế tương ứng với nhiều lệnh ở cấp độ máy.  
+> Cần có một cấu trúc đồng bộ hóa như **mutual exclusion** (loại trừ lẫn nhau) để đảm bảo không xảy ra data race.  
+> Nói chung, nên giả định rằng mọi thao tác đều **không atomic** trừ khi mutual exclusion được áp dụng một cách tường minh.
+
+---
+
+Hãy nhớ rằng **không phải** mọi trình tự thực thi của hai thread đều gây ra race condition.  
+Xem ví dụ trình tự thực thi của Thread 0 và Thread 1 trong Bảng 2.
+
+| Thời điểm | Thread 0 | Thread 1 |
+|-----------|----------|----------|
+| *i*       | Đọc `counts[1]` và đưa vào thanh ghi của Core 0 | ... |
+| *i+1*     | Tăng giá trị trong thanh ghi lên 1 | ... |
+| *i+2*     | Ghi đè `counts[1]` bằng nội dung của thanh ghi | ... |
+| *i+3*     | ... | Đọc `counts[1]` và đưa vào thanh ghi của Core 1 |
+| *i+4*     | ... | Tăng giá trị trong thanh ghi lên 1 |
+| *i+5*     | ... | Ghi đè `counts[1]` bằng nội dung của thanh ghi |
+
+**Bảng 2.** Một trình tự thực thi khác của hai thread khi chạy `countElems`
+
+---
+
+Trong trình tự này, Thread 1 **không** đọc `counts[1]` cho đến **sau** khi Thread 0 đã cập nhật giá trị mới (61).  
+Kết quả là Thread 1 đọc giá trị 61 từ `counts[1]` và đưa vào thanh ghi của Core 1 tại thời điểm *i+3*, sau đó ghi giá trị 62 vào `counts[1]` tại thời điểm *i+5*.
+
+---
+
+Để khắc phục **data race**, trước tiên chúng ta phải xác định **critical section** — phần mã cần được thực thi **atomic** (cô lập) để đảm bảo hành vi đúng.  
+Trong các chương trình đa luồng, các khối mã cập nhật tài nguyên chia sẻ thường được xác định là critical section.
+
+Trong hàm `countElems`, các thao tác cập nhật mảng `counts` cần được đặt trong critical section để đảm bảo giá trị không bị mất do nhiều thread cùng cập nhật một vị trí bộ nhớ:
+
+
+```c
 long i;
 for (i = start; i < end; i++) {
     val = array[i];
-    counts[val] = counts[val] + 1; //this line needs to be protected
+    counts[val] = counts[val] + 1; // dòng này cần được bảo vệ
 }
 ```
 
+Vì vấn đề cốt lõi trong `countElems` là việc **truy cập đồng thời** vào mảng `counts` bởi nhiều thread, nên cần có một cơ chế đảm bảo rằng **chỉ một thread** được thực thi bên trong **critical section** tại một thời điểm.  
+Sử dụng một cấu trúc đồng bộ hóa (như **mutex**, sẽ được trình bày trong phần tiếp theo) sẽ buộc các thread phải **lần lượt** đi vào critical section.
 
-Since the fundamental problem in `countElems` is the simultaneous access
-of `counts` by multiple threads, a mechanism is needed to ensure that
-only one thread executes within the critical section at a time. Using a
-synchronization construct (like a mutex, which is covered in the next
-section) will force the threads to enter the critical section
-sequentially.
+
+
+
 
 
 

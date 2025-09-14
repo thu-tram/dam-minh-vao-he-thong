@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 15.1. Heterogeneous Computing: Hardware Accelerators, GPGPU Computing, and CUDA 
 
 **Heterogeneous computing** is computing using multiple, different

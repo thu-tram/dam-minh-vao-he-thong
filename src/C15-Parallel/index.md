@@ -1,18 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 15. Looking Ahead: Other Parallel Systems and Parallel Programming Models 
 
 In the [previous

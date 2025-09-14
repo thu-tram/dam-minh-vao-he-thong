@@ -1,190 +1,120 @@
+Dưới đây là bản dịch tiếng Việt của mục **14.5. Cache Coherence and False Sharing**, tuân thủ đầy đủ các quy ước đã nêu:
 
+---
 
+## 14.5. Tính nhất quán bộ nhớ đệm (Cache Coherence) và Chia sẻ sai (False Sharing)
 
+**Multicore cache** (bộ nhớ đệm trên hệ thống đa lõi) có thể ảnh hưởng sâu sắc đến hiệu năng của một chương trình **multithreaded** (đa luồng).  
+Trước tiên, hãy cùng điểm lại nhanh một số [khái niệm cơ bản liên quan đến thiết kế cache](../C11-MemHierarchy/caching.html#_cpu_caches):
 
+- Dữ liệu/lệnh không được vận chuyển **từng phần tử riêng lẻ** vào cache.  
+  Thay vào đó, dữ liệu được truyền theo **block** (khối), và kích thước block thường **lớn hơn** ở các mức thấp hơn của **memory hierarchy** (hệ thống phân cấp bộ nhớ).
 
+- Mỗi cache được tổ chức thành một tập hợp (**set**), mỗi set chứa một số **line** (dòng).  
+  Mỗi line lưu trữ một block dữ liệu.
 
--   -   [14. Leveraging Shared Memory in the Multicore
-        Era]()
-        -   [14.1. Programming Multicore
-            Systems]()
-        -  
-        -   [14.3. Synchronizing
-            Threads]()
-            -  
-            -  
-            -   [14.3.3. Other Synchronization
-                Constructs]()
-        -   [14.4. Measuring Parallel
-            Performance]()
-            -   [14.4.1. Parallel Performance
-                Basics]()
-            -   [14.4.2. Advanced
-                Topics]()
-        -  
-        -  
-        -   [14.7. Implicit Threading with
-            OpenMP]()
-        -  
-        -  
+- Các bit riêng lẻ của **memory address** (địa chỉ bộ nhớ) được dùng để xác định **set**, **tag**, và **block offset** trong cache — nơi sẽ ghi block dữ liệu.
 
+- **Cache hit** xảy ra khi block dữ liệu mong muốn đã tồn tại trong cache.  
+  Ngược lại, **cache miss** xảy ra khi block không có trong cache, và hệ thống sẽ tìm kiếm ở mức thấp hơn của memory hierarchy (có thể là cache cấp thấp hơn hoặc **main memory**).
 
+- **Valid bit** cho biết block tại một line cụ thể trong cache có thể được sử dụng an toàn hay không.  
+  Nếu valid bit = 0, block dữ liệu tại line đó **không thể** được sử dụng (ví dụ: block có thể chứa dữ liệu từ một process đã thoát).
 
+- Dữ liệu được ghi vào cache/bộ nhớ dựa trên hai chiến lược chính:  
+  - **Write-through**: dữ liệu được ghi đồng thời vào cache và main memory.  
+  - **Write-back**: dữ liệu chỉ được ghi vào cache và sẽ được ghi xuống các mức thấp hơn trong hierarchy **sau khi** block bị loại bỏ (evict) khỏi cache.
 
+---
 
+### 14.5.1. Cache trên hệ thống đa lõi (Caches on Multicore Systems)
 
+[Nhớ lại](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors) rằng, trong **shared memory architecture** (kiến trúc bộ nhớ chia sẻ), mỗi **core** có thể có cache riêng, và nhiều core có thể chia sẻ một cache chung.  
 
+**Hình 1** minh họa một ví dụ CPU hai lõi (**dual-core CPU**).  
+Mặc dù mỗi core có **L1 cache** riêng, nhưng cả hai core chia sẻ chung một **L2 cache**.
 
-
-
-
-## 14.5. Cache Coherence and False Sharing 
-
-Multicore caches can have profound implications on a multithreaded
-program's performance. First, however, let's quickly review some of the
-[basic concepts related to cache
-design](../C11-MemHierarchy/caching.html#_cpu_caches):
-
-
-
--   Data/instructions are not transported *individually* to the cache.
-    Instead, data is transferred in *blocks*, and block sizes tend to
-    get larger at lower levels of the memory hierarchy.
-
--   Each cache is organized into a series of sets, with each set having
-    a number of lines. Each line holds a single block of data.
-
--   The individual bits of a memory address are used to determine which
-    set, tag, and block offset of the cache to which to write a block of
-    data.
-
--   A **cache hit** occurs when the desired data block exists in the
-    cache. Otherwise, a **cache miss** occurs, and a lookup is performed
-    on the next lower level of the memory hierarchy (which can be cache
-    or main memory).
-
--   The **valid bit** indicates if a block at a particular line in the
-    cache is safe to use. If the valid bit is set to 0, the data block
-    at that line cannot be used (e.g., the block could contain data from
-    an exited process).
-
--   Information is written to cache/memory based on two main strategies.
-    In the **write-through** strategy, the data is written to cache and
-    main memory simultaneously. In the **write-back** strategy, data is
-    written only to cache and gets written to lower levels in the
-    hierarchy after the block is evicted from the cache.
-
-
-
-### 14.5.1. Caches on Multicore Systems 
-
-[Recall](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors)
-that, in shared memory architectures, each core can have its own cache
-and that multiple cores can share a common cache. [Figure
-1](#FigMulticoreCache) depicts an example dual-core CPU. Even though
-each core has its own local L1 cache, the cores share a common L2 cache.
-
-
-
+---
 
 ![dual core processor with separate L1 caches and shared L2 cache](_images/multicore-cache.png)
 
+**Hình 1.** Ví dụ CPU hai lõi với L1 cache riêng và L2 cache dùng chung
 
-Figure 1. An example dual-core CPU with separate L1 caches and a shared
-L2 cache
+---
 
+Nhiều **thread** trong cùng một chương trình thực thi có thể chạy các **function** khác nhau.  
+Nếu không có [**cache coherence strategy**](../C11-MemHierarchy/coherency.html#_cache_coherency) (chiến lược đảm bảo tính nhất quán bộ nhớ đệm) để đảm bảo mỗi cache duy trì một góc nhìn nhất quán về bộ nhớ chia sẻ, các biến chia sẻ có thể bị cập nhật **không đồng bộ**.
 
-Multiple threads in a single executable may execute separate functions.
-Without a [**cache coherence**
-strategy](../C11-MemHierarchy/coherency.html#_cache_coherency) to
-ensure that each cache maintains a consistent view of shared memory, it
-is possible for shared variables to be updated inconsistently. As an
-example, consider the dual-core processor in [Figure
-1](#FigMulticoreCache), where each core is busy executing separate
-threads concurrently. The thread assigned to Core 0 has a local variable
-`x`, whereas the thread executing on Core 1 has a local variable `y`,
-and both threads have shared access to a global variable `g`. [Table
-1](#TabCache) shows one possible path of execution.
+Ví dụ: xét CPU hai lõi trong **Hình 1**, mỗi core đang chạy một thread riêng biệt **đồng thời**:
 
+- Thread trên **Core 0** có biến cục bộ `x`.
+- Thread trên **Core 1** có biến cục bộ `y`.
+- Cả hai thread cùng chia sẻ quyền truy cập biến toàn cục `g`.
 
-+----------------------+----------------------+-----------------------+
-| Time                 | Core 0               | Core 1                |
-+======================+======================+=======================+
-| 0                    | g = 5                | (other work)          |
-+----------------------+----------------------+-----------------------+
-| 1                    | (other work)         | y = g\*4              |
-+----------------------+----------------------+-----------------------+
-| 2                    | x += g               | y += g\*2             |
-+----------------------+----------------------+-----------------------+
+**Bảng 1** cho thấy một kịch bản thực thi có thể xảy ra:
 
-: Table 1. Problematic Data Sharing Due to Caching
+| Time | Core 0       | Core 1       |
+|------|--------------|--------------|
+| 0    | g = 5        | (other work) |
+| 1    | (other work) | y = g * 4    |
+| 2    | x += g       | y += g * 2   |
 
-Suppose that the initial value of `g` is 10, and the initial values of
-`x` and `y` are both 0. What is the final value of `y` at the end of
-this sequence of operations? Without cache coherence, this is a very
-difficult question to answer, given that there are at least three stored
-values of `g`: one in Core 0's L1 cache, one in Core 1's L1 cache, and a
-separate copy of `g` stored in the shared L2 cache.
+**Bảng 1.** Chia sẻ dữ liệu gây vấn đề do caching
 
+---
 
+Giả sử giá trị ban đầu của `g` là **10**, và giá trị ban đầu của `x` và `y` đều là **0**.  
+Vậy giá trị cuối cùng của `y` sau chuỗi thao tác này là bao nhiêu?  
 
+Không có **cache coherence**, đây là câu hỏi rất khó trả lời, vì tồn tại ít nhất **ba bản sao** của `g`:
+
+1. Một bản trong **L1 cache** của Core 0.  
+2. Một bản trong **L1 cache** của Core 1.  
+3. Một bản khác trong **L2 cache** dùng chung.
+
+---
 
 ![A problematic update to the caches](_images/mc-cache-example.png)
 
+**Hình 2.** Một cập nhật gây vấn đề đối với cache không sử dụng cơ chế **cache coherency**
 
-Figure 2. A problematic update to caches that do not employ cache
-coherency
+**Hình 2** minh họa một kết quả sai có thể xảy ra sau khi chuỗi thao tác trong **Bảng 1** hoàn tất.  
+Giả sử L1 cache sử dụng **write-back policy** (chính sách ghi-lùi).  
+Khi thread chạy trên **Core 0** ghi giá trị `5` vào `g`, nó chỉ cập nhật giá trị `g` trong **L1 cache** của Core 0.  
+Giá trị `g` trong **L1 cache** của Core 1 vẫn là `10`, và bản sao trong **L2 cache** dùng chung cũng vẫn là `10`.  
+Ngay cả khi sử dụng **write-through policy** (chính sách ghi-xuyên), cũng không có gì đảm bảo rằng bản sao `g` trong L1 cache của Core 1 sẽ được cập nhật!  
+Trong trường hợp này, `y` sẽ có giá trị cuối cùng là **60**.
 
+---
 
-Figure 2 shows one possible erroneous result after
-the sequence of operations in Table 1 completes. Suppose
-that the L1 caches implement a write-back policy. When the thread
-executing on Core 0 writes the value 5 to `g`, it updates only the value
-of `g` in Core 0's L1 cache. The value of `g` in Core 1's L1 cache still
-remains 10, as does the copy in the shared L2 cache. Even if a
-write-through policy is implemented, there is no guarantee that the copy
-of `g` stored in Core 1's L1 cache gets updated! In this case, `y` will
-have the final value of `60`.
+Một **cache coherence strategy** (chiến lược đảm bảo tính nhất quán bộ nhớ đệm) sẽ **invalide** (vô hiệu hóa) hoặc **update** (cập nhật) các bản sao dữ liệu chia sẻ trong các cache khác khi một cache ghi dữ liệu vào giá trị chia sẻ đó.  
+**Protocol Modified Shared Invalid (MSI)** (xem chi tiết trong [Chương 11.6](../C11-MemHierarchy/coherency.html#_the_msi_protocol)) là một ví dụ về **invalidating cache coherence protocol** (giao thức nhất quán bộ nhớ đệm kiểu vô hiệu hóa).
 
+---
 
-A cache coherence strategy invalidates or updates cached copies of
-shared values in other caches when a write to the shared data value is
-made in one cache. The [Modified Shared Invalid
-(MSI)](../C11-MemHierarchy/coherency.html#_the_msi_protocol)
-protocol (discussed in detail in [Chapter
-11.6](../C11-MemHierarchy/coherency.html#_the_msi_protocol)) is
-one example of an invalidating cache coherency protocol.
+Một kỹ thuật phổ biến để triển khai MSI là **snooping**.  
+Một **snoopy cache** sẽ “nghe lén” (snoop) trên **memory bus** để phát hiện các tín hiệu ghi.  
+Nếu snoopy cache phát hiện một thao tác ghi vào một **shared cache block** (khối cache chia sẻ), nó sẽ **invalidate** line chứa block đó.  
+Kết quả là chỉ còn **một bản hợp lệ duy nhất** của block nằm trong cache vừa được ghi, trong khi **tất cả các bản sao khác** của block trong các cache khác sẽ bị đánh dấu là **invalid**.
 
+---
 
-A common technnique for implementing MSI is snooping. Such a **snoopy
-cache** \"snoops\" on the memory bus for possible write signals. If the
-snoopy cache detects a write to a shared cache block, it invalidates its
-line containing that cache block. The end result is that the only valid
-version of the block is in the cache that is written to, whereas *all
-other* copies of the block in other caches are marked as invalid.
+Việc áp dụng giao thức MSI với snooping sẽ cho ra kết quả đúng là gán giá trị **30** cho biến `y` trong ví dụ trước.
 
+---
 
-Employing the MSI protocol with snoooping would yield the correct final
-assignment of `30` to variable `y` in the previous example.
+### 14.5.2. False Sharing
 
+**Cache coherence** đảm bảo tính đúng đắn, nhưng nó cũng có thể gây ảnh hưởng tiêu cực đến hiệu năng.  
+Hãy nhớ rằng khi thread trên Core 0 cập nhật `g`, **snoopy cache** sẽ **invalidate** không chỉ `g`, mà **toàn bộ cache line** chứa `g`.
 
+---
 
-### 14.5.2. False Sharing 
-
-Cache coherence guarantees correctness, but it can potentially harm
-performance. Recall that when the thread updates `g` on Core 0, the
-snoopy cache invalidates not only `g`, but the *entire cache line* that
-`g` is a part of.
+Xét [phiên bản thử nghiệm ban đầu](_attachments/countElems_p.c) của chúng ta khi **parallelize** (song song hóa) hàm `countElems` trong thuật toán **CountSort**.  
+Để tiện theo dõi, hàm này được trích lại ở đây:
 
 
-Consider our [initial attempt](_attachments/countElems_p.c) at
-parallelizing the `countElems` function of the CountSort algorithm. For
-convenience, the function is reproduced here:
-
-
-
-
-```
+```c
 /*parallel version of step 1 (first cut) of CountSort algorithm:
  * extracts arguments from args value
  * calculates portion of the array this thread is responsible for counting
@@ -213,181 +143,129 @@ void *countElems(void *args){
 ```
 
 
-In our previous discussion of
-this function, we pointed out how data races can cause the `counts`
-array to not populate with the correct set of counts. Let's see what
-happens if we attempt to *time* this function. We add timing code to
-`main` using `getimeofday` in the exact manner as shown in
-[countElems_p\_v3.c](_attachments/countElems_p_v3.c). Benchmarking the
-initial version of `countElems` as just shown on 100 million elements
-yields the following times:
+Trong phần thảo luận trước về hàm này, chúng ta đã chỉ ra rằng **data race** có thể khiến mảng `counts` không được điền đúng tập giá trị đếm.  
+Bây giờ, hãy xem điều gì xảy ra nếu chúng ta thử **đo thời gian** chạy hàm này.  
+Ta thêm mã đo thời gian vào `main` bằng `gettimeofday` giống hệt như trong [countElems_p_v3.c](_attachments/countElems_p_v3.c).  
 
-
-
-
-    $ ./countElems_p 100000000 0 1
-    Time for Step 1 is 0.336239 s
-
-    $ ./countElems_p 100000000 0 2
-    Time for Step 1 is 0.799464 s
-
-    $ ./countElems_p 100000000 0 4
-    Time for Step 1 is 0.767003 s
-
-
-Even without any synchronization constructs, this version of the program
-*still gets slower* as the number of threads increases!
-
-
-To understand what is going on, let's revisit the `counts` array. The
-`counts` array holds the frequency of occurrence of each number in our
-input array. The maximum value is determined by the variable `MAX`. In
-our example program, `MAX` is set to 10. In other words, the `counts`
-array takes up 40 bytes of space.
-
-
-Recall that the [cache
-details](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors)
-on a Linux system are located in the `/sys/devices/system/cpu/`
-directory. Each logical core has its own cpu subdirectory called `cpuk`
-where `k` indicates the *kth* logical core. Each `cpu` subdirectory in
-turn has separate `index` directories that indicate the caches available
-to that core.
-
-
-The `index` directories contain files with numerous details about each
-logical core's caches. The contents of a sample `index0` directory are
-shown here (`index0` typically corresponds to a Linux system's L1
-cache):
-
-
-
-
-    $ ls /sys/devices/system/cpu/cpu0/cache/index0
-    coherency_line_size      power            type
-    level                    shared_cpu_list  uevent
-    number_of_sets           shared_cpu_map   ways_of_associativity
-    physical_line_partition  size
-
-
-To discover the cache line size of the L1 cache, use this command:
-
-
-
-
-    $ cat /sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size
-    64
-
-
-The output reveals that L1 cache line size for the machine is 64 bytes.
-In other words, the 40-byte `counts` array fits *within one cache line*.
-
-
-Recall that with invalidating cache coherence protocols like MSI, every
-time a program updates a shared variable, the *entire cache line in
-other caches storing the variable is invalidated*. Let's consider what
-happens when two threads execute the preceding function. One possible
-path of execution is shown in Table 2 (assuming that
-each thread is assigned to a separate core, and the variable `x` is
-local to each thread).
-
-
-+----------------------+----------------------+-----------------------+
-| Time                 | Thread 0             | Thread 1              |
-+======================+======================+=======================+
-| *i*                  | Reads array\[x\] (1) | ...​                   |
-+----------------------+----------------------+-----------------------+
-| *i+1*                | Increments           | Reads array\[x\] (4)  |
-|                      | counts\[1\]          |                       |
-|                      | (**invalidates cache |                       |
-|                      | line**)              |                       |
-+----------------------+----------------------+-----------------------+
-| *i+2*                | Reads array\[x\] (6) | Increments            |
-|                      |                      | counts\[4\]           |
-|                      |                      | (**invalidates cache  |
-|                      |                      | line**)               |
-+----------------------+----------------------+-----------------------+
-| *i+3*                | Increments           | Reads array\[x\] (2)  |
-|                      | counts\[6\]          |                       |
-|                      | (**invalidates cache |                       |
-|                      | line**)              |                       |
-+----------------------+----------------------+-----------------------+
-| *i+4*                | Reads array\[x\] (3) | Increments            |
-|                      |                      | counts\[2\]           |
-|                      |                      | (**invalidates cache  |
-|                      |                      | line**)               |
-+----------------------+----------------------+-----------------------+
-| *i+5*                | Increments           | ...​                   |
-|                      | counts\[3\]          |                       |
-|                      | (**invalidates cache |                       |
-|                      | line**)              |                       |
-+----------------------+----------------------+-----------------------+
-
-: Table 2. A Possible Execution Sequence of Two Threads Running
-`countElems`
-
-
--   During time step *i*, Thread 0 reads the value at `array[x]` in its
-    part of the array, which is a 1 in this example.
-
--   During time steps *i + 1* to *i + 5*, each thread reads a value from
-    `array[x]`. Note that each thread is looking at different components
-    of the array. Not only that, each read of `array` in our sample
-    execution yields unique values (so no race conditions in this sample
-    execution sequence!). After reading the value from `array[x]`, each
-    thread increments the associated value in `counts`.
-
--   Recall that the `counts` array *fits on a single cache line* in our
-    L1 cache. As a result, every write to `counts` invalidates the
-    *entire line* in *every other L1 cache*.
-
--   The end result is that, despite updating *different* memory
-    locations in `counts`, any cache line containing `counts` is
-    *invalidated* with *every update* to `counts`!
-
-
-The invalidation forces all L1 caches to update the line with a
-\"valid\" version from L2. The repeated invalidation and overwriting of
-lines from the L1 cache is an example of **thrashing**, where repeated
-conflicts in the cache cause a series of misses.
-
-
-The addition of more cores makes the problem worse, given that now more
-L1 caches are invalidating the line. As a result, adding additional
-threads slows down the runtime, despite the fact that each thread is
-accessing different elements of the `counts` array! This is an example
-of **false sharing**, or the illusion that individual elements are being
-shared by multiple cores. In the previous example, it appears that all
-the cores are accessing the same elements of `counts`, even though this
-is not the case.
-
-
-
-### 14.5.3. Fixing False Sharing 
-
-One way to fix an instance of false sharing is to pad the array (in our
-case `counts`) with additional elements so that it doesn't fit in a
-single cache line. However, padding can waste memory, and may not
-eliminate the problem from all architectures (consider the scenario in
-which two different machines have different L1 cache sizes). In most
-cases, writing code to support different cache sizes is generally not
-worth the gain in performance.
-
-
-A better solution is to have threads write to *local storage* whenever
-possible. Local storage in this context refers to memory that is *local*
-to a thread. The following solution reduces false sharing by choosing to
-perform updates to a locally declared version of `counts` called
-`local_counts`.
-
-
-Let's revisit the final version of our `countElems` function (reproduced
-from [countElems_p\_v3.c](_attachments/countElems_p_v3.c)):
-
-
-
+Kết quả benchmark phiên bản ban đầu của `countElems` trên 100 triệu phần tử như sau:
 
 ```
+$ ./countElems_p 100000000 0 1
+Time for Step 1 is 0.336239 s
+
+$ ./countElems_p 100000000 0 2
+Time for Step 1 is 0.799464 s
+
+$ ./countElems_p 100000000 0 4
+Time for Step 1 is 0.767003 s
+```
+
+Ngay cả **khi không có bất kỳ cơ chế đồng bộ nào**, phiên bản này của chương trình **vẫn chạy chậm hơn** khi số lượng thread tăng lên!
+
+---
+
+Để hiểu chuyện gì đang xảy ra, hãy xem lại mảng `counts`.  
+Mảng `counts` lưu tần suất xuất hiện của mỗi số trong mảng đầu vào.  
+Giá trị lớn nhất được xác định bởi biến `MAX`.  
+Trong chương trình ví dụ, `MAX = 10`.  
+Nói cách khác, mảng `counts` chiếm **40 byte** dung lượng.
+
+---
+
+Hãy nhớ rằng thông tin [cache details](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors) trên hệ thống Linux nằm trong thư mục `/sys/devices/system/cpu/`.  
+Mỗi **logical core** có thư mục con `cpuk` (trong đó `k` là số thứ tự core).  
+Mỗi thư mục `cpu` lại có các thư mục `index` riêng, biểu thị các cache có sẵn cho core đó.
+
+---
+
+Các thư mục `index` chứa nhiều tệp mô tả chi tiết về cache của từng logical core.  
+Nội dung ví dụ của thư mục `index0` (thường tương ứng với L1 cache trên Linux) như sau:
+
+```
+$ ls /sys/devices/system/cpu/cpu0/cache/index0
+coherency_line_size      power            type
+level                    shared_cpu_list  uevent
+number_of_sets           shared_cpu_map   ways_of_associativity
+physical_line_partition  size
+```
+
+Để biết kích thước **cache line** của L1 cache, dùng lệnh:
+
+```
+$ cat /sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size
+64
+```
+
+Kết quả cho thấy **L1 cache line size** của máy là **64 byte**.  
+Điều này có nghĩa là mảng `counts` 40 byte **nằm gọn trong một cache line**.
+
+---
+
+Hãy nhớ rằng với các **invalidating cache coherence protocol** như MSI, mỗi khi chương trình cập nhật một biến chia sẻ, **toàn bộ cache line** trong các cache khác chứa biến đó sẽ bị **invalidate**.  
+
+Xem điều gì xảy ra khi hai thread chạy hàm trên.  
+Một kịch bản thực thi có thể xảy ra được thể hiện trong **Bảng 2** (giả sử mỗi thread chạy trên một core riêng, và biến `x` là biến cục bộ của từng thread):
+
+| Time  | Thread 0                  | Thread 1                  |
+|-------|---------------------------|---------------------------|
+| *i*   | Reads array\[x\] (1)       | ...                       |
+| *i+1* | Increments counts\[1\]     | Reads array\[x\] (4)       |
+|       | (**invalidates cache line**)|                           |
+| *i+2* | Reads array\[x\] (6)       | Increments counts\[4\]     |
+|       |                           | (**invalidates cache line**)|  
+| *i+3* | Increments counts\[6\]     | Reads array\[x\] (2)       |
+|       | (**invalidates cache line**)|                           |
+| *i+4* | Reads array\[x\] (3)       | Increments counts\[2\]     |
+|       |                           | (**invalidates cache line**)|  
+| *i+5* | Increments counts\[3\]     | ...                       |
+|       | (**invalidates cache line**)|                           |
+
+**Bảng 2.** Một chuỗi thực thi có thể xảy ra của hai thread chạy `countElems`
+
+- Ở bước thời gian *i*, **Thread 0** đọc giá trị tại `array[x]` trong phần dữ liệu của nó, giá trị này là `1` trong ví dụ này.
+
+- Trong các bước thời gian từ *i + 1* đến *i + 5*, mỗi thread đọc một giá trị từ `array[x]`.  
+  Lưu ý rằng mỗi thread đang truy cập các phần tử **khác nhau** của mảng.  
+  Không chỉ vậy, mỗi lần đọc `array` trong chuỗi thực thi mẫu này đều trả về giá trị **duy nhất** (nên không có **race condition** trong chuỗi thực thi này).  
+  Sau khi đọc giá trị từ `array[x]`, mỗi thread sẽ tăng giá trị tương ứng trong `counts`.
+
+- Hãy nhớ rằng mảng `counts` **nằm gọn trong một cache line** của L1 cache.  
+  Do đó, **mỗi lần ghi** vào `counts` sẽ **invalidate** (vô hiệu hóa) **toàn bộ cache line** này trong **mọi L1 cache khác**.
+
+- Kết quả là, mặc dù đang cập nhật **các vị trí bộ nhớ khác nhau** trong `counts`, nhưng bất kỳ cache line nào chứa `counts` cũng sẽ bị **invalidate** với **mỗi lần cập nhật** `counts`!
+
+---
+
+Việc invalidation buộc tất cả các L1 cache phải cập nhật lại cache line này bằng một phiên bản “hợp lệ” từ L2.  
+Việc lặp đi lặp lại quá trình invalidation và ghi đè cache line từ L1 cache là một ví dụ về **thrashing** — khi các xung đột lặp lại trong cache gây ra hàng loạt **cache miss**.
+
+---
+
+Khi số lượng core tăng, vấn đề càng trở nên nghiêm trọng, vì lúc này có nhiều L1 cache hơn cùng thực hiện invalidation trên cache line.  
+Kết quả là, việc thêm thread mới sẽ làm **thời gian chạy chậm lại**, mặc dù mỗi thread đang truy cập các phần tử **khác nhau** của mảng `counts`!  
+
+Đây là một ví dụ về **false sharing** — hiện tượng “ảo giác” rằng các phần tử riêng lẻ đang được nhiều core chia sẻ.  
+Trong ví dụ trước, có vẻ như tất cả các core đang truy cập cùng một phần tử của `counts`, mặc dù thực tế không phải vậy.
+
+---
+
+### 14.5.3. Khắc phục False Sharing
+
+Một cách để khắc phục false sharing là **padding** (đệm) mảng (trong trường hợp này là `counts`) bằng các phần tử bổ sung để nó **không vừa** trong một cache line.  
+Tuy nhiên, padding có thể gây **lãng phí bộ nhớ** và có thể **không loại bỏ hoàn toàn vấn đề** trên mọi kiến trúc (ví dụ: hai máy khác nhau có kích thước L1 cache khác nhau).  
+Trong hầu hết các trường hợp, việc viết mã để hỗ trợ nhiều kích thước cache thường **không đáng** so với lợi ích hiệu năng thu được.
+
+---
+
+Một giải pháp tốt hơn là để các thread ghi vào **local storage** (bộ nhớ cục bộ) bất cứ khi nào có thể.  
+Trong ngữ cảnh này, local storage là vùng nhớ **cục bộ** cho một thread.  
+Giải pháp sau đây giảm false sharing bằng cách thực hiện cập nhật vào một biến `counts` cục bộ được khai báo riêng, gọi là `local_counts`.
+
+---
+
+Hãy xem lại phiên bản cuối cùng của hàm `countElems` (trích từ [countElems_p_v3.c](_attachments/countElems_p_v3.c)):
+
+```c
 /*parallel version of CountSort algorithm step 1 (final attempt with mutexes):
  * extracts arguments from args value
  * calculates the portion of the array this thread is responsible for counting
@@ -424,51 +302,32 @@ void *countElems( void *args ){
 }
 ```
 
+Việc sử dụng `local_counts` để cộng dồn tần suất thay vì `counts` là nguyên nhân chính giúp giảm false sharing trong ví dụ này:
 
-The use of `local_counts` to accumulate frequencies in lieu of `counts`
-is the major source of reduction of false sharing in this example:
-
-
-
-
-```
+```c
 for (i = start; i < end; i++){
     val = array[i];
-    local_counts[val] = local_counts[val] + 1; //updates local counts array
+    local_counts[val] = local_counts[val] + 1; // cập nhật mảng đếm cục bộ
 }
 ```
 
+Vì **cache coherence** được thiết kế để duy trì góc nhìn nhất quán về bộ nhớ chia sẻ, nên invalidation chỉ xảy ra khi **ghi** vào **giá trị chia sẻ** trong bộ nhớ.  
+Do `local_counts` **không được chia sẻ** giữa các thread, việc ghi vào nó sẽ **không** làm invalidate cache line tương ứng.
 
-Since cache coherence is meant to maintain a consistent view of shared
-memory, the invalidations trigger only on *writes* to *shared values* in
-memory. Since `local_counts` is not shared among the different threads,
-a write to it will not invalidate its associated cache line.
+---
 
+Trong phần cuối của mã, **mutex** đảm bảo tính đúng đắn bằng cách chỉ cho phép **một thread** cập nhật mảng `counts` chia sẻ tại một thời điểm:
 
-In the last component of the code, the mutex enforces correctness by
-ensuring that only one thread updates the shared `counts` array at a
-time:
-
-
-
-
-```
-//update to global counts array
-pthread_mutex_lock(&mutex); //acquire the mutex lock
+```c
+// cập nhật mảng counts toàn cục
+pthread_mutex_lock(&mutex); // khóa mutex
 for (i = 0; i < MAX; i++){
     counts[i] += local_counts[i];
 }
-pthread_mutex_unlock(&mutex); //release the mutex lock
+pthread_mutex_unlock(&mutex); // mở khóa mutex
 ```
 
-
-Since `counts` is located on a single cache line, it will still get
-invalidated with every write. The difference is that the penalty here is
-at most `MAX` × *t* writes vs. *n* writes, where *n* is the length of
-our input array, and *t* is the number of threads employed.
-
-
-
-
-
+Vì `counts` nằm trên **một cache line duy nhất**, nó vẫn sẽ bị invalidate với mỗi lần ghi.  
+Điểm khác biệt là chi phí ở đây **tối đa** là `MAX × t` lần ghi so với `n` lần ghi,  
+trong đó `n` là độ dài mảng đầu vào và `t` là số lượng thread được sử dụng.
 

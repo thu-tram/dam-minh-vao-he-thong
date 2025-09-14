@@ -1,7 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **13.2. Processes**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
-
 ## 13.2. Processes (Tiến trình)
 
 Một trong những **abstraction** (trừu tượng hóa) chính mà **operating system** (OS – hệ điều hành) triển khai là **process** (tiến trình).  
@@ -160,124 +156,158 @@ Ví dụ: một process có thể vào trạng thái *Ready* theo ba cách:
 
 ![Process State](_images/procstate.png)
 
+**Hình 1.** Các trạng thái của một process trong suốt vòng đời của nó
+
+---
+
+> **Thời gian chạy của process (Process Runtime)**
+
+Lập trình viên thường sử dụng **thời gian hoàn thành** của một process như một thước đo để đánh giá hiệu năng của nó.  
+Đối với các chương trình **noninteractive** (không tương tác), thời gian chạy nhanh hơn thường cho thấy một bản cài đặt tốt hơn hoặc tối ưu hơn.  
+Ví dụ: khi so sánh hai chương trình tính **prime factors** (thừa số nguyên tố) của một số lớn, chương trình nào hoàn thành đúng nhiệm vụ nhanh hơn sẽ được ưu tiên.
+
+Có hai cách đo khác nhau về **thời gian chạy** của một process:
+
+- Cách thứ nhất là **tổng wall time** (hay **wall-clock time**).  
+  Wall time là khoảng thời gian từ khi bắt đầu đến khi hoàn thành một process — tức là thời gian trôi qua từ lúc process bắt đầu cho đến khi kết thúc, được đo bằng một chiếc đồng hồ treo tường.  
+  Wall time bao gồm:
+  - Thời gian process ở trạng thái **Running** (đang chạy) và thực thi trên CPU.
+  - Thời gian process ở trạng thái **Blocked** (bị chặn) chờ một sự kiện như I/O.
+  - Thời gian process ở trạng thái **Ready** (sẵn sàng) chờ đến lượt được lập lịch để chạy trên CPU.  
+
+  Trong các hệ thống **multiprogrammed** và **timeshared**, wall time của một process có thể chậm hơn do các process khác chạy đồng thời và chia sẻ tài nguyên hệ thống.
+
+- Cách thứ hai là **tổng CPU time** (hay **process time**).  
+  CPU time chỉ đo lượng thời gian process ở trạng thái **Running** và thực thi lệnh trên CPU.  
+  CPU time **không** bao gồm thời gian process ở trạng thái **Blocked** hoặc **Ready**.  
+  Do đó, tổng CPU time của một process **không bị ảnh hưởng** bởi các process khác chạy đồng thời trên hệ thống.
+
+---
+
+### 13.2.3. Tạo (và hủy) process
+
+OS tạo một process mới khi một process hiện có thực hiện **system call** yêu cầu tạo process.  
+Trong Unix, system call **fork** tạo ra một process mới.  
+Process gọi `fork` là **parent process** (tiến trình cha) và process mới được tạo là **child process** (tiến trình con) của nó.  
+
+Ví dụ: nếu bạn chạy `a.out` trong shell, process shell sẽ gọi system call `fork` để yêu cầu OS tạo một child process mới dùng để chạy chương trình `a.out`.  
+
+Một ví dụ khác: một process trình duyệt web có thể gọi `fork` để tạo các child process xử lý các sự kiện duyệt web khác nhau.  
+Trình duyệt web có thể tạo một child process để xử lý giao tiếp với web server khi người dùng tải một trang web, tạo một process khác để xử lý thao tác chuột của người dùng, và các process khác để xử lý các cửa sổ hoặc tab trình duyệt riêng biệt.  
+
+Một trình duyệt web đa tiến trình như vậy có thể tiếp tục xử lý yêu cầu của người dùng thông qua một số child process, đồng thời một số child process khác có thể bị chặn khi chờ phản hồi từ web server từ xa hoặc chờ thao tác chuột của người dùng.
+
+---
+
+Một **process hierarchy** (cây phân cấp tiến trình) của mối quan hệ cha–con tồn tại giữa tập các process đang hoạt động trong hệ thống.  
+
+Ví dụ: nếu process *A* gọi `fork` hai lần, sẽ tạo ra hai child process mới là *B* và *C*.  
+Nếu process *C* tiếp tục gọi `fork`, một process mới *D* sẽ được tạo.  
+Process *C* là con của *A* và là cha của *D*.  
+Process *B* và *C* là **siblings** (anh/chị/em) vì chúng có cùng một parent process là *A*.  
+Process *A* là **ancestor** (tổ tiên) của *B*, *C* và *D*.  
+
+Ví dụ này được minh họa trong **Hình 2**.
+
+![Process Hierarchy created from the example. A is the top ancestor with two children, B and C below it. C has one child, D, below it.](_images/prochierarchy.png)
+
+**Hình 2.** Ví dụ về cây phân cấp tiến trình được tạo bởi một parent process (*A*) gọi `fork` hai lần để tạo hai child process (*B* và *C*).  
+Lời gọi `fork` của *C* tạo ra child process của nó là *D*.  
+Để liệt kê cây phân cấp tiến trình trên hệ thống Linux, chạy `pstree` hoặc `ps -Aef --forest`.
+
+---
+
+Vì các process hiện có kích hoạt việc tạo process mới, nên một hệ thống cần ít nhất **một process ban đầu** để tạo ra các process khác.  
+Khi khởi động (**boot time**), OS tạo **process mức người dùng đầu tiên** trong hệ thống.  
+Process đặc biệt này, có tên là `init`, nằm ở đỉnh của cây phân cấp tiến trình và là **ancestor** của tất cả các process khác trong hệ thống.
 
 
+#### fork
 
-#### fork 
+System call `fork` được dùng để tạo một **process** (tiến trình) mới.  
+Tại thời điểm gọi `fork`, **child process** (tiến trình con) sẽ **kế thừa** trạng thái thực thi (**execution state**) từ **parent process** (tiến trình cha).  
+OS sẽ tạo một **bản sao** của trạng thái thực thi của process cha tại thời điểm nó gọi `fork`.  
+Trạng thái thực thi này bao gồm:
 
-The `fork` system call is used to create a process. At the time of the
-fork, the child inherits its execution state from its parent. The OS
-creates a *copy* of the calling (parent) process's execution state at
-the point when the parent calls `fork`. This execution state includes
-the parent's address space contents, CPU register values, and any system
-resources it has allocated (e.g., open files). The OS also creates a new
-**process control struct**, an OS data structure for managing the child
-process, and it assigns the child process a unique PID. After the OS
-creates and initializes the new process, the child and parent are
-concurrent --- they both continue running and their executions overlap
-as the OS context switches them on and off the CPU.
+- Nội dung **address space** (không gian địa chỉ) của process cha.
+- Giá trị các **CPU register** (thanh ghi CPU).
+- Bất kỳ **system resource** (tài nguyên hệ thống) nào đã được cấp phát (ví dụ: các file đang mở).
 
+OS cũng tạo một **process control struct** (cấu trúc điều khiển tiến trình) mới — đây là cấu trúc dữ liệu của OS dùng để quản lý child process — và gán cho child process một **PID** (Process ID) duy nhất.  
+Sau khi OS tạo và khởi tạo process mới, **child** và **parent** sẽ chạy **concurrently** (đồng thời) — cả hai tiếp tục thực thi và xen kẽ nhau khi OS thực hiện **context switch** trên CPU.
 
-When the child process is first scheduled by the OS to run on the CPU,
-it starts executing at the point at which its parent left off --- at the
-return from the `fork` call. This is because `fork` gives the child a
-copy of its parent's execution state (the child executes using its own
-copy of this state when it starts running). From the programmer's point
-of view, *a call to `fork` returns twice*: once in the context of the
-running parent process, and once in the context of the running child
-process.
+---
 
+Khi child process lần đầu tiên được OS lập lịch để chạy trên CPU, nó sẽ bắt đầu thực thi **tại đúng vị trí mà parent đã dừng** — tức là tại điểm trả về từ lời gọi `fork`.  
+Điều này là do `fork` cấp cho child một bản sao trạng thái thực thi của parent (child sẽ chạy bằng bản sao này khi bắt đầu).  
 
-In order to differentiate the child and parent processes in a program, a
-call to `fork` returns different values to the parent and child. The
-child process always receives a return value of 0, whereas the parent
-receives the child's PID value (or -1 if `fork` fails).
+Từ góc nhìn của lập trình viên, **một lời gọi `fork` sẽ trả về hai lần**:  
+- Một lần trong ngữ cảnh của parent process đang chạy.  
+- Một lần trong ngữ cảnh của child process đang chạy.
 
+---
 
-For example, the following code snippet shows a call to the `fork`
-system call that creates a new child process of the calling process:
+Để phân biệt child và parent trong chương trình, lời gọi `fork` sẽ trả về **giá trị khác nhau** cho mỗi bên:  
+- Child process **luôn** nhận giá trị trả về là `0`.  
+- Parent process nhận giá trị là **PID của child** (hoặc `-1` nếu `fork` thất bại).
 
+---
 
+Ví dụ, đoạn mã sau minh họa lời gọi system call `fork` tạo một child process mới từ process gọi nó:
 
-
-```
+```c
 pid_t pid;
 
-pid = fork();   /* create a new child process */
+pid = fork();   /* tạo một child process mới */
 
-print("pid = %d\n", pid);  /* both parent and child execute this */
+printf("pid = %d\n", pid);  /* cả parent và child đều thực thi dòng này */
 ```
 
+Sau khi `fork` tạo child process mới, cả parent và child sẽ tiếp tục thực thi **trong ngữ cảnh riêng của mình**, tại điểm trả về của lời gọi `fork`.  
+Cả hai process sẽ gán giá trị trả về của `fork` cho biến `pid` và đều gọi `printf`.  
+Child process sẽ in ra `0`, còn parent process sẽ in ra **PID của child**.
 
-After the call to `fork` creates a new child process, the parent and
-child processes both continue executing, in their separate execution
-contexts, at the return point of the `fork` call. Both processes assign
-the return value of `fork` to their `pid` variable and both call
-`printf`. The child process's call prints out 0 and the parent process
-prints out the child's PID value.
+---
 
-
-Figure 3 shows an example of what the process hierarchy
-looks like after this code's execution. The child process gets an exact
-copy of the parent process's execution context at the point of the fork,
-but the value stored in its variable `pid` differs from its parent
-because `fork` returns the child's PID value (14 in this example) to the
-parent process, and 0 to the child.
-
-
-
+**Hình 3** minh họa ví dụ về cây tiến trình sau khi đoạn mã trên được thực thi.  
+Child process nhận **bản sao chính xác** của trạng thái thực thi của parent tại thời điểm `fork`, nhưng giá trị trong biến `pid` của nó khác với parent vì `fork` trả về **PID của child** (14 trong ví dụ này) cho parent, và `0` cho child.
 
 ![forked child process gets copy of parent state, but fork returns a different value to the child and parent process](_images/fork.png)
 
+**Hình 3.** Một process (PID 12) gọi `fork` để tạo child process mới.  
+Child process nhận bản sao chính xác của address space và trạng thái thực thi của parent, nhưng có PID riêng (14).  
+`fork` trả về `0` cho child và trả về PID của child (14) cho parent.
 
-Figure 3. A process (PID 12) calls fork to create a new child process.
-The new child process gets an exact copy of its parent's address and
-execution state, but gets its own process identifier (PID 14). fork
-returns 0 to the child process and the child's PID value (14) to the
-parent.
+---
 
+Thông thường, lập trình viên muốn child và parent thực hiện **các tác vụ khác nhau** sau khi gọi `fork`.  
+Có thể sử dụng giá trị trả về khác nhau của `fork` để phân nhánh, cho phép parent và child thực thi các đoạn mã khác nhau.  
 
-Often, the programmer wants the child and parent processes to perform
-different tasks after the `fork` call. A programmer can use the
-different return values from `fork` to trigger the parent and child
-processes to execute different code branches. For example, the following
-code snippet creates a new child process and uses the return value from
-`fork` to have the child and parent processes execute different code
-branches after the call:
+Ví dụ, đoạn mã sau tạo một child process mới và dùng giá trị trả về của `fork` để phân nhánh thực thi:
 
-
-
-
-```
+```c
 pid_t pid;
 
-pid = fork();   /* create a new child process */
+pid = fork();   /* tạo một child process mới */
 
 if (pid == 0) {
-    /* only the child process executes this code */
+    /* chỉ child process thực thi đoạn mã này */
     ...
 } else if (pid != -1)  {
-    /* only the parent process executes this code */
+    /* chỉ parent process thực thi đoạn mã này */
     ...
 }
 ```
 
+---
 
-It is important to remember that as soon as they are created, the child
-and parent processes run concurrently in their own execution contexts,
-modifying their separate copies of program variables and possibly
-executing different branches in the code.
+Điều quan trọng cần nhớ là **ngay khi được tạo**, child và parent sẽ chạy **đồng thời** trong ngữ cảnh thực thi riêng của mình,  
+thay đổi các bản sao biến chương trình riêng biệt và có thể thực thi các nhánh mã khác nhau.
 
-
-Consider the [following program](_attachments/fork.c) that contains a
-call to `fork` with branching on the value of `pid` to trigger the
-parent and child processes to execute different code (this example also
-shows a call to `getpid` that returns the PID of the calling process):
+Hãy xem [chương trình sau](_attachments/fork.c), trong đó có lời gọi `fork` kết hợp với phân nhánh dựa trên giá trị `pid` để kích hoạt parent và child thực thi các đoạn mã khác nhau (ví dụ này cũng minh họa lời gọi `getpid` trả về PID của process đang gọi):
 
 
-
-
-```
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -310,12 +340,11 @@ int main(void) {
 }
 ```
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-When run, this program's output might look like the following (assume
-that the parent's PID is 12 and the child's is 14):
+---
 
-
-
+Khi chạy, chương trình này có thể cho ra kết quả như sau (giả sử PID của **parent** là 12 và PID của **child** là 14):
 
 ```
 A
@@ -325,107 +354,68 @@ Child: fork returned 0, my pid 14
 B:14
 ```
 
+Trên thực tế, kết quả của chương trình có thể xuất hiện theo bất kỳ thứ tự nào trong **Bảng 1** (và nếu bạn chạy chương trình nhiều lần, bạn sẽ thường thấy nhiều hơn một thứ tự xuất hiện).  
+Trong **Bảng 1**, parent in ra `B:12` và child in ra `B:14` trong ví dụ này, nhưng giá trị PID chính xác sẽ thay đổi theo từng lần chạy.
 
-In fact, the program's output could look like any of the possible
-options shown in Table 1 (and you will often
-see more than one possible ordering of output if you run the program
-multiple times). In Table 1, the parent
-prints B:12 and the child B:14 in this example, but the exact PID values
-will vary from run to run.
+| Option 1 | Option 2 | Option 3 | Option 4 | Option 5 | Option 6 |
+|----------|----------|----------|----------|----------|----------|
+| `A`      | `A`      | `A`      | `A`      | `A`      | `A`      |
+| `Parent…`| `Parent…`| `Parent…`| `Child…` | `Child…` | `Child…` |
+| `Child…` | `Child…` | `B:12`   | `Parent…`| `Parent…`| `B:14`   |
+| `B:12`   | `B:14`   | `Child…` | `B:12`   | `B:14`   | `Parent…`|
+| `B:14`   | `B:12`   | `B:14`   | `B:14`   | `B:12`   | `B:12`   |
 
+**Bảng 1.** Sáu thứ tự xuất hiện kết quả có thể xảy ra của chương trình ví dụ.
 
-+----------+----------+----------+----------+----------+-----------+
-| Option 1 | Option 2 | Option 3 | Option 4 | Option 5 | Option 6  |
-+==========+==========+==========+==========+==========+===========+
-| `A`      | `A`      | `A`      | `A`      | `A`      | `A`       |
-+----------+----------+----------+----------+----------+-----------+
-| `        | `        | `        | `Child…​` | `Child…​` | `Child…​`  |
-| Parent…​` | Parent…​` | Parent…​` |          |          |           |
-+----------+----------+----------+----------+----------+-----------+
-| `Child…​` | `Child…​` | `B:12`   | `        | `        | `B:14`    |
-|          |          |          | Parent…​` | Parent…​` |           |
-+----------+----------+----------+----------+----------+-----------+
-| `B:12`   | `B:14`   | `Child…​` | `B:12`   | `B:14`   | `Parent…​` |
-+----------+----------+----------+----------+----------+-----------+
-| `B:14`   | `B:12`   | `B:14`   | `B:14`   | `B:12`   | `B:12`    |
-+----------+----------+----------+----------+----------+-----------+
+---
 
-: Table 1. All Six Possible Orderings of Example Program Output
+Sáu thứ tự kết quả khác nhau này có thể xảy ra vì sau khi system call `fork` trả về, **parent** và **child** chạy **concurrently** (đồng thời) và có thể được lập lịch chạy trên CPU theo nhiều cách khác nhau, dẫn đến bất kỳ sự xen kẽ nào của các chuỗi lệnh.  
 
-These six different output orderings are possible because after the
-`fork` system call returns, the parent and child processes are
-concurrent and can be scheduled to run on the CPU in many different
-orderings, resulting in any possible interleaving of their instruction
-sequences. Consider the execution time line of this program, shown in
-Figure 4. The dotted line represents concurrent execution
-of the two processes. Depending on when each is scheduled to run on the
-CPU, one could execute both its `printf` statements before the other, or
-the execution of their two `printf` statements could be interleaved,
-resulting in any of the possible outcomes shown in the table above.
-Because only one process, the parent, exists before the call to `fork`,
-A is always printed by the parent before any of the output after the
-call to `fork`.
+Hãy xem **Hình 4** minh họa **execution time line** (dòng thời gian thực thi) của chương trình.  
+Đường nét đứt biểu thị việc thực thi đồng thời của hai process.  
+Tùy thuộc vào thời điểm mỗi process được lập lịch chạy trên CPU, một process có thể thực thi cả hai lệnh `printf` của nó trước process kia, hoặc việc thực thi hai lệnh `printf` của chúng có thể xen kẽ nhau, dẫn đến bất kỳ kết quả nào trong bảng trên.  
 
-
-
+Vì chỉ có một process (parent) tồn tại trước khi gọi `fork`, nên `A` **luôn** được in ra bởi parent trước bất kỳ kết quả nào sau lời gọi `fork`.
 
 ![after the parent calls fork, both processes execute concurrently](_images/forkprint.png)
 
+**Hình 4.** Dòng thời gian thực thi của chương trình. Chỉ có parent tồn tại trước khi gọi `fork`. Sau khi `fork` trả về, cả hai chạy đồng thời (được biểu diễn bằng các đường nét đứt).
 
-Figure 4. The execution time line of the program. Only the parent
-process exists before the call to `fork`. After `fork` returns, both run
-concurrently (shown in the dotted lines).
+---
 
+### 13.2.4. exec
 
+Thông thường, một process mới được tạo ra để thực thi một chương trình **khác** với chương trình của parent process.  
+Điều này có nghĩa là `fork` thường được gọi để tạo một process với mục đích chạy một chương trình mới từ điểm bắt đầu của nó (tức là bắt đầu thực thi từ lệnh đầu tiên).  
 
+Ví dụ: nếu người dùng gõ `./a.out` trong shell, process shell sẽ gọi `fork` để tạo một child process mới chạy `a.out`.  
+Vì là hai process riêng biệt, shell và process `a.out` được bảo vệ khỏi nhau; chúng không thể can thiệp vào trạng thái thực thi của nhau.
 
-### 13.2.4. exec 
+---
 
-Usually a new process is created to execute a program that is different
-from that of its parent process. This means that `fork` is often called
-to create a process with the intention of running a new program from its
-starting point (that is starting its execution from its first
-instruction). For example, if a user types `./a.out` in a shell, the
-shell process forks a new child process to run `a.out`. As two separate
-processes, the shell and the `a.out` process are protected from each
-other; they cannot interfere with each other's execution state.
+Mặc dù `fork` tạo ra child process mới, nhưng nó **không** khiến child chạy `a.out`.  
+Để khởi tạo child process chạy một chương trình mới, child process sẽ gọi một trong các system call **exec**.  
+Unix cung cấp một họ các system call exec, yêu cầu OS **overlay** (ghi đè) image của process gọi bằng một image mới từ file thực thi nhị phân.  
 
+Nói cách khác, một system call exec yêu cầu OS ghi đè nội dung **address space** của process gọi bằng chương trình `a.out` được chỉ định và khởi tạo lại trạng thái thực thi của nó để bắt đầu chạy từ lệnh đầu tiên trong chương trình `a.out`.
 
-While `fork` creates the new child process, it does not cause the child
-to run `a.out`. To initialize the child process to run a new program,
-the child process calls one of the **exec** system calls. Unix provides
-a family of exec system calls that trigger the OS to overlay the calling
-process's image with a new image from a binary executable file. In other
-words, an exec system call tells the OS to overwrite the calling
-process's address space contents with the specified `a.out` and to
-reinitialize its execution state to start executing the very first
-instruction in the `a.out` program.
+---
 
+Một ví dụ về system call exec là `execvp`, với prototype hàm như sau:
 
-One example of an exec system call is `execvp`, whose function prototype
-is as follows:
-
-
-
-
-```
+```c
 int execvp(char *filename, char *argv[]);
 ```
 
+- Tham số `filename` chỉ định tên của chương trình thực thi nhị phân để khởi tạo image của process.
+- `argv` chứa các đối số dòng lệnh sẽ được truyền vào hàm `main` của chương trình khi nó bắt đầu thực thi.
 
-The `filename` parameter specifies the name of a binary executable
-program to initialize the process's image, and `argv` contains the
-command line arguments to pass into the `main` function of the program
-when it starts executing.
+---
 
-
-Here's an example code snippet that, when executed, creates a new child
-process to run `a.out`:
+Dưới đây là ví dụ đoạn mã, khi chạy sẽ tạo một child process mới để chạy `a.out`:
 
 
-
-
-```
+```c
 pid_t pid;
 int  ret;
 char *argv[2];
@@ -443,198 +433,146 @@ if (pid == 0) { /* child process */
 }
 ```
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-The `argv` variable is initialized to the value of the `argv` argument
-that is passed to the `main` function of `a.out`:
+---
 
+Biến `argv` được khởi tạo bằng giá trị của đối số `argv` được truyền vào hàm `main` của chương trình `a.out`:
 
-
-
+```c
+int main(int argc, char *argv) { ... }
 ```
-int main(int argc, char *argv) { ...
-```
 
+`execvp` sẽ xác định giá trị cần truyền cho `argc` dựa trên giá trị `argv` này (trong trường hợp này là 1).
 
-`execvp` will figure out the value to pass to `argc` based on this
-`argv` value (in this case 1).
-
-
-Figure 5 shows what the process hierarchy would look like
-after executing this code:
-
-
-
+**Hình 5** cho thấy cây phân cấp tiến trình (**process hierarchy**) sẽ trông như thế nào sau khi thực thi đoạn mã này:
 
 ![after fork child calls exec](_images/exec.png)
 
+**Hình 5.** Khi **child process** gọi `execvp` (bên trái), OS sẽ thay thế **image** của nó bằng `a.out` (bên phải) và khởi tạo child process để bắt đầu chạy chương trình `a.out` từ đầu.
 
-Figure 5. When the child process calls execvp (left), the OS replaces
-its image with a.out (right) and initializes the child process to start
-running the a.out program from its beginning.
+---
 
+Một điểm cần lưu ý trong ví dụ mã trên là thông báo lỗi có vẻ “lạ” ngay sau lời gọi `execvp`: tại sao việc **trả về** từ một system call `exec` lại là lỗi?  
+Nếu system call `exec` thành công, thì đoạn mã phát hiện và xử lý lỗi ngay sau đó sẽ **không bao giờ** được thực thi, vì process lúc này sẽ đang thực thi mã trong chương trình `a.out` thay vì đoạn mã hiện tại (nội dung **address space** của process đã bị thay đổi bởi `exec`).  
 
-Something to note in the example code shown above is its seemingly odd
-error message after the call to `execvp`: why would returning from an
-exec system call be an error? If the exec system call is successful,
-then the error detection and handling code immediately following it will
-never be executed because the process will now be executing code in the
-`a.out` program instead of this code (the process's address space
-contents have been changed by exec). That is, when a call to an exec
-function is successful, the process doesn't continue its execution at
-the return of the exec call. Because of this behavior, the following
-code snippet is equivalent to the one shown above (however, the one
-above is typically easier to understand):
+Nói cách khác, khi một lời gọi hàm `exec` thành công, process **không** tiếp tục thực thi tại điểm trả về của lời gọi `exec`.  
+Chính vì hành vi này, đoạn mã sau tương đương với đoạn mã ở trên (tuy nhiên, đoạn ở trên thường dễ hiểu hơn):
 
-
-
-
-```
+```c
 pid_t pid;
 int ret;
 
 pid = fork();
 if (pid == 0) { /* child process */
     ret = execvp("a.out", argv);
-    printf("Error: execvp returned!!!\n");  /* only executed if execvp fails */
+    printf("Error: execvp returned!!!\n");  /* chỉ chạy nếu execvp thất bại */
     exit(ret);
 }
 ```
 
+---
 
+### 13.2.5. exit và wait
 
-### 13.2.5. exit and wait 
+Để kết thúc, một process sẽ gọi system call `exit`, yêu cầu OS dọn dẹp hầu hết trạng thái của process.  
+Sau khi chạy mã thoát (**exit code**), process sẽ thông báo cho **parent process** rằng nó đã thoát.  
+Parent chịu trách nhiệm dọn dẹp phần trạng thái còn lại của child process đã thoát khỏi hệ thống.
 
-To terminate, a process calls the `exit` system call, which triggers the
-OS to clean up most of the process's state. After running the exit code,
-a process notifies its parent process that it has exited. The parent is
-responsible for cleaning up the exited child's remaining state from the
-system.
+---
 
+Process có thể bị yêu cầu thoát theo nhiều cách:
 
-Processes can be triggered to exit in several ways. First, a process may
-complete all of its application code. Returning from its `main` function
-leads to a process invoking the `exit` system call. Second, a process
-can perform an invalid action, such as dividing by zero or dereferencing
-a null pointer, that results in its exiting. Finally, a process can
-receive a **signal** from the OS or another process, telling it to exit
-(in fact, dividing by zero and NULL pointer dereferences result in the
-OS sending the process `SIGFPE` and `SIGSEGV` signals telling it to
-exit).
+1. Process hoàn thành toàn bộ mã ứng dụng của nó.  
+   Việc trả về từ hàm `main` sẽ dẫn đến việc process gọi system call `exit`.
 
+2. Process thực hiện một hành động không hợp lệ, chẳng hạn như chia cho 0 hoặc dereference một **null pointer**, dẫn đến việc nó bị thoát.
 
->> Signals
+3. Process nhận một **signal** từ OS hoặc từ process khác, yêu cầu nó thoát  
+   (thực tế, chia cho 0 và dereference null pointer sẽ khiến OS gửi cho process các signal `SIGFPE` và `SIGSEGV` yêu cầu nó thoát).
 
+#### **Signals**
 
-A **signal** is a software interrupt that the OS delivers to a process.
-Signals are a method by which related processes can communicate with one
-another. The OS provides an interface for one process to send a signal
-to another, and for it to communicate with processes (to send a process
-a `SIGSEGV` signal when it dereferences a null pointer, for example).
+**Signal** là một **software interrupt** (ngắt phần mềm) mà OS gửi tới một process.  
+Signal là một phương thức để các process có liên quan giao tiếp với nhau.  
+OS cung cấp một **interface** để một process gửi signal tới process khác, và để OS giao tiếp với process (ví dụ: gửi signal `SIGSEGV` khi process dereference một null pointer).
 
+Khi một process nhận được signal, nó sẽ bị ngắt để chạy mã **signal handler** đặc biệt.  
+Một hệ thống định nghĩa một số lượng cố định các signal để truyền đạt các ý nghĩa khác nhau, mỗi signal được phân biệt bằng một số hiệu duy nhất.  
+OS triển khai các **default signal handler** (trình xử lý tín hiệu mặc định) cho từng loại signal, nhưng lập trình viên có thể đăng ký mã signal handler ở mức người dùng để ghi đè hành động mặc định của hầu hết các signal trong ứng dụng của họ.
 
-When a process receives a signal, it is interrupted to run special
-signal handler code. A system defines a fixed number of signals to
-communicate various meanings, each differentiated by a unique signal
-number. The OS implements default signal handlers for each signal type,
-but programmers can register their own user-level signal handler code to
-override the default actions of most signals for their application.
+Phần **Signals** sẽ chứa thêm thông tin chi tiết về signal và cách xử lý signal.
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-The Signals section contains more
-information about signals and signal handling.
+---
 
+Nếu một **shell process** muốn kết thúc **child process** đang chạy `a.out`, nó có thể gửi cho child một **signal** `SIGKILL`.  
+Khi child process nhận được signal này, nó sẽ chạy **signal handler** cho `SIGKILL`, trong đó gọi `exit` để kết thúc child process.  
 
-If a shell process wants to terminate its child process running `a.out`,
-it can send the child a `SIGKILL` signal. When the child process
-receives the signal, it runs signal handler code for `SIGKILL` that
-calls `exit`, terminating the child process. If a user types CTRL-C in a
-Unix shell that is currently running a program, the child process
-receives a `SIGINT` signal. The default signal handler for `SIGINT` also
-calls `exit`, resulting in the child process exiting.
+Nếu người dùng nhấn **CTRL-C** trong một Unix shell đang chạy một chương trình, child process sẽ nhận signal `SIGINT`.  
+**Default signal handler** (trình xử lý tín hiệu mặc định) cho `SIGINT` cũng gọi `exit`, dẫn đến việc child process thoát.
 
+---
 
-After executing the `exit` system call, the OS delivers a `SIGCHLD`
-signal to the process's parent process to notify it that its child has
-exited. The child becomes a **zombie** process; it moves to the Exited
-state and can no longer run on the CPU. The execution state of a zombie
-process is partially cleaned up, but the OS still maintains a little
-information about it, including about how it terminated.
+Sau khi thực thi system call `exit`, OS sẽ gửi một signal `SIGCHLD` tới **parent process** của process vừa thoát để thông báo rằng child của nó đã kết thúc.  
+Child lúc này trở thành một **zombie process** — nó chuyển sang trạng thái **Exited** và không thể chạy lại trên CPU.  
+Trạng thái thực thi của zombie process được OS dọn dẹp một phần, nhưng OS vẫn giữ lại một số thông tin về nó, bao gồm cả cách mà nó đã kết thúc.
 
+---
 
-A parent process **reaps** its zombie child (cleans up the rest of its
-state from the system) by calling the `wait` system call. If the parent
-process calls `wait` before its child process exits, the parent process
-blocks until it receives a `SIGCHLD` signal from the child. The
-`waitpid` system call is a version of `wait` that takes a PID argument,
-allowing a parent to block while waiting for the termination of a
-specific child process.
+**Parent process** sẽ **reap** (thu hồi) zombie child của mình (dọn dẹp phần trạng thái còn lại khỏi hệ thống) bằng cách gọi system call `wait`.  
+Nếu parent process gọi `wait` **trước** khi child process thoát, parent sẽ bị **block** cho đến khi nhận được signal `SIGCHLD` từ child.  
 
+System call `waitpid` là một phiên bản của `wait` có thêm đối số PID, cho phép parent block trong khi chờ một child process cụ thể kết thúc.
 
-Figure 6 shows the sequence of events that occur when a
-process exits.
+---
 
-
-
+**Hình 6** minh họa trình tự các sự kiện xảy ra khi một process thoát:
 
 ![child exits](_images/exit.png)
 
+**Hình 6.** Quá trình thoát của process.  
+- **Trái:** Child process gọi system call `exit` để dọn dẹp phần lớn trạng thái thực thi của nó.  
+- **Giữa:** Sau khi chạy `exit`, child process trở thành zombie (ở trạng thái **Exited** và không thể chạy lại), và parent process nhận signal `SIGCHLD` thông báo rằng child đã thoát.  
+- **Phải:** Parent gọi `waitpid` để thu hồi zombie child (dọn dẹp phần trạng thái còn lại của child khỏi hệ thống).
 
-Figure 6. Process exit. Left: The child process calls the exit system
-call to clean up most of its execution state. Middle: After running
-exit, the child process becomes a zombie (it is in the Exited state and
-cannot run again), and its parent process is sent a SIGCHLD signal,
-notifying it that its child is exited. Right: The parent calls waitpid
-to reap its zombie child (cleans up the rest of the child's state from
-the system).
+---
 
+Vì parent và child process chạy **concurrently** (đồng thời), nên parent có thể gọi `wait` **trước** khi child thoát, hoặc child có thể thoát **trước** khi parent gọi `wait`.  
 
-Because the parent and child processes execute concurrently, the parent
-may call `wait` before its child exits, or the child can exit before the
-parent calls `wait`. If the child is still executing when the parent
-process calls `wait`, the parent blocks until the child exits (the
-parent enters the Blocked state waiting for the `SIGCHLD` signal event
-to happen). The blocking behavior of the parent can be seen if you run a
-program (`a.out`) in the foreground of a shell --- the shell program
-doesn't print out a shell prompt until `a.out` terminates, indicating
-that the shell parent process is blocked on a call to `wait`, waiting
-until it receives a `SIGCHLD` from its child process running `a.out`.
+- Nếu child vẫn đang chạy khi parent gọi `wait`, parent sẽ bị block cho đến khi child thoát (parent chuyển sang trạng thái **Blocked** chờ sự kiện signal `SIGCHLD`).  
+- Hành vi block này có thể quan sát được nếu bạn chạy một chương trình (`a.out`) ở **foreground** của shell — shell sẽ không in ra prompt cho đến khi `a.out` kết thúc, cho thấy shell (parent) đang bị block trong lời gọi `wait`, chờ nhận `SIGCHLD` từ child process đang chạy `a.out`.
 
+---
 
-A programmer can also design the parent process code so that it will
-never block waiting for a child process to exit. If the parent
-implements a `SIGCHLD` signal handler that contains the call to `wait`,
-then the parent only calls `wait` when there is an exited child process
-to reap, and thus it doesn't block on a `wait` call. This behavior can
-be seen by running a program in the background in a shell (`a.out &`).
-The shell program will continue executing, print out a prompt, and
-execute another command as its child runs `a.out`. Here's an example of
-how you might see the difference between a parent blocking on `wait` vs.
-a nonblocking parent that only calls `wait` inside a `SIGCHLD` signal
-handler (make sure you execute a program that runs for long enough to
-notice the difference):
+Lập trình viên cũng có thể thiết kế mã của parent process sao cho nó **không bao giờ** bị block khi chờ child process thoát.  
+Nếu parent triển khai một **signal handler** cho `SIGCHLD` và bên trong có lời gọi `wait`, thì parent chỉ gọi `wait` khi thực sự có child process đã thoát để thu hồi, và do đó sẽ không bị block trong lời gọi `wait`.  
 
+Hành vi này có thể thấy khi chạy một chương trình ở **background** trong shell (`a.out &`).  
+Shell sẽ tiếp tục thực thi, in ra prompt và chạy lệnh khác trong khi child của nó chạy `a.out`.
 
+Ví dụ để thấy sự khác biệt giữa parent bị block trong `wait` và parent không block (chỉ gọi `wait` bên trong `SIGCHLD` handler) — hãy chạy một chương trình đủ lâu để nhận thấy sự khác biệt:
 
+```bash
+$ a.out        # shell process fork child và gọi wait
 
-    $  a.out        # shell process forks child and calls wait
-
-    $  a.out &      # shell process forks child but does not call wait
-    $  ps           # (the shell can run ps and a.out concurrently)
-
-
-Below is an example code snippet containing `fork`, `exec`, `exit`, and
-`wait` system calls (with error handling removed for readability). This
-example is designed to test your understanding of these system calls and
-their effects on the execution of the processes. In this example, the
-parent process creates a child process and waits for it to exit. The
-child then forks another child to run the `a.out` program (the first
-child is the parent of the second child). It then waits for its child to
-exit.
-
-
-
-
+$ a.out &      # shell process fork child nhưng không gọi wait
+$ ps           # shell có thể chạy ps và a.out đồng thời
 ```
+
+---
+
+Dưới đây là ví dụ đoạn mã chứa các system call `fork`, `exec`, `exit` và `wait` (đã bỏ phần xử lý lỗi để dễ đọc).  
+Ví dụ này được thiết kế để kiểm tra mức độ hiểu của bạn về các system call này và tác động của chúng đến quá trình thực thi của các process.  
+
+Trong ví dụ:  
+- Parent process tạo một child process và chờ nó thoát.  
+- Child process sau đó fork một child khác để chạy chương trình `a.out` (child đầu tiên là parent của child thứ hai).  
+- Sau đó, child đầu tiên chờ child của nó thoát.
+
+
+```c
 pid_t pid1, pid2, ret;
 int status;
 
@@ -659,60 +597,47 @@ if (pid1 == 0 ) {       /* child 1 */
     printf("F\n");
 }
 ```
+---
 
+**Hình 7** minh họa **execution time line** (dòng thời gian thực thi) của các sự kiện **create / running / blocked / exit** của process khi thực thi ví dụ ở trên.  
+Các **đường nét đứt** biểu thị khoảng thời gian khi quá trình thực thi của một process **chồng lấn** với process con hoặc hậu duệ của nó: các process này chạy **concurrently** (đồng thời) và có thể được lập lịch trên CPU theo bất kỳ thứ tự nào.  
+Các **đường liền** biểu thị **sự phụ thuộc** trong quá trình thực thi giữa các process.  
 
-Figure 7 illustrates the execution time line of process
-create/running/blocked/exit events from executing the above example. The
-dotted lines represent times when a process's execution overlaps with
-its child or descendants: the processes are concurrent and can be
-scheduled on the CPU in any order. Solid lines represent dependencies on
-the execution of the processes. For example, Child 1 cannot call `exit`
-until it has reaped its exited child process, Child 2. When a process
-calls `wait`, it blocks until its child exits. When a process calls
-`exit`, it never runs again. The program's output is annotated along
-each process's execution time line at points in its execution when the
-corresponding `printf` statement can occur.
+Ví dụ: **Child 1** không thể gọi `exit` cho đến khi nó đã **reap** (thu hồi) xong **child process** đã thoát của mình là **Child 2**.  
+Khi một process gọi `wait`, nó sẽ **block** cho đến khi child của nó thoát.  
+Khi một process gọi `exit`, nó sẽ **không bao giờ** chạy lại.  
 
+Kết quả in ra của chương trình được chú thích dọc theo dòng thời gian thực thi của từng process tại các điểm mà lệnh `printf` tương ứng có thể xảy ra.
 
-
+---
 
 ![the execution time line for fork-wait example](_images/forkwait.png)
 
+**Hình 7.** Dòng thời gian thực thi của chương trình ví dụ, cho thấy một trình tự có thể xảy ra của các lời gọi `fork`, `exec`, `wait` và `exit` từ ba process.  
+Các **đường liền** biểu thị sự phụ thuộc về thứ tự thực thi giữa các process, và các **đường nét đứt** biểu thị các điểm thực thi đồng thời.  
+**Parent** là parent process của **Child 1**, và **Child 1** là parent process của **Child 2**.
 
-Figure 7. The execution time line for the example program, showing a
-possible sequence of fork, exec, wait, and exit calls from the three
-processes. Solid lines represent dependencies in the order of execution
-between processes, and dotted line concurrent execution points. Parent
-is the parent process of Child 1, and Child 1 is the parent of Child 2.
+---
 
+Sau khi các lời gọi `fork` được thực hiện trong chương trình này, **parent process** và **child process** đầu tiên sẽ chạy đồng thời.  
+Do đó, lời gọi `wait` trong parent có thể **xen kẽ** với bất kỳ lệnh nào của child.  
 
-After the calls to `fork` are made in this program, the parent process
-and first child process run concurrently, thus the call to `wait` in the
-parent could be interleaved with any instruction of its child. For
-example, the parent process could call `wait` and block before its child
-process calls `fork` to create its child process. Table 2
-lists all possible outputs from running the example program.
+Ví dụ: parent process có thể gọi `wait` và bị block **trước** khi child process của nó gọi `fork` để tạo child process của riêng nó.  
 
+**Bảng 2** liệt kê tất cả các kết quả đầu ra có thể có khi chạy chương trình ví dụ.
 
-  Option 1   Option 2   Option 3   Option 4
-  ---------- ---------- ---------- ----------
-  `A`        `A`        `A`        `A`
-  `B`        `B`        `B`        `E`
-  `C`        `C`        `E`        `B`
-  `D`        `E`        `C`        `C`
-  `E`        `D`        `D`        `D`
-  `F`        `F`        `F`        `F`
+| Option 1 | Option 2 | Option 3 | Option 4 |
+|----------|----------|----------|----------|
+| `A`      | `A`      | `A`      | `A`      |
+| `B`      | `B`      | `B`      | `E`      |
+| `C`      | `C`      | `E`      | `B`      |
+| `D`      | `E`      | `C`      | `C`      |
+| `E`      | `D`      | `D`      | `D`      |
+| `F`      | `F`      | `F`      | `F`      |
 
-  : Table 2. All Possible Output Orderings from the Program
+**Bảng 2.** Tất cả các thứ tự kết quả có thể có từ chương trình.
 
-The program outputs in Table 2 are all possible because
-the parent runs concurrently with its descendant processes until it
-calls `wait`. Thus, the parent's call to `printf("E\n")` can be
-interleaved at any point between the start and the exit of its
-descendant processes.
+---
 
-
-
-
-
-
+Các kết quả trong **Bảng 2** đều có thể xảy ra vì **parent process** chạy đồng thời với các process hậu duệ của nó cho đến khi nó gọi `wait`.  
+Do đó, lời gọi `printf("E\n")` của parent có thể được xen kẽ tại bất kỳ điểm nào giữa lúc bắt đầu và lúc kết thúc của các process hậu duệ của nó.

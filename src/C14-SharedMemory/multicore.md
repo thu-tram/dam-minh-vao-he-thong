@@ -1,158 +1,130 @@
-## 14.1. Programming Multicore Systems 
+## 14.1. Lập trình hệ thống đa lõi (Programming Multicore Systems)
 
-Most of the common languages that programmers know today were created
-prior to the multicore age. As a result, many languages cannot
-*implicitly* (or automatically) employ multicore processors to speed up
-the execution of a program. Instead, programmers must specifically write
-software to leverage the multiple cores on a system.
+Hầu hết các ngôn ngữ lập trình phổ biến mà lập trình viên biết ngày nay đều được tạo ra **trước** kỷ nguyên đa lõi.  
+Do đó, nhiều ngôn ngữ **không thể** *ngầm định* (hoặc tự động) tận dụng bộ xử lý đa lõi để tăng tốc độ thực thi chương trình.  
+Thay vào đó, lập trình viên phải **chủ động** viết phần mềm để khai thác nhiều core trên hệ thống.
 
+---
 
+### 14.1.1. Ảnh hưởng của hệ thống đa lõi đến việc thực thi process
 
-### 14.1.1. The Impact of Multicore Systems on Process Execution 
+Hãy nhớ rằng một **process** (tiến trình) có thể được xem như một **abstraction** (sự trừu tượng hóa) của một chương trình đang chạy.  
+Mỗi process thực thi trong **virtual address space** (không gian địa chỉ ảo) riêng của nó.  
+**Operating system** (OS – hệ điều hành) lập lịch (schedule) các process để thực thi trên CPU; một **context switch** (chuyển ngữ cảnh) xảy ra khi CPU thay đổi process mà nó đang thực thi.
 
-Recall that a **process**
-can be thought of as an abstraction of a running program. Each process
-executes in its own virtual address space. The operating system (OS)
-schedules processes for execution on the CPU; a **context switch**
-occurs when the CPU changes which process it currently executes.
+---
 
-
-Figure 1 illustrates how five example processes may
-execute on a single-core CPU.
-
-
-
+**Hình 1** minh họa cách năm process ví dụ có thể thực thi trên một CPU lõi đơn.
 
 ![concurrency example with 5 processes](_images/concurrency_1.png)
 
+**Hình 1.** Trình tự thời gian thực thi của năm process khi chúng chia sẻ một CPU lõi đơn
 
-Figure 1. An execution time sequence for five processes as they share a
-single CPU core
+---
 
+Trục ngang là thời gian, với mỗi **time slice** (lát thời gian) tương ứng một đơn vị thời gian.  
+Một ô vuông biểu thị thời điểm một process đang sử dụng CPU lõi đơn.  
+Giả sử mỗi process thực thi trọn một time slice trước khi xảy ra context switch.  
+Ví dụ, **Process 1** sử dụng CPU tại các bước thời gian T1 và T3.
 
-The horizontal axis is time, with each time slice taking one unit of
-time. A box indicates when a process is using the single-core CPU.
-Assume that each process executes for one full time slice before a
-context switch occurs. So, Process 1 uses the CPU during time steps T1
-and T3.
+---
 
+Trong ví dụ này, thứ tự thực thi process là:  
+P1, P2, P1, P2, P4, P2, P3, P4, P5, P3, P5.
 
-In this example, the order of process execution is P1, P2, P1, P2, P4,
-P2, P3, P4, P5, P3, P5. We take a moment here to distinguish between two
-measures of time. The **CPU time** measures the amount of time a process
-takes to execute on a CPU. In contrast, the **wall-clock time** measures
-the amount of time a human perceives a process takes to complete. The
-wall-clock time is often significantly longer than the CPU time, due to
-context switches. For example, Process 1's CPU time requires two time
-units, whereas its wall-clock time is three time units.
+Tại đây, ta phân biệt giữa hai khái niệm về thời gian:
 
+- **CPU time**: lượng thời gian một process thực sự chạy trên CPU.
+- **Wall-clock time**: lượng thời gian mà con người cảm nhận process cần để hoàn thành.
 
-When the total execution time of one process overlaps with another, the
-processes are running **concurrently** with each other. Operating
-systems employed concurrency in the single-core era to give the illusion
-that a computer can execute many things at once (e.g., you can have a
-calculator program, a web browser, and a word processing document all
-open at the same time). In truth, each process executes serially and the
-operating system determines the [order in which processes execute and
-complete](../C13-OS/processes.html#_multiprogramming_and_context_switching)
-(which often differs in subsequent runs).
+Wall-clock time thường **lớn hơn nhiều** so với CPU time, do có context switch.  
+Ví dụ, CPU time của Process 1 là 2 đơn vị thời gian, nhưng wall-clock time của nó là 3 đơn vị thời gian.
 
+---
 
-Returning to the example, observe that Process 1 and Process 2 run
-concurrently with each other, since their executions overlap at time
-points T2-T4. Likewise, Process 2 runs concurrently with Process 4, as
-their executions overlap at time points T4-T6. In contrast, Process 2
-does *not* run concurrently with Process 3, because they share no
-overlap in their execution; Process 3 only starts running at time T7,
-whereas Process 2 completes at time T6.
+Khi tổng thời gian thực thi của một process **chồng lấn** với process khác, các process đó đang chạy **concurrently** (đồng thời).  
+Trong thời kỳ CPU lõi đơn, OS sử dụng concurrency để tạo **ảo giác** rằng máy tính có thể thực hiện nhiều việc cùng lúc  
+(ví dụ: bạn có thể mở đồng thời chương trình máy tính bỏ túi, trình duyệt web và tài liệu soạn thảo văn bản).  
+Thực tế, mỗi process vẫn thực thi **tuần tự**, và OS quyết định [thứ tự thực thi và hoàn thành của các process](../C13-OS/processes.html#_multiprogramming_and_context_switching) (thứ tự này có thể khác nhau ở mỗi lần chạy).
 
+---
 
-A multicore CPU enables the OS to schedule a different process to each
-available core, allowing processes to execute *simultaneously*. The
-simultaneous execution of instructions from processes running on
-multiple cores is referred to as **parallel execution**. [Figure
-2](#FigConcurrency2) shows how our example processes might execute on a
-dual-core system.
+Quay lại ví dụ, ta thấy:
 
+- Process 1 và Process 2 chạy **concurrently** vì thời gian thực thi của chúng chồng lấn tại T2–T4.
+- Process 2 và Process 4 cũng chạy concurrently (T4–T6).
+- Ngược lại, Process 2 **không** chạy concurrently với Process 3, vì chúng không có khoảng thời gian thực thi trùng nhau; Process 3 chỉ bắt đầu tại T7, trong khi Process 2 kết thúc ở T6.
 
+---
 
+Một CPU đa lõi cho phép OS lập lịch **một process khác nhau** cho **mỗi core** khả dụng, cho phép các process thực thi **simultaneously** (đồng thời thực sự).  
+Việc thực thi đồng thời các lệnh từ các process chạy trên nhiều core được gọi là **parallel execution** (thực thi song song).  
+
+**Hình 2** cho thấy cách các process ví dụ có thể thực thi trên hệ thống **dual-core** (2 lõi).
 
 ![parallel example with 2 cores](_images/concurrency_2.png)
 
+**Hình 2.** Trình tự thời gian thực thi của năm process, mở rộng để bao gồm hai CPU core (một lõi màu xanh đậm, một lõi màu xanh nhạt)
 
-Figure 2. An execution time sequence for five processes, extended to
-include two CPU cores (one in dark blue, the other in light green).
+---
 
+Trong ví dụ này, hai CPU core được tô màu khác nhau.  
+Giả sử thứ tự thực thi process vẫn là:  
+P1, P2, P1, P2, P4, P2, P3, P4, P5, P3, P5.
 
-In this example, the two CPU cores are colored differently. Suppose that
-the process execution order is again P1, P2, P1, P2, P4, P2, P3, P4, P5,
-P3, P5. The presence of multiple cores enables certain processes to
-execute *sooner*. For example, during time unit T1, the first core
-executes Process 1 while the second core executes Process 2. At time T2,
-the first core executes Process 2 while the second executes Process 1.
-Thus, Process 1 finishes executing after time T2, whereas Process 2
-finishes executing at time T3.
+Sự xuất hiện của nhiều core cho phép một số process **thực thi sớm hơn**.  
+Ví dụ:
 
+- Tại T1: Core 1 chạy Process 1, Core 2 chạy Process 2.
+- Tại T2: Core 1 chạy Process 2, Core 2 chạy Process 1.
 
-Note that the parallel execution of multiple processes increases just
-the number of processes that execute at any one time. In [Figure
-2](#FigConcurrency2), all the processes complete execution by time unit
-T7. However, each individual process still requires the same amount of
-CPU time to complete as shown in Figure 1. For
-example, Process 2 requires three time units regardless of execution on
-a single or multicore system (i.e., its *CPU time* remains the same). A
-multicore processor increases the **throughput** of process execution,
-or the number of processes that can complete in a given period of time.
-Thus, while the CPU time of an individual process remains unchanged, its
-wall-clock time may decrease.
+Kết quả: Process 1 hoàn tất sau T2, trong khi Process 2 hoàn tất tại T3.
 
+---
 
+Lưu ý: **Parallel execution** chỉ làm tăng **số lượng process** có thể chạy tại một thời điểm.  
+Trong **Hình 2**, tất cả process hoàn tất tại T7.  
+Tuy nhiên, **mỗi process riêng lẻ** vẫn cần cùng một lượng CPU time như trong **Hình 1**.  
+Ví dụ: Process 2 cần 3 đơn vị thời gian CPU, bất kể chạy trên hệ thống lõi đơn hay đa lõi (tức là *CPU time* không đổi).
 
-### 14.1.2. Expediting Process Execution with Threads 
+---
 
-One way to speed up the execution of a single process is to decompose it
-into lightweight, independent execution flows called **threads**.
-Figure 3 shows how a process's virtual address space
-changes when it is multithreaded with two threads. While each thread has
-its own private allocation of call stack memory, all threads *share* the
-program data, instructions, and the heap allocated to the multithreaded
-process.
+CPU đa lõi giúp tăng **throughput** (thông lượng) của việc thực thi process — tức là số lượng process có thể hoàn thành trong một khoảng thời gian nhất định.  
+Vì vậy, mặc dù CPU time của từng process không thay đổi, **wall-clock time** của nó có thể giảm.
 
 
+### 14.1.2. Tăng tốc thực thi process bằng Threads
 
+Một cách để tăng tốc thực thi của một process đơn là **phân rã** nó thành các luồng thực thi nhẹ, độc lập gọi là **thread**.  
+**Hình 3** cho thấy cách **virtual address space** (không gian địa chỉ ảo) của một process thay đổi khi nó được **multithreaded** (đa luồng) với hai thread.  
+Mỗi thread có **call stack** (ngăn xếp lời gọi hàm) riêng, nhưng tất cả các thread **chia sẻ** dữ liệu chương trình, lệnh, và vùng heap được cấp phát cho process đa luồng.
+
+---
 
 ![multithread process with 2 threads](_images/multithread-vas.png)
 
+**Hình 3.** So sánh không gian địa chỉ ảo của process đơn luồng và process đa luồng với hai thread
 
-Figure 3. Comparing the virtual address space of a single-threaded and a
-multithreaded process with two threads
+---
 
+Hệ điều hành lập lịch (schedule) các thread tương tự như cách nó lập lịch các process.  
+Trên một **multicore processor** (bộ xử lý đa lõi), OS có thể tăng tốc thực thi của chương trình đa luồng bằng cách lập lịch cho các thread khác nhau chạy trên các core riêng biệt.  
+Số lượng thread tối đa có thể thực thi song song bằng với số lượng **physical core** (lõi vật lý) trên hệ thống.  
+Nếu số lượng thread vượt quá số lượng physical core, các thread còn lại phải **chờ đến lượt** để thực thi (tương tự như cách các process chạy trên một core đơn).
 
-The operating system schedules threads in the same manner as it
-schedules processes. On a multicore processor, the OS can speed up the
-execution of a multithreaded program by scheduling the different threads
-to run on separate cores. The maximum number of threads that can execute
-in parallel is equal to the number of physical cores on the system. If
-the number of threads exceeds the number of physical cores, the
-remaining threads must wait their turn to execute (similar to how
-processes execute on a single core).
+---
 
+#### Ví dụ: Nhân vô hướng (Scalar Multiplication)
 
+Ví dụ ban đầu về cách sử dụng multithreading để tăng tốc ứng dụng:  
+Xét bài toán nhân vô hướng một mảng `array` với một số nguyên `s`.  
+Trong phép nhân vô hướng, mỗi phần tử của mảng được nhân với `s`.
 
-#### An Example: Scalar Multiplication 
+---
 
-As an initial example of how to use multithreading to speed up an
-application, consider the problem of performing scalar multiplication of
-an array `array` and some integer `s`. In scalar multiplication, each
-element in the array is scaled by multiplying the element with `s`.
+Một cài đặt **tuần tự** của hàm nhân vô hướng như sau:
 
-
-A serial implementation of a scalar multiplication function follows:
-
-
-
-
-```
+```c
 void scalar_multiply(int * array, long length, int s) {
     int i;
     for (i = 0; i < length; i++) {
@@ -161,93 +133,80 @@ void scalar_multiply(int * array, long length, int s) {
 }
 ```
 
+---
 
-Suppose that `array` has *N* total elements. To create a multithreaded
-version of this application with *t* threads, it is necessary to:
+Giả sử `array` có tổng cộng *N* phần tử.  
+Để tạo phiên bản đa luồng với *t* thread, cần:
 
+1. Tạo *t* thread.
+2. Gán cho mỗi thread một **phần con** của mảng đầu vào (tức là *N*/*t* phần tử).
+3. Yêu cầu mỗi thread nhân các phần tử trong phần mảng của nó với `s`.
 
+---
 
-1.  Create *t* threads.
+Giả sử phiên bản tuần tự của `scalar_multiply` mất **60 giây** để nhân một mảng 100 triệu phần tử.  
+Để xây dựng phiên bản chạy với *t* = 4 thread, ta gán cho mỗi thread **1/4** mảng đầu vào (25 triệu phần tử).
 
-2.  Assign each thread a subset of the input array (i.e., *N*/*t*
-    elements).
+---
 
-3.  Instruct each thread to multiply the elements in its array subset by
-    `s`.
+**Hình 4** cho thấy điều gì xảy ra khi chạy 4 thread trên **một core**.  
+Như trước, thứ tự thực thi do OS quyết định.  
+Giả sử thứ tự thực thi thread là: Thread 1, Thread 3, Thread 2, Thread 4.  
+Trên CPU lõi đơn (biểu diễn bằng các ô vuông), mỗi thread chạy **tuần tự**.  
+Do đó, process đa luồng chạy trên một core vẫn mất **60 giây** (thậm chí lâu hơn một chút do overhead tạo thread).
 
-
-Suppose that the serial implementation of `scalar_multiply` spends 60
-seconds multiplying an input array of 100 million elements. To build a
-version that executes with *t*= 4 threads, we assign each thread one
-fourth of the total input array (25 million elements).
-
-
-Figure 4 shows what happens when we run four threads on a
-single core. As before, the execution order is left to the operating
-system. In this scenario, assume that the thread execution order is
-Thread 1, Thread 3, Thread 2, Thread 4. On a single-core processor
-(represented by the squares), each thread executes sequentially. Thus,
-the multithreaded process running on one core will still take 60 seconds
-to run (perhaps a little longer, given the overhead of creating
-threads).
-
-
-
+---
 
 ![multithreaded process on one core](_images/single-core-thread.png)
 
+**Hình 4.** Chạy bốn thread trên CPU lõi đơn
 
-Figure 4. Running four threads on a single-core CPU
+---
 
+Bây giờ giả sử chạy process đa luồng trên hệ thống **dual-core**.  
+**Hình 5** cho thấy kết quả.  
+Vẫn với *t* = 4 thread và thứ tự thực thi: Thread 1, Thread 3, Thread 2, Thread 4.  
+Hai core được biểu diễn bằng các ô vuông có màu khác nhau.  
 
-Now suppose that we run our multithreaded process on a dual-core system.
-Figure 5 shows the result. Again, assume *t* = 4 threads,
-and that the thread execution order is Thread 1, Thread 3, Thread 2,
-Thread 4. Our two cores are represented by shaded squares. Since the
-system is dual-core, Thread 1 and Thread 3 execute in parallel during
-time step T1. Threads 2 and 4 then execute in parallel during time step
-T2. Thus, the multithreaded process that originally took 60 seconds to
-run now runs in 30 seconds.
+- Tại T1: Thread 1 và Thread 3 chạy song song.  
+- Tại T2: Thread 2 và Thread 4 chạy song song.  
 
+Kết quả: process đa luồng vốn mất 60 giây giờ chỉ mất **30 giây**.
 
-
+---
 
 ![multithreaded process on two cores](_images/dual-core-thread.png)
 
+**Hình 5.** Chạy bốn thread trên CPU hai lõi
 
-Figure 5. Running four threads on a dual-core CPU
+---
 
+Cuối cùng, giả sử process đa luồng (*t* = 4) chạy trên CPU **quad-core** (4 lõi).  
+**Hình 6** minh họa một trình tự thực thi như vậy.  
+Mỗi core trong hình được tô màu khác nhau.  
 
-Finally, suppose that the multithreaded process (*t* = 4) is run on a
-quad-core CPU. Figure 6 shows one such execution sequence.
-Each of the four cores in Figure 6 is shaded differently. On
-the quad-core system, each thread executes in parallel during time slice
-T1. Thus, on a quad-core CPU, the multithreaded process that originally
-took 60 seconds now runs in 15 seconds.
+- Tại T1: Cả 4 thread chạy song song.  
 
+Kết quả: process đa luồng vốn mất 60 giây giờ chỉ mất **15 giây**.
 
-
+---
 
 ![multithreaded process on four cores](_images/quad-core-thread.png)
 
+**Hình 6.** Chạy bốn thread trên CPU bốn lõi
 
-Figure 6. Running four threads on a quad-core CPU
+---
 
+Nhìn chung, nếu số lượng thread bằng số lượng core (*c*) và OS lập lịch để mỗi thread chạy song song trên một core riêng, thì process đa luồng sẽ chạy trong khoảng **1/*c*** thời gian.  
+Đây là **linear speedup** (tăng tốc tuyến tính) lý tưởng, nhưng hiếm khi đạt được trong thực tế.  
 
-In general, if the number of threads matches the number of cores (*c*)
-and the operating system schedules each thread to run on a separate core
-in parallel, then the multithreaded process should run in approximately
-1/*c* of the time. Such linear speedup is ideal, but not frequently
-observed in practice. For example, if there are many other processes (or
-multithreaded processes) waiting to use the CPU, they will all compete
-for the limited number of cores, resulting in **resource contention**
-among the processes. If the number of specified threads exceeds the
-number of CPU cores, each thread must wait its turn to run. We explore
-other factors that often prevent linear speedup [later in this
-chapter](performance.html#_measuring_the_performance_of_parallel_programs).
+Ví dụ: nếu có nhiều process khác (hoặc process đa luồng khác) đang chờ CPU, tất cả sẽ cạnh tranh cho số core hạn chế, dẫn đến **resource contention** (tranh chấp tài nguyên).  
+Nếu số thread vượt quá số core CPU, mỗi thread phải chờ đến lượt.  
 
+Chúng ta sẽ tìm hiểu các yếu tố khác thường ngăn cản việc đạt được linear speedup [ở phần sau của chương này](performance.html#_measuring_the_performance_of_parallel_programs).
 
+---
 
-
+Bạn có muốn tôi dịch tiếp sang **14.2. Shared Memory Multiprocessing** để nối tiếp nội dung không?
 
 
