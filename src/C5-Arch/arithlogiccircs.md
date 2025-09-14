@@ -1,8 +1,3 @@
-
-
-
-
-
 ### 5.4.1. Arithmetic and Logic Circuits 
 
 Arithmetic and Logic circuits implement the arithmetic and logic
