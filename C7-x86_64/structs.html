@@ -157,7 +157,7 @@ Mỗi x~i~ biểu thị địa chỉ của một field cụ thể.</p>
 <p>Các field được lưu liên tiếp nhau trong bộ nhớ theo đúng thứ tự khai báo.<br />
 Trong <strong>Hình 1</strong>, field <code>age</code> được cấp phát ngay sau field <code>name</code> (tại byte offset x~64~), tiếp theo là <code>grad_yr</code> (offset x~68~) và <code>gpa</code> (offset x~72~).<br />
 Cách tổ chức này cho phép truy cập field hiệu quả về mặt bộ nhớ.</p>
-<p>Để hiểu cách compiler sinh mã assembly làm việc với một <code>struct</code>, hãy xét hàm <code>initStudent</code>:</p>
+<p>Để hiểu cách compiler sinh code assembly làm việc với một <code>struct</code>, hãy xét hàm <code>initStudent</code>:</p>
 <pre><code class="language-c">void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
     strncpy(s-&gt;name, nm, 64);
     s-&gt;grad_yr = gr;
@@ -167,7 +167,7 @@ Cách tổ chức này cho phép truy cập field hiệu quả về mặt bộ n
 </code></pre>
 <p>Hàm <code>initStudent</code> nhận địa chỉ cơ sở của một <code>struct studentT</code> làm tham số đầu tiên,<br />
 và các giá trị mong muốn cho từng field làm các tham số còn lại.<br />
-Đoạn mã assembly dưới đây thể hiện hàm này:</p>
+Đoạn code assembly dưới đây thể hiện hàm này:</p>
 <pre><code>Dump of assembler code for function initStudent:
 0x4006aa &lt;+0&gt;:  push  %rbp                   # lưu rbp
 0x4006ab &lt;+1&gt;:  mov   %rsp,%rbp              # cập nhật rbp (stack frame mới)
@@ -195,7 +195,7 @@ và các giá trị mong muốn cho từng field làm các tham số còn lại.
 0x400700 &lt;+86&gt;: leaveq                       # chuẩn bị thoát hàm
 0x400701 &lt;+87&gt;: retq                         # return (void, %rax bị bỏ qua)
 </code></pre>
-<p>Việc chú ý tới <strong>byte offset</strong> của từng field là chìa khóa để hiểu đoạn mã này.<br />
+<p>Việc chú ý tới <strong>byte offset</strong> của từng field là chìa khóa để hiểu đoạn code này.<br />
 Một số điểm cần lưu ý:</p>
 <ul>
 <li>Lời gọi <code>strncpy</code> nhận địa chỉ cơ sở của field <code>name</code> trong <code>s</code>, địa chỉ mảng <code>nm</code>, và độ dài cần copy làm ba tham số.<br />
@@ -215,10 +215,10 @@ Hãy nhớ rằng vì <code>name</code> là field đầu tiên trong <code>struc
 </code></pre>
 <ul>
 <li>
-<p>Đoạn mã này chứa một thanh ghi (<code>%xmm0</code>) và lệnh (<code>movss</code>) chưa được đề cập trước đó. <code>%xmm0</code> là ví dụ về thanh ghi dành riêng cho giá trị <strong>floating-point</strong>. Lệnh <code>movss</code> cho biết dữ liệu được di chuyển là kiểu <strong>floating-point đơn chính xác</strong> (single-precision).</p>
+<p>Đoạn code này chứa một thanh ghi (<code>%xmm0</code>) và lệnh (<code>movss</code>) chưa được đề cập trước đó. <code>%xmm0</code> là ví dụ về thanh ghi dành riêng cho giá trị <strong>floating-point</strong>. Lệnh <code>movss</code> cho biết dữ liệu được di chuyển là kiểu <strong>floating-point đơn chính xác</strong> (single-precision).</p>
 </li>
 <li>
-<p>Phần tiếp theo của mã (từ <code>&lt;initStudent+51&gt;</code> đến <code>&lt;initStudent+58&gt;</code>) đặt giá trị của tham số <code>gr</code> tại offset <code>0x44</code> (68) tính từ đầu <code>s</code>.<br />
+<p>Phần tiếp theo của code (từ <code>&lt;initStudent+51&gt;</code> đến <code>&lt;initStudent+58&gt;</code>) đặt giá trị của tham số <code>gr</code> tại offset <code>0x44</code> (68) tính từ đầu <code>s</code>.<br />
 Xem lại bố cục bộ nhớ trong <strong>Hình 1</strong> cho thấy địa chỉ này tương ứng với <code>s-&gt;grad_yr</code>:</p>
 </li>
 </ul>
@@ -227,7 +227,7 @@ Xem lại bố cục bộ nhớ trong <strong>Hình 1</strong> cho thấy địa
 0x4006e4 &lt;+58&gt;: mov   %edx,0x44(%rax)        # copy gr vào %rax+0x44 (s-&gt;grad_yr)
 </code></pre>
 <ul>
-<li>Phần tiếp theo của mã (từ <code>&lt;initStudent+61&gt;</code> đến <code>&lt;initStudent+68&gt;</code>) đặt giá trị của tham số <code>ag</code> tại offset <code>0x40</code> (64) tính từ đầu <code>s</code>.<br />
+<li>Phần tiếp theo của code (từ <code>&lt;initStudent+61&gt;</code> đến <code>&lt;initStudent+68&gt;</code>) đặt giá trị của tham số <code>ag</code> tại offset <code>0x40</code> (64) tính từ đầu <code>s</code>.<br />
 Trong <strong>Hình 1</strong>, địa chỉ này tương ứng với <code>s-&gt;age</code>:</li>
 </ul>
 <pre><code>0x4006e7 &lt;+61&gt;: mov   -0x8(%rbp),%rax        # copy s vào %rax
@@ -248,7 +248,7 @@ Offset này khớp với vị trí của field <code>gpa</code> trong <strong>H�
 <p>Như vậy, bằng cách quan sát các <strong>byte offset</strong> và cách compiler sử dụng chúng trong các lệnh <code>mov</code>, ta có thể thấy rõ cách các field của struct được truy cập và gán giá trị trong assembly.<br />
 Điều này cũng cho thấy lợi ích của việc khai báo các field liên tiếp trong bộ nhớ: compiler chỉ cần cộng thêm offset cố định vào địa chỉ cơ sở của struct để truy cập từng field, giúp việc truy cập dữ liệu nhanh và hiệu quả hơn.</p>
 <ul>
-<li>Phần tiếp theo của đoạn mã (từ <code>&lt;initStudent+61&gt;</code> đến <code>&lt;initStudent+68&gt;</code>) sao chép giá trị tham số <code>ag</code> vào field <code>s→age</code> của <code>struct</code>, field này nằm tại offset <code>0x40</code> (hoặc 64 byte) tính từ địa chỉ của <code>s</code>:</li>
+<li>Phần tiếp theo của đoạn code (từ <code>&lt;initStudent+61&gt;</code> đến <code>&lt;initStudent+68&gt;</code>) sao chép giá trị tham số <code>ag</code> vào field <code>s→age</code> của <code>struct</code>, field này nằm tại offset <code>0x40</code> (hoặc 64 byte) tính từ địa chỉ của <code>s</code>:</li>
 </ul>
 <pre><code>0x4006e7 &lt;+61&gt;: mov   -0x8(%rbp),%rax        # copy s vào %rax
 0x4006eb &lt;+65&gt;: mov   -0x14(%rbp),%edx       # copy ag vào %edx
@@ -284,7 +284,7 @@ struct studentTM student2;
 <li>Các kiểu dữ liệu 4 byte (ví dụ <code>int</code>, <code>float</code>, <code>unsigned</code>) phải nằm ở địa chỉ chia hết cho 4.</li>
 <li>Các kiểu dữ liệu lớn hơn (ví dụ <code>long</code>, <code>double</code>, và con trỏ) phải nằm ở địa chỉ chia hết cho 8.</li>
 </ul>
-<p>Đối với một <code>struct</code>, compiler sẽ thêm các byte trống (<strong>padding</strong>) giữa các field để đảm bảo mỗi field thỏa mãn yêu cầu căn chỉnh của nó.<br />
+<p>Đối với một <code>struct</code>, compiler sẽ thêm các byte trống (<strong>padding</strong>) giữa các field để đảm bảo mỗi field thỏa coden yêu cầu căn chỉnh của nó.<br />
 Ví dụ, trong <code>struct</code> được khai báo ở <strong>Hình 3</strong>, compiler thêm 1 byte padding tại byte x~63~ để đảm bảo field <code>age</code> bắt đầu ở một địa chỉ là bội số của 4.<br />
 Các giá trị được căn chỉnh đúng trong bộ nhớ có thể được đọc hoặc ghi chỉ với một thao tác, giúp tăng hiệu suất.</p>
 <p>Xét trường hợp khi một <code>struct</code> được định nghĩa như sau:</p>

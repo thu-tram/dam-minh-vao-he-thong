@@ -150,13 +150,13 @@
 <p><strong>Hình 1.</strong> Các bước OS thực hiện để khởi chạy một chương trình mới trên phần cứng bên dưới.</p>
 <p>Giống như các chương trình của người dùng, OS cũng là phần mềm chạy trên phần cứng máy tính.<br />
 Tuy nhiên, OS là <strong>system software</strong> (phần mềm hệ thống) đặc biệt, quản lý tất cả tài nguyên hệ thống và triển khai giao diện cho người dùng; nó là thành phần bắt buộc để sử dụng máy tính.</p>
-<p>Vì OS là phần mềm, mã thực thi nhị phân của nó cũng chạy trên phần cứng như bất kỳ chương trình nào khác: dữ liệu và lệnh của nó được lưu trong RAM, và các lệnh được CPU nạp và thực thi giống như lệnh của chương trình người dùng.<br />
-Do đó, để OS chạy, mã thực thi nhị phân của nó cần được nạp vào RAM và CPU phải được khởi tạo để bắt đầu chạy mã của OS.<br />
-Tuy nhiên, vì OS chịu trách nhiệm chạy mã trên phần cứng, nên nó cần một bước hỗ trợ ban đầu để tự khởi động.</p>
+<p>Vì OS là phần mềm, code thực thi nhị phân của nó cũng chạy trên phần cứng như bất kỳ chương trình nào khác: dữ liệu và lệnh của nó được lưu trong RAM, và các lệnh được CPU nạp và thực thi giống như lệnh của chương trình người dùng.<br />
+Do đó, để OS chạy, code thực thi nhị phân của nó cần được nạp vào RAM và CPU phải được khởi tạo để bắt đầu chạy code của OS.<br />
+Tuy nhiên, vì OS chịu trách nhiệm chạy code trên phần cứng, nên nó cần một bước hỗ trợ ban đầu để tự khởi động.</p>
 <h3 id="1311-os-booting"><a class="header" href="#1311-os-booting">13.1.1. OS Booting</a></h3>
 <p>Quá trình OS tự nạp và khởi tạo trên máy tính được gọi là <strong>booting</strong> — OS “tự kéo mình lên bằng dây giày” (<em>pulls itself up by its bootstraps</em>), hay <em>boot</em> chính nó trên máy tính.<br />
-OS cần một chút hỗ trợ ban đầu để được nạp vào máy tính và bắt đầu chạy mã khởi động (<strong>boot code</strong>).</p>
-<p>Để khởi chạy mã OS, một đoạn mã được lưu trong <strong>firmware</strong> (bộ nhớ không mất dữ liệu – nonvolatile memory – trong phần cứng) sẽ chạy khi máy tính vừa bật nguồn.<br />
+OS cần một chút hỗ trợ ban đầu để được nạp vào máy tính và bắt đầu chạy code khởi động (<strong>boot code</strong>).</p>
+<p>Để khởi chạy code OS, một đoạn code được lưu trong <strong>firmware</strong> (bộ nhớ không mất dữ liệu – nonvolatile memory – trong phần cứng) sẽ chạy khi máy tính vừa bật nguồn.<br />
 <strong>BIOS</strong> (Basic Input/Output System) và <strong>UEFI</strong> (Unified Extensible Firmware Interface) là hai ví dụ của loại firmware này.</p>
 <p>Khi bật nguồn, BIOS hoặc UEFI sẽ chạy và thực hiện đủ các bước khởi tạo phần cứng để nạp <strong>boot block</strong> (khối khởi động) đầu tiên của OS từ đĩa vào RAM, rồi bắt đầu chạy các lệnh trong boot block trên CPU.<br />
 Khi OS bắt đầu chạy, nó sẽ nạp phần còn lại của mình từ đĩa, phát hiện và khởi tạo các tài nguyên phần cứng, đồng thời khởi tạo các cấu trúc dữ liệu và abstraction để hệ thống sẵn sàng cho người dùng.</p>
@@ -196,44 +196,44 @@ addl $8, %ebx  # an example instruction after the trap instruction
 </code></pre>
 <p>Lệnh đầu tiên (<code>movl $4, %eax</code>) đưa số định danh system call cho <code>write</code> (4) vào thanh ghi <code>eax</code>.<br />
 Lệnh thứ hai (<code>int $0x80</code>) kích hoạt trap.<br />
-Khi mã trap handler của OS chạy, nó sẽ dùng giá trị trong thanh ghi <code>eax</code> (4) để xác định system call nào đang được gọi và chạy mã xử lý tương ứng (trong trường hợp này là mã xử lý <code>write</code>).<br />
+Khi code trap handler của OS chạy, nó sẽ dùng giá trị trong thanh ghi <code>eax</code> (4) để xác định system call nào đang được gọi và chạy code xử lý tương ứng (trong trường hợp này là code xử lý <code>write</code>).<br />
 Sau khi OS xử lý xong, nó sẽ tiếp tục thực thi chương trình tại lệnh ngay sau trap instruction (<code>addl</code> trong ví dụ này).</p>
 <p>Không giống như system call (xuất phát từ việc thực thi lệnh của chương trình), <strong>hardware interrupt</strong> được gửi tới CPU qua <strong>interrupt bus</strong>.<br />
 Một thiết bị sẽ đặt một tín hiệu (thường là một số chỉ loại interrupt) lên interrupt bus của CPU (<strong>Hình 3</strong>).<br />
-Khi CPU phát hiện tín hiệu trên interrupt bus, nó sẽ dừng thực thi lệnh của process hiện tại và bắt đầu chạy mã <strong>interrupt handler</strong> của OS.<br />
-Sau khi mã xử lý interrupt của OS chạy xong, OS sẽ tiếp tục thực thi process tại lệnh ứng dụng đang chạy khi interrupt xảy ra.</p>
+Khi CPU phát hiện tín hiệu trên interrupt bus, nó sẽ dừng thực thi lệnh của process hiện tại và bắt đầu chạy code <strong>interrupt handler</strong> của OS.<br />
+Sau khi code xử lý interrupt của OS chạy xong, OS sẽ tiếp tục thực thi process tại lệnh ứng dụng đang chạy khi interrupt xảy ra.</p>
 <p><img src="_images/diskinter.png" alt="Interrupt bus" /></p>
 <p><strong>Hình 3.</strong> Một thiết bị phần cứng (ổ đĩa) gửi tín hiệu tới CPU qua <strong>interrupt bus</strong> để kích hoạt OS thực thi thay cho nó.</p>
-<p>Nếu một chương trình người dùng đang chạy trên CPU khi một <strong>interrupt</strong> (hoặc <strong>trap</strong>) xảy ra, CPU sẽ chạy mã <strong>interrupt handler</strong> (hoặc <strong>trap handler</strong>) của OS.<br />
+<p>Nếu một chương trình người dùng đang chạy trên CPU khi một <strong>interrupt</strong> (hoặc <strong>trap</strong>) xảy ra, CPU sẽ chạy code <strong>interrupt handler</strong> (hoặc <strong>trap handler</strong>) của OS.<br />
 Khi OS xử lý xong interrupt, nó sẽ tiếp tục thực thi chương trình người dùng bị gián đoạn tại đúng vị trí trước khi bị ngắt.</p>
-<p>Vì OS là phần mềm, và mã của nó được nạp vào RAM và chạy trên CPU giống như mã chương trình người dùng, nên OS phải bảo vệ mã và trạng thái của mình khỏi các process thông thường đang chạy trong hệ thống.<br />
+<p>Vì OS là phần mềm, và code của nó được nạp vào RAM và chạy trên CPU giống như code chương trình người dùng, nên OS phải bảo vệ code và trạng thái của mình khỏi các process thông thường đang chạy trong hệ thống.<br />
 CPU hỗ trợ điều này bằng cách định nghĩa hai <strong>chế độ thực thi</strong>:</p>
 <ol>
 <li>
 <p><strong>User mode</strong>: CPU chỉ thực thi các lệnh ở mức người dùng và chỉ truy cập các vùng bộ nhớ mà OS cho phép.<br />
-OS thường ngăn CPU ở user mode truy cập vào mã lệnh và dữ liệu của OS.<br />
+OS thường ngăn CPU ở user mode truy cập vào code lệnh và dữ liệu của OS.<br />
 User mode cũng giới hạn các thành phần phần cứng mà CPU có thể truy cập trực tiếp.</p>
 </li>
 <li>
-<p><strong>Kernel mode</strong>: CPU có thể thực thi bất kỳ lệnh nào và truy cập bất kỳ vùng bộ nhớ nào (bao gồm cả vùng lưu mã lệnh và dữ liệu của OS).<br />
+<p><strong>Kernel mode</strong>: CPU có thể thực thi bất kỳ lệnh nào và truy cập bất kỳ vùng bộ nhớ nào (bao gồm cả vùng lưu code lệnh và dữ liệu của OS).<br />
 Nó cũng có thể truy cập trực tiếp các thành phần phần cứng và thực thi các lệnh đặc biệt.</p>
 </li>
 </ol>
-<p>Khi mã OS chạy trên CPU, hệ thống ở <strong>kernel mode</strong>; khi chương trình người dùng chạy trên CPU, hệ thống ở <strong>user mode</strong>.<br />
-Nếu CPU đang ở user mode và nhận một interrupt, CPU sẽ chuyển sang kernel mode, nạp <strong>interrupt handler routine</strong> và bắt đầu thực thi mã xử lý interrupt của OS.<br />
+<p>Khi code OS chạy trên CPU, hệ thống ở <strong>kernel mode</strong>; khi chương trình người dùng chạy trên CPU, hệ thống ở <strong>user mode</strong>.<br />
+Nếu CPU đang ở user mode và nhận một interrupt, CPU sẽ chuyển sang kernel mode, nạp <strong>interrupt handler routine</strong> và bắt đầu thực thi code xử lý interrupt của OS.<br />
 Trong kernel mode, OS có thể truy cập phần cứng và các vùng bộ nhớ không được phép trong user mode.<br />
-Khi OS xử lý xong interrupt, nó sẽ khôi phục trạng thái CPU để tiếp tục thực thi mã người dùng tại đúng vị trí bị gián đoạn, rồi trả CPU về user mode (xem <a href="#FigCPUInterrupts">Hình 4</a>).</p>
+Khi OS xử lý xong interrupt, nó sẽ khôi phục trạng thái CPU để tiếp tục thực thi code người dùng tại đúng vị trí bị gián đoạn, rồi trả CPU về user mode (xem <a href="#FigCPUInterrupts">Hình 4</a>).</p>
 <p><img src="_images/handler.png" alt="OS runs interrupt handler code" /></p>
-<p><strong>Hình 4.</strong> CPU và interrupt. Mã người dùng đang chạy trên CPU bị ngắt (tại thời điểm X trên trục thời gian), và mã xử lý interrupt của OS được thực thi. Sau khi OS xử lý xong interrupt, việc thực thi mã người dùng được tiếp tục (tại thời điểm Y trên trục thời gian).</p>
-<p>Trong một hệ thống điều khiển bằng interrupt, interrupt có thể xảy ra bất kỳ lúc nào, nghĩa là OS có thể chuyển từ chạy mã người dùng sang chạy mã xử lý interrupt ở bất kỳ chu kỳ máy nào.<br />
+<p><strong>Hình 4.</strong> CPU và interrupt. Mã người dùng đang chạy trên CPU bị ngắt (tại thời điểm X trên trục thời gian), và code xử lý interrupt của OS được thực thi. Sau khi OS xử lý xong interrupt, việc thực thi code người dùng được tiếp tục (tại thời điểm Y trên trục thời gian).</p>
+<p>Trong một hệ thống điều khiển bằng interrupt, interrupt có thể xảy ra bất kỳ lúc nào, nghĩa là OS có thể chuyển từ chạy code người dùng sang chạy code xử lý interrupt ở bất kỳ chu kỳ máy nào.<br />
 Một cách để hỗ trợ hiệu quả việc <strong>chuyển ngữ cảnh thực thi</strong> từ user mode sang kernel mode là cho phép kernel chạy trong <strong>execution context</strong> của mọi process trong hệ thống.</p>
-<p>Khi boot, OS sẽ nạp mã của mình vào một vị trí cố định trong RAM, vị trí này được <strong>map</strong> vào phần trên cùng của <strong>address space</strong> của mọi process (xem <strong>Hình 5</strong>), và khởi tạo một thanh ghi CPU với địa chỉ bắt đầu của hàm xử lý interrupt của OS.<br />
-Khi có interrupt, CPU sẽ chuyển sang kernel mode và thực thi các lệnh của mã xử lý interrupt của OS, vốn có thể truy cập ở các địa chỉ trên cùng trong address space của mọi process.</p>
-<p>Vì mọi process đều có OS được map vào cùng một vị trí ở trên cùng của address space, mã xử lý interrupt của OS có thể chạy nhanh trong ngữ cảnh của bất kỳ process nào đang chạy trên CPU khi interrupt xảy ra.<br />
+<p>Khi boot, OS sẽ nạp code của mình vào một vị trí cố định trong RAM, vị trí này được <strong>map</strong> vào phần trên cùng của <strong>address space</strong> của mọi process (xem <strong>Hình 5</strong>), và khởi tạo một thanh ghi CPU với địa chỉ bắt đầu của hàm xử lý interrupt của OS.<br />
+Khi có interrupt, CPU sẽ chuyển sang kernel mode và thực thi các lệnh của code xử lý interrupt của OS, vốn có thể truy cập ở các địa chỉ trên cùng trong address space của mọi process.</p>
+<p>Vì mọi process đều có OS được map vào cùng một vị trí ở trên cùng của address space, code xử lý interrupt của OS có thể chạy nhanh trong ngữ cảnh của bất kỳ process nào đang chạy trên CPU khi interrupt xảy ra.<br />
 Mã OS này chỉ có thể được truy cập ở kernel mode, giúp bảo vệ OS khỏi các truy cập ở user mode; trong quá trình thực thi bình thường, một process chạy ở user mode và không thể đọc hoặc ghi vào các địa chỉ của OS được map vào phần trên cùng của address space của nó.</p>
 <p><img src="_images/osmem.png" alt="The OS is mapped into every process address space" /></p>
 <p><strong>Hình 5.</strong> Không gian địa chỉ của process: kernel của OS được map vào phần trên cùng của address space của mọi process.</p>
-<p>Mặc dù việc map mã OS vào address space của mọi process giúp thực thi mã kernel nhanh khi có interrupt, nhưng nhiều bộ xử lý hiện đại có các đặc điểm khiến cơ chế này bộc lộ lỗ hổng bảo mật đối với kernel.<br />
+<p>Mặc dù việc map code OS vào address space của mọi process giúp thực thi code kernel nhanh khi có interrupt, nhưng nhiều bộ xử lý hiện đại có các đặc điểm khiến cơ chế này bộc lộ lỗ hổng bảo mật đối với kernel.<br />
 Kể từ thông báo vào tháng 1 năm 2018 về lỗ hổng phần cứng <strong>Meltdown</strong>¹, các hệ điều hành đã tách riêng bộ nhớ kernel và bộ nhớ của chương trình người dùng để bảo vệ chống lại lỗ hổng này, nhưng điều đó cũng khiến việc chuyển sang kernel mode để xử lý interrupt kém hiệu quả hơn.</p>
 <h3 id="1313-tài-liệu-tham-khảo"><a class="header" href="#1313-tài-liệu-tham-khảo">13.1.3. Tài liệu tham khảo</a></h3>
 <ol>

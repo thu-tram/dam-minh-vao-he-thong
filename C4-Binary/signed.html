@@ -139,21 +139,21 @@
                         <h2 id="43-số-nguyên-nhị-phân-có-dấu-signed-binary-integers"><a class="header" href="#43-số-nguyên-nhị-phân-có-dấu-signed-binary-integers">4.3. Số nguyên nhị phân có dấu (Signed Binary Integers)</a></h2>
 <p>Cho đến giờ, chúng ta mới chỉ giới hạn việc thảo luận về số nhị phân ở dạng <strong>unsigned</strong> (chỉ gồm các số không âm).<br />
 Phần này giới thiệu một cách diễn giải khác của nhị phân để biểu diễn cả số âm.<br />
-Vì biến có dung lượng lưu trữ hữu hạn, một cách mã hóa nhị phân có dấu phải phân biệt được giữa số âm, số 0 và số dương.<br />
+Vì biến có dung lượng lưu trữ hữu hạn, một cách code hóa nhị phân có dấu phải phân biệt được giữa số âm, số 0 và số dương.<br />
 Việc thao tác với số có dấu cũng đòi hỏi một <strong>procedure</strong> (thủ tục) để thực hiện phép phủ định (negation).</p>
-<p>Một cách mã hóa nhị phân có dấu phải chia tập hợp các chuỗi bit thành hai nhóm: số âm và số không âm.<br />
+<p>Một cách code hóa nhị phân có dấu phải chia tập hợp các chuỗi bit thành hai nhóm: số âm và số không âm.<br />
 Trong thực tế, các nhà thiết kế hệ thống thường xây dựng hệ thống <strong>general-purpose</strong> (đa dụng), nên việc chia đôi 50% / 50% là lựa chọn cân bằng.<br />
-Vì vậy, các cách mã hóa số có dấu được trình bày trong chương này sẽ biểu diễn số lượng giá trị âm và không âm bằng nhau.</p>
+Vì vậy, các cách code hóa số có dấu được trình bày trong chương này sẽ biểu diễn số lượng giá trị âm và không âm bằng nhau.</p>
 <blockquote>
 <p><strong>Lưu ý:</strong> Có sự khác biệt tinh tế nhưng quan trọng giữa <em>non-negative</em> (không âm) và <em>positive</em> (dương).<br />
 Tập hợp số dương loại trừ số 0, trong khi tập hợp số không âm bao gồm cả 0.<br />
 Ngay cả khi chia đều 50% số chuỗi bit cho số âm và số không âm, vẫn cần dành một giá trị không âm để biểu diễn số 0.<br />
 Do đó, với số bit cố định, hệ thống số có thể biểu diễn nhiều số âm hơn số dương (ví dụ: trong hệ <strong>two’s complement</strong>).</p>
 </blockquote>
-<p>Các cách mã hóa số có dấu sử dụng <strong>một bit</strong> để phân biệt giữa nhóm số âm và nhóm số không âm.<br />
+<p>Các cách code hóa số có dấu sử dụng <strong>một bit</strong> để phân biệt giữa nhóm số âm và nhóm số không âm.<br />
 Theo quy ước, <strong>bit ngoài cùng bên trái</strong> cho biết số đó là âm (1) hay không âm (0).<br />
 Bit này được gọi là <strong>high-order bit</strong> hoặc <strong>most significant bit</strong>.</p>
-<p>Chương này sẽ giới thiệu hai cách mã hóa số có dấu: <strong>signed magnitude</strong> và <strong>two’s complement</strong>.<br />
+<p>Chương này sẽ giới thiệu hai cách code hóa số có dấu: <strong>signed magnitude</strong> và <strong>two’s complement</strong>.<br />
 Mặc dù chỉ có <strong>two’s complement</strong> còn được sử dụng trong thực tế, việc so sánh cả hai sẽ giúp minh họa các đặc điểm quan trọng.</p>
 <h3 id="431-signed-magnitude"><a class="header" href="#431-signed-magnitude">4.3.1. Signed Magnitude</a></h3>
 <p><strong>Signed magnitude</strong> coi bit cao nhất chỉ là bit dấu.<br />

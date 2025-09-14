@@ -291,7 +291,7 @@ Những giả định này phù hợp với cấu trúc của hầu hết các m
 </ul>
 <p>Lưu ý: Tổng số truy cập D1 được tính bằng <code>D1 = D1mr + D1mw</code> và tổng số truy cập LL được tính bằng <code>ILmr + DLmr + DLmw</code>.</p>
 <p>Hãy xem phiên bản 1 của chương trình hoạt động thế nào dưới Cachegrind.<br />
-Chạy Valgrind trên mã đã biên dịch với lệnh:</p>
+Chạy Valgrind trên code đã biên dịch với lệnh:</p>
 <pre><code>$ valgrind --tool=cachegrind --cache-sim=yes ./cachex 1000
 </code></pre>
 <p>Trong lệnh này, công cụ <code>cachegrind</code> của Valgrind đóng vai trò như một lớp bao quanh file thực thi <code>cachex</code>.<br />

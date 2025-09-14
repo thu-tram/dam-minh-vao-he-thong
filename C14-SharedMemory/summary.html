@@ -143,7 +143,7 @@ Các thư viện như POSIX và OpenMP sử dụng mô hình giao tiếp <strong
 <h3 id="những-điểm-chính-cần-ghi-nhớ"><a class="header" href="#những-điểm-chính-cần-ghi-nhớ">Những điểm chính cần ghi nhớ</a></h3>
 <p><strong>Threads là đơn vị cơ bản của các chương trình concurrent</strong></p>
 <p>:   Để song song hóa một chương trình tuần tự, lập trình viên sử dụng các cấu trúc nhẹ gọi là <strong>thread</strong>.<br />
-Trong một <strong>process đa luồng</strong> (multithreaded process) cụ thể, mỗi thread có vùng <strong>stack</strong> riêng, nhưng chia sẻ dữ liệu chương trình, vùng <strong>heap</strong> và mã lệnh của process.<br />
+Trong một <strong>process đa luồng</strong> (multithreaded process) cụ thể, mỗi thread có vùng <strong>stack</strong> riêng, nhưng chia sẻ dữ liệu chương trình, vùng <strong>heap</strong> và code lệnh của process.<br />
 Giống như process, thread chạy <strong>nondeterministically</strong> (không xác định trước) trên CPU (tức là thứ tự thực thi thay đổi giữa các lần chạy, và việc thread nào được gán cho core nào là do hệ điều hành quyết định).</p>
 <p><strong>Cấu trúc đồng bộ hóa đảm bảo chương trình hoạt động đúng</strong></p>
 <p>:   Hệ quả của việc dùng bộ nhớ chia sẻ là các thread có thể vô tình ghi đè dữ liệu trong vùng nhớ chung.<br />

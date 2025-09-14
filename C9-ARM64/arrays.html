@@ -138,7 +138,7 @@
                     <main>
                         <h2 id="97-mảng-arrays"><a class="header" href="#97-mảng-arrays">9.7. Mảng (Arrays)</a></h2>
 <p>Hãy nhớ rằng <a href="../C1-C_intro/arrays_strings.html#_introduction_to_arrays">array</a> là tập hợp có thứ tự của các phần tử dữ liệu cùng kiểu, được lưu trữ liên tiếp nhau trong bộ nhớ. <strong>Single-dimension array</strong> (mảng một chiều) được cấp phát tĩnh có dạng <code>Type arr[N]</code>, trong đó <code>Type</code> là kiểu dữ liệu, <code>arr</code> là tên định danh của mảng, và <code>N</code> là số phần tử dữ liệu. Khai báo mảng tĩnh như <code>Type arr[N]</code> hoặc cấp phát động như <code>arr = malloc(N*sizeof(Type))</code> sẽ chiếm tổng cộng <em>N</em> × <code>sizeof</code>(<em>Type</em>) byte bộ nhớ.</p>
-<p>Để truy cập phần tử tại chỉ số <code>i</code> trong mảng <code>arr</code>, sử dụng cú pháp <code>arr[i]</code>. <strong>Compiler</strong> (trình biên dịch) thường chuyển đổi các truy cập mảng thành <a href="../C2-C_depth/pointers.html#_pointer_variables">pointer arithmetic</a> trước khi dịch sang mã assembly. Do đó, <code>arr+i</code> tương đương với <code>&amp;arr[i]</code>, và <code>*(arr+i)</code> tương đương với <code>arr[i]</code>. Vì mỗi phần tử dữ liệu trong <code>arr</code> có kiểu <code>Type</code>, nên <code>arr+i</code> ngụ ý rằng phần tử <code>i</code> được lưu tại địa chỉ <code>arr + sizeof(Type) * i</code>.</p>
+<p>Để truy cập phần tử tại chỉ số <code>i</code> trong mảng <code>arr</code>, sử dụng cú pháp <code>arr[i]</code>. <strong>Compiler</strong> (trình biên dịch) thường chuyển đổi các truy cập mảng thành <a href="../C2-C_depth/pointers.html#_pointer_variables">pointer arithmetic</a> trước khi dịch sang code assembly. Do đó, <code>arr+i</code> tương đương với <code>&amp;arr[i]</code>, và <code>*(arr+i)</code> tương đương với <code>arr[i]</code>. Vì mỗi phần tử dữ liệu trong <code>arr</code> có kiểu <code>Type</code>, nên <code>arr+i</code> ngụ ý rằng phần tử <code>i</code> được lưu tại địa chỉ <code>arr + sizeof(Type) * i</code>.</p>
 <p>Bảng 1 dưới đây tóm tắt một số thao tác mảng thường gặp và lệnh assembly tương ứng. Trong các ví dụ, giả sử ta khai báo một mảng <code>int</code> có độ dài 10 (ví dụ: <code>int arr[10]</code>). Giả sử thanh ghi <code>x1</code> lưu địa chỉ của <code>arr</code>, thanh ghi <code>x2</code> lưu giá trị <code>i</code> kiểu <code>int</code>, và thanh ghi <code>x0</code> biểu diễn một biến <code>x</code> (cũng kiểu <code>int</code>). Hãy nhớ rằng biến <code>int</code> chiếm 4 byte, trong khi biến <code>int *</code> chiếm 8 byte.</p>
 <div class="table-wrapper"><table><thead><tr><th>Operation</th><th>Type</th><th>Assembly Representation</th></tr></thead><tbody>
 <tr><td><code>x = arr</code></td><td><code>int *</code></td><td><code>mov x0, x1</code></td></tr>
@@ -165,7 +165,7 @@
     return total;
 }
 </code></pre>
-<p>Hàm <code>sumArray</code> nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem mã assembly tương ứng của hàm <code>sumArray</code>:</p>
+<p>Hàm <code>sumArray</code> nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem code assembly tương ứng của hàm <code>sumArray</code>:</p>
 <pre><code>Dump of assembler code for function sumArray:
 0x874 &lt;+0&gt;:   sub    sp, sp, #0x20       // tăng stack thêm 32 byte (tạo frame mới)
 0x878 &lt;+4&gt;:   str    x0, [sp, #8]        // lưu x0 tại sp + 8 (địa chỉ mảng)
@@ -192,7 +192,7 @@
 0x8cc &lt;+88&gt;:  add    sp, sp, #0x20       // khôi phục stack về trạng thái ban đầu
 0x8d0 &lt;+92&gt;:  ret                        // trả về (total)
 </code></pre>
-<p>Khi lần theo đoạn mã assembly này, hãy cân nhắc xem dữ liệu được truy cập là <strong>pointer</strong> (con trỏ) hay <strong>value</strong> (giá trị).<br />
+<p>Khi lần theo đoạn code assembly này, hãy cân nhắc xem dữ liệu được truy cập là <strong>pointer</strong> (con trỏ) hay <strong>value</strong> (giá trị).<br />
 Ví dụ, lệnh tại <code>&lt;sumArray+12&gt;</code> khiến vị trí <code>sp + 28</code> trên stack chứa một biến kiểu <code>int</code>, ban đầu được gán giá trị <code>0</code>. Ngược lại, đối số được lưu tại <code>sp + 8</code> là đối số đầu tiên của hàm (<code>array</code>), có kiểu <code>int *</code> và tương ứng với địa chỉ cơ sở của mảng. Một biến khác (gọi là <code>i</code>) được lưu tại <code>sp + 24</code> và ban đầu được gán giá trị 0.</p>
 <p>Người đọc tinh ý sẽ nhận thấy một lệnh mới chưa gặp trước đây tại dòng <code>&lt;sumArray+24&gt;</code> là <code>ldrsw</code>. Lệnh <code>ldrsw</code> (viết tắt của <em>load register signed word</em>) sẽ lấy giá trị <code>int</code> 32-bit được lưu tại <code>sp + 24</code>, chuyển nó thành số nguyên 64-bit và lưu vào <code>x0</code>. Thao tác này là cần thiết vì các lệnh tiếp theo sẽ thực hiện <strong>pointer arithmetic</strong> (tính toán trên con trỏ). Hãy nhớ rằng trên hệ thống 64-bit, con trỏ chiếm 8 byte. Việc compiler sử dụng <code>ldrsw</code> giúp đơn giản hóa quá trình bằng cách đảm bảo mọi dữ liệu đều được lưu trong thanh ghi 64-bit đầy đủ thay vì chỉ ở dạng 32-bit.</p>
 <p>Hãy xem kỹ hơn bảy lệnh từ <code>&lt;sumArray+28&gt;</code> đến <code>&lt;sumArray+52&gt;</code>:</p>

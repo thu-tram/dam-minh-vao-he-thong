@@ -156,7 +156,7 @@ Time to matrix-vector multiply: 1.98402
 <h3 id="1231-loop-interchange"><a class="header" href="#1231-loop-interchange">12.3.1. Loop Interchange</a></h3>
 <p><strong>Loop interchange</strong> (hoán đổi vòng lặp) là kỹ thuật tối ưu hóa thay đổi thứ tự của vòng lặp ngoài và vòng lặp trong trong các vòng lặp lồng nhau để tối đa hóa <strong>cache locality</strong> (tính cục bộ của cache).<br />
 Việc thực hiện tự động kỹ thuật này là khó đối với trình biên dịch. Trong GCC, có cờ <code>-floop-interchange</code> nhưng hiện tại không được bật mặc định.<br />
-Do đó, lập trình viên nên chú ý đến cách mã truy cập các cấu trúc dữ liệu phức hợp trong bộ nhớ như mảng và ma trận.</p>
+Do đó, lập trình viên nên chú ý đến cách code truy cập các cấu trúc dữ liệu phức hợp trong bộ nhớ như mảng và ma trận.</p>
 <p>Ví dụ, hãy xem xét kỹ hơn hàm <code>matrixVectorMultiply</code> trong <a href="_attachments/matrixVector.c">matrixVector.c</a>:</p>
 <h4 id="phiên-bản-gốc-matrixvectorc"><a class="header" href="#phiên-bản-gốc-matrixvectorc">Phiên bản gốc (<a href="_attachments/matrixVector.c">matrixVector.c</a>)</a></h4>
 <pre><code class="language-c">void matrixVectorMultiply(int **m, int *v, int **res, int row, int col) {
@@ -187,8 +187,8 @@ Thứ tự vòng lặp hiện tại khiến chương trình duyệt qua từng <
 <p>Hãy nhớ rằng <a href="../C11-MemHierarchy/caching.html#_direct_mapped_caches">dữ liệu được nạp vào cache theo <em>block</em></a> chứ không phải từng phần tử riêng lẻ.<br />
 Do đó, khi một phần tử <em>x</em> trong mảng <code>res</code> hoặc <code>m</code> được truy cập, <strong>các phần tử liền kề với x</strong> cũng được nạp vào cache.<br />
 Việc duyệt qua từng “cột” của ma trận gây ra nhiều <strong>cache miss</strong> hơn, vì cache buộc phải nạp block mới ở mỗi lần truy cập.</p>
-<p><strong>Bảng 2</strong> cho thấy việc thêm cờ tối ưu hóa <strong>không</strong> làm giảm thời gian chạy của hàm.<br />
-Tuy nhiên, chỉ cần đổi thứ tự vòng lặp (như trong ví dụ mã ở trên và trong <a href="_attachments/matrixVector2.c">matrixVector2.c</a>) đã giúp hàm chạy nhanh hơn gần <strong>8 lần</strong> và cho phép trình biên dịch thực hiện thêm các tối ưu hóa khác.</p>
+<p><strong>Bảng 2</strong> cho thấy việc thêm optimization flag hóa <strong>không</strong> làm giảm thời gian chạy của hàm.<br />
+Tuy nhiên, chỉ cần đổi thứ tự vòng lặp (như trong ví dụ code ở trên và trong <a href="_attachments/matrixVector2.c">matrixVector2.c</a>) đã giúp hàm chạy nhanh hơn gần <strong>8 lần</strong> và cho phép trình biên dịch thực hiện thêm các tối ưu hóa khác.</p>
 <h4 id="thời-gian-thực-thi-giây-cho-phép-nhân-ma-trận-10000--10000"><a class="header" href="#thời-gian-thực-thi-giây-cho-phép-nhân-ma-trận-10000--10000">Thời gian thực thi (giây) cho phép nhân ma trận 10.000 × 10.000</a></h4>
 <div class="table-wrapper"><table><thead><tr><th>Phiên bản</th><th>Chương trình</th><th>Unoptimized</th><th><code>-O1</code></th><th><code>-O2</code></th><th><code>-O3</code></th></tr></thead><tbody>
 <tr><td>Original</td><td><code>matrixVector</code></td><td>2.01</td><td>2.05</td><td>2.07</td><td>2.08</td></tr>
@@ -207,7 +207,7 @@ Time to matrix-vector multiply: 0.271369
 </code></pre>
 <p>Bây giờ, việc cấp phát và điền dữ liệu cho ma trận chiếm nhiều thời gian nhất.<br />
 Đo đạc chi tiết hơn cho thấy phần <strong>điền dữ liệu</strong> cho ma trận mới là nguyên nhân chính.<br />
-Hãy xem kỹ đoạn mã này:</p>
+Hãy xem kỹ đoạn code này:</p>
 <pre><code class="language-c">// fill matrices
 for (i = 0; i &lt; rows; i++){
     fillArrayRandom(matrix[i], cols);

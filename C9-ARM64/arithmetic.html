@@ -138,7 +138,7 @@
                     <main>
                         <h2 id="93-các-lệnh-số-học-arithmetic-instructions"><a class="header" href="#93-các-lệnh-số-học-arithmetic-instructions">9.3. Các lệnh số học (Arithmetic Instructions)</a></h2>
 <h3 id="931-các-lệnh-số-học-thông-dụng-common-arithmetic-instructions"><a class="header" href="#931-các-lệnh-số-học-thông-dụng-common-arithmetic-instructions">9.3.1. Các lệnh số học thông dụng (Common Arithmetic Instructions)</a></h3>
-<p><strong>A64 ISA</strong> (Instruction Set Architecture — “kiến trúc tập lệnh”) triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong> (Arithmetic Logic Unit — “bộ số học và logic”). <a href="#OtherArithmetica64">Bảng 1</a> liệt kê một số lệnh số học thường gặp khi đọc mã Assembly của ARM.</p>
+<p><strong>A64 ISA</strong> (Instruction Set Architecture — “kiến trúc tập lệnh”) triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong> (Arithmetic Logic Unit — “bộ số học và logic”). <a href="#OtherArithmetica64">Bảng 1</a> liệt kê một số lệnh số học thường gặp khi đọc code Assembly của ARM.</p>
 <div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Translation</th></tr></thead><tbody>
 <tr><td><code>add D, O1, O2</code></td><td>D = O1 + O2</td></tr>
 <tr><td><code>sub D, O1, O2</code></td><td>D = O1 - O2</td></tr>
@@ -184,7 +184,7 @@
 </tbody></table>
 </div>
 <p><strong>Bảng 5.</strong> Các lệnh dịch bit</p>
-<p>Ngoài thanh ghi đích, mỗi lệnh dịch bit nhận hai toán hạng; một thường là thanh ghi (ký hiệu R) và một là giá trị dịch 6-bit (v). Trên hệ thống 64-bit, giá trị dịch được mã hóa thành một byte (vì không có ý nghĩa khi dịch quá 63 bit). Giá trị dịch v phải là hằng số hoặc được lưu trong một thanh ghi thành phần.</p>
+<p>Ngoài thanh ghi đích, mỗi lệnh dịch bit nhận hai toán hạng; một thường là thanh ghi (ký hiệu R) và một là giá trị dịch 6-bit (v). Trên hệ thống 64-bit, giá trị dịch được code hóa thành một byte (vì không có ý nghĩa khi dịch quá 63 bit). Giá trị dịch v phải là hằng số hoặc được lưu trong một thanh ghi thành phần.</p>
 <p>Lệnh dịch bit cuối cùng, <code>ror</code>, cần được thảo luận riêng. Lệnh <code>ror</code> <em>xoay</em> các bit, thay thế các bit có trọng số lớn nhất bằng các bit có trọng số nhỏ nhất. Chúng ta ký hiệu phép xoay bit này bằng ký hiệu <code>&gt;&gt;&gt;</code>.</p>
 <blockquote>
 <p><strong>Các phiên bản khác nhau của lệnh giúp chúng ta phân biệt kiểu dữ liệu ở mức assembly</strong></p>
@@ -206,8 +206,8 @@
 <p><strong>Bảng 6.</strong> Các phép toán bitwise</p>
 <p>Hãy nhớ rằng <strong>bitwise not</strong> khác với phép <strong>negation</strong> (<code>neg</code>). Lệnh <code>mvn</code> đảo tất cả các bit của toán hạng nhưng <strong>không</strong> cộng thêm 1. Cần cẩn thận để không nhầm lẫn hai lệnh này.</p>
 <blockquote>
-<p><strong>Chỉ sử dụng phép toán bitwise khi thực sự cần trong mã C của bạn!</strong></p>
-<p>Sau khi đọc phần này, bạn có thể sẽ muốn thay thế các phép toán số học thông thường trong mã C của mình bằng các phép dịch bit hoặc các phép toán bit khác. Điều này <strong>không</strong> được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bit khi điều đó hợp lý, vì vậy lập trình viên không cần phải tự làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên <strong>tính dễ đọc của mã</strong> bất cứ khi nào có thể và tránh tối ưu hóa sớm (<em>premature optimization</em>).</p>
+<p><strong>Chỉ sử dụng phép toán bitwise khi thực sự cần trong code C của bạn!</strong></p>
+<p>Sau khi đọc phần này, bạn có thể sẽ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bit khác. Điều này <strong>không</strong> được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bit khi điều đó hợp lý, vì vậy lập trình viên không cần phải tự làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên <strong>tính dễ đọc của code</strong> bất cứ khi nào có thể và tránh tối ưu hóa sớm (<em>premature optimization</em>).</p>
 </blockquote>
 
                     </main>

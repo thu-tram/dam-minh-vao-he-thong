@@ -138,7 +138,7 @@
                     <main>
                         <h2 id="9-arm-assembly"><a class="header" href="#9-arm-assembly">9. ARM Assembly</a></h2>
 <p>Trong chương này, chúng ta sẽ tìm hiểu về kiến trúc <strong>ARM version 8 application profile (ARMv8-A)</strong> với <strong>A64 ISA</strong>, phiên bản ARM ISA mới nhất đang được sử dụng trên tất cả các máy tính ARM chạy hệ điều hành Linux.<br />
-Hãy nhớ rằng một <a href="../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture">instruction set architecture</a> (ISA — “kiến trúc tập lệnh”) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.</p>
+Hãy nhớ rằng một <a href="../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture">instruction set architecture</a> (ISA — “kiến trúc tập lệnh”) định nghĩa tập hợp các lệnh và cách code hóa nhị phân của một chương trình ở cấp độ máy.</p>
 <p>Để chạy được các ví dụ trong chương này, bạn cần có một máy với bộ xử lý ARMv8-A và hệ điều hành 64-bit. Các ví dụ trong chương này được thực hiện trên <strong>Raspberry Pi 3B+</strong> chạy hệ điều hành <strong>Ubuntu Mate 64-bit</strong>. Lưu ý rằng mọi phiên bản Raspberry Pi phát hành từ năm 2016 đều có thể sử dụng A64 ISA. Tuy nhiên, <strong>Raspberry Pi OS</strong> (hệ điều hành mặc định của Raspberry Pi) vẫn là bản 32-bit tại thời điểm viết sách này.</p>
 <p>Bạn có thể kiểm tra xem hệ thống của mình đang chạy hệ điều hành 64-bit hay không bằng cách chạy lệnh <code>uname -m</code>. Một hệ điều hành 64-bit sẽ cho kết quả như sau:</p>
 <pre><code>$ uname -m
@@ -147,7 +147,7 @@ aarch64
 <p>Mặc dù có thể <em>biên dịch</em> (build) các tệp thực thi ARM trên máy Intel bằng <a href="https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads">bộ công cụ cross-compilation GNU của ARM</a>, nhưng bạn <strong>không thể</strong> <em>chạy</em> trực tiếp các tệp ARM trên hệ thống x86.<br />
 Nếu muốn học ARM assembly trực tiếp trên laptop, bạn có thể thử <a href="https://www.qemu.org/">QEMU</a>, một trình <strong>giả lập</strong> (emulator) hệ thống ARM. Trình giả lập khác với máy ảo ở chỗ nó mô phỏng cả phần cứng của hệ thống khác.</p>
 <p>Một lựa chọn khác là sử dụng <a href="https://aws.amazon.com/ec2/instance-types/a1/">EC2 A1 instances</a> mà Amazon mới phát hành. Mỗi instance cung cấp cho bạn quyền truy cập vào bộ xử lý <strong>Graviton 64-bit</strong>, tuân theo đặc tả ARMv8-A.</p>
-<p>Tuy nhiên, cần lưu ý rằng các lệnh assembly cụ thể do compiler sinh ra phụ thuộc nhiều vào hệ điều hành và kiến trúc phần cứng chính xác. Do đó, mã assembly sinh ra trên AWS hoặc qua QEMU có thể hơi khác so với các ví dụ trong chương này.</p>
+<p>Tuy nhiên, cần lưu ý rằng các lệnh assembly cụ thể do compiler sinh ra phụ thuộc nhiều vào hệ điều hành và kiến trúc phần cứng chính xác. Do đó, code assembly sinh ra trên AWS hoặc qua QEMU có thể hơi khác so với các ví dụ trong chương này.</p>
 <blockquote>
 <p><strong>RISC và bộ xử lý ARM</strong></p>
 <p>Trong nhiều năm, kiến trúc <strong>CISC</strong> (<em>complex instruction set computer</em>) chiếm ưu thế trên thị trường máy tính cá nhân và máy chủ. Ví dụ phổ biến của CISC là các bộ xử lý Intel và AMD.<br />

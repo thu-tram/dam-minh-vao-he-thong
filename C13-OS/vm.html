@@ -215,14 +215,14 @@ OS quản lý RAM và quyết định vị trí nào trong RAM sẽ lưu nội d
 <p>Ví dụ: nếu hai process P1 và P2 cùng chạy <a href="#exampleprog">chương trình ví dụ</a> ở trên, thì P1 và P2 sẽ có <strong>bản sao riêng</strong> của biến <code>x</code>, mỗi bản được lưu ở một vị trí khác nhau trong RAM.<br />
 Nói cách khác, <code>x</code> của P1 và <code>x</code> của P2 có <strong>physical address</strong> khác nhau.<br />
 Nếu OS gán cùng một physical address cho biến <code>x</code> của cả P1 và P2, thì việc P1 gán <code>x = 6</code> sẽ làm thay đổi giá trị <code>x</code> của P2, vi phạm nguyên tắc <strong>private virtual address space</strong> (không gian địa chỉ ảo riêng cho từng process).</p>
-<p>Tại bất kỳ thời điểm nào, OS lưu trong RAM nội dung không gian địa chỉ của nhiều process, cũng như mã OS có thể được <strong>map</strong> vào không gian địa chỉ ảo của mọi process (mã OS thường được nạp bắt đầu từ địa chỉ <code>0x0</code> của RAM).</p>
+<p>Tại bất kỳ thời điểm nào, OS lưu trong RAM nội dung không gian địa chỉ của nhiều process, cũng như code OS có thể được <strong>map</strong> vào không gian địa chỉ ảo của mọi process (code OS thường được nạp bắt đầu từ địa chỉ <code>0x0</code> của RAM).</p>
 <p><strong>Hình 2</strong> minh họa ví dụ OS và ba process (P1, P2, P3) được nạp vào RAM.<br />
 Mỗi process có vùng lưu trữ vật lý riêng cho nội dung không gian địa chỉ của nó (ngay cả khi P1 và P2 chạy cùng một chương trình, chúng vẫn có vùng lưu trữ vật lý riêng cho biến <code>x</code>).</p>
 <p><img src="_images/pa.png" alt="physical addresses" /></p>
 <p><strong>Hình 2.</strong> Ví dụ nội dung RAM, với OS được nạp tại địa chỉ <code>0x0</code> và các process được nạp tại các địa chỉ bộ nhớ vật lý khác nhau trong RAM. Nếu P1 và P2 chạy cùng một <code>a.out</code>, physical address của <code>x</code> trong P1 sẽ khác với physical address của <code>x</code> trong P2.</p>
 <h4 id="virtual-memory-và-virtual-addresses"><a class="header" href="#virtual-memory-và-virtual-addresses">Virtual Memory và Virtual Addresses</a></h4>
 <p><strong>Virtual memory</strong> là góc nhìn của từng process về không gian bộ nhớ của nó, và <strong>virtual address</strong> là địa chỉ trong góc nhìn đó.</p>
-<p>Nếu hai process chạy cùng một <strong>binary executable</strong> (tệp thực thi nhị phân), chúng sẽ có <strong>cùng virtual address</strong> cho mã hàm và biến toàn cục trong không gian địa chỉ của mình (các địa chỉ ảo của vùng cấp phát động trên heap và biến cục bộ trên stack có thể khác nhau đôi chút do sự khác biệt tại runtime giữa hai lần thực thi).</p>
+<p>Nếu hai process chạy cùng một <strong>binary executable</strong> (tệp thực thi nhị phân), chúng sẽ có <strong>cùng virtual address</strong> cho code hàm và biến toàn cục trong không gian địa chỉ của mình (các địa chỉ ảo của vùng cấp phát động trên heap và biến cục bộ trên stack có thể khác nhau đôi chút do sự khác biệt tại runtime giữa hai lần thực thi).</p>
 <p>Nói cách khác, cả hai process sẽ có cùng virtual address cho vị trí hàm <code>main</code>, và cùng virtual address cho vị trí biến toàn cục <code>x</code> trong không gian địa chỉ của chúng, như minh họa trong <strong>Hình 3</strong>.</p>
 <p><img src="_images/va.png" alt="virtual addresses for two processes running the same a.out" /></p>
 <p><strong>Hình 3.</strong> Ví dụ nội dung virtual memory của hai process chạy cùng một tệp <code>a.out</code>. P1 và P2 có cùng virtual address cho biến toàn cục <code>x</code>.</p>
@@ -295,7 +295,7 @@ Virtual address và physical address khác nhau ở các bit cao, vốn xác đ�
 <li><strong>Physical address</strong> dài 14 bit</li>
 <li><strong>Page</strong> có kích thước 8 byte</li>
 </ul>
-<p>Vì kích thước page là 8 byte, nên <strong>3 bit thấp</strong> (low-order bits) của cả physical address và virtual address sẽ xác định <strong>byte offset</strong> (độ lệch byte) trong một page hoặc frame — 3 bit có thể mã hóa 8 giá trị byte offset khác nhau, từ 0–7 (vì ( 2^3 = 8 )).</p>
+<p>Vì kích thước page là 8 byte, nên <strong>3 bit thấp</strong> (low-order bits) của cả physical address và virtual address sẽ xác định <strong>byte offset</strong> (độ lệch byte) trong một page hoặc frame — 3 bit có thể code hóa 8 giá trị byte offset khác nhau, từ 0–7 (vì ( 2^3 = 8 )).</p>
 <p>Điều này để lại:</p>
 <ul>
 <li><strong>13 bit cao</strong> (high-order bits) của virtual address để xác định <strong>page number</strong> (số hiệu trang)</li>
@@ -335,7 +335,7 @@ Ví dụ này cho thấy các page table riêng biệt được lưu trong RAM c
 Nếu valid bit của một page bằng 0, nghĩa là page đó trong không gian địa chỉ ảo của process hiện <strong>chưa được nạp</strong> vào bộ nhớ vật lý.</p>
 <p><img src="_images/pte.png" alt="page table entry" /></p>
 <p><strong>Hình 9.</strong> Một <strong>page table entry</strong> (PTE) lưu <strong>frame number</strong> (23) của frame RAM chứa page ảo.<br />
-Chúng ta liệt kê frame number (23) ở dạng thập phân, mặc dù thực tế nó được mã hóa ở dạng nhị phân trong PTE (<code>0...010111</code>).<br />
+Chúng ta liệt kê frame number (23) ở dạng thập phân, mặc dù thực tế nó được code hóa ở dạng nhị phân trong PTE (<code>0...010111</code>).<br />
 Valid bit bằng 1 cho biết entry này lưu một ánh xạ hợp lệ.</p>
 <h4 id="sử-dụng-page-table-để-ánh-xạ-từ-virtual-address-sang-physical-address"><a class="header" href="#sử-dụng-page-table-để-ánh-xạ-từ-virtual-address-sang-physical-address">Sử dụng Page Table để ánh xạ từ Virtual Address sang Physical Address</a></h4>
 <p>Có <strong>4 bước</strong> để dịch một <strong>virtual address</strong> (địa chỉ ảo) sang <strong>physical address</strong> (địa chỉ vật lý) (minh họa trong <strong>Hình 10</strong>).<br />
@@ -345,8 +345,8 @@ Tùy vào sự kết hợp cụ thể giữa <strong>OS</strong> và phần cứ
 <li>
 <p><strong>MMU</strong> chia các bit của virtual address thành hai phần:</p>
 <ul>
-<li>Với kích thước page là ( 2^k ) byte, <strong>k bit thấp</strong> (VA bit từ (k-1) đến 0) mã hóa <strong>byte offset</strong> (<em>d</em>) trong page.</li>
-<li><strong>n-k bit cao</strong> (VA bit từ (n-1) đến (k)) mã hóa <strong>virtual page number</strong> (<em>p</em>).</li>
+<li>Với kích thước page là ( 2^k ) byte, <strong>k bit thấp</strong> (VA bit từ (k-1) đến 0) code hóa <strong>byte offset</strong> (<em>d</em>) trong page.</li>
+<li><strong>n-k bit cao</strong> (VA bit từ (n-1) đến (k)) code hóa <strong>virtual page number</strong> (<em>p</em>).</li>
 </ul>
 </li>
 <li>
@@ -498,7 +498,7 @@ P2: 1011001
 P1: 1011001
 </code></pre>
 <p><strong>Bước 1:</strong> Xác định cách chia bit trong virtual address và physical address.<br />
-Vì kích thước page là 8 byte, <strong>3 bit thấp</strong> của mỗi địa chỉ mã hóa <strong>page offset</strong> (<em>d</em>).<br />
+Vì kích thước page là 8 byte, <strong>3 bit thấp</strong> của mỗi địa chỉ code hóa <strong>page offset</strong> (<em>d</em>).<br />
 Virtual address dài 7 bit → 3 bit thấp cho page offset, còn lại <strong>4 bit cao</strong> để xác định <strong>page number</strong> (<em>p</em>).<br />
 Physical address dài 6 bit → 3 bit thấp cho page offset, <strong>3 bit cao</strong> xác định <strong>frame number</strong>.</p>
 <p><strong>Bước 2:</strong> Với mỗi virtual address, dùng các bit page number (<em>p</em>) để tra trong page table của process tương ứng, lấy <strong>PTE</strong> cho page <em>p</em>.<br />

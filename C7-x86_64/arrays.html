@@ -166,7 +166,7 @@
     return total;
 }
 </code></pre>
-<p>Hàm <code>sumArray</code> nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem đoạn mã assembly tương ứng của hàm <code>sumArray</code>:</p>
+<p>Hàm <code>sumArray</code> nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem đoạn code assembly tương ứng của hàm <code>sumArray</code>:</p>
 <pre><code>0x400686 &lt;+0&gt;:   push %rbp                   # save %rbp
 0x400687 &lt;+1&gt;:    mov  %rsp,%rbp              # update %rbp (new stack frame)
 0x40068a &lt;+4&gt;:    mov  %rdi,-0x18(%rbp)       # copy array to %rbp-0x18
@@ -189,7 +189,7 @@
 0x4006c9 &lt;+67&gt;:   pop  %rbp                   # prepare to leave the function
 0x4006ca &lt;+68&gt;:   retq                        # return total
 </code></pre>
-<p>Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu được truy cập là một <strong>địa chỉ</strong> hay một <strong>giá trị</strong>. Ví dụ, lệnh tại <code>&lt;sumArray+11&gt;</code> khiến vị trí <code>%rbp-0x4</code> chứa một biến kiểu <code>int</code>, ban đầu được gán giá trị 0. Ngược lại, đối số được lưu tại <code>%rbp-0x18</code> là đối số thứ nhất của hàm (<code>array</code>), có kiểu <code>int *</code> và tương ứng với địa chỉ gốc (base address) của mảng. Một biến khác (mà ta gọi là <code>i</code>) được lưu tại vị trí <code>%rbp-0x8</code>. Cuối cùng, lưu ý rằng <strong>size suffix</strong> (hậu tố kích thước) chỉ được thêm vào cuối các lệnh như <code>add</code> và <code>mov</code> khi cần thiết. Trong các trường hợp liên quan đến hằng số, compiler cần chỉ rõ số byte của hằng số sẽ được di chuyển.</p>
+<p>Khi lần theo đoạn code assembly này, hãy xem xét liệu dữ liệu được truy cập là một <strong>địa chỉ</strong> hay một <strong>giá trị</strong>. Ví dụ, lệnh tại <code>&lt;sumArray+11&gt;</code> khiến vị trí <code>%rbp-0x4</code> chứa một biến kiểu <code>int</code>, ban đầu được gán giá trị 0. Ngược lại, đối số được lưu tại <code>%rbp-0x18</code> là đối số thứ nhất của hàm (<code>array</code>), có kiểu <code>int *</code> và tương ứng với địa chỉ gốc (base address) của mảng. Một biến khác (mà ta gọi là <code>i</code>) được lưu tại vị trí <code>%rbp-0x8</code>. Cuối cùng, lưu ý rằng <strong>size suffix</strong> (hậu tố kích thước) chỉ được thêm vào cuối các lệnh như <code>add</code> và <code>mov</code> khi cần thiết. Trong các trường hợp liên quan đến hằng số, compiler cần chỉ rõ số byte của hằng số sẽ được di chuyển.</p>
 <p>Người đọc tinh ý sẽ nhận thấy một lệnh chưa từng thấy trước đây tại dòng <code>&lt;sumArray+30&gt;</code> có tên <code>cltq</code>. Lệnh <code>cltq</code> là viết tắt của <em>convert long to quad</em> (chuyển từ long sang quad) và chuyển giá trị <code>int</code> 32-bit được lưu trong <code>%eax</code> thành giá trị số nguyên 64-bit được lưu trong <code>%rax</code>. Thao tác này là cần thiết vì các lệnh tiếp theo sẽ thực hiện <strong>pointer arithmetic</strong> (tính toán trên con trỏ). Hãy nhớ rằng trên hệ thống 64-bit, con trỏ chiếm 8 byte. Việc compiler sử dụng <code>cltq</code> giúp đơn giản hóa quá trình bằng cách đảm bảo tất cả dữ liệu được lưu trong các thanh ghi 64-bit thay vì các thành phần 32-bit.</p>
 <p>Hãy cùng xem kỹ hơn năm lệnh nằm giữa các vị trí <code>&lt;sumArray+32&gt;</code> và <code>&lt;sumArray+49&gt;</code>:</p>
 <pre><code>&lt;+32&gt;: lea 0x0(,%rax,4),%rdx       # copy i*4 to %rdx

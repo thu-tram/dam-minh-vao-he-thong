@@ -175,7 +175,7 @@ Hãy nhớ rằng vùng call stack (stack memory) của một chương trình kh
 </div>
 <p>Sáu tham số đầu tiên của hàm lần lượt được nạp vào các thanh ghi <code>%rdi</code>, <code>%rsi</code>, <code>%rdx</code>, <code>%rcx</code>, <code>%r8</code>, và <code>%r9</code>. Bất kỳ tham số bổ sung nào sẽ được nạp lần lượt vào call stack dựa trên kích thước của chúng (dịch 4 byte cho dữ liệu 32-bit, dịch 8 byte cho dữ liệu 64-bit).</p>
 <h3 id="752-tracing-through-an-example"><a class="header" href="#752-tracing-through-an-example">7.5.2. Tracing Through an Example</a></h3>
-<p>Dựa trên kiến thức về quản lý hàm, hãy lần theo ví dụ mã nguồn đã được giới thiệu ở đầu chương này. Lưu ý rằng từ khóa <code>void</code> được thêm vào danh sách tham số của mỗi định nghĩa hàm để chỉ rõ rằng các hàm này không nhận đối số nào. Thay đổi này không làm thay đổi kết quả của chương trình; tuy nhiên, nó giúp đơn giản hóa mã assembly tương ứng.</p>
+<p>Dựa trên kiến thức về quản lý hàm, hãy lần theo ví dụ mã nguồn đã được giới thiệu ở đầu chương này. Lưu ý rằng từ khóa <code>void</code> được thêm vào danh sách tham số của mỗi định nghĩa hàm để chỉ rõ rằng các hàm này không nhận đối số nào. Thay đổi này không làm thay đổi kết quả của chương trình; tuy nhiên, nó giúp đơn giản hóa code assembly tương ứng.</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 
 int assign(void) {
@@ -196,13 +196,13 @@ int main(void) {
     return 0;
 }
 </code></pre>
-<p>Chúng ta biên dịch đoạn mã này với lệnh:</p>
+<p>Chúng ta biên dịch đoạn code này với lệnh:</p>
 <pre><code>gcc -o prog prog.c
 </code></pre>
 <p>và sử dụng:</p>
 <pre><code>objdump -d
 </code></pre>
-<p>để xem mã assembly bên dưới. Lệnh thứ hai sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng <code>less</code> và chức năng tìm kiếm để trích xuất các hàm <code>adder</code>, <code>assign</code> và <code>main</code>:</p>
+<p>để xem code assembly bên dưới. Lệnh thứ hai sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng <code>less</code> và chức năng tìm kiếm để trích xuất các hàm <code>adder</code>, <code>assign</code> và <code>main</code>:</p>
 <pre><code class="language-assembly">0000000000400526 &lt;assign&gt;:
   400526:       55                      push   %rbp
   400527:       48 89 e5                mov    %rsp,%rbp
@@ -277,7 +277,7 @@ int main(void) {
 <p><img src="_images/procedures/Slide15.png" alt="slide15" /></p>
 <p>Hãy chú ý tới lệnh tiếp theo. Hãy nhớ rằng <code>$0x28</code> đã được đặt trên stack khi gọi <code>assign</code>. Lệnh <code>mov $-0x4(%rbp), %eax</code> di chuyển <strong>giá trị cũ</strong> trên stack vào <code>%eax</code>! Điều này sẽ không xảy ra nếu lập trình viên đã khởi tạo biến <code>a</code> trong <code>adder</code>.</p>
 <p><img src="_images/procedures/Slide16.png" alt="slide16" /></p>
-<p>Lệnh <code>add</code> tại địa chỉ <code>0x53d</code> cộng 2 vào <code>%eax</code>. Hãy nhớ rằng khi trả về một số nguyên 32-bit, x86-64 sử dụng <code>%eax</code> thay vì <code>%rax</code>. Hai lệnh cuối này tương đương với đoạn mã trong <code>adder</code>:</p>
+<p>Lệnh <code>add</code> tại địa chỉ <code>0x53d</code> cộng 2 vào <code>%eax</code>. Hãy nhớ rằng khi trả về một số nguyên 32-bit, x86-64 sử dụng <code>%eax</code> thay vì <code>%rax</code>. Hai lệnh cuối này tương đương với đoạn code trong <code>adder</code>:</p>
 <pre><code class="language-c">int a;
 return a + 2;
 </code></pre>

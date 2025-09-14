@@ -137,7 +137,7 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="83-arithmetic-instructions-các-lệnh-số-học"><a class="header" href="#83-arithmetic-instructions-các-lệnh-số-học">8.3. Arithmetic Instructions (Các lệnh số học)</a></h2>
-<p><strong>IA32 ISA</strong> triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong>. <a href="#OtherArithmetic32">Bảng 1</a> liệt kê một số lệnh số học thường gặp khi đọc mã assembly.</p>
+<p><strong>IA32 ISA</strong> triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong>. <a href="#OtherArithmetic32">Bảng 1</a> liệt kê một số lệnh số học thường gặp khi đọc code assembly.</p>
 <div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Translation</th></tr></thead><tbody>
 <tr><td><code>add S, D</code></td><td>S + D → D</td></tr>
 <tr><td><code>sub S, D</code></td><td>D - S → D</td></tr>
@@ -175,7 +175,7 @@ Tương tự, để tính <code>77 / 4</code>, compiler thường dịch thành 
 <li>Một toán hạng thường là thanh ghi (ký hiệu D).</li>
 <li>Toán hạng còn lại là giá trị dịch (<em>v</em>).</li>
 </ul>
-<p>Trên hệ thống 32-bit, giá trị dịch được mã hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).<br />
+<p>Trên hệ thống 32-bit, giá trị dịch được code hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).<br />
 Giá trị dịch <em>v</em> phải là một hằng số hoặc được lưu trong thanh ghi <code>%cl</code>.</p>
 <p><strong>Ghi chú:</strong><br />
 Ở cấp độ assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là số có dấu hay không dấu.<br />

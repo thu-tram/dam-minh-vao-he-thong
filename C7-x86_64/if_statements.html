@@ -163,8 +163,8 @@ Dump of assembler code for function getSmallest:
    0x4005b9 &lt;+35&gt;:  pop    %rbp
    0x4005ba &lt;+36&gt;:  retq
 </code></pre>
-<p>Đây là một cách hiển thị khác của mã assembly so với những gì ta đã thấy trước đây. Ở đây, ta có thể thấy <strong>địa chỉ</strong> gắn với mỗi lệnh, nhưng không thấy <strong>byte</strong> mã máy. Lưu ý rằng đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hóa. Các lệnh thường xuất hiện khi tạo hàm (tức <code>push %rbp</code>, <code>mov %rsp, %rbp</code>) đã được lược bỏ. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi <code>%rdi</code> và <code>%rsi</code>. Vì các tham số của <code>getSmallest</code> có kiểu <code>int</code>, compiler đặt chúng vào các <strong>component register</strong> tương ứng là <code>%edi</code> và <code>%esi</code>. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là <code>x</code> và <code>y</code>.</p>
-<p>Hãy lần lượt phân tích một số dòng đầu tiên của đoạn mã assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ không vẽ stack một cách tường minh. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack.</p>
+<p>Đây là một cách hiển thị khác của code assembly so với những gì ta đã thấy trước đây. Ở đây, ta có thể thấy <strong>địa chỉ</strong> gắn với mỗi lệnh, nhưng không thấy <strong>byte</strong> code máy. Lưu ý rằng đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hóa. Các lệnh thường xuất hiện khi tạo hàm (tức <code>push %rbp</code>, <code>mov %rsp, %rbp</code>) đã được lược bỏ. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi <code>%rdi</code> và <code>%rsi</code>. Vì các tham số của <code>getSmallest</code> có kiểu <code>int</code>, compiler đặt chúng vào các <strong>component register</strong> tương ứng là <code>%edi</code> và <code>%esi</code>. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là <code>x</code> và <code>y</code>.</p>
+<p>Hãy lần lượt phân tích một số dòng đầu tiên của đoạn code assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ không vẽ stack một cách tường minh. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack.</p>
 <ul>
 <li>
 <p>Lệnh <code>mov</code> đầu tiên sao chép giá trị trong thanh ghi <code>%edi</code> (tham số thứ nhất, <code>x</code>) và đặt nó vào vị trí bộ nhớ <code>%rbp-0x14</code> trên call stack. Instruction pointer (<code>%rip</code>) được đặt tới địa chỉ của lệnh tiếp theo, 0x40059d.</p>
@@ -216,7 +216,7 @@ Dump of assembler code for function getSmallest:
 0x4005b9 &lt;+35&gt;: pop %rbp                      # restore %rbp (clean up stack)
 0x4005ba &lt;+36&gt;: retq                          # exit function (return %eax)
 </code></pre>
-<p>Chuyển ngược đoạn assembly này về mã C sẽ cho ra:</p>
+<p>Chuyển ngược đoạn assembly này về code C sẽ cho ra:</p>
 <h2 id="bảng-1"><a class="header" href="#bảng-1">Bảng 1:</a></h2>
 <table>
   <thead>
@@ -258,7 +258,7 @@ return smallest;
 </tbody>
 </table>
 <p><strong>Bảng 1.</strong> Dịch <code>getSmallest()</code> sang dạng C dùng <code>goto</code> và dạng C thông thường.</p>
-<p>Trong <strong>Bảng 1</strong>, biến <code>smallest</code> tương ứng với thanh ghi <code>%eax</code>. Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, mã sẽ thực thi câu lệnh <code>smallest = x</code>, câu lệnh này gắn với nhãn <code>goto</code> là <code>assign_x</code> trong dạng <code>goto</code> của hàm. Ngược lại, câu lệnh <code>smallest = y</code> sẽ được thực thi. Nhãn <code>goto</code> <code>done</code> được dùng để chỉ ra rằng giá trị trong <code>smallest</code> sẽ được trả về.</p>
+<p>Trong <strong>Bảng 1</strong>, biến <code>smallest</code> tương ứng với thanh ghi <code>%eax</code>. Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, code sẽ thực thi câu lệnh <code>smallest = x</code>, câu lệnh này gắn với nhãn <code>goto</code> là <code>assign_x</code> trong dạng <code>goto</code> của hàm. Ngược lại, câu lệnh <code>smallest = y</code> sẽ được thực thi. Nhãn <code>goto</code> <code>done</code> được dùng để chỉ ra rằng giá trị trong <code>smallest</code> sẽ được trả về.</p>
 <p>Hãy lưu ý rằng bản dịch C ở trên của đoạn assembly có một chút khác biệt so với hàm <code>getSmallest</code> ban đầu. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển bất kỳ câu lệnh <code>if</code> nào thành dạng <code>goto</code> tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. <strong>Bảng 2</strong> cho thấy dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương:</p>
 <table>
   <thead>
@@ -292,7 +292,7 @@ done:
   </tbody>
 </table>
 <p><strong>Bảng 2.</strong> Dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương.</p>
-<p>Khi dịch mã sang assembly, compiler sẽ tạo một lệnh nhảy (jump) khi điều kiện <strong>đúng</strong>. Điều này trái ngược với cấu trúc của câu lệnh <code>if</code>, nơi “nhảy” (tới <code>else</code>) xảy ra khi điều kiện <strong>không</strong> đúng. Dạng <code>goto</code> thể hiện rõ sự khác biệt về logic này.</p>
+<p>Khi dịch code sang assembly, compiler sẽ tạo một lệnh nhảy (jump) khi điều kiện <strong>đúng</strong>. Điều này trái ngược với cấu trúc của câu lệnh <code>if</code>, nơi “nhảy” (tới <code>else</code>) xảy ra khi điều kiện <strong>không</strong> đúng. Dạng <code>goto</code> thể hiện rõ sự khác biệt về logic này.</p>
 <p>Xét bản dịch <code>goto</code> ban đầu của hàm <code>getSmallest</code>, ta thấy rằng:</p>
 <ul>
 <li><code>x &lt;= y</code> tương ứng với <code>!condition</code>.</li>
@@ -312,9 +312,9 @@ done:
     return smallest;
 }
 </code></pre>
-<p>Phiên bản này giống hệt với hàm <code>getSmallest</code> ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.</p>
+<p>Phiên bản này giống hệt với hàm <code>getSmallest</code> ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức code C vẫn có thể được dịch ra cùng một tập lệnh assembly.</p>
 <h4 id="các-lệnh-cmov"><a class="header" href="#các-lệnh-cmov">Các lệnh cmov</a></h4>
-<p>Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là <strong>conditional move</strong> (<code>cmov</code>). Các lệnh <code>cmp</code>, <code>test</code> và <code>jmp</code> thực hiện <em>conditional transfer of control</em> (chuyển điều khiển có điều kiện) trong một chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng khác nhau. Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các nhánh này thường tốn kém về hiệu năng.</p>
+<p>Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là <strong>conditional move</strong> (<code>cmov</code>). Các lệnh <code>cmp</code>, <code>test</code> và <code>jmp</code> thực hiện <em>conditional transfer of control</em> (chuyển điều khiển có điều kiện) trong một chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng khác nhau. Điều này có thể gây bất lợi cho việc tối ưu hóa code, vì các nhánh này thường tốn kém về hiệu năng.</p>
 <p>Ngược lại, lệnh <code>cmov</code> thực hiện <em>conditional transfer of data</em> (chuyển dữ liệu có điều kiện). Nói cách khác, cả <code>then_statement</code> và <code>else_statement</code> của cấu trúc điều kiện đều được thực thi, và dữ liệu sẽ được đặt vào thanh ghi thích hợp dựa trên kết quả của điều kiện.</p>
 <p>Việc sử dụng <strong>biểu thức ba ngôi</strong> (ternary expression) trong C thường khiến compiler sinh ra lệnh <code>cmov</code> thay vì các lệnh nhảy. Với câu lệnh if-then-else thông thường, biểu thức ba ngôi có dạng:</p>
 <pre><code class="language-c">result = (condition) ? then_statement : else_statement;
@@ -324,7 +324,7 @@ done:
     return x &gt; y ? y : x;
 }
 </code></pre>
-<p>Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra. Hãy nhớ rằng tham số thứ nhất và thứ hai (<code>x</code> và <code>y</code>) lần lượt được lưu trong các thanh ghi <code>%edi</code> và <code>%esi</code>:</p>
+<p>Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem code assembly được tạo ra. Hãy nhớ rằng tham số thứ nhất và thứ hai (<code>x</code> và <code>y</code>) lần lượt được lưu trong các thanh ghi <code>%edi</code> và <code>%esi</code>:</p>
 <pre><code>0x4005d7 &lt;+0&gt;:   push   %rbp             #save %rbp
 0x4005d8 &lt;+1&gt;:   mov    %rsp,%rbp        #update %rbp
 0x4005db &lt;+4&gt;:   mov    %edi,-0x4(%rbp)  #copy x to %rbp-0x4
@@ -335,7 +335,7 @@ done:
 0x4005eb &lt;+20&gt;:  pop    %rbp             #restore %rbp
 0x4005ec &lt;+21&gt;:  retq                    #return %eax
 </code></pre>
-<p>Đoạn mã assembly này <strong>không có lệnh nhảy</strong>. Sau khi so sánh <code>x</code> và <code>y</code>, <code>x</code> sẽ được chuyển vào thanh ghi trả về chỉ khi <code>x</code> nhỏ hơn hoặc bằng <code>y</code>. Giống như các lệnh nhảy, hậu tố của lệnh <code>cmov</code> cho biết điều kiện mà việc chuyển dữ liệu có điều kiện sẽ xảy ra. <strong>Bảng 3</strong> liệt kê tập hợp các lệnh conditional move.</p>
+<p>Đoạn code assembly này <strong>không có lệnh nhảy</strong>. Sau khi so sánh <code>x</code> và <code>y</code>, <code>x</code> sẽ được chuyển vào thanh ghi trả về chỉ khi <code>x</code> nhỏ hơn hoặc bằng <code>y</code>. Giống như các lệnh nhảy, hậu tố của lệnh <code>cmov</code> cho biết điều kiện mà việc chuyển dữ liệu có điều kiện sẽ xảy ra. <strong>Bảng 3</strong> liệt kê tập hợp các lệnh conditional move.</p>
 <div class="table-wrapper"><table><thead><tr><th>Signed</th><th>Unsigned</th><th>Mô tả</th></tr></thead><tbody>
 <tr><td><code>cmove</code> (<code>cmovz</code>)</td><td></td><td>move if equal (==)</td></tr>
 <tr><td><code>cmovne</code> (<code>cmovnz</code>)</td><td></td><td>move if not equal (!=)</td></tr>
@@ -374,7 +374,7 @@ done:
 </code></pre>
 <p><strong>Bảng 4.</strong> Hai hàm cố gắng tăng giá trị của số nguyên <code>x</code>.</p>
 <p>Mỗi hàm nhận vào một con trỏ tới một số nguyên và kiểm tra xem nó có phải <code>NULL</code> hay không. Nếu <code>x</code> không phải <code>NULL</code>, hàm sẽ tăng giá trị được giải tham chiếu của <code>x</code> và trả về giá trị đó. Ngược lại, hàm sẽ trả về giá trị 1.</p>
-<p>Thoạt nhìn, có thể bạn sẽ nghĩ rằng <code>incrementX2</code> sử dụng lệnh <code>cmov</code> vì nó dùng <strong>biểu thức ba ngôi</strong> (ternary expression). Tuy nhiên, cả hai hàm đều sinh ra <strong>chính xác cùng một mã assembly</strong>.</p>
+<p>Thoạt nhìn, có thể bạn sẽ nghĩ rằng <code>incrementX2</code> sử dụng lệnh <code>cmov</code> vì nó dùng <strong>biểu thức ba ngôi</strong> (ternary expression). Tuy nhiên, cả hai hàm đều sinh ra <strong>chính xác cùng một code assembly</strong>.</p>
 <pre><code>0x4005ed &lt;+0&gt;:   push   %rbp
 0x4005ee &lt;+1&gt;:   mov    %rsp,%rbp
 0x4005f1 &lt;+4&gt;:   mov    %rdi,-0x8(%rbp)
@@ -390,7 +390,7 @@ done:
 0x400612 &lt;+37&gt;:  pop    %rbp
 0x400613 &lt;+38&gt;:  retq
 </code></pre>
-<p>Hãy nhớ rằng lệnh <code>cmov</code> <em>thực thi cả hai nhánh của điều kiện</em>. Nói cách khác, <code>x</code> sẽ luôn bị giải tham chiếu (<strong>dereference</strong>) bất kể điều kiện là gì. Xét trường hợp <code>x</code> là một con trỏ null: việc giải tham chiếu một con trỏ null sẽ dẫn đến <strong>null pointer exception</strong> trong mã, gây ra lỗi <strong>segmentation fault</strong>. Để loại bỏ hoàn toàn khả năng này, compiler chọn cách an toàn và sử dụng các lệnh nhảy.</p>
+<p>Hãy nhớ rằng lệnh <code>cmov</code> <em>thực thi cả hai nhánh của điều kiện</em>. Nói cách khác, <code>x</code> sẽ luôn bị giải tham chiếu (<strong>dereference</strong>) bất kể điều kiện là gì. Xét trường hợp <code>x</code> là một con trỏ null: việc giải tham chiếu một con trỏ null sẽ dẫn đến <strong>null pointer exception</strong> trong code, gây ra lỗi <strong>segmentation fault</strong>. Để loại bỏ hoàn toàn khả năng này, compiler chọn cách an toàn và sử dụng các lệnh nhảy.</p>
 
                     </main>
 

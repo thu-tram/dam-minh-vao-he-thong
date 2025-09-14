@@ -138,7 +138,7 @@
                     <main>
                         <h3 id="1341-tín-hiệu-signals"><a class="header" href="#1341-tín-hiệu-signals">13.4.1. Tín hiệu (Signals)</a></h3>
 <p><strong>Signal</strong> là một <strong>software interrupt</strong> (ngắt phần mềm) được gửi từ một <strong>process</strong> (tiến trình) này tới một process khác thông qua <strong>OS</strong> (hệ điều hành).<br />
-Khi một process nhận được signal, điểm thực thi hiện tại của nó sẽ bị OS ngắt để chạy <strong>signal handler</strong> (mã xử lý tín hiệu).<br />
+Khi một process nhận được signal, điểm thực thi hiện tại của nó sẽ bị OS ngắt để chạy <strong>signal handler</strong> (code xử lý tín hiệu).<br />
 Nếu signal handler trả về, quá trình thực thi của process sẽ tiếp tục từ vị trí mà nó bị ngắt để xử lý signal.<br />
 Trong một số trường hợp, signal handler sẽ khiến process thoát (exit), và khi đó nó sẽ không tiếp tục thực thi từ vị trí trước khi bị ngắt.</p>
 <p>Signal tương tự như <strong>hardware interrupt</strong> (ngắt phần cứng) và <strong>trap</strong>, nhưng khác ở một số điểm.<br />
@@ -175,14 +175,14 @@ Xem thêm trong <strong>man page</strong> (<code>man 7 signal</code>) để bi�
 <li>Process có thể bị chặn (<strong>blocked</strong>).</li>
 <li>Process có thể được bỏ chặn (<strong>unblocked</strong>).</li>
 </ul>
-<p>OS định nghĩa một <strong>hành động mặc định</strong> và cung cấp mã <strong>default signal handler</strong> (trình xử lý tín hiệu mặc định) cho mỗi số hiệu signal.<br />
-Tuy nhiên, lập trình viên ứng dụng có thể thay đổi hành động mặc định của hầu hết các signal và có thể viết mã signal handler của riêng mình.<br />
+<p>OS định nghĩa một <strong>hành động mặc định</strong> và cung cấp code <strong>default signal handler</strong> (trình xử lý tín hiệu mặc định) cho mỗi số hiệu signal.<br />
+Tuy nhiên, lập trình viên ứng dụng có thể thay đổi hành động mặc định của hầu hết các signal và có thể viết code signal handler của riêng mình.<br />
 Nếu một chương trình ứng dụng không đăng ký hàm signal handler riêng cho một signal cụ thể, thì handler mặc định của OS sẽ được thực thi khi process nhận signal đó.</p>
-<p>Với một số signal, hành động mặc định do OS định nghĩa <strong>không thể</strong> bị ghi đè bởi mã signal handler của ứng dụng.<br />
+<p>Với một số signal, hành động mặc định do OS định nghĩa <strong>không thể</strong> bị ghi đè bởi code signal handler của ứng dụng.<br />
 Ví dụ: nếu một process nhận signal <code>SIGKILL</code>, OS <strong>luôn</strong> buộc process phải thoát; và khi nhận signal <code>SIGSTOP</code>, process sẽ <strong>luôn</strong> bị chặn cho đến khi nhận signal để tiếp tục (<code>SIGCONT</code>) hoặc để thoát (<code>SIGKILL</code>).</p>
 <p>Linux hỗ trợ hai system call khác nhau có thể được dùng để thay đổi hành vi mặc định của một signal hoặc để đăng ký signal handler cho một signal cụ thể: <code>sigaction</code> và <code>signal</code>.<br />
 Vì <code>sigaction</code> tuân thủ chuẩn POSIX và có nhiều tính năng hơn, nó nên được dùng trong phần mềm triển khai thực tế.<br />
-Tuy nhiên, trong ví dụ mã của chúng ta, ta dùng <code>signal</code> vì nó dễ hiểu hơn.</p>
+Tuy nhiên, trong ví dụ code của chúng ta, ta dùng <code>signal</code> vì nó dễ hiểu hơn.</p>
 <p>Dưới đây là <a href="_attachments/signals.c">chương trình ví dụ</a> đăng ký signal handler cho các signal <code>SIGALRM</code>, <code>SIGINT</code> và <code>SIGCONT</code> bằng system call <code>signal</code> (đã bỏ phần xử lý lỗi để dễ đọc):</p>
 <h4 id="ví-dụ-đăng-ký-signal-handler"><a class="header" href="#ví-dụ-đăng-ký-signal-handler">Ví dụ đăng ký signal handler</a></h4>
 <pre><code class="language-c">/*
@@ -264,9 +264,9 @@ Trong các chương trình tạo ra <strong>child process</strong>, parent proce
 Tuy nhiên, parent process cần gọi <code>wait</code> để <strong>reap</strong> (thu hồi) các <strong>zombie process</strong> sau khi chúng kết thúc.<br />
 Nếu không, các zombie process sẽ không bao giờ biến mất và tiếp tục chiếm giữ một số tài nguyên hệ thống.</p>
 <p>Trong những trường hợp này, parent process có thể đăng ký signal handler cho signal <code>SIGCHLD</code>.<br />
-Khi parent nhận <code>SIGCHLD</code> từ một child process đã kết thúc, mã handler của nó sẽ chạy và gọi <code>wait</code> để thu hồi các zombie process.</p>
-<p>Dưới đây là đoạn mã minh họa việc triển khai hàm signal handler cho signal <code>SIGCHLD</code>.<br />
-Đoạn mã này cũng cho thấy một phần của hàm <code>main</code> đăng ký signal handler cho <code>SIGCHLD</code> (lưu ý: việc này nên được thực hiện <strong>trước</strong> bất kỳ lời gọi <code>fork</code> nào):</p>
+Khi parent nhận <code>SIGCHLD</code> từ một child process đã kết thúc, code handler của nó sẽ chạy và gọi <code>wait</code> để thu hồi các zombie process.</p>
+<p>Dưới đây là đoạn code minh họa việc triển khai hàm signal handler cho signal <code>SIGCHLD</code>.<br />
+Đoạn code này cũng cho thấy một phần của hàm <code>main</code> đăng ký signal handler cho <code>SIGCHLD</code> (lưu ý: việc này nên được thực hiện <strong>trước</strong> bất kỳ lời gọi <code>fork</code> nào):</p>
 <h4 id="ví-dụ-signal-handler-cho-sigchld"><a class="header" href="#ví-dụ-signal-handler-cho-sigchld">Ví dụ signal handler cho SIGCHLD</a></h4>
 <pre><code class="language-c">/*
  * signal handler for SIGCHLD: reaps zombie children
@@ -311,11 +311,11 @@ int main(void) {
 Nó cũng truyền cờ <code>WNOHANG</code>, nghĩa là lời gọi <code>waitpid</code> sẽ <strong>không bị chặn</strong> nếu không có zombie child process nào để thu hồi.</p>
 <p>Ngoài ra, <code>waitpid</code> được gọi bên trong vòng lặp <code>while</code> và tiếp tục chạy miễn là nó trả về một PID hợp lệ (tức là vẫn còn zombie child process để thu hồi).<br />
 Điều quan trọng là signal handler phải gọi <code>waitpid</code> trong vòng lặp, vì trong khi nó đang chạy, process có thể nhận thêm các signal <code>SIGCHLD</code> từ các child process khác vừa kết thúc.</p>
-<p>OS <strong>không</strong> theo dõi số lượng signal <code>SIGCHLD</code> mà một process nhận được; nó chỉ ghi nhận rằng process đã nhận một <code>SIGCHLD</code> và ngắt thực thi của nó để chạy mã handler.<br />
+<p>OS <strong>không</strong> theo dõi số lượng signal <code>SIGCHLD</code> mà một process nhận được; nó chỉ ghi nhận rằng process đã nhận một <code>SIGCHLD</code> và ngắt thực thi của nó để chạy code handler.<br />
 Do đó, nếu không có vòng lặp, signal handler có thể bỏ sót một số zombie process chưa được thu hồi.</p>
 <p>Signal handler sẽ được thực thi bất cứ khi nào parent nhận signal <code>SIGCHLD</code>, bất kể parent đang bị chặn bởi lời gọi <code>wait</code> hay <code>waitpid</code>.</p>
 <ul>
-<li>Nếu parent đang bị chặn bởi <code>wait</code> khi nhận <code>SIGCHLD</code>, nó sẽ thức dậy và chạy mã handler để thu hồi một hoặc nhiều zombie process, sau đó tiếp tục thực thi tại vị trí ngay sau lời gọi <code>wait</code>.</li>
+<li>Nếu parent đang bị chặn bởi <code>wait</code> khi nhận <code>SIGCHLD</code>, nó sẽ thức dậy và chạy code handler để thu hồi một hoặc nhiều zombie process, sau đó tiếp tục thực thi tại vị trí ngay sau lời gọi <code>wait</code>.</li>
 <li>Nếu parent đang bị chặn bởi <code>waitpid</code> cho một child cụ thể, thì sau khi handler chạy, parent có thể tiếp tục hoặc vẫn bị chặn:
 <ul>
 <li>Nếu handler đã thu hồi đúng child mà <code>waitpid</code> đang chờ, parent sẽ tiếp tục thực thi.</li>

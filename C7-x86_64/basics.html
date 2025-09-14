@@ -152,14 +152,14 @@ int main(void){
     return 0;
 }
 </code></pre>
-<p>Để biên dịch đoạn mã này, sử dụng lệnh sau:</p>
+<p>Để biên dịch đoạn code này, sử dụng lệnh sau:</p>
 <pre><code>$ gcc -o adder adder.c
 </code></pre>
-<p>Tiếp theo, hãy xem mã assembly tương ứng của chương trình này bằng cách sử dụng lệnh <code>objdump</code>:</p>
+<p>Tiếp theo, hãy xem code assembly tương ứng của chương trình này bằng cách sử dụng lệnh <code>objdump</code>:</p>
 <pre><code>$ objdump -d adder &gt; output
 $ less output
 </code></pre>
-<p>Tìm đoạn mã liên quan đến hàm <code>adder2</code> bằng cách gõ <code>/adder2</code> khi đang xem tệp <code>output</code> với <code>less</code>. Phần liên quan đến <code>adder2</code> sẽ trông tương tự như sau:</p>
+<p>Tìm đoạn code liên quan đến hàm <code>adder2</code> bằng cách gõ <code>/adder2</code> khi đang xem tệp <code>output</code> với <code>less</code>. Phần liên quan đến <code>adder2</code> sẽ trông tương tự như sau:</p>
 <p><strong>Kết quả assembly cho hàm <code>adder2</code></strong></p>
 <pre><code>0000000000400526 &lt;adder2&gt;:
   400526:       55                      push   %rbp
@@ -171,14 +171,14 @@ $ less output
   400534:       c3                      retq
 </code></pre>
 <p>Đừng lo nếu bạn chưa hiểu chuyện gì đang xảy ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly trong các phần sau. Hiện tại, hãy nghiên cứu cấu trúc của từng lệnh riêng lẻ.</p>
-<p>Mỗi dòng trong ví dụ trên chứa <strong>địa chỉ 64-bit</strong> của lệnh trong bộ nhớ chương trình, <strong>các byte</strong> tương ứng với lệnh đó, và <strong>dạng văn bản</strong> (plaintext) của chính lệnh. Ví dụ, <code>55</code> là dạng <strong>machine code</strong> (mã máy) của lệnh <code>push %rbp</code>, và lệnh này nằm tại địa chỉ <code>0x400526</code> trong bộ nhớ chương trình. Lưu ý rằng <code>0x400526</code> là dạng rút gọn của địa chỉ 64-bit đầy đủ của lệnh <code>push %rbp</code>; các số 0 ở đầu bị lược bỏ để dễ đọc hơn.</p>
-<p>Điều quan trọng cần lưu ý là một dòng mã C thường được dịch thành nhiều lệnh assembly. Chẳng hạn, phép toán <code>a + 2</code> được biểu diễn bằng hai lệnh: <code>mov -0x4(%rbp), %eax</code> và <code>add $0x2, %eax</code>.</p>
+<p>Mỗi dòng trong ví dụ trên chứa <strong>địa chỉ 64-bit</strong> của lệnh trong bộ nhớ chương trình, <strong>các byte</strong> tương ứng với lệnh đó, và <strong>dạng văn bản</strong> (plaintext) của chính lệnh. Ví dụ, <code>55</code> là dạng <strong>machine code</strong> (code máy) của lệnh <code>push %rbp</code>, và lệnh này nằm tại địa chỉ <code>0x400526</code> trong bộ nhớ chương trình. Lưu ý rằng <code>0x400526</code> là dạng rút gọn của địa chỉ 64-bit đầy đủ của lệnh <code>push %rbp</code>; các số 0 ở đầu bị lược bỏ để dễ đọc hơn.</p>
+<p>Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành nhiều lệnh assembly. Chẳng hạn, phép toán <code>a + 2</code> được biểu diễn bằng hai lệnh: <code>mov -0x4(%rbp), %eax</code> và <code>add $0x2, %eax</code>.</p>
 <blockquote>
 <p><strong>Assembly của bạn có thể trông khác!</strong><br />
-Nếu bạn đang biên dịch mã của mình cùng với chúng tôi, bạn có thể nhận thấy rằng một số ví dụ assembly của bạn trông khác so với những gì được hiển thị trong sách này. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành bên dưới. Hầu hết các ví dụ assembly trong sách này được tạo ra trên các hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).</p>
-<p>Trong các ví dụ tiếp theo, chúng tôi <strong>không</strong> sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ tệp ví dụ nào (<code>example.c</code>) bằng lệnh:<br />
+Nếu bạn đang biên dịch code của mình cùng với chúng tôi, bạn có thể nhận thấy rằng một số ví dụ assembly của bạn trông khác so với những gì được hiển thị trong sách này. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành bên dưới. Hầu hết các ví dụ assembly trong sách này được tạo ra trên các hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).</p>
+<p>Trong các ví dụ tiếp theo, chúng tôi <strong>không</strong> sử dụng bất kỳ optimization flag hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ tệp ví dụ nào (<code>example.c</code>) bằng lệnh:<br />
 <code>gcc -o example example.c</code><br />
-Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch mã dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong <a href="../C12-CodeOpt/index.html#_code_optimization">một chương sau</a>.</p>
+Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong <a href="../C12-CodeOpt/index.html#_code_optimization">một chương sau</a>.</p>
 </blockquote>
 <h3 id="711-thanh-ghi-registers"><a class="header" href="#711-thanh-ghi-registers">7.1.1. Thanh ghi (Registers)</a></h3>
 <p>Hãy nhớ rằng <strong>register</strong> (thanh ghi) là một đơn vị lưu trữ có kích thước bằng một từ (word-sized) nằm trực tiếp trên CPU. Có thể có các thanh ghi riêng cho dữ liệu, lệnh và địa chỉ. Ví dụ, CPU Intel có tổng cộng 16 thanh ghi để lưu trữ dữ liệu 64-bit:</p>
@@ -213,12 +213,12 @@ Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hã
 <p>ISA cung cấp một cơ chế riêng để truy cập các thành phần 8-bit bên trong 16 bit thấp của bốn thanh ghi đầu tiên. <a href="#Register">Hình 1</a> minh họa cơ chế truy cập cho <code>%rax</code>. <strong>Higher byte</strong> (byte cao) và <strong>lower byte</strong> (byte thấp) trong 16 bit thấp của bốn thanh ghi đầu tiên có thể được truy cập bằng cách lấy hai chữ cái cuối của tên thanh ghi và thay chữ cái cuối bằng <code>h</code> (cho <em>higher</em>) hoặc <code>l</code> (cho <em>lower</em>), tùy thuộc vào byte muốn truy cập. Ví dụ, <code>%al</code> tham chiếu đến 8 bit thấp của <code>%ax</code>, trong khi <code>%ah</code> tham chiếu đến 8 bit cao của <code>%ax</code>. Các thanh ghi 8-bit này thường được dùng để lưu trữ giá trị 1 byte cho một số thao tác nhất định, chẳng hạn như <strong>bitwise shift</strong> (dịch bit), vì một thanh ghi 32-bit không thể dịch quá 32 vị trí, và số 32 chỉ cần 1 byte để lưu trữ.</p>
 <blockquote>
 <p><strong>Compiler có thể chọn component register tùy thuộc vào kiểu dữ liệu</strong><br />
-Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu <code>long</code>) và sử dụng các <strong>component register</strong> 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu <code>int</code>). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.<br />
+Khi đọc code assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu <code>long</code>) và sử dụng các <strong>component register</strong> 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu <code>int</code>). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.<br />
 Ví dụ, trong hàm <code>adder2</code> ở ví dụ trước, compiler tham chiếu đến component register <code>%eax</code> thay vì <code>%rax</code> vì kiểu <code>int</code> thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm <code>adder2</code> có tham số kiểu <code>long</code> thay vì <code>int</code>, compiler sẽ lưu <code>a</code> trong thanh ghi <code>%rax</code> thay vì <code>%eax</code>.</p>
 </blockquote>
 <p>Tám thanh ghi cuối (<code>%r8</code>–<code>%r15</code>) không thuộc <strong>IA32 ISA</strong>. Tuy nhiên, chúng cũng có cơ chế để truy cập các thành phần byte khác nhau. Để truy cập 32 bit thấp, 16 bit thấp hoặc byte thấp nhất của tám thanh ghi này, lần lượt thêm các hậu tố <code>d</code>, <code>w</code> hoặc <code>b</code> vào cuối tên thanh ghi. Ví dụ, <code>%r9d</code> truy cập 32 bit thấp của <code>%r9</code>, <code>%r9w</code> truy cập 16 bit thấp, và <code>%r9b</code> truy cập byte thấp nhất của <code>%r9</code>.</p>
 <h3 id="713-cấu-trúc-lệnh-instruction-structure"><a class="header" href="#713-cấu-trúc-lệnh-instruction-structure">7.1.3. Cấu trúc lệnh (Instruction Structure)</a></h3>
-<p>Mỗi <strong>instruction</strong> (lệnh) bao gồm một <strong>operation code</strong> hay <strong>opcode</strong> (mã thao tác) xác định lệnh đó làm gì, và một hoặc nhiều <strong>operand</strong> (toán hạng) cho biết lệnh sẽ thực hiện như thế nào.<br />
+<p>Mỗi <strong>instruction</strong> (lệnh) bao gồm một <strong>operation code</strong> hay <strong>opcode</strong> (code thao tác) xác định lệnh đó làm gì, và một hoặc nhiều <strong>operand</strong> (toán hạng) cho biết lệnh sẽ thực hiện như thế nào.<br />
 Ví dụ, lệnh <code>add $0x2, %eax</code> có opcode là <code>add</code> và các operand là <code>$0x2</code> và <code>%eax</code>.</p>
 <p>Mỗi operand tương ứng với một vị trí nguồn hoặc đích cho một thao tác cụ thể. Các lệnh có hai toán hạng thường tuân theo định dạng <strong>source, destination</strong> (<code>S</code>, <code>D</code>), trong đó toán hạng đầu tiên chỉ nguồn (source register) và toán hạng thứ hai chỉ đích (destination).</p>
 <p>Có nhiều loại operand:</p>
@@ -267,9 +267,9 @@ Lưu ý rằng ký hiệu <code>M[x]</code> trong ngữ cảnh này biểu thị
 <li>Dạng <strong>memory</strong> không thể đồng thời là cả nguồn (source) và đích (destination) trong cùng một lệnh.</li>
 <li>Trong các phép toán có <strong>scaling</strong> (tỉ lệ nhân — xem hai toán hạng cuối trong <a href="#Operands">Bảng 2</a>), hệ số nhân là tham số thứ ba trong dấu ngoặc. Hệ số nhân có thể là 1, 2, 4 hoặc 8.</li>
 </ul>
-<p><strong>Bảng 2</strong> được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích mã assembly.</p>
+<p><strong>Bảng 2</strong> được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích code assembly.</p>
 <h3 id="715-hậu-tố-của-lệnh-instruction-suffixes"><a class="header" href="#715-hậu-tố-của-lệnh-instruction-suffixes">7.1.5. Hậu tố của lệnh (Instruction Suffixes)</a></h3>
-<p>Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có một <strong>suffix</strong> (hậu tố) cho biết <em>kích thước</em> (gắn liền với <em>kiểu dữ liệu</em>) của dữ liệu được thao tác ở mức mã lệnh. Compiler sẽ tự động dịch mã sang các lệnh có hậu tố phù hợp. <strong>Bảng 3</strong> cho thấy các hậu tố thông dụng của lệnh trong x86-64.</p>
+<p>Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có một <strong>suffix</strong> (hậu tố) cho biết <em>kích thước</em> (gắn liền với <em>kiểu dữ liệu</em>) của dữ liệu được thao tác ở mức code lệnh. Compiler sẽ tự động dịch code sang các lệnh có hậu tố phù hợp. <strong>Bảng 3</strong> cho thấy các hậu tố thông dụng của lệnh trong x86-64.</p>
 <div class="table-wrapper"><table><thead><tr><th>Suffix</th><th>C Type</th><th>Size (bytes)</th></tr></thead><tbody>
 <tr><td>b</td><td><code>char</code></td><td>1</td></tr>
 <tr><td>w</td><td><code>short</code></td><td>2</td></tr>

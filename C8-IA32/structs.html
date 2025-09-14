@@ -153,7 +153,7 @@ struct studentT student;
 <p><img src="_images/structArray.png" alt="structArray" /></p>
 <p><strong>Hình 1.</strong> Sơ đồ bố trí bộ nhớ của struct <code>student</code></p>
 <p>Các <em>field</em> được lưu trữ liên tiếp nhau trong bộ nhớ theo đúng thứ tự mà chúng được khai báo. Trong Hình 1, <em>field</em> <code>age</code> được cấp phát ngay sau <em>field</em> <code>name</code> (tại byte offset x~64~), tiếp theo là <code>grad_yr</code> (byte offset x~68~) và <code>gpa</code> (byte offset x~72~). Cách tổ chức này cho phép truy cập các <em>field</em> một cách hiệu quả về mặt bộ nhớ.</p>
-<p>Để hiểu cách <strong>compiler</strong> (trình biên dịch) sinh mã Assembly để làm việc với một <code>struct</code>, hãy xem xét hàm <code>initStudent</code>:</p>
+<p>Để hiểu cách <strong>compiler</strong> (trình biên dịch) sinh code Assembly để làm việc với một <code>struct</code>, hãy xem xét hàm <code>initStudent</code>:</p>
 <pre><code class="language-c">void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
     strncpy(s-&gt;name, nm, 64);
     s-&gt;grad_yr = gr;
@@ -185,7 +185,7 @@ Nói chung, tham số thứ <em>i</em> của hàm <code>initStudent</code> nằm
  &lt;+56&gt;:  leave                          # chuẩn bị thoát hàm
  &lt;+57&gt;:  ret                            # trả về
 </code></pre>
-<p>Việc chú ý đến <strong>byte offset</strong> (độ lệch tính theo byte) của từng <em>field</em> là chìa khóa để hiểu đoạn mã này. Dưới đây là một số điểm cần lưu ý:</p>
+<p>Việc chú ý đến <strong>byte offset</strong> (độ lệch tính theo byte) của từng <em>field</em> là chìa khóa để hiểu đoạn code này. Dưới đây là một số điểm cần lưu ý:</p>
 <ul>
 <li>Lời gọi <code>strncpy</code> nhận ba đối số: địa chỉ cơ sở của <em>field</em> <code>name</code> trong <code>s</code>, địa chỉ của mảng <code>nm</code>, và một giá trị chỉ định độ dài. Hãy nhớ rằng vì <code>name</code> là <em>field</em> đầu tiên trong <code>struct studentT</code>, nên địa chỉ của <code>s</code> cũng chính là địa chỉ của <code>s→name</code>.</li>
 </ul>
@@ -197,14 +197,14 @@ Nói chung, tham số thứ <em>i</em> của hàm <code>initStudent</code> nằm
  &lt;+23&gt;:  call  0x8048320 &lt;strncpy@plt&gt;  # gọi strncpy(s-&gt;name, nm, 64)
 </code></pre>
 <ul>
-<li>Phần tiếp theo của mã (các lệnh <code>&lt;initStudent+28&gt;</code> đến <code>&lt;initStudent+35&gt;</code>) đặt giá trị của tham số <code>gr</code> tại vị trí cách đầu <code>s</code> <strong>68 byte</strong>. Xem lại sơ đồ bố trí bộ nhớ trong Hình 1 cho thấy địa chỉ này tương ứng với <code>s→grad_yr</code>.</li>
+<li>Phần tiếp theo của code (các lệnh <code>&lt;initStudent+28&gt;</code> đến <code>&lt;initStudent+35&gt;</code>) đặt giá trị của tham số <code>gr</code> tại vị trí cách đầu <code>s</code> <strong>68 byte</strong>. Xem lại sơ đồ bố trí bộ nhớ trong Hình 1 cho thấy địa chỉ này tương ứng với <code>s→grad_yr</code>.</li>
 </ul>
 <pre><code> &lt;+28&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
  &lt;+32&gt;:  mov   0x14(%ebp),%edx          # copy tham số 4 (gr) vào edx
  &lt;+35&gt;:  mov   %edx,0x44(%eax)          # copy gr vào offset eax+68 (s-&gt;grad_yr)
 </code></pre>
 <ul>
-<li>Phần tiếp theo của mã (các lệnh <code>&lt;initStudent+38&gt;</code> đến <code>&lt;initStudent+53&gt;</code>) sao chép tham số <code>ag</code> vào <em>field</em> <code>s→age</code>. Sau đó, giá trị của tham số <code>g</code> được sao chép vào <em>field</em> <code>s→gpa</code> (byte offset 72):</li>
+<li>Phần tiếp theo của code (các lệnh <code>&lt;initStudent+38&gt;</code> đến <code>&lt;initStudent+53&gt;</code>) sao chép tham số <code>ag</code> vào <em>field</em> <code>s→age</code>. Sau đó, giá trị của tham số <code>g</code> được sao chép vào <em>field</em> <code>s→gpa</code> (byte offset 72):</li>
 </ul>
 <pre><code> &lt;+38&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
  &lt;+41&gt;:  mov   0x10(%ebp),%edx          # copy tham số 3 (ag) vào edx

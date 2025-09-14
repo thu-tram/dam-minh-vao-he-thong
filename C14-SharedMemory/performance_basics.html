@@ -170,7 +170,7 @@ Tuy nhiên, chỉ số này <strong>không phản ánh</strong> việc chương 
 <h4 id="hiệu-năng-song-song-trong-thực-tế"><a class="header" href="#hiệu-năng-song-song-trong-thực-tế">Hiệu năng song song trong thực tế</a></h4>
 <p>Trong thế giới lý tưởng, speedup là <strong>tuyến tính</strong>: mỗi đơn vị tính toán bổ sung sẽ mang lại mức tăng tốc tương ứng.<br />
 Tuy nhiên, điều này <strong>hiếm khi</strong> xảy ra trong thực tế.</p>
-<p>Hầu hết các chương trình đều chứa một phần <strong>bắt buộc phải tuần tự</strong> do các phụ thuộc nội tại trong mã.<br />
+<p>Hầu hết các chương trình đều chứa một phần <strong>bắt buộc phải tuần tự</strong> do các phụ thuộc nội tại trong code.<br />
 Chuỗi phụ thuộc dài nhất trong một chương trình được gọi là <strong>critical path</strong> (đường tới hạn).<br />
 Giảm độ dài của critical path là bước quan trọng đầu tiên trong việc song song hóa chương trình.</p>
 <p>Ngoài ra, các <strong>điểm đồng bộ hóa thread</strong> và (đối với các chương trình chạy trên nhiều nút tính toán) <strong>chi phí giao tiếp giữa các process</strong> cũng là những yếu tố có thể giới hạn hiệu năng song song.</p>

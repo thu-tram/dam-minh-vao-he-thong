@@ -193,7 +193,7 @@ Quả thật, phần tử thứ 3 trong <strong>Hình 1</strong> nằm tại byt
 }
 </code></pre>
 <p>Hàm <code>sumArray</code> nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng.<br />
-Tiếp theo, chúng ta sẽ xem mã assembly tương ứng của hàm <code>sumArray</code>.</p>
+Tiếp theo, chúng ta sẽ xem code assembly tương ứng của hàm <code>sumArray</code>.</p>
 <pre><code>&lt;sumArray&gt;:
  &lt;+0&gt;:  push %ebp                    # lưu ebp
  &lt;+1&gt;:  mov  %esp,%ebp               # cập nhật ebp (stack frame mới)
@@ -215,7 +215,7 @@ Tiếp theo, chúng ta sẽ xem mã assembly tương ứng của hàm <code>sumA
  &lt;+57&gt;: leave                        # chuẩn bị thoát hàm
  &lt;+58&gt;: ret                          # trả về total
 </code></pre>
-<p>Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu được truy cập là một <strong>địa chỉ</strong> hay một <strong>giá trị</strong>.<br />
+<p>Khi lần theo đoạn code assembly này, hãy xem xét liệu dữ liệu được truy cập là một <strong>địa chỉ</strong> hay một <strong>giá trị</strong>.<br />
 Ví dụ: lệnh tại <code>&lt;sumArray+13&gt;</code> khiến <code>%ebp-4</code> chứa một biến kiểu <code>int</code>, ban đầu được gán giá trị 0.<br />
 Ngược lại, đối số được lưu tại <code>%ebp+8</code> là tham số đầu tiên của hàm (<code>array</code>), có kiểu <code>int *</code> và tương ứng với địa chỉ cơ sở của mảng.<br />
 Một biến khác (chúng ta gọi là <code>total</code>) được lưu tại <code>%ebp-8</code>.</p>

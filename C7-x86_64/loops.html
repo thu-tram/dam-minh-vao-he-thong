@@ -151,7 +151,7 @@
     return total;
 }
 </code></pre>
-<p>Biên dịch đoạn code này và dùng GDB để disassemble sẽ cho ra mã assembly sau:</p>
+<p>Biên dịch đoạn code này và dùng GDB để disassemble sẽ cho ra code assembly sau:</p>
 <pre><code>Dump of assembler code for function sumUp:
 0x400526 &lt;+0&gt;:   push   %rbp
 0x400527 &lt;+1&gt;:   mov    %rsp,%rbp
@@ -267,7 +267,7 @@ start:
     return total;
 }
 </code></pre>
-<p>Phiên bản này tạo ra mã assembly <strong>giống hệt</strong> với ví dụ vòng lặp <code>while</code>. Dưới đây là mã assembly và chú thích từng dòng:</p>
+<p>Phiên bản này tạo ra code assembly <strong>giống hệt</strong> với ví dụ vòng lặp <code>while</code>. Dưới đây là code assembly và chú thích từng dòng:</p>
 <pre><code class="language-assembly">Dump of assembler code for function sumUp2:
 0x400554 &lt;+0&gt;:   push   %rbp                   # lưu %rbp
 0x400555 &lt;+1&gt;:   mov    %rsp,%rbp              # cập nhật %rbp (stack frame mới)
@@ -285,7 +285,7 @@ start:
 0x400580 &lt;+44&gt;:  pop    %rbp                   # chuẩn bị thoát hàm
 0x400581 &lt;+45&gt;:  retq                          # trả về total
 </code></pre>
-<p>Để hiểu vì sao phiên bản vòng lặp <code>for</code> này tạo ra mã assembly giống hệt với phiên bản vòng lặp <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
+<p>Để hiểu vì sao phiên bản vòng lặp <code>for</code> này tạo ra code assembly giống hệt với phiên bản vòng lặp <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
 <pre><code class="language-c">for (&lt;khởi tạo&gt;; &lt;biểu thức điều kiện&gt;; &lt;bước lặp&gt;) {
     &lt;thân vòng lặp&gt;
 }

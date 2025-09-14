@@ -137,7 +137,7 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="73-các-lệnh-số-học-arithmetic-instructions"><a class="header" href="#73-các-lệnh-số-học-arithmetic-instructions">7.3. Các lệnh số học (Arithmetic Instructions)</a></h2>
-<p><strong>x86 ISA</strong> (Instruction Set Architecture — kiến trúc tập lệnh) triển khai một số <strong>instructions</strong> (lệnh) tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong> (Arithmetic Logic Unit — đơn vị số học và logic). <strong>Bảng 1</strong> liệt kê một số lệnh số học thường gặp khi đọc mã assembly.</p>
+<p><strong>x86 ISA</strong> (Instruction Set Architecture — kiến trúc tập lệnh) triển khai một số <strong>instructions</strong> (lệnh) tương ứng với các phép toán số học được thực hiện bởi <strong>ALU</strong> (Arithmetic Logic Unit — đơn vị số học và logic). <strong>Bảng 1</strong> liệt kê một số lệnh số học thường gặp khi đọc code assembly.</p>
 <div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Translation</th></tr></thead><tbody>
 <tr><td><code>add S, D</code></td><td>S + D → D</td></tr>
 <tr><td><code>sub S, D</code></td><td>D - S → D</td></tr>
@@ -163,7 +163,7 @@
 </tbody></table>
 </div>
 <p><strong>Bảng 2.</strong> Các lệnh dịch bit.</p>
-<p>Mỗi lệnh dịch nhận hai toán hạng: một thường là <strong>register</strong> (thanh ghi, ký hiệu D) và một là giá trị dịch (<em>v</em>). Trên hệ thống 64-bit, giá trị dịch được mã hóa trong một byte (vì không hợp lý khi dịch quá 63 bit). Giá trị dịch <em>v</em> phải là hằng số hoặc được lưu trong thanh ghi <code>%cl</code>.</p>
+<p>Mỗi lệnh dịch nhận hai toán hạng: một thường là <strong>register</strong> (thanh ghi, ký hiệu D) và một là giá trị dịch (<em>v</em>). Trên hệ thống 64-bit, giá trị dịch được code hóa trong một byte (vì không hợp lý khi dịch quá 63 bit). Giá trị dịch <em>v</em> phải là hằng số hoặc được lưu trong thanh ghi <code>%cl</code>.</p>
 <blockquote>
 <p><strong>Different Versions of Instructions Help Distinguish Types at an Assembly Level</strong><br />
 Ở mức assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng compiler sẽ sử dụng các <strong>component register</strong> dựa trên kiểu dữ liệu. Tương tự, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là signed hay unsigned. Ở mức assembly, compiler sử dụng các lệnh khác nhau để phân biệt giữa dịch logic và dịch số học.</p>
@@ -181,8 +181,8 @@
 <p><strong>Bảng 3.</strong> Các phép toán bitwise.</p>
 <p>Hãy nhớ rằng phép bitwise <code>not</code> khác với phép <strong>negation</strong> (<code>neg</code>). Lệnh <code>not</code> đảo tất cả các bit nhưng không cộng thêm 1. Cần cẩn thận để không nhầm lẫn hai lệnh này.</p>
 <blockquote>
-<p><strong>Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong mã C của bạn!</strong><br />
-Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong mã C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này <em>không</em> được khuyến khích. Hầu hết các <strong>compiler</strong> (trình biên dịch) hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi điều đó hợp lý, khiến lập trình viên không cần phải tự làm điều này. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của mã nguồn bất cứ khi nào có thể và tránh tối ưu hóa sớm một cách không cần thiết.</p>
+<p><strong>Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong code C của bạn!</strong><br />
+Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này <em>không</em> được khuyến khích. Hầu hết các <strong>compiler</strong> (trình biên dịch) hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi điều đó hợp lý, khiến lập trình viên không cần phải tự làm điều này. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của mã nguồn bất cứ khi nào có thể và tránh tối ưu hóa sớm một cách không cần thiết.</p>
 </blockquote>
 <h3 id="733-lệnh-load-effective-address"><a class="header" href="#733-lệnh-load-effective-address">7.3.3. Lệnh Load Effective Address</a></h3>
 <p><em>What's lea got to do (got to do) with it?</em></p>

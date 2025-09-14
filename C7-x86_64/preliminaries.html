@@ -152,7 +152,7 @@ Lệnh <code>test</code> thực hiện phép <strong>bitwise AND</strong>. Một
 <p>Trong ví dụ này, phép AND từng bit của <code>%rax</code> với chính nó sẽ cho kết quả bằng 0 <strong>chỉ khi</strong> <code>%rax</code> chứa giá trị 0. Nói cách khác, đây là cách kiểm tra giá trị zero và tương đương với:</p>
 <pre><code>cmp $0, %rax
 </code></pre>
-<p>Không giống các lệnh số học đã đề cập trước đó, <code>cmp</code> và <code>test</code> <strong>không</strong> thay đổi thanh ghi đích. Thay vào đó, cả hai lệnh này thay đổi một tập hợp các giá trị 1-bit gọi là <strong>condition code flags</strong> (cờ mã điều kiện).<br />
+<p>Không giống các lệnh số học đã đề cập trước đó, <code>cmp</code> và <code>test</code> <strong>không</strong> thay đổi thanh ghi đích. Thay vào đó, cả hai lệnh này thay đổi một tập hợp các giá trị 1-bit gọi là <strong>condition code flags</strong> (cờ code điều kiện).<br />
 Ví dụ, <code>cmp</code> sẽ thay đổi các cờ này dựa trên việc giá trị R2 - R1 là dương (greater), âm (less) hay bằng 0 (equal). Hãy nhớ rằng <a href="../C5-Arch/cpu.html#_the_alu">condition code</a> lưu trữ thông tin về một phép toán trong ALU. Các condition code flags là một phần của thanh ghi <code>FLAGS</code> trên hệ thống x86.</p>
 <div class="table-wrapper"><table><thead><tr><th>Flag</th><th>Translation</th></tr></thead><tbody>
 <tr><td><code>ZF</code></td><td>Bằng 0 (1: đúng; 0: sai)</td></tr>
@@ -172,7 +172,7 @@ Ví dụ, <code>cmp</code> sẽ thay đổi các cờ này dựa trên việc gi
 <p><code>SF</code> và <code>OF</code> được dùng cho so sánh số nguyên có dấu, trong khi <code>CF</code> được dùng cho so sánh số nguyên không dấu.<br />
 Mặc dù việc tìm hiểu sâu về condition code flags vượt ra ngoài phạm vi cuốn sách này, nhưng việc <code>cmp</code> và <code>test</code> thiết lập các cờ này là điều kiện cần để nhóm lệnh tiếp theo (<em>jump instructions</em>) hoạt động chính xác.</p>
 <h3 id="các-lệnh-nhảy-jump-instructions"><a class="header" href="#các-lệnh-nhảy-jump-instructions">Các lệnh nhảy (Jump Instructions)</a></h3>
-<p><strong>Jump instruction</strong> cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh. Trong các chương trình assembly mà ta đã phân tích, <code>%rip</code> luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép <code>%rip</code> được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh <code>if</code>) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).</p>
+<p><strong>Jump instruction</strong> cho phép chương trình “nhảy” tới một vị trí mới trong code lệnh. Trong các chương trình assembly mà ta đã phân tích, <code>%rip</code> luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép <code>%rip</code> được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh <code>if</code>) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).</p>
 <h4 id="lệnh-nhảy-trực-tiếp-direct-jump-instructions"><a class="header" href="#lệnh-nhảy-trực-tiếp-direct-jump-instructions">Lệnh nhảy trực tiếp (Direct jump instructions)</a></h4>
 <div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>jmp L</code></td><td>Nhảy tới vị trí được chỉ định bởi nhãn L</td></tr>
@@ -218,8 +218,8 @@ Mỗi lệnh bắt đầu bằng chữ <code>j</code> (jump). Hậu tố của l
 <p>Khi đọc thành tiếng, ta có thể thấy <code>jg</code> tương ứng với <em>jump greater</em> và từ đồng nghĩa trong so sánh có dấu của nó là <code>jnl</code>, nghĩa là <em>jump not less</em>. Tương tự, phiên bản so sánh không dấu <code>ja</code> nghĩa là <em>jump above</em>, trong khi từ đồng nghĩa <code>jnbe</code> nghĩa là <em>jump not below or equal</em>.</p>
 <p>Nếu bạn đọc thành tiếng các lệnh này, điều đó sẽ giúp giải thích tại sao một số từ đồng nghĩa lại tương ứng với những lệnh cụ thể. Một điều khác cần nhớ là các thuật ngữ <em>greater</em> và <em>less</em> yêu cầu CPU diễn giải phép so sánh số dưới dạng <strong>có dấu</strong>, trong khi <em>above</em> và <em>below</em> cho biết phép so sánh số là <strong>không dấu</strong>.</p>
 <h3 id="câu-lệnh-goto"><a class="header" href="#câu-lệnh-goto">Câu lệnh <code>goto</code></a></h3>
-<p>Trong các tiểu mục tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và phân tích ngược chúng trở lại thành C. Khi dịch mã assembly của các câu lệnh điều kiện và vòng lặp về C, sẽ hữu ích nếu hiểu được dạng <code>goto</code> tương ứng trong ngôn ngữ C.</p>
-<p>Câu lệnh <code>goto</code> là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã. Lệnh assembly tương ứng với câu lệnh <code>goto</code> là <code>jmp</code>.</p>
+<p>Trong các tiểu mục tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và phân tích ngược chúng trở lại thành C. Khi dịch code assembly của các câu lệnh điều kiện và vòng lặp về C, sẽ hữu ích nếu hiểu được dạng <code>goto</code> tương ứng trong ngôn ngữ C.</p>
+<p>Câu lệnh <code>goto</code> là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong code. Lệnh assembly tương ứng với câu lệnh <code>goto</code> là <code>jmp</code>.</p>
 <p>Câu lệnh <code>goto</code> bao gồm từ khóa <code>goto</code> theo sau là một <strong>goto label</strong> (nhãn goto), là một loại nhãn chương trình cho biết nơi thực thi sẽ tiếp tục. Ví dụ, <code>goto done</code> nghĩa là chương trình sẽ nhảy tới dòng được đánh dấu bằng nhãn <code>done</code>.</p>
 <p>Các ví dụ khác về nhãn chương trình trong C bao gồm <a href="../C2-C_depth/advanced_switch.html#_c_switch_stmt_">nhãn của câu lệnh switch</a> đã được đề cập trong Chương 2.</p>
 <table>
@@ -270,14 +270,14 @@ done:
 <p>Dạng <code>goto</code> của hàm này có thể trông hơi phản trực giác, nhưng hãy phân tích chính xác điều gì đang diễn ra. Câu lệnh điều kiện kiểm tra xem biến <code>x</code> có nhỏ hơn hoặc bằng <code>y</code> hay không.</p>
 <ul>
 <li>
-<p>Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, chương trình sẽ chuyển quyền điều khiển tới nhãn <code>else_statement</code>, nơi chứa câu lệnh duy nhất <code>smallest = x</code>. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục thực thi phần mã dưới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>x</code>).</p>
+<p>Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, chương trình sẽ chuyển quyền điều khiển tới nhãn <code>else_statement</code>, nơi chứa câu lệnh duy nhất <code>smallest = x</code>. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục thực thi phần code dưới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>x</code>).</p>
 </li>
 <li>
 <p>Nếu <code>x</code> lớn hơn <code>y</code>, <code>smallest</code> được gán giá trị <code>y</code>. Sau đó, chương trình thực thi câu lệnh <code>goto done</code>, chuyển quyền điều khiển tới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>y</code>).</p>
 </li>
 </ul>
-<p>Mặc dù câu lệnh <code>goto</code> từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng <code>goto</code> trong mã hiện đại được coi là <strong>thói quen xấu</strong>, vì nó làm giảm khả năng đọc hiểu của mã. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng <code>goto</code> với tiêu đề <em>Go To Statement Considered Harmful</em><sup class="footnote-reference"><a href="#1">1</a></sup>.</p>
-<p>Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng <code>goto</code>, và lập trình viên được khuyến cáo tránh dùng để không viết ra mã khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh <code>goto</code> trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi mã C có điều kiện sang dạng <code>goto</code> trước khi dịch sang assembly, bao gồm cả mã chứa câu lệnh <code>if</code> và vòng lặp.</p>
+<p>Mặc dù câu lệnh <code>goto</code> từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng <code>goto</code> trong code hiện đại được coi là <strong>thói quen xấu</strong>, vì nó làm giảm khả năng đọc hiểu của code. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng <code>goto</code> với tiêu đề <em>Go To Statement Considered Harmful</em><sup class="footnote-reference"><a href="#1">1</a></sup>.</p>
+<p>Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng <code>goto</code>, và lập trình viên được khuyến cáo tránh dùng để không viết ra code khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh <code>goto</code> trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi code C có điều kiện sang dạng <code>goto</code> trước khi dịch sang assembly, bao gồm cả code chứa câu lệnh <code>if</code> và vòng lặp.</p>
 <p>Các tiểu mục tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh <code>if</code> và vòng lặp trong assembly:</p>
 <ul>
 <li><a href="if_statements.html#_if_statements_in_assembly">If Statements</a></li>

@@ -177,7 +177,7 @@ Ví dụ: nếu một chương trình muốn biết thời gian hiện tại tro
 <p>Kernel cũng cung cấp <strong>device interface</strong> (giao diện thiết bị) để tương tác với phần cứng.<br />
 Thông thường, các thiết bị I/O như <strong>HDD</strong> (ổ cứng), bàn phím, và <strong>SSD</strong> (ổ thể rắn) tương tác với kernel thông qua giao diện này.<br />
 Các thiết bị này đi kèm với <strong>device driver</strong> (trình điều khiển thiết bị) đặc biệt, chạy trong OS và xử lý việc truyền dữ liệu tới hoặc từ thiết bị.<br />
-Device driver tương tác với OS thông qua device interface; một thiết bị mới có thể được thêm vào hệ thống bằng cách nạp mã device driver của nó (được viết tuân theo device interface của OS) vào OS.<br />
+Device driver tương tác với OS thông qua device interface; một thiết bị mới có thể được thêm vào hệ thống bằng cách nạp code device driver của nó (được viết tuân theo device interface của OS) vào OS.<br />
 Kernel trực tiếp quản lý các thiết bị phần cứng khác như CPU và RAM.</p>
 <p><strong>Hình 2</strong> cho thấy lớp OS kernel nằm giữa ứng dụng người dùng và phần cứng máy tính, bao gồm cả giao diện lập trình cho người dùng và giao diện thiết bị phần cứng.</p>
 <p><img src="_images/osinterfaces.png" alt="OS kernel implements an interface to applications and to hardware devices" /></p>

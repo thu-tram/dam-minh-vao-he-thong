@@ -144,7 +144,7 @@ Chúng ta cũng sẽ minh họa cách diễn giải ý nghĩa từ dữ liệu s
 Chúng ta sẽ phân loại các thiết bị lưu trữ này ở <a href="../C11-MemHierarchy/devices.html#_storage_devices">Chương 11</a>.<br />
 Tuy nhiên, trong phạm vi thảo luận này, bản chất của phương tiện lưu trữ không quá quan trọng — dù là tia laser quét bề mặt DVD hay đầu đọc di chuyển trên đĩa từ, thì đầu ra cuối cùng từ thiết bị lưu trữ vẫn là một chuỗi tín hiệu điện.<br />
 Để đơn giản hóa mạch điện, mỗi tín hiệu là <strong>binary</strong> (nhị phân), nghĩa là chỉ có thể ở một trong hai trạng thái: không có điện áp (diễn giải là 0) hoặc có điện áp (diễn giải là 1).<br />
-Chương này sẽ khám phá cách hệ thống mã hóa thông tin thành nhị phân, bất kể phương tiện lưu trữ ban đầu là gì.</p>
+Chương này sẽ khám phá cách hệ thống code hóa thông tin thành nhị phân, bất kể phương tiện lưu trữ ban đầu là gì.</p>
 <p>Trong hệ nhị phân, mỗi tín hiệu tương ứng với một <strong>bit</strong> (binary digit — chữ số nhị phân) thông tin: 0 hoặc 1.<br />
 Có thể bạn sẽ ngạc nhiên khi biết rằng mọi loại dữ liệu đều có thể được biểu diễn chỉ bằng 0 và 1.<br />
 Tất nhiên, khi thông tin phức tạp hơn, số lượng bit cần thiết để biểu diễn nó cũng tăng lên.<br />
@@ -158,7 +158,7 @@ Do đó, việc thêm bit làm tăng <strong>theo cấp số nhân</strong> số
 <p><strong>Hình 1.</strong> Các giá trị có thể biểu diễn với từ 1 đến 4 bit. Các bit được gạch chân thể hiện phần tiền tố được kế thừa từ hàng phía trên.</p>
 <p>Vì một bit đơn lẻ không chứa được nhiều thông tin, các hệ thống lưu trữ thường nhóm nhiều bit lại thành chuỗi dài hơn để lưu trữ giá trị phức tạp hơn.<br />
 Nhóm phổ biến nhất là <strong>byte</strong>, gồm 8 bit.<br />
-Một byte có thể biểu diễn (2^8 = 256) giá trị khác nhau (0–255) — đủ để mã hóa các chữ cái và ký hiệu thông dụng trong tiếng Anh.<br />
+Một byte có thể biểu diễn (2^8 = 256) giá trị khác nhau (0–255) — đủ để code hóa các chữ cái và ký hiệu thông dụng trong tiếng Anh.<br />
 Byte cũng là đơn vị nhỏ nhất có thể định địa chỉ trong bộ nhớ máy tính, nghĩa là chương trình không thể yêu cầu ít hơn 8 bit để lưu một biến.</p>
 <p>Các CPU hiện đại cũng thường định nghĩa <strong>word</strong> là 32 bit hoặc 64 bit, tùy thiết kế phần cứng.<br />
 Kích thước của word xác định kích thước “mặc định” mà phần cứng sử dụng để truyền dữ liệu giữa các thành phần (ví dụ: giữa bộ nhớ và thanh ghi).<br />
@@ -174,7 +174,7 @@ Nhưng cách <strong>diễn giải</strong> chuỗi bit mới là phần thú v�
 Mọi dữ liệu trong bộ nhớ máy tính đều được lưu dưới dạng bit, nhưng bit <strong>không có ý nghĩa cố hữu</strong>.<br />
 Ví dụ, ngay cả với một bit duy nhất, bạn có thể diễn giải hai giá trị của nó theo nhiều cách: lên/xuống, đen/trắng, có/không, bật/tắt, v.v.</p>
 <p>Khi tăng độ dài chuỗi bit, phạm vi diễn giải cũng mở rộng.<br />
-Ví dụ, biến <code>char</code> sử dụng tiêu chuẩn mã hóa <strong>ASCII</strong> (American Standard Code for Information Interchange), định nghĩa cách giá trị nhị phân 8 bit tương ứng với chữ cái và ký hiệu tiếng Anh.<br />
+Ví dụ, biến <code>char</code> sử dụng tiêu chuẩn code hóa <strong>ASCII</strong> (American Standard Code for Information Interchange), định nghĩa cách giá trị nhị phân 8 bit tương ứng với chữ cái và ký hiệu tiếng Anh.<br />
 Bảng 1 cho thấy một phần nhỏ của bảng ASCII (để xem đầy đủ, bạn có thể chạy <code>man ascii</code> trên dòng lệnh).<br />
 Không có lý do đặc biệt nào để ký tự <code>'X'</code> phải tương ứng với <code>01011000</code>, nên bạn không cần ghi nhớ bảng này.<br />
 Điều quan trọng là mọi chương trình lưu trữ chữ cái đều thống nhất cách diễn giải chuỗi bit, và đó là lý do ASCII được định nghĩa bởi một ủy ban tiêu chuẩn.</p>
@@ -185,16 +185,16 @@ Không có lý do đặc biệt nào để ký tự <code>'X'</code> phải tư�
 <tr><td>01011010</td><td>Z</td><td>00100011</td><td>#</td></tr>
 </tbody></table>
 </div>
-<p><strong>Bảng 1.</strong> Một phần nhỏ của bảng mã ASCII 8 bit.</p>
-<p>Bất kỳ loại thông tin nào cũng có thể được mã hóa thành nhị phân, kể cả dữ liệu phức tạp như hình ảnh và âm thanh.<br />
-Ví dụ, giả sử một hệ mã hóa ảnh định nghĩa:<br />
+<p><strong>Bảng 1.</strong> Một phần nhỏ của bảng code ASCII 8 bit.</p>
+<p>Bất kỳ loại thông tin nào cũng có thể được code hóa thành nhị phân, kể cả dữ liệu phức tạp như hình ảnh và âm thanh.<br />
+Ví dụ, giả sử một hệ code hóa ảnh định nghĩa:<br />
 <code>00</code> = trắng, <code>01</code> = cam, <code>10</code> = xanh dương, <code>11</code> = đen.<br />
-Hình 2 minh họa cách ta có thể dùng mã hóa 2 bit này để vẽ một hình con cá đơn giản chỉ với 12 byte.<br />
+Hình 2 minh họa cách ta có thể dùng code hóa 2 bit này để vẽ một hình con cá đơn giản chỉ với 12 byte.<br />
 Ở phần (a), mỗi ô ảnh tương ứng với một chuỗi 2 bit.<br />
-Phần (b) và (c) cho thấy cách mã hóa nhị phân này dưới dạng chuỗi 2 bit và chuỗi byte.</p>
+Phần (b) và (c) cho thấy cách code hóa nhị phân này dưới dạng chuỗi 2 bit và chuỗi byte.</p>
 <p><img src="_images/ImageRepresentation.png" alt="Hình con cá với nền xanh dương (10), mắt trắng (00), đồng tử đen (11), và thân màu cam (01)." /></p>
 <p><strong>Hình 2.</strong> (a) Biểu diễn hình ảnh, (b) biểu diễn theo ô 2 bit, và (c) biểu diễn theo byte của hình con cá đơn giản.</p>
-<p>Vừa giới thiệu hai cách mã hóa, ta thấy cùng một chuỗi bit <code>01011010</code> có thể được trình soạn thảo văn bản hiểu là ký tự <code>'Z'</code>, nhưng một chương trình đồ họa lại hiểu là một phần đuôi cá.<br />
+<p>Vừa giới thiệu hai cách code hóa, ta thấy cùng một chuỗi bit <code>01011010</code> có thể được trình soạn thảo văn bản hiểu là ký tự <code>'Z'</code>, nhưng một chương trình đồ họa lại hiểu là một phần đuôi cá.<br />
 Cách diễn giải nào đúng phụ thuộc vào <strong>ngữ cảnh</strong>.<br />
 Mặc dù các bit bên dưới là giống nhau, con người thường thấy một số cách diễn giải dễ hiểu hơn (ví dụ: nhìn thấy hình con cá với màu sắc thay vì bảng byte).</p>
 <p>Phần còn lại của chương này sẽ tập trung vào việc biểu diễn và thao tác với <strong>số nhị phân</strong>, nhưng điều quan trọng cần nhớ là:<br />

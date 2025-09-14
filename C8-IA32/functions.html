@@ -210,7 +210,7 @@ int main(void) {
     return 0;
 }
 </code></pre>
-<p>Chúng ta biên dịch code với cờ <code>-m32</code> và dùng <code>objdump -d</code> để xem mã assembly.<br />
+<p>Chúng ta biên dịch code với cờ <code>-m32</code> và dùng <code>objdump -d</code> để xem code assembly.<br />
 Lệnh này xuất ra một file khá lớn với nhiều thông tin không cần thiết.<br />
 Dùng <code>less</code> và chức năng tìm kiếm để trích xuất các hàm <code>adder</code>, <code>assign</code> và <code>main</code>:</p>
 <pre><code class="language-assembly"> 804840d &lt;assign&gt;:

@@ -172,7 +172,7 @@ Pthreads cung cấp một primitive đồng bộ hóa dạng barrier.<br />
 Nếu không có barrier, có thể một thread đã hoàn thành công việc trước khi các thread khác kịp in thông báo bắt đầu.<br />
 Lưu ý rằng <strong>vẫn</strong> có thể xảy ra trường hợp một thread in thông báo hoàn thành công việc trước khi một thread khác thực sự kết thúc.</p>
 <h4 id="condition-variables"><a class="header" href="#condition-variables">Condition Variables</a></h4>
-<p><strong>Condition variable</strong> buộc một thread phải <strong>block</strong> (chặn) cho đến khi một điều kiện cụ thể được thỏa mãn.<br />
+<p><strong>Condition variable</strong> buộc một thread phải <strong>block</strong> (chặn) cho đến khi một điều kiện cụ thể được thỏa coden.<br />
 Cấu trúc này hữu ích trong các tình huống mà một điều kiện phải được đáp ứng trước khi thread thực hiện công việc.<br />
 Nếu không có condition variable, thread sẽ phải liên tục kiểm tra xem điều kiện đã được đáp ứng chưa, gây tốn CPU.</p>
 <p>Condition variable <strong>luôn</strong> được sử dụng cùng với mutex.<br />
@@ -201,7 +201,7 @@ Khác với <code>pthread_cond_wait</code>, hàm <code>pthread_cond_signal</code
 Trong ví dụ sau, chúng ta sử dụng nhiều thread để mô phỏng một nhóm <strong>nông dân</strong> thu thập trứng từ một nhóm <strong>gà</strong>.<br />
 &quot;Chicken&quot; và &quot;Farmer&quot; đại diện cho hai lớp thread riêng biệt.<br />
 Toàn bộ mã nguồn của chương trình này có thể tải tại <a href="_attachments/layeggs.c">layeggs.c</a>.<br />
-Lưu ý rằng đoạn mã liệt kê ở đây đã lược bỏ nhiều phần chú thích/xử lý lỗi để ngắn gọn.</p>
+Lưu ý rằng đoạn code liệt kê ở đây đã lược bỏ nhiều phần chú thích/xử lý lỗi để ngắn gọn.</p>
 <pre><code class="language-c">int main(int argc, char **argv){
     //... declarations omitted for brevity
 
@@ -365,7 +365,7 @@ Vòng lặp <code>while</code> bao quanh lời gọi <code>pthread_cond_wait</co
 Vòng lặp <code>while</code> đảm bảo điều kiện được kiểm tra lại một lần cuối.</p>
 </li>
 <li>
-<p>Hàm <code>pthread_cond_wait</code> có thể gặp <strong>spurious wakeups</strong> — tình huống một thread bị đánh thức <strong>nhầm</strong> ngay cả khi điều kiện chưa được thỏa mãn.</p>
+<p>Hàm <code>pthread_cond_wait</code> có thể gặp <strong>spurious wakeups</strong> — tình huống một thread bị đánh thức <strong>nhầm</strong> ngay cả khi điều kiện chưa được thỏa coden.</p>
 </li>
 </ol>
 <p>Vòng lặp <code>while</code> ở đây chính là một ví dụ của <strong>predicate loop</strong>, buộc phải kiểm tra lại condition variable trước khi nhả mutex.<br />

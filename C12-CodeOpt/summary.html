@@ -137,8 +137,8 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="124-những-điểm-chính-và-tóm-tắt"><a class="header" href="#124-những-điểm-chính-và-tóm-tắt">12.4. Những điểm chính và Tóm tắt</a></h2>
-<p>Hành trình ngắn (và có lẽ hơi gây nản) của chúng ta vào thế giới <strong>code optimization</strong> (tối ưu hóa mã) nên truyền tải một thông điệp rất quan trọng tới người đọc: nếu bạn đang nghĩ đến việc tối ưu mã thủ công, hãy cân nhắc kỹ xem điều gì đáng để bạn bỏ thời gian và điều gì nên để cho trình biên dịch xử lý.<br />
-Dưới đây là một số lời khuyên quan trọng khi bạn muốn cải thiện hiệu năng mã.</p>
+<p>Hành trình ngắn (và có lẽ hơi gây nản) của chúng ta vào thế giới <strong>code optimization</strong> (tối ưu hóa code) nên truyền tải một thông điệp rất quan trọng tới người đọc: nếu bạn đang nghĩ đến việc tối ưu code thủ công, hãy cân nhắc kỹ xem điều gì đáng để bạn bỏ thời gian và điều gì nên để cho trình biên dịch xử lý.<br />
+Dưới đây là một số lời khuyên quan trọng khi bạn muốn cải thiện hiệu năng code.</p>
 <p><strong>Chọn cấu trúc dữ liệu và thuật toán tốt</strong></p>
 <p>Không có gì có thể thay thế việc sử dụng đúng <strong>algorithm</strong> (thuật toán) và <strong>data structure</strong> (cấu trúc dữ liệu); việc không làm như vậy thường là nguyên nhân hàng đầu dẫn đến hiệu năng kém.<br />
 Ví dụ, thuật toán nổi tiếng <strong>Sieve of Eratosthenes</strong> là một cách hiệu quả hơn nhiều để tạo ra các số nguyên tố so với thuật toán tùy chỉnh của chúng ta trong <code>optExample</code>, và mang lại cải thiện hiệu năng đáng kể.<br />
@@ -147,25 +147,25 @@ Ví dụ, thuật toán nổi tiếng <strong>Sieve of Eratosthenes</strong> là
 $ ./genPrimes 5000000
 Found 348513 primes (0.122245 s)
 </code></pre>
-<p>Thuật toán sieve chỉ mất 0,12 giây để tìm tất cả các số nguyên tố từ 2 đến 5 triệu, so với 1,46 giây mà <code>optExample2</code> cần để tạo cùng tập số nguyên tố với cờ tối ưu <code>-O3</code> được bật (nhanh hơn 12×).<br />
+<p>Thuật toán sieve chỉ mất 0,12 giây để tìm tất cả các số nguyên tố từ 2 đến 5 triệu, so với 1,46 giây mà <code>optExample2</code> cần để tạo cùng tập số nguyên tố với optimization flag <code>-O3</code> được bật (nhanh hơn 12×).<br />
 Việc cài đặt thuật toán sieve được để lại như một bài tập cho bạn đọc; tuy nhiên, rõ ràng là việc chọn một thuật toán tốt hơn ngay từ đầu sẽ tiết kiệm hàng giờ tối ưu hóa thủ công. Ví dụ này cho thấy tại sao kiến thức về cấu trúc dữ liệu và thuật toán là nền tảng đối với các nhà khoa học máy tính.</p>
 <p><strong>Sử dụng hàm thư viện chuẩn bất cứ khi nào có thể</strong></p>
 <p>Đừng “phát minh lại bánh xe”. Nếu trong quá trình lập trình bạn cần một hàm thực hiện một tác vụ rất phổ biến (ví dụ: tìm giá trị tuyệt đối, hoặc tìm giá trị lớn nhất/nhỏ nhất trong một danh sách số), hãy dừng lại và kiểm tra xem hàm đó đã tồn tại trong <strong>standard library</strong> (thư viện chuẩn) của ngôn ngữ hay chưa.<br />
 Các hàm trong thư viện chuẩn thường được kiểm thử kỹ và tối ưu hóa cho hiệu năng.<br />
 Ví dụ, nếu bạn tự viết một phiên bản <code>sqrt</code> của riêng mình, trình biên dịch có thể sẽ không biết để tự động thay thế lời gọi hàm đó bằng lệnh <code>fsqrt</code>.</p>
 <p><strong>Tối ưu dựa trên dữ liệu, không dựa trên cảm giác</strong></p>
-<p>Nếu sau khi đã chọn cấu trúc dữ liệu và thuật toán tốt <em>và</em> sử dụng các hàm thư viện chuẩn mà vẫn cần cải thiện hiệu năng, hãy dùng một công cụ <strong>code profiler</strong> (phân tích hiệu năng mã) tốt như Valgrind.<br />
+<p>Nếu sau khi đã chọn cấu trúc dữ liệu và thuật toán tốt <em>và</em> sử dụng các hàm thư viện chuẩn mà vẫn cần cải thiện hiệu năng, hãy dùng một công cụ <strong>code profiler</strong> (phân tích hiệu năng code) tốt như Valgrind.<br />
 Tối ưu hóa <em>không bao giờ</em> nên dựa trên cảm giác. Tập trung quá nhiều vào những gì bạn <em>nghĩ</em> là nên tối ưu (mà không có dữ liệu chứng minh) thường dẫn đến lãng phí thời gian.</p>
-<p><strong>Tách mã phức tạp thành nhiều hàm</strong></p>
-<p>Việc nội tuyến mã thủ công thường không mang lại cải thiện hiệu năng đáng kể so với những gì trình biên dịch hiện đại có thể làm. Thay vào đó, hãy giúp trình biên dịch dễ dàng tối ưu hơn cho bạn.<br />
-Trình biên dịch dễ tối ưu hơn với các đoạn mã ngắn. Việc tách các thao tác phức tạp thành nhiều hàm vừa tăng khả năng đọc mã, vừa giúp trình biên dịch tối ưu dễ hơn.<br />
-Hãy kiểm tra xem trình biên dịch của bạn có tự động thử nội tuyến hay có cờ riêng để thử nội tuyến mã hay không. Tốt hơn hết là để trình biên dịch thực hiện nội tuyến thay vì tự làm thủ công.</p>
-<p><strong>Ưu tiên khả năng đọc mã</strong></p>
-<p>Trong nhiều ứng dụng ngày nay, khả năng đọc mã là ưu tiên hàng đầu. Thực tế là mã được đọc nhiều hơn là được viết.<br />
-Nhiều công ty dành nhiều thời gian đào tạo kỹ sư phần mềm viết mã theo một phong cách nhất định để tối đa hóa khả năng đọc.<br />
-Nếu việc tối ưu mã làm giảm đáng kể khả năng đọc, bạn cần cân nhắc xem cải thiện hiệu năng có xứng đáng với sự đánh đổi đó hay không.<br />
-Ví dụ, nhiều trình biên dịch hiện nay có cờ tối ưu cho phép <strong>loop unrolling</strong> (trải vòng lặp). Lập trình viên nên luôn sử dụng các cờ tối ưu này thay vì tự unroll vòng lặp, vì điều đó có thể làm giảm mạnh khả năng đọc mã.<br />
-Giảm khả năng đọc mã thường làm tăng khả năng xuất hiện lỗi không mong muốn, từ đó có thể dẫn đến lỗ hổng bảo mật.</p>
+<p><strong>Tách code phức tạp thành nhiều hàm</strong></p>
+<p>Việc nội tuyến code thủ công thường không mang lại cải thiện hiệu năng đáng kể so với những gì trình biên dịch hiện đại có thể làm. Thay vào đó, hãy giúp trình biên dịch dễ dàng tối ưu hơn cho bạn.<br />
+Trình biên dịch dễ tối ưu hơn với các đoạn code ngắn. Việc tách các thao tác phức tạp thành nhiều hàm vừa tăng khả năng đọc code, vừa giúp trình biên dịch tối ưu dễ hơn.<br />
+Hãy kiểm tra xem trình biên dịch của bạn có tự động thử nội tuyến hay có cờ riêng để thử nội tuyến code hay không. Tốt hơn hết là để trình biên dịch thực hiện nội tuyến thay vì tự làm thủ công.</p>
+<p><strong>Ưu tiên khả năng đọc code</strong></p>
+<p>Trong nhiều ứng dụng ngày nay, khả năng đọc code là ưu tiên hàng đầu. Thực tế là code được đọc nhiều hơn là được viết.<br />
+Nhiều công ty dành nhiều thời gian đào tạo kỹ sư phần mềm viết code theo một phong cách nhất định để tối đa hóa khả năng đọc.<br />
+Nếu việc tối ưu code làm giảm đáng kể khả năng đọc, bạn cần cân nhắc xem cải thiện hiệu năng có xứng đáng với sự đánh đổi đó hay không.<br />
+Ví dụ, nhiều trình biên dịch hiện nay có optimization flag cho phép <strong>loop unrolling</strong> (trải vòng lặp). Lập trình viên nên luôn sử dụng các optimization flag này thay vì tự unroll vòng lặp, vì điều đó có thể làm giảm mạnh khả năng đọc code.<br />
+Giảm khả năng đọc code thường làm tăng khả năng xuất hiện lỗi không mong muốn, từ đó có thể dẫn đến lỗ hổng bảo mật.</p>
 <p><strong>Chú ý đến việc sử dụng bộ nhớ</strong></p>
 <p>Việc sử dụng bộ nhớ của chương trình thường ảnh hưởng lớn hơn đến thời gian thực thi so với số lượng lệnh mà nó chạy.<br />
 <a href="memory_considerations.html#_loop_interchange">Ví dụ về loop interchange</a> minh họa rõ điều này. Trong cả hai trường hợp, vòng lặp thực thi cùng số lượng lệnh, nhưng thứ tự vòng lặp lại ảnh hưởng đáng kể đến truy cập bộ nhớ và <strong>locality</strong> (tính cục bộ).<br />

@@ -140,7 +140,7 @@
 <p><em>Mutex là gì? Câu trả lời ở ngoài kia, nó đang tìm kiếm bạn, và nó sẽ tìm thấy bạn nếu bạn muốn.</em></p>
 <p>~ Trinity giải thích về mutex cho Neo (Xin lỗi <em>The Matrix</em>)</p>
 <p>Để khắc phục <strong>data race</strong> (tranh chấp dữ liệu), chúng ta sẽ sử dụng một cấu trúc đồng bộ hóa gọi là <strong>mutual exclusion lock</strong> (khóa loại trừ lẫn nhau), hay <strong>mutex</strong>.<br />
-Mutex là một loại <strong>synchronization primitive</strong> (nguyên thủy đồng bộ hóa) đảm bảo rằng tại bất kỳ thời điểm nào, chỉ <strong>một</strong> thread được phép vào và thực thi đoạn mã bên trong <strong>critical section</strong> (vùng tới hạn).</p>
+Mutex là một loại <strong>synchronization primitive</strong> (nguyên thủy đồng bộ hóa) đảm bảo rằng tại bất kỳ thời điểm nào, chỉ <strong>một</strong> thread được phép vào và thực thi đoạn code bên trong <strong>critical section</strong> (vùng tới hạn).</p>
 <p>Trước khi sử dụng mutex, chương trình cần:</p>
 <ol>
 <li><strong>Khai báo</strong> mutex trong vùng nhớ được chia sẻ giữa các thread (thường là biến toàn cục).</li>
@@ -235,7 +235,7 @@ Counts array:
 <p>Hãy nhớ rằng một mục tiêu quan trọng khác của multithreading là <strong>giảm thời gian chạy</strong> của chương trình khi số lượng thread tăng (tức là <em>tăng tốc</em> thực thi).<br />
 Hãy benchmark hiệu năng của hàm <code>countElems</code>.</p>
 <p>Mặc dù có thể bạn muốn dùng lệnh <code>time -p</code>, nhưng hãy nhớ rằng <code>time -p</code> đo <strong>wall-clock time</strong> của <strong>toàn bộ</strong> chương trình (bao gồm cả phần sinh dữ liệu ngẫu nhiên), chứ <strong>không chỉ</strong> thời gian chạy của <code>countElems</code>.<br />
-Trong trường hợp này, tốt hơn là dùng system call <code>gettimeofday</code>, cho phép đo chính xác wall-clock time của một đoạn mã cụ thể.</p>
+Trong trường hợp này, tốt hơn là dùng system call <code>gettimeofday</code>, cho phép đo chính xác wall-clock time của một đoạn code cụ thể.</p>
 <p>Benchmark <code>countElems</code> trên 100 triệu phần tử cho kết quả:</p>
 <pre><code>$ ./countElems_p_v2 100000000 0 1
 Time for Step 1 is 0.368126 s
@@ -449,7 +449,7 @@ Tương tự, Thread 1 cần giữ khóa của <code>acctA</code> — nhưng kh�
 <p>Vì cả hai thread đều <strong>chặn</strong> nhau, chúng rơi vào trạng thái <strong>deadlock</strong>.</p>
 <p><img src="_images/deadlock.png" alt="Two threads deadlocked with each other" /></p>
 <p><strong>Hình 1.</strong> Ví dụ về deadlock</p>
-<p>Mặc dù <strong>OS</strong> (hệ điều hành) cung cấp một số cơ chế bảo vệ chống lại deadlock, lập trình viên vẫn cần cẩn trọng khi viết mã có thể làm tăng khả năng xảy ra deadlock.<br />
+<p>Mặc dù <strong>OS</strong> (hệ điều hành) cung cấp một số cơ chế bảo vệ chống lại deadlock, lập trình viên vẫn cần cẩn trọng khi viết code có thể làm tăng khả năng xảy ra deadlock.<br />
 Ví dụ, kịch bản ở trên có thể tránh được bằng cách <strong>sắp xếp lại</strong> các thao tác khóa sao cho mỗi cặp <strong>lock/unlock</strong> chỉ bao quanh câu lệnh cập nhật số dư tương ứng:</p>
 <pre><code class="language-c">void *Transfer(void *args){
     // bỏ phần truyền tham số để dễ đọc hơn

@@ -156,7 +156,7 @@ struct studentT student;
 <p>Mỗi field được lưu liên tiếp nhau trong bộ nhớ theo đúng thứ tự khai báo.<br />
 Trong Hình 1, field <code>age</code> được cấp phát ngay sau field <code>name</code> (tại byte offset a~64~), tiếp theo là <code>grad_yr</code> (byte offset a~68~) và <code>gpa</code> (byte offset a~72~).<br />
 Cách tổ chức này cho phép truy cập các field một cách hiệu quả về mặt bộ nhớ.</p>
-<p>Để hiểu cách compiler sinh mã assembly làm việc với một <code>struct</code>, hãy xem xét hàm <code>initStudent</code>:</p>
+<p>Để hiểu cách compiler sinh code assembly làm việc với một <code>struct</code>, hãy xem xét hàm <code>initStudent</code>:</p>
 <pre><code class="language-c">void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
     strncpy(s-&gt;name, nm, 64);
     s-&gt;grad_yr = gr;
@@ -166,7 +166,7 @@ Cách tổ chức này cho phép truy cập các field một cách hiệu quả 
 </code></pre>
 <p>Hàm <code>initStudent</code> nhận địa chỉ cơ sở của một <code>struct studentT</code> làm tham số đầu tiên,<br />
 và các giá trị mong muốn cho từng field làm các tham số còn lại.<br />
-Danh sách dưới đây là mã assembly tương ứng của hàm:</p>
+Danh sách dưới đây là code assembly tương ứng của hàm:</p>
 <pre><code>Dump of assembler code for function initStudent:
 0x7f4 &lt;+0&gt;:  stp  x29, x30, [sp, #-48]!  // sp -= 48; lưu x29, x30 tại sp, sp+4
 0x7f8 &lt;+4&gt;:  mov  x29, sp                // x29 = sp (frame pointer = stack pointer)
@@ -191,7 +191,7 @@ Danh sách dưới đây là mã assembly tương ứng của hàm:</p>
 0x844 &lt;+84&gt;: ldp  x29, x30, [sp], #48    // khôi phục x29, x30; sp += 48
 0x848 &lt;+88&gt;: ret                         // return (void)
 </code></pre>
-<p>Việc chú ý đến <strong>byte offset</strong> của từng field là chìa khóa để hiểu đoạn mã này.<br />
+<p>Việc chú ý đến <strong>byte offset</strong> của từng field là chìa khóa để hiểu đoạn code này.<br />
 Dưới đây là một vài điểm cần lưu ý:</p>
 <ul>
 <li>Lời gọi <code>strncpy</code> nhận ba đối số: địa chỉ cơ sở của field <code>name</code> trong <code>s</code>, địa chỉ của mảng <code>nm</code>, và một <strong>length specifier</strong> (chỉ định độ dài).<br />
@@ -209,7 +209,7 @@ Hãy nhớ rằng vì <code>name</code> là field đầu tiên trong <code>struc
 </code></pre>
 <ul>
 <li>
-<p>Đoạn mã trên có sử dụng một thanh ghi chưa được đề cập trước đó (<code>s0</code>). Thanh ghi <code>s0</code> là ví dụ về thanh ghi dành riêng cho giá trị <strong>floating point</strong>.</p>
+<p>Đoạn code trên có sử dụng một thanh ghi chưa được đề cập trước đó (<code>s0</code>). Thanh ghi <code>s0</code> là ví dụ về thanh ghi dành riêng cho giá trị <strong>floating point</strong>.</p>
 </li>
 <li>
 <p>Phần tiếp theo (các lệnh <code>&lt;initStudent+44&gt;</code> đến <code>&lt;initStudent+52&gt;</code>) ghi giá trị của tham số <code>gr</code> vào vị trí cách đầu <code>s</code> 68 byte.<br />
@@ -261,7 +261,7 @@ Byte a~63~ được compiler thêm vào để đáp ứng yêu cầu <strong>mem
 <li>Các kiểu dữ liệu 4 byte (ví dụ: <code>int</code>) phải nằm ở địa chỉ là bội số của 4.</li>
 <li>Các kiểu dữ liệu 64-bit (<code>long</code>, <code>double</code>, và con trỏ) phải nằm ở địa chỉ là bội số của 8.</li>
 </ul>
-<p>Đối với một <code>struct</code>, compiler sẽ thêm các byte trống gọi là <strong>padding</strong> giữa các field để đảm bảo mỗi field thỏa mãn yêu cầu alignment.<br />
+<p>Đối với một <code>struct</code>, compiler sẽ thêm các byte trống gọi là <strong>padding</strong> giữa các field để đảm bảo mỗi field thỏa coden yêu cầu alignment.<br />
 Ví dụ, trong <code>struct</code> ở đoạn code trên, compiler thêm 1 byte padding tại byte a~63~ để đảm bảo field <code>age</code> bắt đầu ở địa chỉ là bội số của 4.<br />
 Các giá trị được <strong>align</strong> đúng trong bộ nhớ có thể được đọc hoặc ghi chỉ với một thao tác, giúp tăng hiệu suất.</p>
 <p>Xem điều gì xảy ra khi <code>struct</code> được định nghĩa như sau:</p>

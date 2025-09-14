@@ -249,9 +249,9 @@ Tùy chọn này hữu ích với các mảng lớn, khi ta muốn chạy chươ
 <p>Thuật toán <strong>CountSort</strong> gồm hai bước chính, và cả hai đều có thể hưởng lợi từ việc song song hóa.<br />
 Trong phần còn lại của chương này, chúng ta sẽ tập trung vào song song hóa <strong>bước 1</strong>, tức hàm <code>countElems</code>.<br />
 Việc song song hóa hàm <code>writeArray</code> được để lại như một bài tập cho người đọc.</p>
-<p>Đoạn mã dưới đây minh họa <strong>lần thử đầu tiên</strong> tạo phiên bản đa luồng của hàm <code>countElems</code>.<br />
-Một số phần của mã (phân tích tham số, xử lý lỗi) được lược bỏ để ngắn gọn, nhưng bạn có thể tải toàn bộ mã nguồn tại: <a href="_attachments/countElems_p.c">countElems_p.c</a>.</p>
-<p>Trong đoạn mã này, mỗi thread sẽ đếm tần suất xuất hiện của các phần tử trong <strong>phần mảng</strong> được gán cho nó từ mảng toàn cục, và cập nhật vào mảng đếm toàn cục <code>counts</code>:</p>
+<p>Đoạn code dưới đây minh họa <strong>lần thử đầu tiên</strong> tạo phiên bản đa luồng của hàm <code>countElems</code>.<br />
+Một số phần của code (phân tích tham số, xử lý lỗi) được lược bỏ để ngắn gọn, nhưng bạn có thể tải toàn bộ mã nguồn tại: <a href="_attachments/countElems_p.c">countElems_p.c</a>.</p>
+<p>Trong đoạn code này, mỗi thread sẽ đếm tần suất xuất hiện của các phần tử trong <strong>phần mảng</strong> được gán cho nó từ mảng toàn cục, và cập nhật vào mảng đếm toàn cục <code>counts</code>:</p>
 <pre><code class="language-c">/*parallel version of step 1 (first cut) of CountSort algorithm:
  * extracts arguments from args value
  * calculates the portion of the array that thread is responsible for counting
@@ -420,8 +420,8 @@ Xem ví dụ trình tự thực thi của Thread 0 và Thread 1 trong Bảng 2.<
 <p><strong>Bảng 2.</strong> Một trình tự thực thi khác của hai thread khi chạy <code>countElems</code></p>
 <p>Trong trình tự này, Thread 1 <strong>không</strong> đọc <code>counts[1]</code> cho đến <strong>sau</strong> khi Thread 0 đã cập nhật giá trị mới (61).<br />
 Kết quả là Thread 1 đọc giá trị 61 từ <code>counts[1]</code> và đưa vào thanh ghi của Core 1 tại thời điểm <em>i+3</em>, sau đó ghi giá trị 62 vào <code>counts[1]</code> tại thời điểm <em>i+5</em>.</p>
-<p>Để khắc phục <strong>data race</strong>, trước tiên chúng ta phải xác định <strong>critical section</strong> — phần mã cần được thực thi <strong>atomic</strong> (cô lập) để đảm bảo hành vi đúng.<br />
-Trong các chương trình đa luồng, các khối mã cập nhật tài nguyên chia sẻ thường được xác định là critical section.</p>
+<p>Để khắc phục <strong>data race</strong>, trước tiên chúng ta phải xác định <strong>critical section</strong> — phần code cần được thực thi <strong>atomic</strong> (cô lập) để đảm bảo hành vi đúng.<br />
+Trong các chương trình đa luồng, các khối code cập nhật tài nguyên chia sẻ thường được xác định là critical section.</p>
 <p>Trong hàm <code>countElems</code>, các thao tác cập nhật mảng <code>counts</code> cần được đặt trong critical section để đảm bảo giá trị không bị mất do nhiều thread cùng cập nhật một vị trí bộ nhớ:</p>
 <pre><code class="language-c">long i;
 for (i = start; i &lt; end; i++) {

@@ -177,7 +177,7 @@ M3 = malloc(ROWS * COLS * sizeof(int));
     return total;
 }
 </code></pre>
-<p>Dưới đây là mã assembly tương ứng. Mỗi dòng đều được chú thích bằng tiếng Việt:</p>
+<p>Dưới đây là code assembly tương ứng. Mỗi dòng đều được chú thích bằng tiếng Việt:</p>
 <pre><code>Dump of assembler code for function sumMat:
 0x400686 &lt;+0&gt;:   push %rbp                 # lưu rbp
 0x400687 &lt;+1&gt;:   mov  %rsp,%rbp            # cập nhật rbp (stack frame mới)
@@ -279,7 +279,7 @@ M3 = malloc(ROWS * COLS * sizeof(int));
 0x40072f &lt;+65&gt;:  movsl
 </code></pre>
 <p>Một lần nữa, các biến <code>i</code>, <code>j</code> và <code>total</code> lần lượt nằm tại các địa chỉ stack <code>%rbp-0xc</code>, <code>%rbp-0x8</code> và <code>%rbp-0x4</code>. Các tham số đầu vào <code>matrix</code>, <code>row</code> và <code>cols</code> lần lượt nằm tại các địa chỉ stack <code>%rbp-0x18</code>, <code>%rbp-0x1c</code> và <code>%rbp-0x20</code>.<br />
-Hãy phóng to vào đoạn mã xử lý riêng việc truy cập phần tử (<em>i</em>, <em>j</em>), hay <code>matrix[i][j]</code>:</p>
+Hãy phóng to vào đoạn code xử lý riêng việc truy cập phần tử (<em>i</em>, <em>j</em>), hay <code>matrix[i][j]</code>:</p>
 <pre><code>0x400715 &lt;+39&gt;: mov  -0xc(%rbp),%eax       # copy i to %eax
 0x400718 &lt;+42&gt;: cltq                       # convert i to 64-bit integer
 0x40071a &lt;+44&gt;: lea  0x0(,%rax,8),%rdx     # multiply i by 8, place in %rdx

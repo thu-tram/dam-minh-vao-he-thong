@@ -153,7 +153,7 @@ Tuy nhiên, vòng lặp cho phép <strong>các lệnh được thực thi lặp 
     return total;
 }
 </code></pre>
-<p>Khi biên dịch đoạn code này với tùy chọn <code>-m32</code> và dùng GDB để disassemble, ta thu được mã assembly sau:</p>
+<p>Khi biên dịch đoạn code này với tùy chọn <code>-m32</code> và dùng GDB để disassemble, ta thu được code assembly sau:</p>
 <pre><code class="language-asm">(gdb) disas sumUp
 Dump of assembler code for function sumUp:
   0x804840b &lt;+0&gt;:   push   %ebp
@@ -208,7 +208,7 @@ Tham số đầu vào <code>n</code> của hàm <code>sumUp</code> nằm tại <
 </ul>
 </li>
 </ul>
-<p>Nếu điều kiện <code>i &lt;= n</code> <strong>không</strong> thỏa mãn, <code>total</code> sẽ được đưa vào thanh ghi trả về <code>%eax</code> và hàm kết thúc.</p>
+<p>Nếu điều kiện <code>i &lt;= n</code> <strong>không</strong> thỏa coden, <code>total</code> sẽ được đưa vào thanh ghi trả về <code>%eax</code> và hàm kết thúc.</p>
 <h4 id="bảng-so-sánh-assembly-và-dạng-c-dùng-goto"><a class="header" href="#bảng-so-sánh-assembly-và-dạng-c-dùng-goto"><strong>Bảng so sánh Assembly và dạng C dùng goto</strong></a></h4>
 <p><strong>Assembly</strong></p>
 <pre><code class="language-asm">&lt;sumUp&gt;:
@@ -268,8 +268,8 @@ start:
     return total;
 }
 </code></pre>
-<p>Phiên bản này tạo ra mã assembly <strong>giống hệt</strong> với ví dụ vòng lặp <code>while</code>.<br />
-Dưới đây là mã assembly và chú thích từng dòng:</p>
+<p>Phiên bản này tạo ra code assembly <strong>giống hệt</strong> với ví dụ vòng lặp <code>while</code>.<br />
+Dưới đây là code assembly và chú thích từng dòng:</p>
 <pre><code class="language-asm">0x8048438 &lt;+0&gt;:  push   %ebp                  # lưu ebp
 0x8048439 &lt;+1&gt;:  mov    %esp,%ebp             # cập nhật ebp (tạo stack frame mới)
 0x804843b &lt;+3&gt;:  sub    $0x10,%esp            # cấp phát 16 byte cho stack frame
@@ -286,7 +286,7 @@ Dưới đây là mã assembly và chú thích từng dòng:</p>
 0x8048463 &lt;+43&gt;: leave                        # chuẩn bị thoát hàm
 0x8048464 &lt;+44&gt;: ret                          # trả về total
 </code></pre>
-<p>Để hiểu tại sao phiên bản <code>for</code> tạo ra mã assembly giống hệt với phiên bản <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
+<p>Để hiểu tại sao phiên bản <code>for</code> tạo ra code assembly giống hệt với phiên bản <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
 <pre><code class="language-c">for (&lt;khởi tạo&gt;; &lt;biểu thức điều kiện&gt;; &lt;bước lặp&gt;) {
     &lt;thân vòng lặp&gt;
 }

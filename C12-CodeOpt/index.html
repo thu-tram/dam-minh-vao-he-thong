@@ -136,31 +136,31 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="12-tối-ưu-hóa-mã-code-optimization"><a class="header" href="#12-tối-ưu-hóa-mã-code-optimization">12. Tối ưu hóa mã (Code Optimization)</a></h2>
-<p><strong>Code optimization</strong> (tối ưu hóa mã) là quá trình cải thiện một chương trình bằng cách giảm kích thước mã, độ phức tạp, mức sử dụng bộ nhớ hoặc thời gian chạy (hoặc kết hợp các yếu tố này) mà không thay đổi chức năng vốn có của chương trình.<br />
-Nhiều hệ thống biên dịch bao gồm một <strong>code optimizer</strong> (bộ tối ưu mã) như một bước trung gian. Cụ thể, một <strong>optimizing compiler</strong> (trình biên dịch tối ưu) sẽ áp dụng các phép biến đổi cải thiện mã như một phần của quá trình biên dịch. Hầu như tất cả các trình biên dịch hiện đại (bao gồm GCC) đều là optimizing compiler.<br />
-Trình biên dịch C của GCC triển khai nhiều <strong>optimization flag</strong> (cờ tối ưu hóa) cho phép lập trình viên truy cập trực tiếp một tập con các tối ưu hóa đã được triển khai. Các cờ tối ưu hóa này giúp tối ưu mã nhưng phải đánh đổi với thời gian biên dịch và khả năng gỡ lỗi.<br />
-Để đơn giản, GCC gói một tập con các cờ tối ưu hóa này thành các <strong>optimization level</strong> (mức tối ưu hóa) khác nhau mà lập trình viên có thể gọi trực tiếp. Ví dụ, lệnh sau biên dịch một chương trình mẫu với mức tối ưu hóa cấp 1:</p>
+                        <h2 id="12-tối-ưu-hóa-code-code-optimization"><a class="header" href="#12-tối-ưu-hóa-code-code-optimization">12. Tối ưu hóa code (Code Optimization)</a></h2>
+<p><strong>Code optimization</strong> (tối ưu hóa code) là quá trình cải thiện một chương trình bằng cách giảm kích thước code, độ phức tạp, mức sử dụng bộ nhớ hoặc thời gian chạy (hoặc kết hợp các yếu tố này) mà không thay đổi chức năng vốn có của chương trình.<br />
+Nhiều hệ thống biên dịch bao gồm một <strong>code optimizer</strong> (bộ tối ưu code) như một bước trung gian. Cụ thể, một <strong>optimizing compiler</strong> (trình biên dịch tối ưu) sẽ áp dụng các phép biến đổi cải thiện code như một phần của quá trình biên dịch. Hầu như tất cả các trình biên dịch hiện đại (bao gồm GCC) đều là optimizing compiler.<br />
+Trình biên dịch C của GCC triển khai nhiều <strong>optimization flag</strong> (optimization flag hóa) cho phép lập trình viên truy cập trực tiếp một tập con các tối ưu hóa đã được triển khai. Các optimization flag hóa này giúp tối ưu code nhưng phải đánh đổi với thời gian biên dịch và khả năng gỡ lỗi.<br />
+Để đơn giản, GCC gói một tập con các optimization flag hóa này thành các <strong>optimization level</strong> (mức tối ưu hóa) khác nhau mà lập trình viên có thể gọi trực tiếp. Ví dụ, lệnh sau biên dịch một chương trình mẫu với mức tối ưu hóa cấp 1:</p>
 <pre><code class="language-bash">$ gcc -O1 -o program program.c
 </code></pre>
-<p>Mức tối ưu hóa 1 (<code>-O1</code> hoặc <code>-O</code>) trong GCC thực hiện các tối ưu hóa cơ bản để giảm kích thước mã và thời gian thực thi, đồng thời cố gắng giữ thời gian biên dịch ở mức tối thiểu.<br />
+<p>Mức tối ưu hóa 1 (<code>-O1</code> hoặc <code>-O</code>) trong GCC thực hiện các tối ưu hóa cơ bản để giảm kích thước code và thời gian thực thi, đồng thời cố gắng giữ thời gian biên dịch ở mức tối thiểu.<br />
 Mức tối ưu hóa 2 (<code>-O2</code>) bao gồm hầu hết các tối ưu hóa đã được GCC triển khai mà không liên quan đến sự đánh đổi giữa dung lượng và hiệu năng.<br />
 Cuối cùng, mức tối ưu hóa 3 (<code>-O3</code>) thực hiện thêm các tối ưu hóa bổ sung (chẳng hạn như <strong>function inlining</strong> — nội tuyến hàm, sẽ được thảo luận sau trong chương này) và có thể khiến chương trình mất nhiều thời gian biên dịch hơn đáng kể.<br />
-<a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">Tài liệu GCC</a> mô tả chi tiết các cờ tối ưu hóa đã được triển khai.</p>
+<a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">Tài liệu GCC</a> mô tả chi tiết các optimization flag hóa đã được triển khai.</p>
 <p>Việc thảo luận chi tiết về optimizing compiler và cách xây dựng, vận hành của chúng nằm ngoài phạm vi của cuốn sách này; chúng tôi khuyến khích bạn đọc quan tâm tìm hiểu cuốn sách kinh điển <em>Compilers: Principles, Techniques, and Tools</em> của Aho, Sethi và Ullman.<br />
-Mục đích của chương này là làm nổi bật một số điều mà hầu hết các trình biên dịch có thể (và không thể) làm, cũng như cách lập trình viên có thể phối hợp với trình biên dịch và các công cụ profiling để giúp cải thiện mã của mình.</p>
+Mục đích của chương này là làm nổi bật một số điều mà hầu hết các trình biên dịch có thể (và không thể) làm, cũng như cách lập trình viên có thể phối hợp với trình biên dịch và các công cụ profiling để giúp cải thiện code của mình.</p>
 <h3 id="những-gì-trình-biên-dịch-đã-làm-sẵn"><a class="header" href="#những-gì-trình-biên-dịch-đã-làm-sẵn">Những gì trình biên dịch đã làm sẵn</a></h3>
 <p>Một số tối ưu hóa phổ biến được hầu hết mọi trình biên dịch thực hiện sẽ được mô tả ngắn gọn trong các phần tiếp theo.<br />
 Sinh viên <em>không bao giờ</em> nên tự tay triển khai các tối ưu hóa này, vì chúng đã được trình biên dịch thực hiện sẵn.</p>
 <p><strong>Constant Folding</strong> (gộp hằng)</p>
-<p>:   Các hằng số trong mã được tính toán ngay tại thời điểm biên dịch để giảm số lượng lệnh sinh ra.<br />
-Ví dụ, trong đoạn mã dưới đây, <strong>macro expansion</strong> (mở rộng macro) thay câu lệnh <code>int debug = N-5</code> bằng <code>int debug = 5-5</code>. Sau đó, <strong>constant folding</strong> cập nhật câu lệnh này thành <code>int debug = 0</code>.</p>
+<p>:   Các hằng số trong code được tính toán ngay tại thời điểm biên dịch để giảm số lượng lệnh sinh ra.<br />
+Ví dụ, trong đoạn code dưới đây, <strong>macro expansion</strong> (mở rộng macro) thay câu lệnh <code>int debug = N-5</code> bằng <code>int debug = 5-5</code>. Sau đó, <strong>constant folding</strong> cập nhật câu lệnh này thành <code>int debug = 0</code>.</p>
 <pre><code class="language-c">#define N 5
 int debug = N - 5; // constant folding thay đổi câu lệnh này thành debug = 0;
 </code></pre>
 <p><strong>Constant Propagation</strong> (truyền hằng)</p>
 <p>:   <strong>Constant propagation</strong> thay thế biến bằng một giá trị hằng nếu giá trị đó được biết tại thời điểm biên dịch.<br />
-Xem đoạn mã sau:</p>
+Xem đoạn code sau:</p>
 <pre><code class="language-c">int debug = 0;
 
 // sums up all the elements in an array
@@ -176,12 +176,12 @@ int doubleSum(int *array, int length){
 }
 </code></pre>
 <p>Một trình biên dịch áp dụng constant propagation sẽ thay <code>if (debug)</code> thành <code>if (0)</code>.</p>
-<p><strong>Dead Code Elimination</strong> (loại bỏ mã chết)</p>
+<p><strong>Dead Code Elimination</strong> (loại bỏ code chết)</p>
 <p>:   Không hiếm khi một chương trình chứa các biến, phép gán hoặc câu lệnh không được sử dụng.<br />
 Mặc dù các câu lệnh không cần thiết này hiếm khi được đưa vào một cách cố ý, nhưng chúng thường là sản phẩm phụ tự nhiên của quá trình phát triển và tinh chỉnh phần mềm liên tục.<br />
-Nếu không được phát hiện, các đoạn mã gọi là <strong>dead code</strong> này có thể khiến trình biên dịch sinh ra các lệnh assembly không cần thiết, từ đó lãng phí thời gian xử lý.<br />
-Hầu hết các trình biên dịch sử dụng các kỹ thuật như <strong>dataflow analysis</strong> (phân tích luồng dữ liệu) để xác định các đoạn mã không thể truy cập và loại bỏ chúng.<br />
-<strong>Dead code elimination</strong> thường giúp chương trình chạy nhanh hơn bằng cách thu nhỏ kích thước mã và tập lệnh liên quan.<br />
+Nếu không được phát hiện, các đoạn code gọi là <strong>dead code</strong> này có thể khiến trình biên dịch sinh ra các lệnh assembly không cần thiết, từ đó lãng phí thời gian xử lý.<br />
+Hầu hết các trình biên dịch sử dụng các kỹ thuật như <strong>dataflow analysis</strong> (phân tích luồng dữ liệu) để xác định các đoạn code không thể truy cập và loại bỏ chúng.<br />
+<strong>Dead code elimination</strong> thường giúp chương trình chạy nhanh hơn bằng cách thu nhỏ kích thước code và tập lệnh liên quan.<br />
 Ví dụ, hãy xem lại hàm <code>doubleSum</code> trong đó trình biên dịch đã áp dụng constant propagation để thay <code>debug</code> bằng <code>0</code> trong câu lệnh <code>if</code>:</p>
 <pre><code class="language-c">int debug = 0;
 
@@ -217,24 +217,24 @@ int doubleSum(int *array, int length){
     return total + total; //simplifying expression
 }
 </code></pre>
-<p>Tương tự, trình biên dịch cũng sẽ biến đổi các đoạn mã sử dụng <strong>bit-shifting</strong> (dịch bit) và các toán tử bitwise khác để đơn giản hóa biểu thức.<br />
+<p>Tương tự, trình biên dịch cũng sẽ biến đổi các đoạn code sử dụng <strong>bit-shifting</strong> (dịch bit) và các toán tử bitwise khác để đơn giản hóa biểu thức.<br />
 Ví dụ, trình biên dịch có thể thay biểu thức <code>total * 8</code> bằng <code>total &lt;&lt; 3</code>, hoặc thay biểu thức <code>total % 8</code> bằng <code>total &amp; 7</code>, vì các phép toán bitwise được thực hiện chỉ với một lệnh nhanh duy nhất.</p>
-<h3 id="những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-mã"><a class="header" href="#những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-mã">Những gì trình biên dịch không phải lúc nào cũng làm được: Lợi ích của việc học tối ưu hóa mã</a></h3>
-<p>Với những lợi ích mà <strong>optimizing compiler</strong> (trình biên dịch tối ưu) mang lại, có thể sẽ không rõ ràng ngay lập tức tại sao việc học tối ưu hóa mã lại hữu ích.<br />
-Bạn có thể dễ dàng nghĩ về trình biên dịch như một “hộp đen” thông minh kỳ diệu. Nhưng cuối cùng, trình biên dịch cũng chỉ là một phần mềm thực hiện một loạt các phép biến đổi mã nhằm tăng tốc độ chạy.<br />
+<h3 id="những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-code"><a class="header" href="#những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-code">Những gì trình biên dịch không phải lúc nào cũng làm được: Lợi ích của việc học tối ưu hóa code</a></h3>
+<p>Với những lợi ích mà <strong>optimizing compiler</strong> (trình biên dịch tối ưu) mang lại, có thể sẽ không rõ ràng ngay lập tức tại sao việc học tối ưu hóa code lại hữu ích.<br />
+Bạn có thể dễ dàng nghĩ về trình biên dịch như một “hộp đen” thông minh kỳ diệu. Nhưng cuối cùng, trình biên dịch cũng chỉ là một phần mềm thực hiện một loạt các phép biến đổi code nhằm tăng tốc độ chạy.<br />
 Trình biên dịch cũng bị giới hạn trong các loại tối ưu hóa mà nó có thể thực hiện.</p>
 <p><strong>Algorithmic Strength Reduction Is Impossible</strong> (Không thể giảm độ phức tạp thuật toán một cách tự động)</p>
 <p>:   Nguyên nhân hàng đầu dẫn đến hiệu năng kém là do lựa chọn sai <strong>data structure</strong> (cấu trúc dữ liệu) và <strong>algorithm</strong> (thuật toán).<br />
 Trình biên dịch không thể “phép màu” sửa chữa những quyết định sai này.<br />
 Ví dụ, một trình biên dịch sẽ không bao giờ tối ưu một chương trình đang cài đặt <strong>bubble sort</strong> thành một chương trình dùng <strong>quick sort</strong>.<br />
 Mặc dù độ tinh vi của trình biên dịch và các tối ưu hóa của nó ngày càng được cải thiện, nhưng <em>chất lượng</em> tối ưu hóa của từng trình biên dịch cụ thể vẫn khác nhau giữa các nền tảng.<br />
-Do đó, trách nhiệm thuộc về lập trình viên trong việc đảm bảo mã của mình sử dụng các thuật toán và cấu trúc dữ liệu tốt nhất.</p>
+Do đó, trách nhiệm thuộc về lập trình viên trong việc đảm bảo code của mình sử dụng các thuật toán và cấu trúc dữ liệu tốt nhất.</p>
 <p><strong>Compiler Optimization Flags Are Not Guaranteed to Make Code &quot;Optimal&quot; (or Consistent)</strong><br />
-(Các cờ tối ưu hóa của trình biên dịch không đảm bảo mã sẽ “tối ưu” hoặc nhất quán)</p>
+(Các optimization flag hóa của trình biên dịch không đảm bảo code sẽ “tối ưu” hoặc nhất quán)</p>
 <p>:   Việc tăng mức tối ưu hóa của trình biên dịch (ví dụ: từ <code>-O2</code> lên <code>-O3</code>) không phải lúc nào cũng làm giảm thời gian chạy của chương trình.<br />
-Đôi khi, lập trình viên có thể phát hiện rằng việc nâng cờ tối ưu từ <code>-O2</code> lên <code>-O3</code> lại <em>làm chậm</em> chương trình, hoặc không mang lại cải thiện hiệu năng nào.<br />
-Trong một số trường hợp khác, lập trình viên có thể thấy rằng chương trình biên dịch <strong>không</strong> dùng cờ tối ưu thì chạy bình thường, nhưng khi biên dịch với <code>-O2</code> hoặc <code>-O3</code> lại gây ra <strong>segmentation fault</strong> hoặc lỗi khác.<br />
-Những lỗi lập trình kiểu này đặc biệt khó gỡ, vì cờ debug (<code>-g</code>) của GCC không tương thích với các cờ tối ưu (<code>-O</code>), do các phép biến đổi mà trình biên dịch thực hiện ở các mức <code>-O</code> gây cản trở khả năng phân tích mã của <strong>debugger</strong>.<br />
+Đôi khi, lập trình viên có thể phát hiện rằng việc nâng optimization flag từ <code>-O2</code> lên <code>-O3</code> lại <em>làm chậm</em> chương trình, hoặc không mang lại cải thiện hiệu năng nào.<br />
+Trong một số trường hợp khác, lập trình viên có thể thấy rằng chương trình biên dịch <strong>không</strong> dùng optimization flag thì chạy bình thường, nhưng khi biên dịch với <code>-O2</code> hoặc <code>-O3</code> lại gây ra <strong>segmentation fault</strong> hoặc lỗi khác.<br />
+Những lỗi lập trình kiểu này đặc biệt khó gỡ, vì cờ debug (<code>-g</code>) của GCC không tương thích với các optimization flag (<code>-O</code>), do các phép biến đổi mà trình biên dịch thực hiện ở các mức <code>-O</code> gây cản trở khả năng phân tích code của <strong>debugger</strong>.<br />
 Cờ <code>-g</code> lại là yêu cầu bắt buộc của nhiều công cụ profiling phổ biến như GDB và Valgrind.</p>
 <p>Một nguyên nhân lớn gây ra hành vi không nhất quán là do tiêu chuẩn C/C++ không đưa ra hướng dẫn rõ ràng về cách xử lý <strong>undefined behavior</strong> (hành vi không xác định).<br />
 Kết quả là, thường thì trình biên dịch sẽ tự quyết định cách xử lý sự mơ hồ này.<br />
@@ -247,15 +247,15 @@ Xem ví dụ sau từ John Regehr¹:</p>
 <p>Giả sử <code>silly</code> được chạy với <code>a = INT_MAX</code>. Trong trường hợp này, phép tính <code>a + 1</code> gây <strong>integer overflow</strong> (tràn số nguyên).<br />
 Tuy nhiên, tiêu chuẩn C/C++ không định nghĩa <em>cách</em> trình biên dịch phải xử lý tràn số nguyên.<br />
 Thực tế, biên dịch chương trình <strong>không</strong> dùng tối ưu hóa khiến hàm trả về 0, trong khi biên dịch với tối ưu hóa <code>-O3</code> lại khiến hàm trả về 1.</p>
-<p>Tóm lại, các cờ tối ưu hóa nên được sử dụng một cách thận trọng, có cân nhắc và khi thật sự cần thiết.<br />
-Việc hiểu rõ cờ tối ưu nào nên dùng cũng giúp lập trình viên <strong>hợp tác</strong> với trình biên dịch thay vì “đối đầu” với nó.</p>
+<p>Tóm lại, các optimization flag hóa nên được sử dụng một cách thận trọng, có cân nhắc và khi thật sự cần thiết.<br />
+Việc hiểu rõ optimization flag nào nên dùng cũng giúp lập trình viên <strong>hợp tác</strong> với trình biên dịch thay vì “đối đầu” với nó.</p>
 <blockquote>
 <p><strong>The compiler is not required to handle undefined behavior</strong><br />
 Hàm <code>silly</code> khi chạy với <code>a = INT_MAX</code> là một ví dụ về undefined behavior.<br />
-Lưu ý rằng kết quả không nhất quán do trình biên dịch tạo ra <strong>không</strong> phải là lỗi thiết kế của trình biên dịch hay là hậu quả của việc dùng cờ tối ưu hóa.<br />
+Lưu ý rằng kết quả không nhất quán do trình biên dịch tạo ra <strong>không</strong> phải là lỗi thiết kế của trình biên dịch hay là hậu quả của việc dùng optimization flag hóa.<br />
 Trình biên dịch được thiết kế để tuân theo <strong>specification</strong> (đặc tả) của ngôn ngữ.<br />
 Tiêu chuẩn ngôn ngữ C không quy định trình biên dịch phải làm gì khi gặp undefined behavior; chương trình có thể bị crash, không biên dịch được, hoặc tạo ra kết quả không nhất quán hoặc sai.<br />
-Cuối cùng, lập trình viên phải chịu trách nhiệm phát hiện và loại bỏ undefined behavior trong mã.<br />
+Cuối cùng, lập trình viên phải chịu trách nhiệm phát hiện và loại bỏ undefined behavior trong code.<br />
 Việc <code>silly</code> nên trả về 0, 1 hay giá trị khác là quyết định mà lập trình viên phải đưa ra.<br />
 Để tìm hiểu thêm về undefined behavior và các vấn đề liên quan trong C, hãy xem <strong>C FAQ²</strong> hoặc blog của John Regehr¹.</p>
 </blockquote>
@@ -290,7 +290,7 @@ Vì vậy, nếu <code>shiftAdd</code> được truyền vào hai số nguyên 5
 }
 </code></pre>
 <p><strong>Bảng 1.</strong> So sánh hai hàm nhân số thứ nhất với 10 và cộng số thứ hai vào. Có tại <a href="_attachments/shiftadd.c">liên kết này</a>.</p>
-<p>Hàm <code>shiftAddOpt</code> tối ưu hàm <code>shiftAdd</code> bằng cách loại bỏ một lần truy cập bộ nhớ bổ sung tới <code>a</code>, dẫn đến tập lệnh nhỏ hơn trong mã assembly đã biên dịch.<br />
+<p>Hàm <code>shiftAddOpt</code> tối ưu hàm <code>shiftAdd</code> bằng cách loại bỏ một lần truy cập bộ nhớ bổ sung tới <code>a</code>, dẫn đến tập lệnh nhỏ hơn trong code assembly đã biên dịch.<br />
 Tuy nhiên, trình biên dịch sẽ <strong>không bao giờ</strong> tự thực hiện tối ưu hóa này do rủi ro <strong>memory aliasing</strong> (trùng địa chỉ bộ nhớ).<br />
 Để hiểu lý do, hãy xem xét hàm <code>main</code> sau:</p>
 <pre><code class="language-c">int main(void){
@@ -326,7 +326,7 @@ shiftAddOpt produces: 56
 }
 </code></pre>
 <p>Kết quả mong đợi là <strong>55</strong>.<br />
-Tuy nhiên, khi biên dịch và chạy lại mã đã cập nhật, ta nhận được <strong>hai kết quả khác nhau</strong>:</p>
+Tuy nhiên, khi biên dịch và chạy lại code đã cập nhật, ta nhận được <strong>hai kết quả khác nhau</strong>:</p>
 <pre><code class="language-bash">$ gcc -o shiftadd shiftadd.c
 $ ./shiftadd
 shiftAdd produces: 100
@@ -352,7 +352,7 @@ Thay thế tham số thứ hai bằng một số nguyên sẽ loại bỏ rủi 
 <p><strong>Bảng 2.</strong> Các hàm đã cải tiến, nhân số thứ nhất với 10 và cộng số thứ hai vào. Có tại <a href="_attachments/shiftadd.c">liên kết này</a>.</p>
 <p>Việc loại bỏ truy cập bộ nhớ không cần thiết giúp lập trình viên giữ nguyên khả năng đọc của hàm <code>shiftAdd</code> gốc, đồng thời cho phép trình biên dịch tối ưu hàm.</p>
 <h3 id="hợp-tác-với-trình-biên-dịch-một-chương-trình-mẫu"><a class="header" href="#hợp-tác-với-trình-biên-dịch-một-chương-trình-mẫu">Hợp tác với trình biên dịch: Một chương trình mẫu</a></h3>
-<p>Trong các phần tiếp theo, chúng ta sẽ tập trung tìm hiểu thêm về các loại tối ưu hóa phổ biến và thảo luận các chiến lược lập trình, profiling để giúp trình biên dịch dễ dàng tối ưu mã hơn.<br />
+<p>Trong các phần tiếp theo, chúng ta sẽ tập trung tìm hiểu thêm về các loại tối ưu hóa phổ biến và thảo luận các chiến lược lập trình, profiling để giúp trình biên dịch dễ dàng tối ưu code hơn.<br />
 Để dẫn dắt nội dung, chúng ta sẽ cùng tối ưu chương trình sau (được viết chưa tối ưu) nhằm tìm tất cả các số nguyên tố từ 2 đến <em>n</em> (mã nguồn có tại <a href="_attachments/optExample.c">liên kết này</a>).</p>
 <pre><code class="language-c">//helper function: checks to see if a number is prime
 int isPrime(int x) {
@@ -398,7 +398,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 </code></pre>
-<p><strong>Bảng 3</strong> cho thấy kết quả đo thời gian để tạo ra các số nguyên tố từ 2 đến 5.000.000 với các cờ tối ưu hóa khác nhau, sử dụng lệnh biên dịch cơ bản sau:</p>
+<p><strong>Bảng 3</strong> cho thấy kết quả đo thời gian để tạo ra các số nguyên tố từ 2 đến 5.000.000 với các optimization flag hóa khác nhau, sử dụng lệnh biên dịch cơ bản sau:</p>
 <pre><code class="language-bash">$ gcc -o optExample optExample.c -lm
 </code></pre>
 <h4 id="kết-quả-thời-gian-giây"><a class="header" href="#kết-quả-thời-gian-giây">Kết quả thời gian (giây)</a></h4>
@@ -407,8 +407,8 @@ int main(int argc, char **argv) {
 </tbody></table>
 </div>
 <p><strong>Bảng 3.</strong> Thời gian (giây) để tạo các số nguyên tố từ 2 đến 5.000.000</p>
-<p>Thời gian nhanh nhất quan sát được khi dùng cờ tối ưu hóa là khoảng <strong>2,14 giây</strong>.<br />
-Mặc dù việc sử dụng các cờ tối ưu hóa giúp giảm hơn một giây so với thời gian chạy ban đầu của chương trình, nhưng việc tăng mức tối ưu hóa chỉ mang lại cải thiện rất nhỏ.<br />
+<p>Thời gian nhanh nhất quan sát được khi dùng optimization flag hóa là khoảng <strong>2,14 giây</strong>.<br />
+Mặc dù việc sử dụng các optimization flag hóa giúp giảm hơn một giây so với thời gian chạy ban đầu của chương trình, nhưng việc tăng mức tối ưu hóa chỉ mang lại cải thiện rất nhỏ.<br />
 Trong các phần tiếp theo, chúng ta sẽ thảo luận cách có thể chỉnh sửa chương trình để giúp trình biên dịch dễ dàng tối ưu hơn.</p>
 <h3 id="tài-liệu-tham-khảo"><a class="header" href="#tài-liệu-tham-khảo">Tài liệu tham khảo</a></h3>
 <ol>

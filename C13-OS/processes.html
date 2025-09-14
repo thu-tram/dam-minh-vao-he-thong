@@ -140,7 +140,7 @@
 <p>Một trong những <strong>abstraction</strong> (trừu tượng hóa) chính mà <strong>operating system</strong> (OS – hệ điều hành) triển khai là <strong>process</strong> (tiến trình).<br />
 Một process đại diện cho một <strong>instance</strong> (phiên bản) của một chương trình đang chạy trong hệ thống, bao gồm:</p>
 <ul>
-<li><strong>Binary executable code</strong> (mã thực thi nhị phân) của chương trình.</li>
+<li><strong>Binary executable code</strong> (code thực thi nhị phân) của chương trình.</li>
 <li><strong>Data</strong> (dữ liệu) của chương trình.</li>
 <li><strong>Execution context</strong> (ngữ cảnh thực thi).</li>
 </ul>
@@ -187,17 +187,17 @@ Có hai bước chính để thực hiện một CPU context switch:</p>
 <p><strong>OS khôi phục context</strong> đã lưu của một process khác lên CPU và bắt đầu cho CPU chạy process này, tiếp tục thực thi từ lệnh mà nó đã dừng trước đó.</p>
 </li>
 </ol>
-<p>Một phần của <strong>context switching</strong> (chuyển ngữ cảnh) có thể khiến bạn nghĩ là “bất khả thi” đó là: mã của OS thực hiện context switching phải chạy trên CPU <strong>trong khi</strong> nó lưu (hoặc khôi phục) <strong>execution context</strong> (ngữ cảnh thực thi) của một process từ (hoặc lên) CPU.<br />
-Các lệnh của mã context switching cần sử dụng <strong>CPU hardware register</strong> (thanh ghi phần cứng của CPU) để thực thi, nhưng giá trị các thanh ghi của process đang bị chuyển ra khỏi CPU lại cần được chính mã context switching lưu lại.<br />
+<p>Một phần của <strong>context switching</strong> (chuyển ngữ cảnh) có thể khiến bạn nghĩ là “bất khả thi” đó là: code của OS thực hiện context switching phải chạy trên CPU <strong>trong khi</strong> nó lưu (hoặc khôi phục) <strong>execution context</strong> (ngữ cảnh thực thi) của một process từ (hoặc lên) CPU.<br />
+Các lệnh của code context switching cần sử dụng <strong>CPU hardware register</strong> (thanh ghi phần cứng của CPU) để thực thi, nhưng giá trị các thanh ghi của process đang bị chuyển ra khỏi CPU lại cần được chính code context switching lưu lại.<br />
 Phần cứng máy tính cung cấp một số hỗ trợ để điều này khả thi.</p>
-<p>Khi khởi động (<strong>boot time</strong>), OS khởi tạo phần cứng, bao gồm cả việc khởi tạo trạng thái CPU, để khi CPU chuyển sang <strong>kernel mode</strong> do một <strong>interrupt</strong>, mã <strong>interrupt handler</strong> của OS sẽ bắt đầu thực thi và trạng thái thực thi của process bị ngắt được bảo vệ khỏi việc bị ghi đè.</p>
-<p>Phần cứng máy tính và OS phối hợp thực hiện một phần việc lưu ban đầu <strong>user-level execution context</strong> (ngữ cảnh thực thi ở mức người dùng), đủ để mã OS có thể chạy trên CPU mà không làm mất trạng thái thực thi của process bị ngắt.</p>
+<p>Khi khởi động (<strong>boot time</strong>), OS khởi tạo phần cứng, bao gồm cả việc khởi tạo trạng thái CPU, để khi CPU chuyển sang <strong>kernel mode</strong> do một <strong>interrupt</strong>, code <strong>interrupt handler</strong> của OS sẽ bắt đầu thực thi và trạng thái thực thi của process bị ngắt được bảo vệ khỏi việc bị ghi đè.</p>
+<p>Phần cứng máy tính và OS phối hợp thực hiện một phần việc lưu ban đầu <strong>user-level execution context</strong> (ngữ cảnh thực thi ở mức người dùng), đủ để code OS có thể chạy trên CPU mà không làm mất trạng thái thực thi của process bị ngắt.</p>
 <p>Ví dụ: các giá trị thanh ghi của process bị ngắt cần được lưu lại để khi process chạy lại trên CPU, nó có thể tiếp tục từ đúng vị trí trước đó, sử dụng các giá trị thanh ghi của mình.<br />
-Tùy thuộc vào hỗ trợ phần cứng, việc lưu giá trị thanh ghi của process ở mức người dùng có thể được thực hiện hoàn toàn bởi phần cứng, hoặc gần như hoàn toàn bằng phần mềm như là phần đầu tiên của mã xử lý ngắt trong kernel.<br />
+Tùy thuộc vào hỗ trợ phần cứng, việc lưu giá trị thanh ghi của process ở mức người dùng có thể được thực hiện hoàn toàn bởi phần cứng, hoặc gần như hoàn toàn bằng phần mềm như là phần đầu tiên của code xử lý ngắt trong kernel.<br />
 Tối thiểu, giá trị <strong>program counter (PC)</strong> của process cần được lưu lại để không bị mất khi địa chỉ của kernel interrupt handler được nạp vào PC.</p>
-<p>Khi OS bắt đầu chạy, nó thực thi toàn bộ mã context switching của process, lưu toàn bộ trạng thái thực thi của process đang chạy trên CPU và khôi phục trạng thái thực thi đã lưu của một process khác lên CPU.<br />
+<p>Khi OS bắt đầu chạy, nó thực thi toàn bộ code context switching của process, lưu toàn bộ trạng thái thực thi của process đang chạy trên CPU và khôi phục trạng thái thực thi đã lưu của một process khác lên CPU.<br />
 Vì OS chạy ở kernel mode, nó có thể truy cập bất kỳ phần nào của bộ nhớ máy tính, thực thi các lệnh đặc quyền và truy cập bất kỳ thanh ghi phần cứng nào.</p>
-<p>Do đó, mã context switching của OS có thể truy cập và lưu trạng thái thực thi CPU của bất kỳ process nào vào bộ nhớ, và có thể khôi phục từ bộ nhớ trạng thái thực thi của bất kỳ process nào lên CPU.<br />
+<p>Do đó, code context switching của OS có thể truy cập và lưu trạng thái thực thi CPU của bất kỳ process nào vào bộ nhớ, và có thể khôi phục từ bộ nhớ trạng thái thực thi của bất kỳ process nào lên CPU.<br />
 Mã context switching của OS kết thúc bằng việc thiết lập CPU để thực thi trạng thái thực thi đã khôi phục của process và chuyển CPU sang user mode.<br />
 Khi đã chuyển sang user mode, CPU sẽ thực thi các lệnh và sử dụng trạng thái thực thi từ process mà OS vừa chuyển lên CPU.</p>
 <h3 id="1322-process-state-trạng-thái-tiến-trình"><a class="header" href="#1322-process-state-trạng-thái-tiến-trình">13.2.2. Process State (Trạng thái tiến trình)</a></h3>
@@ -327,7 +327,7 @@ Sau khi OS tạo và khởi tạo process mới, <strong>child</strong> và <str
 <li>Child process <strong>luôn</strong> nhận giá trị trả về là <code>0</code>.</li>
 <li>Parent process nhận giá trị là <strong>PID của child</strong> (hoặc <code>-1</code> nếu <code>fork</code> thất bại).</li>
 </ul>
-<p>Ví dụ, đoạn mã sau minh họa lời gọi system call <code>fork</code> tạo một child process mới từ process gọi nó:</p>
+<p>Ví dụ, đoạn code sau minh họa lời gọi system call <code>fork</code> tạo một child process mới từ process gọi nó:</p>
 <pre><code class="language-c">pid_t pid;
 
 pid = fork();   /* tạo một child process mới */
@@ -337,30 +337,30 @@ printf(&quot;pid = %d\n&quot;, pid);  /* cả parent và child đều thực thi
 <p>Sau khi <code>fork</code> tạo child process mới, cả parent và child sẽ tiếp tục thực thi <strong>trong ngữ cảnh riêng của mình</strong>, tại điểm trả về của lời gọi <code>fork</code>.<br />
 Cả hai process sẽ gán giá trị trả về của <code>fork</code> cho biến <code>pid</code> và đều gọi <code>printf</code>.<br />
 Child process sẽ in ra <code>0</code>, còn parent process sẽ in ra <strong>PID của child</strong>.</p>
-<p><strong>Hình 3</strong> minh họa ví dụ về cây tiến trình sau khi đoạn mã trên được thực thi.<br />
+<p><strong>Hình 3</strong> minh họa ví dụ về cây tiến trình sau khi đoạn code trên được thực thi.<br />
 Child process nhận <strong>bản sao chính xác</strong> của trạng thái thực thi của parent tại thời điểm <code>fork</code>, nhưng giá trị trong biến <code>pid</code> của nó khác với parent vì <code>fork</code> trả về <strong>PID của child</strong> (14 trong ví dụ này) cho parent, và <code>0</code> cho child.</p>
 <p><img src="_images/fork.png" alt="forked child process gets copy of parent state, but fork returns a different value to the child and parent process" /></p>
 <p><strong>Hình 3.</strong> Một process (PID 12) gọi <code>fork</code> để tạo child process mới.<br />
 Child process nhận bản sao chính xác của address space và trạng thái thực thi của parent, nhưng có PID riêng (14).<br />
 <code>fork</code> trả về <code>0</code> cho child và trả về PID của child (14) cho parent.</p>
 <p>Thông thường, lập trình viên muốn child và parent thực hiện <strong>các tác vụ khác nhau</strong> sau khi gọi <code>fork</code>.<br />
-Có thể sử dụng giá trị trả về khác nhau của <code>fork</code> để phân nhánh, cho phép parent và child thực thi các đoạn mã khác nhau.</p>
-<p>Ví dụ, đoạn mã sau tạo một child process mới và dùng giá trị trả về của <code>fork</code> để phân nhánh thực thi:</p>
+Có thể sử dụng giá trị trả về khác nhau của <code>fork</code> để phân nhánh, cho phép parent và child thực thi các đoạn code khác nhau.</p>
+<p>Ví dụ, đoạn code sau tạo một child process mới và dùng giá trị trả về của <code>fork</code> để phân nhánh thực thi:</p>
 <pre><code class="language-c">pid_t pid;
 
 pid = fork();   /* tạo một child process mới */
 
 if (pid == 0) {
-    /* chỉ child process thực thi đoạn mã này */
+    /* chỉ child process thực thi đoạn code này */
     ...
 } else if (pid != -1)  {
-    /* chỉ parent process thực thi đoạn mã này */
+    /* chỉ parent process thực thi đoạn code này */
     ...
 }
 </code></pre>
 <p>Điều quan trọng cần nhớ là <strong>ngay khi được tạo</strong>, child và parent sẽ chạy <strong>đồng thời</strong> trong ngữ cảnh thực thi riêng của mình,<br />
-thay đổi các bản sao biến chương trình riêng biệt và có thể thực thi các nhánh mã khác nhau.</p>
-<p>Hãy xem <a href="_attachments/fork.c">chương trình sau</a>, trong đó có lời gọi <code>fork</code> kết hợp với phân nhánh dựa trên giá trị <code>pid</code> để kích hoạt parent và child thực thi các đoạn mã khác nhau (ví dụ này cũng minh họa lời gọi <code>getpid</code> trả về PID của process đang gọi):</p>
+thay đổi các bản sao biến chương trình riêng biệt và có thể thực thi các nhánh code khác nhau.</p>
+<p>Hãy xem <a href="_attachments/fork.c">chương trình sau</a>, trong đó có lời gọi <code>fork</code> kết hợp với phân nhánh dựa trên giá trị <code>pid</code> để kích hoạt parent và child thực thi các đoạn code khác nhau (ví dụ này cũng minh họa lời gọi <code>getpid</code> trả về PID của process đang gọi):</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -433,7 +433,7 @@ Unix cung cấp một họ các system call exec, yêu cầu OS <strong>overlay<
 <li>Tham số <code>filename</code> chỉ định tên của chương trình thực thi nhị phân để khởi tạo image của process.</li>
 <li><code>argv</code> chứa các đối số dòng lệnh sẽ được truyền vào hàm <code>main</code> của chương trình khi nó bắt đầu thực thi.</li>
 </ul>
-<p>Dưới đây là ví dụ đoạn mã, khi chạy sẽ tạo một child process mới để chạy <code>a.out</code>:</p>
+<p>Dưới đây là ví dụ đoạn code, khi chạy sẽ tạo một child process mới để chạy <code>a.out</code>:</p>
 <pre><code class="language-c">pid_t pid;
 int  ret;
 char *argv[2];
@@ -454,13 +454,13 @@ if (pid == 0) { /* child process */
 <pre><code class="language-c">int main(int argc, char *argv) { ... }
 </code></pre>
 <p><code>execvp</code> sẽ xác định giá trị cần truyền cho <code>argc</code> dựa trên giá trị <code>argv</code> này (trong trường hợp này là 1).</p>
-<p><strong>Hình 5</strong> cho thấy cây phân cấp tiến trình (<strong>process hierarchy</strong>) sẽ trông như thế nào sau khi thực thi đoạn mã này:</p>
+<p><strong>Hình 5</strong> cho thấy cây phân cấp tiến trình (<strong>process hierarchy</strong>) sẽ trông như thế nào sau khi thực thi đoạn code này:</p>
 <p><img src="_images/exec.png" alt="after fork child calls exec" /></p>
 <p><strong>Hình 5.</strong> Khi <strong>child process</strong> gọi <code>execvp</code> (bên trái), OS sẽ thay thế <strong>image</strong> của nó bằng <code>a.out</code> (bên phải) và khởi tạo child process để bắt đầu chạy chương trình <code>a.out</code> từ đầu.</p>
-<p>Một điểm cần lưu ý trong ví dụ mã trên là thông báo lỗi có vẻ “lạ” ngay sau lời gọi <code>execvp</code>: tại sao việc <strong>trả về</strong> từ một system call <code>exec</code> lại là lỗi?<br />
-Nếu system call <code>exec</code> thành công, thì đoạn mã phát hiện và xử lý lỗi ngay sau đó sẽ <strong>không bao giờ</strong> được thực thi, vì process lúc này sẽ đang thực thi mã trong chương trình <code>a.out</code> thay vì đoạn mã hiện tại (nội dung <strong>address space</strong> của process đã bị thay đổi bởi <code>exec</code>).</p>
+<p>Một điểm cần lưu ý trong ví dụ code trên là thông báo lỗi có vẻ “lạ” ngay sau lời gọi <code>execvp</code>: tại sao việc <strong>trả về</strong> từ một system call <code>exec</code> lại là lỗi?<br />
+Nếu system call <code>exec</code> thành công, thì đoạn code phát hiện và xử lý lỗi ngay sau đó sẽ <strong>không bao giờ</strong> được thực thi, vì process lúc này sẽ đang thực thi code trong chương trình <code>a.out</code> thay vì đoạn code hiện tại (nội dung <strong>address space</strong> của process đã bị thay đổi bởi <code>exec</code>).</p>
 <p>Nói cách khác, khi một lời gọi hàm <code>exec</code> thành công, process <strong>không</strong> tiếp tục thực thi tại điểm trả về của lời gọi <code>exec</code>.<br />
-Chính vì hành vi này, đoạn mã sau tương đương với đoạn mã ở trên (tuy nhiên, đoạn ở trên thường dễ hiểu hơn):</p>
+Chính vì hành vi này, đoạn code sau tương đương với đoạn code ở trên (tuy nhiên, đoạn ở trên thường dễ hiểu hơn):</p>
 <pre><code class="language-c">pid_t pid;
 int ret;
 
@@ -473,12 +473,12 @@ if (pid == 0) { /* child process */
 </code></pre>
 <h3 id="1325-exit-và-wait"><a class="header" href="#1325-exit-và-wait">13.2.5. exit và wait</a></h3>
 <p>Để kết thúc, một process sẽ gọi system call <code>exit</code>, yêu cầu OS dọn dẹp hầu hết trạng thái của process.<br />
-Sau khi chạy mã thoát (<strong>exit code</strong>), process sẽ thông báo cho <strong>parent process</strong> rằng nó đã thoát.<br />
+Sau khi chạy code thoát (<strong>exit code</strong>), process sẽ thông báo cho <strong>parent process</strong> rằng nó đã thoát.<br />
 Parent chịu trách nhiệm dọn dẹp phần trạng thái còn lại của child process đã thoát khỏi hệ thống.</p>
 <p>Process có thể bị yêu cầu thoát theo nhiều cách:</p>
 <ol>
 <li>
-<p>Process hoàn thành toàn bộ mã ứng dụng của nó.<br />
+<p>Process hoàn thành toàn bộ code ứng dụng của nó.<br />
 Việc trả về từ hàm <code>main</code> sẽ dẫn đến việc process gọi system call <code>exit</code>.</p>
 </li>
 <li>
@@ -493,9 +493,9 @@ Việc trả về từ hàm <code>main</code> sẽ dẫn đến việc process g
 <p><strong>Signal</strong> là một <strong>software interrupt</strong> (ngắt phần mềm) mà OS gửi tới một process.<br />
 Signal là một phương thức để các process có liên quan giao tiếp với nhau.<br />
 OS cung cấp một <strong>interface</strong> để một process gửi signal tới process khác, và để OS giao tiếp với process (ví dụ: gửi signal <code>SIGSEGV</code> khi process dereference một null pointer).</p>
-<p>Khi một process nhận được signal, nó sẽ bị ngắt để chạy mã <strong>signal handler</strong> đặc biệt.<br />
+<p>Khi một process nhận được signal, nó sẽ bị ngắt để chạy code <strong>signal handler</strong> đặc biệt.<br />
 Một hệ thống định nghĩa một số lượng cố định các signal để truyền đạt các ý nghĩa khác nhau, mỗi signal được phân biệt bằng một số hiệu duy nhất.<br />
-OS triển khai các <strong>default signal handler</strong> (trình xử lý tín hiệu mặc định) cho từng loại signal, nhưng lập trình viên có thể đăng ký mã signal handler ở mức người dùng để ghi đè hành động mặc định của hầu hết các signal trong ứng dụng của họ.</p>
+OS triển khai các <strong>default signal handler</strong> (trình xử lý tín hiệu mặc định) cho từng loại signal, nhưng lập trình viên có thể đăng ký code signal handler ở mức người dùng để ghi đè hành động mặc định của hầu hết các signal trong ứng dụng của họ.</p>
 <p>Phần <strong>Signals</strong> sẽ chứa thêm thông tin chi tiết về signal và cách xử lý signal.</p>
 <p>Nếu một <strong>shell process</strong> muốn kết thúc <strong>child process</strong> đang chạy <code>a.out</code>, nó có thể gửi cho child một <strong>signal</strong> <code>SIGKILL</code>.<br />
 Khi child process nhận được signal này, nó sẽ chạy <strong>signal handler</strong> cho <code>SIGKILL</code>, trong đó gọi <code>exit</code> để kết thúc child process.</p>
@@ -520,7 +520,7 @@ Nếu parent process gọi <code>wait</code> <strong>trước</strong> khi child
 <li>Nếu child vẫn đang chạy khi parent gọi <code>wait</code>, parent sẽ bị block cho đến khi child thoát (parent chuyển sang trạng thái <strong>Blocked</strong> chờ sự kiện signal <code>SIGCHLD</code>).</li>
 <li>Hành vi block này có thể quan sát được nếu bạn chạy một chương trình (<code>a.out</code>) ở <strong>foreground</strong> của shell — shell sẽ không in ra prompt cho đến khi <code>a.out</code> kết thúc, cho thấy shell (parent) đang bị block trong lời gọi <code>wait</code>, chờ nhận <code>SIGCHLD</code> từ child process đang chạy <code>a.out</code>.</li>
 </ul>
-<p>Lập trình viên cũng có thể thiết kế mã của parent process sao cho nó <strong>không bao giờ</strong> bị block khi chờ child process thoát.<br />
+<p>Lập trình viên cũng có thể thiết kế code của parent process sao cho nó <strong>không bao giờ</strong> bị block khi chờ child process thoát.<br />
 Nếu parent triển khai một <strong>signal handler</strong> cho <code>SIGCHLD</code> và bên trong có lời gọi <code>wait</code>, thì parent chỉ gọi <code>wait</code> khi thực sự có child process đã thoát để thu hồi, và do đó sẽ không bị block trong lời gọi <code>wait</code>.</p>
 <p>Hành vi này có thể thấy khi chạy một chương trình ở <strong>background</strong> trong shell (<code>a.out &amp;</code>).<br />
 Shell sẽ tiếp tục thực thi, in ra prompt và chạy lệnh khác trong khi child của nó chạy <code>a.out</code>.</p>
@@ -530,7 +530,7 @@ Shell sẽ tiếp tục thực thi, in ra prompt và chạy lệnh khác trong k
 $ a.out &amp;      # shell process fork child nhưng không gọi wait
 $ ps           # shell có thể chạy ps và a.out đồng thời
 </code></pre>
-<p>Dưới đây là ví dụ đoạn mã chứa các system call <code>fork</code>, <code>exec</code>, <code>exit</code> và <code>wait</code> (đã bỏ phần xử lý lỗi để dễ đọc).<br />
+<p>Dưới đây là ví dụ đoạn code chứa các system call <code>fork</code>, <code>exec</code>, <code>exit</code> và <code>wait</code> (đã bỏ phần xử lý lỗi để dễ đọc).<br />
 Ví dụ này được thiết kế để kiểm tra mức độ hiểu của bạn về các system call này và tác động của chúng đến quá trình thực thi của các process.</p>
 <p>Trong ví dụ:</p>
 <ul>

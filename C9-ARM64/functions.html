@@ -146,7 +146,7 @@ Hãy nhớ rằng <code>sp</code> là <strong>stack pointer</strong> (thanh ghi 
 <p>Hình 1 cho thấy các <em>stack frame</em> của <code>main</code> và một hàm mà nó gọi tên là <code>fname</code>. Chúng ta sẽ gọi hàm <code>main</code> là hàm <em>caller</em> (hàm gọi) và <code>fname</code> là hàm <em>callee</em> (hàm được gọi).</p>
 <p><img src="_images/stackFrame.png" alt="an illustration of stack frames" /><br />
 <strong>Hình 1.</strong> Quản lý stack frame</p>
-<p>Trong Hình 1, <em>active frame</em> hiện tại thuộc về hàm callee (<code>fname</code>). Vùng của call stack nằm giữa <strong>stack pointer</strong> và <strong>frame pointer</strong> được dùng cho các biến cục bộ. Stack pointer sẽ thay đổi khi các giá trị cục bộ được <em>push</em> (đẩy) lên hoặc <em>pop</em> (lấy ra) khỏi stack. Frame pointer thường không được sử dụng trong mã đã tối ưu hóa, và thường là tùy chọn. Do đó, các compiler như GCC thường tham chiếu các giá trị trên stack tương đối so với stack pointer.</p>
+<p>Trong Hình 1, <em>active frame</em> hiện tại thuộc về hàm callee (<code>fname</code>). Vùng của call stack nằm giữa <strong>stack pointer</strong> và <strong>frame pointer</strong> được dùng cho các biến cục bộ. Stack pointer sẽ thay đổi khi các giá trị cục bộ được <em>push</em> (đẩy) lên hoặc <em>pop</em> (lấy ra) khỏi stack. Frame pointer thường không được sử dụng trong code đã tối ưu hóa, và thường là tùy chọn. Do đó, các compiler như GCC thường tham chiếu các giá trị trên stack tương đối so với stack pointer.</p>
 <p>Trong Hình 1, <em>active frame</em> được giới hạn phía dưới bởi <strong>base pointer</strong> của <code>fname</code>, tức <code>x29</code>, chứa địa chỉ stack <code>0xef30</code>. Giá trị lưu tại địa chỉ <code>0xef30</code> là giá trị frame pointer đã “lưu” (0xef50), vốn chỉ ra đáy của <em>activation frame</em> cho hàm <code>main</code>. Ngay bên dưới frame pointer là <strong>return address</strong> đã lưu (lưu trong <code>x30</code>), cho biết địa chỉ mà chương trình sẽ tiếp tục thực thi khi <code>main</code> thoát.</p>
 <blockquote>
 <h4 id="return-address-trỏ-tới-code-memory-không-phải-stack-memory"><a class="header" href="#return-address-trỏ-tới-code-memory-không-phải-stack-memory">Return address trỏ tới <em>code memory</em>, không phải <em>stack memory</em></a></h4>
@@ -188,10 +188,10 @@ int main(void) {
     return 0;
 }
 </code></pre>
-<p>Chúng ta biên dịch mã này với lệnh:</p>
+<p>Chúng ta biên dịch code này với lệnh:</p>
 <pre><code>gcc -o prog prog.c
 </code></pre>
-<p>và dùng <code>objdump -d</code> để xem mã assembly tương ứng. Lệnh sau sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng <code>less</code> và chức năng tìm kiếm để trích xuất các hàm <code>adder</code>, <code>assign</code> và <code>main</code>:</p>
+<p>và dùng <code>objdump -d</code> để xem code assembly tương ứng. Lệnh sau sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng <code>less</code> và chức năng tìm kiếm để trích xuất các hàm <code>adder</code>, <code>assign</code> và <code>main</code>:</p>
 <pre><code class="language-assembly">0000000000000724 &lt;assign&gt;:
  724:   d10043ff        sub     sp, sp, #0x10
  728:   52800500        mov     w0, #0x28                       // #40
@@ -222,7 +222,7 @@ int main(void) {
  77c:   d65f03c0        ret
 </code></pre>
 <p>Mỗi hàm bắt đầu bằng một <strong>symbolic label</strong> (nhãn ký hiệu) tương ứng với tên được khai báo trong chương trình. Ví dụ, <code>&lt;main&gt;:</code> là nhãn ký hiệu cho hàm <code>main</code>. Địa chỉ của nhãn hàm cũng là địa chỉ của lệnh đầu tiên trong hàm đó.</p>
-<p>Để tiết kiệm không gian trong các hình minh họa tiếp theo, chúng ta sẽ rút gọn địa chỉ mã lệnh xuống 12 bit thấp, và địa chỉ stack xuống 16 bit thấp. Ví dụ, địa chỉ stack <code>0xffffffffef50</code> sẽ được hiển thị là <code>0xef50</code>.</p>
+<p>Để tiết kiệm không gian trong các hình minh họa tiếp theo, chúng ta sẽ rút gọn địa chỉ code lệnh xuống 12 bit thấp, và địa chỉ stack xuống 16 bit thấp. Ví dụ, địa chỉ stack <code>0xffffffffef50</code> sẽ được hiển thị là <code>0xef50</code>.</p>
 <h3 id="953-tracing-through-main"><a class="header" href="#953-tracing-through-main">9.5.3. Tracing Through main</a></h3>
 <p>Hình 3 cho thấy execution stack ngay trước khi thực thi hàm <code>main</code>.</p>
 <p><img src="_images/procedures/Slide1.png" alt="slide1" /></p>

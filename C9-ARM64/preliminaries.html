@@ -176,7 +176,7 @@ Các cờ điều kiện là một phần của trạng thái bộ xử lý ARM 
 </ul>
 <p>Việc tìm hiểu sâu về các cờ điều kiện nằm ngoài phạm vi của sách này, nhưng cần lưu ý rằng việc <code>cmp</code> và <code>tst</code> thiết lập các cờ này cho phép các lệnh tiếp theo (lệnh <em>branch</em>) hoạt động chính xác.</p>
 <h3 id="lệnh-nhánh-the-branch-instructions"><a class="header" href="#lệnh-nhánh-the-branch-instructions">Lệnh nhánh (The Branch Instructions)</a></h3>
-<p>Lệnh nhánh cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh.<br />
+<p>Lệnh nhánh cho phép chương trình “nhảy” tới một vị trí mới trong code lệnh.<br />
 Trong các chương trình assembly mà ta đã phân tích, <code>pc</code> luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình.<br />
 Lệnh nhánh cho phép <code>pc</code> được đặt tới một lệnh mới chưa thực thi (như trong câu lệnh <code>if</code>) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).</p>
 <h4 id="lệnh-nhánh-trực-tiếp-direct-branch-instructions"><a class="header" href="#lệnh-nhánh-trực-tiếp-direct-branch-instructions">Lệnh nhánh trực tiếp (Direct branch instructions)</a></h4>
@@ -233,13 +233,13 @@ Những hậu tố này cũng được dùng cho lệnh <strong>conditional sele
 <p><strong>Bảng 4.</strong> Hậu tố lệnh nhánh có điều kiện (các từ đồng nghĩa được ghi trong ngoặc)</p>
 <h3 id="câu-lệnh-goto"><a class="header" href="#câu-lệnh-goto">Câu lệnh goto</a></h3>
 <p>Trong các phần tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và dịch ngược chúng về C.<br />
-Khi dịch ngược mã assembly của các câu lệnh điều kiện và vòng lặp về C, việc hiểu dạng <code>goto</code> tương ứng trong C là rất hữu ích.</p>
-<p>Câu lệnh <code>goto</code> là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã.<br />
+Khi dịch ngược code assembly của các câu lệnh điều kiện và vòng lặp về C, việc hiểu dạng <code>goto</code> tương ứng trong C là rất hữu ích.</p>
+<p>Câu lệnh <code>goto</code> là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong code.<br />
 Lệnh assembly tương ứng với <code>goto</code> là <code>b</code>.</p>
 <p>Cú pháp <code>goto</code> gồm từ khóa <code>goto</code> theo sau là một <strong>goto label</strong> — một loại nhãn chương trình chỉ ra rằng việc thực thi sẽ tiếp tục tại vị trí được đánh dấu bởi nhãn đó.<br />
 Ví dụ: <code>goto done</code> nghĩa là chương trình sẽ nhảy tới dòng có nhãn <code>done</code>.</p>
 <p>Các ví dụ khác về nhãn trong C bao gồm nhãn của câu lệnh <a href="../C2-C_depth/advanced_switch.html#_c_switch_stmt_">switch</a> đã được đề cập ở Chương 2.</p>
-<p>Các đoạn mã dưới đây minh họa hàm <code>getSmallest</code> được viết bằng C thông thường (bên trái) và dạng <code>goto</code> tương ứng trong C (bên phải).<br />
+<p>Các đoạn code dưới đây minh họa hàm <code>getSmallest</code> được viết bằng C thông thường (bên trái) và dạng <code>goto</code> tương ứng trong C (bên phải).<br />
 Hàm <code>getSmallest</code> so sánh giá trị của hai số nguyên (<code>x</code> và <code>y</code>), và gán giá trị nhỏ hơn cho biến <code>smallest</code>.</p>
 <h4 id="phiên-bản-c-thông-thường"><a class="header" href="#phiên-bản-c-thông-thường">Phiên bản C thông thường</a></h4>
 <pre><code class="language-c">int getSmallest(int x, int y) {
@@ -277,16 +277,16 @@ done:
 Câu lệnh điều kiện kiểm tra xem biến <code>x</code> có nhỏ hơn hoặc bằng <code>y</code> hay không.</p>
 <ul>
 <li>
-<p>Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, chương trình sẽ chuyển quyền điều khiển tới nhãn <code>else_statement</code>, nơi chứa duy nhất câu lệnh <code>smallest = x</code>. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục chạy phần mã dưới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>x</code>).</p>
+<p>Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, chương trình sẽ chuyển quyền điều khiển tới nhãn <code>else_statement</code>, nơi chứa duy nhất câu lệnh <code>smallest = x</code>. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục chạy phần code dưới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>x</code>).</p>
 </li>
 <li>
 <p>Nếu <code>x</code> lớn hơn <code>y</code>, thì <code>smallest</code> được gán bằng <code>y</code>. Sau đó chương trình thực thi câu lệnh <code>goto done</code>, chuyển quyền điều khiển tới nhãn <code>done</code>, trả về giá trị của <code>smallest</code> (<code>y</code>).</p>
 </li>
 </ul>
-<p>Mặc dù câu lệnh <code>goto</code> từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng trong mã hiện đại, việc dùng <code>goto</code> được xem là một <strong>thói quen xấu</strong>, vì nó làm giảm khả năng đọc hiểu của mã nguồn.<br />
+<p>Mặc dù câu lệnh <code>goto</code> từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng trong code hiện đại, việc dùng <code>goto</code> được xem là một <strong>thói quen xấu</strong>, vì nó làm giảm khả năng đọc hiểu của mã nguồn.<br />
 Thực tế, nhà khoa học máy tính <strong>Edsger Dijkstra</strong> đã viết một bài báo nổi tiếng chỉ trích việc sử dụng <code>goto</code> với tiêu đề <em>Go To Statement Considered Harmful</em><sup class="footnote-reference"><a href="#1">1</a></sup>.</p>
-<p>Nhìn chung, các chương trình C được thiết kế tốt sẽ <strong>không</strong> sử dụng <code>goto</code>, và lập trình viên được khuyến cáo tránh dùng nó để không tạo ra mã khó đọc, khó gỡ lỗi và khó bảo trì.<br />
-Tuy nhiên, việc hiểu câu lệnh <code>goto</code> trong C vẫn quan trọng, vì GCC thường chuyển đổi mã C có chứa điều kiện sang dạng <code>goto</code> trước khi dịch sang assembly — bao gồm cả mã có câu lệnh <code>if</code> và vòng lặp.</p>
+<p>Nhìn chung, các chương trình C được thiết kế tốt sẽ <strong>không</strong> sử dụng <code>goto</code>, và lập trình viên được khuyến cáo tránh dùng nó để không tạo ra code khó đọc, khó gỡ lỗi và khó bảo trì.<br />
+Tuy nhiên, việc hiểu câu lệnh <code>goto</code> trong C vẫn quan trọng, vì GCC thường chuyển đổi code C có chứa điều kiện sang dạng <code>goto</code> trước khi dịch sang assembly — bao gồm cả code có câu lệnh <code>if</code> và vòng lặp.</p>
 <p>Các phần tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh <code>if</code> và vòng lặp trong assembly:</p>
 <ul>
 <li><a href="if_statements.html#_if_statements_in_assembly">If Statements</a></li>

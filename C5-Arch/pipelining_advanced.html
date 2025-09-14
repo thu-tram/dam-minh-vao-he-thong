@@ -145,23 +145,23 @@
 <li><strong>Memory (M):</strong> đọc hoặc ghi dữ liệu từ/đến bộ nhớ.</li>
 <li><strong>WriteBack (W):</strong> ghi kết quả vào thanh ghi đích.</li>
 </ul>
-<p>Hãy nhớ rằng trình biên dịch sẽ chuyển các dòng mã nguồn thành chuỗi lệnh mã máy để CPU thực thi. Mã assembly là phiên bản dễ đọc của mã máy. Đoạn mã dưới đây minh họa một chuỗi lệnh assembly giả định:</p>
+<p>Hãy nhớ rằng trình biên dịch sẽ chuyển các dòng mã nguồn thành chuỗi lệnh code máy để CPU thực thi. Mã assembly là phiên bản dễ đọc của code máy. Đoạn code dưới đây minh họa một chuỗi lệnh assembly giả định:</p>
 <pre><code class="language-asm">MOV M[0x84], Reg1     # chuyển giá trị tại địa chỉ bộ nhớ 0x84 vào thanh ghi Reg1
 ADD 2, Reg1, Reg1     # cộng 2 vào giá trị trong Reg1 và lưu kết quả vào Reg1
 MOV 4, Reg2           # sao chép giá trị 4 vào thanh ghi Reg2
 ADD Reg2, Reg2, Reg2  # tính Reg2 + Reg2, lưu kết quả vào Reg2
-JMP L1&lt;0x14&gt;          # nhảy đến đoạn mã tại L1 (địa chỉ mã 0x14)
+JMP L1&lt;0x14&gt;          # nhảy đến đoạn code tại L1 (địa chỉ code 0x14)
 </code></pre>
-<p>Đừng lo nếu bạn chưa hiểu rõ đoạn mã trên — ta sẽ tìm hiểu chi tiết về assembly trong <a href="../C7-x86_64/index.html#_assembly_chapter">các chương sau</a>. Hiện tại, bạn chỉ cần nắm các điểm sau:</p>
+<p>Đừng lo nếu bạn chưa hiểu rõ đoạn code trên — ta sẽ tìm hiểu chi tiết về assembly trong <a href="../C7-x86_64/index.html#_assembly_chapter">các chương sau</a>. Hiện tại, bạn chỉ cần nắm các điểm sau:</p>
 <ul>
 <li>Mỗi ISA định nghĩa một tập hợp lệnh.</li>
 <li>Mỗi lệnh hoạt động trên một hoặc nhiều toán hạng (ví dụ: thanh ghi, bộ nhớ hoặc hằng số).</li>
 <li>Không phải lệnh nào cũng cần cùng số giai đoạn pipeline để thực thi.</li>
 </ul>
-<p>Trong phần thảo luận trước, ta giả định rằng mọi lệnh đều mất cùng số chu kỳ để thực thi; tuy nhiên, thực tế không phải vậy. Ví dụ, lệnh <code>MOV</code> đầu tiên cần cả năm giai đoạn vì nó di chuyển dữ liệu từ bộ nhớ vào thanh ghi. Ngược lại, ba lệnh tiếp theo chỉ cần bốn giai đoạn (F, D, E, W) vì chúng chỉ thao tác trên thanh ghi, không truy cập bộ nhớ. Lệnh cuối cùng (<code>JMP</code>) là một loại lệnh <em>nhảy</em> hoặc <em>rẽ nhánh có điều kiện</em>. Mục đích của nó là chuyển luồng điều khiển sang một phần khác của mã. Cụ thể, các địa chỉ trong vùng mã của bộ nhớ tham chiếu đến các <em>lệnh</em> khác trong tệp thực thi. Vì lệnh <code>JMP</code> không cập nhật thanh ghi đa dụng nào, giai đoạn WriteBack được bỏ qua, nên chỉ cần ba giai đoạn (F, D, E). Ta sẽ tìm hiểu chi tiết về lệnh điều kiện trong <a href="../C7-x86_64/conditional_control_loops.html#_conditional_control_and_loops">các chương sau</a> về assembly.</p>
+<p>Trong phần thảo luận trước, ta giả định rằng mọi lệnh đều mất cùng số chu kỳ để thực thi; tuy nhiên, thực tế không phải vậy. Ví dụ, lệnh <code>MOV</code> đầu tiên cần cả năm giai đoạn vì nó di chuyển dữ liệu từ bộ nhớ vào thanh ghi. Ngược lại, ba lệnh tiếp theo chỉ cần bốn giai đoạn (F, D, E, W) vì chúng chỉ thao tác trên thanh ghi, không truy cập bộ nhớ. Lệnh cuối cùng (<code>JMP</code>) là một loại lệnh <em>nhảy</em> hoặc <em>rẽ nhánh có điều kiện</em>. Mục đích của nó là chuyển luồng điều khiển sang một phần khác của code. Cụ thể, các địa chỉ trong vùng code của bộ nhớ tham chiếu đến các <em>lệnh</em> khác trong tệp thực thi. Vì lệnh <code>JMP</code> không cập nhật thanh ghi đa dụng nào, giai đoạn WriteBack được bỏ qua, nên chỉ cần ba giai đoạn (F, D, E). Ta sẽ tìm hiểu chi tiết về lệnh điều kiện trong <a href="../C7-x86_64/conditional_control_loops.html#_conditional_control_and_loops">các chương sau</a> về assembly.</p>
 <p>Một <strong>pipeline stall</strong> (đình trệ pipeline) xảy ra khi một lệnh buộc phải chờ lệnh khác hoàn tất trước khi có thể tiếp tục. Trình biên dịch và bộ xử lý sẽ cố gắng hết sức để tránh các pipeline stall nhằm tối đa hóa hiệu năng.</p>
 <h3 id="581-vấn-đề-trong-pipeline-data-hazards"><a class="header" href="#581-vấn-đề-trong-pipeline-data-hazards">5.8.1. Vấn đề trong pipeline: Data Hazards</a></h3>
-<p><strong>Data hazard</strong> (xung đột dữ liệu) xảy ra khi hai lệnh cố gắng truy cập cùng một dữ liệu trong pipeline. Ví dụ, hãy xem cặp lệnh đầu tiên trong đoạn mã ở trên:</p>
+<p><strong>Data hazard</strong> (xung đột dữ liệu) xảy ra khi hai lệnh cố gắng truy cập cùng một dữ liệu trong pipeline. Ví dụ, hãy xem cặp lệnh đầu tiên trong đoạn code ở trên:</p>
 <pre><code class="language-asm">MOV M[0x84], Reg1     # chuyển giá trị tại địa chỉ bộ nhớ 0x84 vào thanh ghi Reg1
 ADD 2, Reg1, Reg1     # cộng 2 vào giá trị trong Reg1 và lưu kết quả vào Reg1
 </code></pre>
@@ -178,7 +178,7 @@ ADD Reg2, Reg2, Reg2  # tính Reg2 + Reg2, lưu kết quả vào Reg2
 <p>Hai lệnh này nạp giá trị <code>4</code> vào thanh ghi <code>Reg2</code>, sau đó nhân đôi nó (bằng cách cộng với chính nó). Một lần nữa, các bubble được thêm vào để đảm bảo mỗi lệnh đi qua đủ năm giai đoạn. Tuy nhiên, trong trường hợp này, giai đoạn thực thi của lệnh thứ hai xảy ra <em>trước</em> khi lệnh đầu tiên hoàn tất việc ghi giá trị <code>4</code> vào <code>Reg2</code>.</p>
 <p>Việc thêm nhiều bubble là một giải pháp không tối ưu, vì nó làm pipeline bị đình trệ. Thay vào đó, bộ xử lý sử dụng kỹ thuật gọi là <strong>operand forwarding</strong> (&quot;chuyển tiếp toán hạng&quot;), trong đó pipeline sẽ đọc kết quả từ phép toán trước đó. Nhìn vào Hình 2, khi lệnh <code>MOV 4, Reg2</code> đang thực thi, nó sẽ chuyển tiếp kết quả cho lệnh <code>ADD Reg2, Reg2, Reg2</code>. Như vậy, trong khi lệnh <code>MOV</code> đang ghi vào <code>Reg2</code>, lệnh <code>ADD</code> vẫn có thể sử dụng giá trị mới của <code>Reg2</code> mà nó nhận được từ lệnh <code>MOV</code>.</p>
 <h3 id="582-các-vấn-đề-trong-pipeline-control-hazards"><a class="header" href="#582-các-vấn-đề-trong-pipeline-control-hazards">5.8.2. Các vấn đề trong pipeline: Control Hazards</a></h3>
-<p>Pipeline được tối ưu hóa cho các lệnh xảy ra liên tiếp. Tuy nhiên, sự thay đổi luồng điều khiển trong chương trình — phát sinh từ các cấu trúc điều kiện như câu lệnh <code>if</code> hoặc vòng lặp — có thể ảnh hưởng nghiêm trọng đến hiệu năng của pipeline. Hãy cùng xem một đoạn mã ví dụ khác, viết bằng C:</p>
+<p>Pipeline được tối ưu hóa cho các lệnh xảy ra liên tiếp. Tuy nhiên, sự thay đổi luồng điều khiển trong chương trình — phát sinh từ các cấu trúc điều kiện như câu lệnh <code>if</code> hoặc vòng lặp — có thể ảnh hưởng nghiêm trọng đến hiệu năng của pipeline. Hãy cùng xem một đoạn code ví dụ khác, viết bằng C:</p>
 <pre><code class="language-c">int result = *x; // x là con trỏ đến một số nguyên
 int temp = *y;   // y là con trỏ đến một số nguyên khác
 
@@ -190,13 +190,13 @@ else {
 }
 return result;
 </code></pre>
-<p>Đoạn mã này đơn giản chỉ đọc dữ liệu kiểu số nguyên từ hai con trỏ khác nhau, so sánh giá trị, rồi thực hiện phép toán khác nhau tùy theo kết quả. Dưới đây là cách đoạn mã trên có thể được chuyển thành lệnh assembly:</p>
+<p>Đoạn code này đơn giản chỉ đọc dữ liệu kiểu số nguyên từ hai con trỏ khác nhau, so sánh giá trị, rồi thực hiện phép toán khác nhau tùy theo kết quả. Dưới đây là cách đoạn code trên có thể được chuyển thành lệnh assembly:</p>
 <pre><code class="language-asm">MOV M[0x84], Reg1     # chuyển giá trị tại địa chỉ bộ nhớ 0x84 vào thanh ghi Reg1
 MOV M[0x88], Reg2     # chuyển giá trị tại địa chỉ bộ nhớ 0x88 vào thanh ghi Reg2
 CMP Reg1, Reg2        # so sánh giá trị trong Reg1 với Reg2
 JLE L1&lt;0x14&gt;          # nhảy đến L1 nếu Reg1 nhỏ hơn hoặc bằng Reg2
 ADD Reg1, Reg2, Reg1  # tính Reg1 + Reg2, lưu kết quả vào Reg1
-JMP L2&lt;0x20&gt;          # nhảy đến L2 (địa chỉ mã 0x20)
+JMP L2&lt;0x20&gt;          # nhảy đến L2 (địa chỉ code 0x20)
 L1:
 SUB Reg1, Reg2, Reg1  # tính Reg1 - Reg2, lưu kết quả vào Reg1
 L2:
@@ -206,8 +206,8 @@ RET                   # trả về từ hàm
 <blockquote>
 <p>Nhìn vào assembly lần đầu có thể khiến bạn thấy choáng ngợp — điều đó hoàn toàn bình thường!<br />
 Nếu bạn cảm thấy như vậy, đừng lo lắng. Ta sẽ tìm hiểu chi tiết về assembly trong <a href="../C7-x86_64/index.html#_assembly_chapter">các chương sau</a>.<br />
-Điều quan trọng cần ghi nhớ là: mã chứa câu lệnh điều kiện cũng được dịch thành chuỗi lệnh assembly giống như bất kỳ đoạn mã nào khác.<br />
-Tuy nhiên, khác với các đoạn mã khác, câu lệnh điều kiện <em>không</em> đảm bảo sẽ thực thi theo một cách cụ thể.<br />
+Điều quan trọng cần ghi nhớ là: code chứa câu lệnh điều kiện cũng được dịch thành chuỗi lệnh assembly giống như bất kỳ đoạn code nào khác.<br />
+Tuy nhiên, khác với các đoạn code khác, câu lệnh điều kiện <em>không</em> đảm bảo sẽ thực thi theo một cách cụ thể.<br />
 Sự không chắc chắn trong cách thực thi của câu lệnh điều kiện có ảnh hưởng lớn đến pipeline.</p>
 </blockquote>
 <p><img src="_images/controlHazardprb.png" alt="conditional hazard 1" /></p>
@@ -222,7 +222,7 @@ Sự không chắc chắn trong cách thực thi của câu lệnh điều kiệ
 <p><strong>Branch prediction</strong>: Giải pháp phổ biến nhất là sử dụng <strong>branch predictor</strong> (bộ dự đoán nhánh), dự đoán hướng đi của nhánh dựa trên các lần thực thi trước đó. Các bộ dự đoán nhánh hiện đại rất chính xác. Tuy nhiên, cách tiếp cận này gần đây đã gây ra một số lỗ hổng bảo mật (ví dụ: Spectre<sup class="footnote-reference"><a href="#1">1</a></sup>). Hình 4 minh họa cách bộ dự đoán nhánh xử lý control hazard.</p>
 </li>
 <li>
-<p><strong>Eager execution</strong>: Trong eager execution, CPU sẽ thực thi cả hai nhánh và thực hiện chuyển dữ liệu có điều kiện thay vì chuyển luồng điều khiển (được triển khai thông qua lệnh <code>cmov</code> trong x86 và <code>csel</code> trong ARMv8-A). Việc chuyển dữ liệu có điều kiện cho phép bộ xử lý tiếp tục thực thi mà không làm gián đoạn pipeline. Tuy nhiên, không phải đoạn mã nào cũng có thể tận dụng eager execution, và nó có thể nguy hiểm trong trường hợp truy cập con trỏ hoặc có hiệu ứng phụ.</p>
+<p><strong>Eager execution</strong>: Trong eager execution, CPU sẽ thực thi cả hai nhánh và thực hiện chuyển dữ liệu có điều kiện thay vì chuyển luồng điều khiển (được triển khai thông qua lệnh <code>cmov</code> trong x86 và <code>csel</code> trong ARMv8-A). Việc chuyển dữ liệu có điều kiện cho phép bộ xử lý tiếp tục thực thi mà không làm gián đoạn pipeline. Tuy nhiên, không phải đoạn code nào cũng có thể tận dụng eager execution, và nó có thể nguy hiểm trong trường hợp truy cập con trỏ hoặc có hiệu ứng phụ.</p>
 </li>
 </ul>
 <p><img src="_images/controlHazardsol.png" alt="conditional hazard 2" /></p>

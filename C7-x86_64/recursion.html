@@ -159,7 +159,7 @@
 }
 </code></pre>
 <p><strong>Bảng 1.</strong> Phiên bản lặp (sumDown) và phiên bản đệ quy (sumr)</p>
-<p><strong>Base case</strong> (trường hợp cơ sở) trong hàm đệ quy <code>sumr</code> xử lý mọi giá trị <em>n</em> nhỏ hơn 1. <strong>Bước đệ quy</strong> gọi <code>sumr</code> với giá trị <em>n-1</em> và cộng kết quả với <em>n</em> trước khi trả về. Khi biên dịch <code>sumr</code> và dùng GDB để disassemble, ta thu được mã assembly sau:</p>
+<p><strong>Base case</strong> (trường hợp cơ sở) trong hàm đệ quy <code>sumr</code> xử lý mọi giá trị <em>n</em> nhỏ hơn 1. <strong>Bước đệ quy</strong> gọi <code>sumr</code> với giá trị <em>n-1</em> và cộng kết quả với <em>n</em> trước khi trả về. Khi biên dịch <code>sumr</code> và dùng GDB để disassemble, ta thu được code assembly sau:</p>
 <pre><code>Dump of assembler code for function sumr:
 0x400551 &lt;+0&gt;:    push  %rbp               # lưu %rbp
 0x400552 &lt;+1&gt;:    mov   %rsp,%rbp          # cập nhật %rbp (stack frame mới)
@@ -208,7 +208,7 @@ done:
     return result;
 }
 </code></pre>
-<p><strong>Bảng 2.</strong> Dạng C dùng <code>goto</code> và bản dịch mã assembly của <code>sumr</code></p>
+<p><strong>Bảng 2.</strong> Dạng C dùng <code>goto</code> và bản dịch code assembly của <code>sumr</code></p>
 <p>Mặc dù bản dịch này ban đầu có thể trông không giống hệt hàm <code>sumr</code> gốc, nhưng khi xem xét kỹ, ta thấy hai hàm này thực sự tương đương.</p>
 <h3 id="761-hoạt-hình-quan-sát-sự-thay-đổi-của-call-stack"><a class="header" href="#761-hoạt-hình-quan-sát-sự-thay-đổi-của-call-stack">7.6.1. Hoạt hình: Quan sát sự thay đổi của Call Stack</a></h3>
 <p>Như một bài tập, bạn nên thử vẽ lại stack và quan sát cách các giá trị thay đổi. Hình động dưới đây minh họa cách stack được cập nhật khi chúng ta chạy hàm này với giá trị 3.</p>

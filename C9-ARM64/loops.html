@@ -153,7 +153,7 @@ Tuy nhiên, vòng lặp cho phép các lệnh được <strong>thực thi lại<
     return total;
 }
 </code></pre>
-<p>Khi biên dịch và dùng GDB để disassemble, ta thu được mã assembly sau:</p>
+<p>Khi biên dịch và dùng GDB để disassemble, ta thu được code assembly sau:</p>
 <pre><code>Dump of assembler code for function sumUp:
 0x0724 &lt;+0&gt;:   sub   sp, sp, #0x20
 0x0728 &lt;+4&gt;:   str   w0, [sp, #12]
@@ -237,7 +237,7 @@ Tham số đầu vào <code>n</code> của <code>sumUp</code> nằm tại địa
 </code></pre>
 <p>Các lệnh này sao chép <code>total</code> vào thanh ghi trả về <code>w0</code>, thu nhỏ stack (<code>sp</code>) để khôi phục call stack, và thoát hàm.<br />
 Kết quả là hàm trả về <code>total</code>.</p>
-<p><strong>Bảng 1</strong> dưới đây so sánh mã assembly và dạng C sử dụng <code>goto</code> của hàm <code>sumUp</code>:</p>
+<p><strong>Bảng 1</strong> dưới đây so sánh code assembly và dạng C sử dụng <code>goto</code> của hàm <code>sumUp</code>:</p>
 <h4 id="assembly"><a class="header" href="#assembly">Assembly</a></h4>
 <pre><code class="language-asm">&lt;sumUp&gt;:
   &lt;+0&gt;:   sub   sp, sp, #0x20
@@ -277,7 +277,7 @@ start:
 }
 </code></pre>
 <p><strong>Bảng 1.</strong> Dịch <code>sumUp()</code> sang dạng C sử dụng <code>goto</code>.</p>
-<p>Đoạn code ở trên cũng tương đương với đoạn mã C sau đây <strong>không</strong> sử dụng câu lệnh <code>goto</code>:</p>
+<p>Đoạn code ở trên cũng tương đương với đoạn code C sau đây <strong>không</strong> sử dụng câu lệnh <code>goto</code>:</p>
 <pre><code class="language-c">int sumUp(int n) {
     int total = 0;
     int i = 1;
@@ -299,8 +299,8 @@ start:
     return total;
 }
 </code></pre>
-<p>Phiên bản này tạo ra <strong>mã assembly giống hệt</strong> với ví dụ vòng lặp <code>while</code>.<br />
-Dưới đây là mã assembly của <code>sumUp2</code> kèm chú thích từng dòng:</p>
+<p>Phiên bản này tạo ra <strong>code assembly giống hệt</strong> với ví dụ vòng lặp <code>while</code>.<br />
+Dưới đây là code assembly của <code>sumUp2</code> kèm chú thích từng dòng:</p>
 <pre><code>Dump of assembler code for function sumUp2:
 0x0774 &lt;+0&gt;:  sub   sp, sp, #0x20     // mở rộng stack thêm 32 byte (frame mới)
 0x0778 &lt;+4&gt;:  str   w0, [sp, #12]     // lưu n tại sp+12 (n)
@@ -323,7 +323,7 @@ Dưới đây là mã assembly của <code>sumUp2</code> kèm chú thích từng
 0x07bc &lt;+72&gt;: add   sp, sp, #0x20     // khôi phục stack
 0x07c0 &lt;+76&gt;: ret                     // trả về w0 (total)
 </code></pre>
-<p>Để hiểu tại sao phiên bản vòng lặp <code>for</code> này tạo ra mã assembly giống hệt với phiên bản vòng lặp <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
+<p>Để hiểu tại sao phiên bản vòng lặp <code>for</code> này tạo ra code assembly giống hệt với phiên bản vòng lặp <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
 <pre><code class="language-c">for (&lt;khởi tạo&gt;; &lt;biểu thức điều kiện&gt;; &lt;bước lặp&gt;) {
     &lt;thân vòng lặp&gt;
 }

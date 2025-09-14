@@ -155,11 +155,11 @@ int main(void) {
 <p>Để biên dịch đoạn code này, sử dụng lệnh sau:</p>
 <pre><code>$ gcc -o adder adder.c
 </code></pre>
-<p>Tiếp theo, hãy xem mã assembly tương ứng của đoạn code này bằng cách sử dụng lệnh <code>objdump</code>:</p>
+<p>Tiếp theo, hãy xem code assembly tương ứng của đoạn code này bằng cách sử dụng lệnh <code>objdump</code>:</p>
 <pre><code>$ objdump -d adder &gt; output
 $ less output
 </code></pre>
-<p>Tìm đoạn mã liên quan đến hàm <code>adder2</code> bằng cách gõ <code>/adder</code> khi đang xem file <code>output</code> với <code>less</code>. Phần liên quan đến <code>adder</code> sẽ trông tương tự như sau:</p>
+<p>Tìm đoạn code liên quan đến hàm <code>adder2</code> bằng cách gõ <code>/adder</code> khi đang xem file <code>output</code> với <code>less</code>. Phần liên quan đến <code>adder</code> sẽ trông tương tự như sau:</p>
 <p><strong>Kết quả assembly cho hàm <code>adder2</code></strong>:</p>
 <pre><code>0000000000000724 &lt;adder2&gt;:
  724:   d10043ff        sub     sp, sp, #0x10
@@ -171,7 +171,7 @@ $ less output
 </code></pre>
 <p>Đừng lo nếu bạn chưa hiểu chuyện gì đang diễn ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly trong các phần sau. Hiện tại, hãy nghiên cứu cấu trúc của từng lệnh riêng lẻ.</p>
 <p>Mỗi dòng trong ví dụ trên bao gồm: địa chỉ 64-bit của lệnh trong bộ nhớ chương trình (được rút gọn xuống 3 chữ số cuối để tiết kiệm không gian), các byte tương ứng với lệnh, và dạng biểu diễn văn bản của chính lệnh đó.<br />
-Ví dụ: <code>d10043ff</code> là dạng mã máy của lệnh <code>sub sp, sp, #0x10</code>, và lệnh này nằm tại địa chỉ <code>0x724</code> trong bộ nhớ mã lệnh. Lưu ý rằng <code>0x724</code> là dạng rút gọn của địa chỉ 64-bit đầy đủ; <code>objdump</code> bỏ các số 0 ở đầu để dễ đọc hơn.</p>
+Ví dụ: <code>d10043ff</code> là dạng code máy của lệnh <code>sub sp, sp, #0x10</code>, và lệnh này nằm tại địa chỉ <code>0x724</code> trong bộ nhớ code lệnh. Lưu ý rằng <code>0x724</code> là dạng rút gọn của địa chỉ 64-bit đầy đủ; <code>objdump</code> bỏ các số 0 ở đầu để dễ đọc hơn.</p>
 <p>Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành nhiều lệnh assembly.<br />
 Ví dụ, phép toán <code>a + 2</code> được biểu diễn bởi ba lệnh tại các địa chỉ <code>0x728</code> đến <code>0x730</code>:<br />
 <code>str w0, [sp, #12]</code>, <code>ldr w0, [sp, #12]</code>, và <code>add w0, w0, #0x2</code>.</p>
@@ -179,7 +179,7 @@ Ví dụ, phép toán <code>a + 2</code> được biểu diễn bởi ba lệnh 
 <p><strong>Mã assembly của bạn có thể khác!</strong></p>
 <p>Nếu bạn biên dịch code cùng với chúng tôi, bạn có thể nhận thấy một số ví dụ assembly của mình trông khác. Các lệnh assembly chính xác mà compiler tạo ra phụ thuộc vào phiên bản compiler, kiến trúc phần cứng cụ thể, và hệ điều hành đang sử dụng.<br />
 Hầu hết các ví dụ assembly trong chương này được tạo trên Raspberry Pi 3B+ chạy hệ điều hành Ubuntu Mate 64-bit và sử dụng GCC. Nếu bạn dùng hệ điều hành khác, compiler khác, hoặc một Raspberry Pi hay máy tính nhúng khác, kết quả assembly của bạn có thể khác.</p>
-<p>Trong các ví dụ tiếp theo, chúng tôi <strong>không</strong> sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (ví dụ: <code>example.c</code>) bằng lệnh:<br />
+<p>Trong các ví dụ tiếp theo, chúng tôi <strong>không</strong> sử dụng bất kỳ optimization flag hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (ví dụ: <code>example.c</code>) bằng lệnh:<br />
 <code>gcc -o example example.c</code></p>
 <p>Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường.<br />
 Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu, nội dung này sẽ được đề cập ở <a href="../C12-CodeOpt/index.html#_code_optimization">chương sau</a>.</p>
@@ -193,18 +193,18 @@ Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này tro
 <p><strong>Hình 1.</strong> Bố cục <em>component register</em> của thanh ghi <code>%x0</code>.</p>
 <blockquote>
 <p><strong>Compiler có thể chọn <em>component register</em> tùy theo kiểu dữ liệu</strong></p>
-<p>Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu <code>long</code>) và sử dụng <em>component register</em> 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu <code>int</code>).<br />
+<p>Khi đọc code assembly, hãy nhớ rằng compiler thường sử dụng thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu <code>long</code>) và sử dụng <em>component register</em> 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu <code>int</code>).<br />
 Trong A64, việc xen kẽ giữa <em>component register</em> 32-bit và thanh ghi đầy đủ 64-bit là rất phổ biến. Ví dụ, trong hàm <code>adder2</code> đã trình bày trước đó, compiler tham chiếu tới <em>component register</em> <code>w0</code> thay vì <code>x0</code> vì kiểu <code>int</code> thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm <code>adder2</code> có tham số kiểu <code>long</code> thay vì <code>int</code>, compiler sẽ lưu <code>a</code> trong thanh ghi <code>x0</code> thay vì <em>component register</em> <code>w0</code>.</p>
 </blockquote>
 <p>Đối với những người đã quen với <strong>A32 ISA</strong>, cần lưu ý rằng các thanh ghi đa dụng 32-bit <code>r0</code> đến <code>r12</code> trong A32 ISA được ánh xạ sang các <em>component register</em> <code>w0</code> đến <code>w12</code> trong A64. <strong>A64 ISA</strong> tăng hơn gấp đôi số lượng thanh ghi khả dụng so với A32.</p>
 <h3 id="913-cấu-trúc-lệnh-instruction-structure"><a class="header" href="#913-cấu-trúc-lệnh-instruction-structure">9.1.3. Cấu trúc lệnh (Instruction Structure)</a></h3>
-<p>Mỗi <strong>instruction</strong> (lệnh) bao gồm một <strong>operation code</strong> hay <strong>opcode</strong> (mã thao tác) xác định lệnh sẽ làm gì, và một hoặc nhiều <strong>operand</strong> (toán hạng) cho biết cách thực hiện.<br />
+<p>Mỗi <strong>instruction</strong> (lệnh) bao gồm một <strong>operation code</strong> hay <strong>opcode</strong> (code thao tác) xác định lệnh sẽ làm gì, và một hoặc nhiều <strong>operand</strong> (toán hạng) cho biết cách thực hiện.<br />
 Đối với hầu hết các lệnh A64, định dạng thường dùng như sau:</p>
 <pre><code>opcode D, O1, O2
 </code></pre>
 <p>Trong đó:</p>
 <ul>
-<li><code>opcode</code> là mã thao tác.</li>
+<li><code>opcode</code> là code thao tác.</li>
 <li><code>D</code> là <strong>destination register</strong> (thanh ghi đích).</li>
 <li><code>O1</code> là toán hạng thứ nhất.</li>
 <li><code>O2</code> là toán hạng thứ hai.</li>
@@ -276,7 +276,7 @@ Mỗi dòng trong bảng khớp một toán hạng với dạng của nó (const
 <li>Dữ liệu không thể đọc hoặc ghi trực tiếp từ bộ nhớ; ARM tuân theo mô hình <strong>load/store</strong>, yêu cầu dữ liệu phải được nạp vào thanh ghi trước khi thao tác, và ghi trở lại bộ nhớ sau khi hoàn tất.</li>
 <li>Thành phần đích (destination) của một lệnh luôn phải là một thanh ghi.</li>
 </ul>
-<p>Bảng 1 được cung cấp như tài liệu tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn và chính xác hơn khi phân tích mã assembly.</p>
+<p>Bảng 1 được cung cấp như tài liệu tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn và chính xác hơn khi phân tích code assembly.</p>
 
                     </main>
 

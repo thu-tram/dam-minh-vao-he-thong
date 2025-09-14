@@ -265,7 +265,7 @@ int main(int argc, char **argv) {
 Mỗi process sẽ gọi các hàm MPI để xác định tổng số process đang chạy (<code>MPI_Comm_size</code>) và biết mình là process nào trong số đó (rank của process, với <code>MPI_Comm_rank</code>).<br />
 Sau khi có thông tin này, mỗi process sẽ in ra một thông điệp ngắn chứa rank và tên máy (<code>hostname</code>) mà nó đang chạy, rồi kết thúc.</p>
 <blockquote>
-<p><strong>Chạy mã MPI</strong><br />
+<p><strong>Chạy code MPI</strong><br />
 Để chạy các ví dụ MPI này, bạn cần cài đặt một bản triển khai MPI như <a href="https://www.open-mpi.org/">OpenMPI</a> hoặc <a href="https://www.mpich.org/">MPICH</a> trên hệ thống của mình.</p>
 </blockquote>
 <p>Để biên dịch ví dụ này, sử dụng chương trình biên dịch <code>mpicc</code>, đây là phiên bản của <code>gcc</code> có hỗ trợ MPI, để xây dựng chương trình và liên kết với các thư viện MPI:</p>
@@ -295,9 +295,9 @@ Nếu tính đúng đắn của chương trình yêu cầu các process chạy t
 Ví dụ này áp dụng <strong>mô hình boss/worker</strong> — một process đóng vai trò boss sẽ chia mảng thành các phần nhỏ hơn và phân phát cho các process worker.<br />
 Lưu ý rằng trong phần cài đặt nhân vô hướng này, process boss cũng hoạt động như một worker và thực hiện nhân một phần mảng sau khi đã phân phát các phần khác cho các worker.</p>
 <p>Để tận dụng lợi ích của việc xử lý song song, mỗi process chỉ nhân <strong>phần mảng cục bộ</strong> của mình với giá trị vô hướng, sau đó tất cả các worker gửi kết quả trở lại cho boss để tạo thành kết quả cuối cùng.<br />
-Tại một số điểm trong chương trình, mã sẽ kiểm tra xem <strong>rank</strong> của process có bằng 0 hay không:</p>
+Tại một số điểm trong chương trình, code sẽ kiểm tra xem <strong>rank</strong> của process có bằng 0 hay không:</p>
 <pre><code class="language-c">if (rank == 0) {
-    /* Đoạn mã này chỉ chạy ở process boss. */
+    /* Đoạn code này chỉ chạy ở process boss. */
 }
 </code></pre>
 <p>Việc kiểm tra này đảm bảo rằng chỉ <strong>một</strong> process (process có rank 0) đóng vai trò boss.<br />
@@ -362,7 +362,7 @@ Hình 2 minh họa cách boss phân chia các phần mảng cho từng process M
              MPI_STATUS_IGNORE);
 }
 </code></pre>
-<p>Trong đoạn mã này, boss chạy một vòng lặp, mỗi vòng gửi cho một worker một phần mảng.<br />
+<p>Trong đoạn code này, boss chạy một vòng lặp, mỗi vòng gửi cho một worker một phần mảng.<br />
 Dữ liệu được gửi bắt đầu từ địa chỉ <code>array</code> với offset <code>(i * local_size)</code> để đảm bảo mỗi worker nhận một phần mảng duy nhất.<br />
 Ví dụ: worker rank 1 nhận phần mảng bắt đầu từ chỉ số 5, rank 2 nhận từ chỉ số 10, v.v., như minh họa ở Hình 2.</p>
 <p>Mỗi lời gọi <code>MPI_Send</code> gửi <code>local_size</code> (5) số nguyên (20 byte) đến process có rank <code>i</code>.<br />
@@ -376,7 +376,7 @@ Vì <code>MPI_Recv</code> chặn, nên không worker nào tiếp tục xử lý 
 Vì mỗi worker nhận một tập con duy nhất của mảng, chúng có thể thực thi độc lập, song song, mà không cần giao tiếp thêm.</p>
 <h4 id="tổng-hợp-kết-quả-aggregating-results"><a class="header" href="#tổng-hợp-kết-quả-aggregating-results">Tổng hợp kết quả (Aggregating Results)</a></h4>
 <p>Cuối cùng, sau khi các worker hoàn tất phép nhân, chúng gửi các giá trị mảng đã cập nhật trở lại cho boss, và boss sẽ tổng hợp kết quả.<br />
-Khi sử dụng <code>MPI_Send</code> và <code>MPI_Recv</code>, quá trình này trông tương tự như đoạn mã phân phối mảng ở trên, chỉ khác là vai trò <strong>người gửi</strong> và <strong>người nhận</strong> được đảo ngược.</p>
+Khi sử dụng <code>MPI_Send</code> và <code>MPI_Recv</code>, quá trình này trông tương tự như đoạn code phân phối mảng ở trên, chỉ khác là vai trò <strong>người gửi</strong> và <strong>người nhận</strong> được đảo ngược.</p>
 <pre><code class="language-c">if (rank == 0) {
     int i;
 
@@ -395,7 +395,7 @@ Nói cách khác, với MPI, chúng chỉ đơn thuần là một chuỗi các l
 <p>Vì các ứng dụng song song thường xuyên cần phân phối và thu thập dữ liệu (như mảng trong ví dụ này), MPI cung cấp các hàm chuyên biệt cho mục đích này: <strong><code>MPI_Scatter</code></strong> và <strong><code>MPI_Gather</code></strong>.</p>
 <p>Hai hàm này mang lại hai lợi ích chính:</p>
 <ol>
-<li>Cho phép toàn bộ các khối mã ở trên được viết gọn lại thành <strong>một</strong> lời gọi hàm MPI duy nhất, giúp mã ngắn gọn hơn.</li>
+<li>Cho phép toàn bộ các khối code ở trên được viết gọn lại thành <strong>một</strong> lời gọi hàm MPI duy nhất, giúp code ngắn gọn hơn.</li>
 <li>Thể hiện <strong>ý định</strong> của thao tác cho trình triển khai MPI bên dưới, từ đó có thể tối ưu hóa hiệu năng tốt hơn.</li>
 </ol>
 <p>Để thay thế vòng lặp đầu tiên ở trên, mỗi process có thể gọi <code>MPI_Scatter</code>:</p>
@@ -415,7 +415,7 @@ MPI_Gather(local_array, local_size, MPI_INT, array, local_size, MPI_INT,
 </code></pre>
 <p>Lời gọi này hoạt động ngược lại với <code>MPI_Scatter</code>: lần này, tham số <code>0</code> chỉ định rằng process có rank 0 (boss) là <strong>người nhận</strong>, do đó nó sẽ cập nhật biến <code>array</code>, còn các worker sẽ gửi <code>local_size</code> số nguyên từ biến <code>local_array</code> của mình.</p>
 <h4 id="mã-đầy-đủ-cho-mpi-scalar-multiply"><a class="header" href="#mã-đầy-đủ-cho-mpi-scalar-multiply">Mã đầy đủ cho MPI Scalar Multiply</a></h4>
-<p>Dưới đây là mã đầy đủ cho chương trình nhân vô hướng với MPI sử dụng <code>MPI_Scatter</code> và <code>MPI_Gather</code><br />
+<p>Dưới đây là code đầy đủ cho chương trình nhân vô hướng với MPI sử dụng <code>MPI_Scatter</code> và <code>MPI_Gather</code><br />
 (<a href="_attachments/scalar_multiply_mpi.c">scalar_multiply_mpi.c</a>):</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -536,7 +536,7 @@ int main(int argc, char **argv) {
 Nếu đây là một bài toán thực tế (ví dụ: ứng dụng tính toán khoa học), boss có thể đọc dữ liệu ban đầu từ một tệp đầu vào.<br />
 Sau khi khởi tạo mảng, boss cần gửi thông tin về kích thước mảng và giá trị vô hướng dùng để nhân đến tất cả các worker, vì vậy nó <strong>broadcast</strong> các biến này đến mọi process.</p>
 <p>Khi mỗi process đã biết kích thước mảng và số lượng process, chúng có thể tự tính toán để xác định số phần tử mình phải xử lý.<br />
-Để đơn giản, mã này giả định rằng mảng chia hết cho số lượng process.</p>
+Để đơn giản, code này giả định rằng mảng chia hết cho số lượng process.</p>
 <p>Boss sau đó sử dụng hàm <code>MPI_Scatter</code> để gửi một phần mảng bằng nhau cho mỗi worker (bao gồm cả chính nó).<br />
 Khi đã có đủ thông tin, mỗi worker sẽ thực hiện phép nhân trên phần mảng của mình song song.<br />
 Cuối cùng, khi các worker hoàn tất, boss thu thập từng phần mảng từ các worker bằng <code>MPI_Gather</code> để tạo ra kết quả cuối cùng.</p>

@@ -153,7 +153,7 @@ FPGA, <strong>Cell processor</strong> và GPU là ba ví dụ tiêu biểu của
 <p><strong>FPGA</strong> (Field Programmable Gate Array) là một vi mạch tích hợp bao gồm các cổng logic, bộ nhớ và các thành phần kết nối.<br />
 FPGA có thể <strong>lập trình lại</strong> (reprogrammable), nghĩa là có thể cấu hình lại để thực hiện một chức năng cụ thể ở mức phần cứng, và thường được dùng để tạo nguyên mẫu cho <strong>ASIC</strong> (Application-Specific Integrated Circuit – mạch tích hợp chuyên dụng).</p>
 <p>FPGA thường tiêu thụ ít điện năng hơn so với một CPU đầy đủ, giúp vận hành tiết kiệm năng lượng.<br />
-Một số cách FPGA được tích hợp vào hệ thống máy tính bao gồm: làm bộ điều khiển thiết bị (device controller), xử lý dữ liệu cảm biến, thực hiện các tác vụ mật mã (cryptography), và thử nghiệm các thiết kế phần cứng mới (do có thể lập trình lại, các thiết kế có thể được triển khai, gỡ lỗi và kiểm thử trực tiếp trên FPGA).</p>
+Một số cách FPGA được tích hợp vào hệ thống máy tính bao gồm: làm bộ điều khiển thiết bị (device controller), xử lý dữ liệu cảm biến, thực hiện các tác vụ mật code (cryptography), và thử nghiệm các thiết kế phần cứng mới (do có thể lập trình lại, các thiết kế có thể được triển khai, gỡ lỗi và kiểm thử trực tiếp trên FPGA).</p>
 <p>FPGA có thể được thiết kế như một mạch với số lượng lớn các đơn vị xử lý đơn giản.<br />
 Chúng cũng là các thiết bị có <strong>độ trễ thấp</strong> (low-latency) và có thể kết nối trực tiếp với bus hệ thống.<br />
 Nhờ đó, FPGA đã được sử dụng để triển khai các phép tính song song tốc độ cao, bao gồm các mẫu xử lý song song độc lập lặp lại trên nhiều kênh dữ liệu đầu vào.</p>
@@ -204,7 +204,7 @@ Nếu việc truyền dữ liệu GPU–CPU chiếm phần lớn thời gian th�
 CUDA được thiết kế cho <strong>heterogeneous computing</strong> (tính toán không đồng nhất), trong đó một số hàm của chương trình chạy trên CPU của host, và các hàm khác chạy trên GPU.</p>
 <p>Lập trình viên thường viết chương trình CUDA bằng <strong>C</strong> hoặc <strong>C++</strong> với các annotation chỉ định <strong>CUDA kernel function</strong> (hàm kernel CUDA), và gọi các hàm thư viện CUDA để quản lý bộ nhớ thiết bị GPU.<br />
 Một <strong>kernel function</strong> trong CUDA là một hàm được thực thi trên GPU, và một <strong>CUDA thread</strong> là đơn vị thực thi cơ bản trong chương trình CUDA.<br />
-Các CUDA thread được lập lịch thành các <strong>warp</strong> và thực thi đồng bộ (lockstep) trên các SM của GPU, chạy mã kernel CUDA trên phần dữ liệu của chúng được lưu trong bộ nhớ GPU.</p>
+Các CUDA thread được lập lịch thành các <strong>warp</strong> và thực thi đồng bộ (lockstep) trên các SM của GPU, chạy code kernel CUDA trên phần dữ liệu của chúng được lưu trong bộ nhớ GPU.</p>
 <p>Các hàm kernel được đánh dấu bằng từ khóa <code>global</code> để phân biệt với các hàm chạy trên host.<br />
 Các hàm <code>device</code> trong CUDA là các hàm phụ trợ có thể được gọi từ một hàm kernel CUDA.</p>
 <p>Không gian bộ nhớ của một chương trình CUDA được chia thành bộ nhớ host và bộ nhớ GPU.<br />
@@ -362,7 +362,7 @@ Do SM lập lịch các warp thread để chạy trên các đơn vị xử lý 
 Trên thực tế, việc sử dụng số lượng thread mỗi block là một bội số nhỏ của số lõi xử lý trong một SM thường cho hiệu quả tốt.</p>
 <p>CUDA đảm bảo rằng tất cả các thread từ một lần gọi <strong>kernel</strong> sẽ hoàn thành trước khi bất kỳ thread nào từ lần gọi kernel tiếp theo được lập lịch.<br />
 Do đó, tồn tại một <strong>điểm đồng bộ ngầm</strong> giữa các lần gọi kernel riêng biệt.<br />
-Tuy nhiên, trong một lần gọi kernel duy nhất, các thread block có thể được lập lịch chạy mã kernel theo bất kỳ thứ tự nào trên các SM của GPU.<br />
+Tuy nhiên, trong một lần gọi kernel duy nhất, các thread block có thể được lập lịch chạy code kernel theo bất kỳ thứ tự nào trên các SM của GPU.<br />
 Vì vậy, lập trình viên <strong>không nên</strong> giả định bất kỳ thứ tự thực thi nào giữa các thread thuộc các thread block khác nhau.<br />
 CUDA cung cấp một số hỗ trợ đồng bộ hóa thread, nhưng <strong>chỉ</strong> cho các thread nằm trong cùng một thread block.</p>
 <h3 id="1515-other-languages-for-gpgpu-programming-các-ngôn-ngữ-khác-cho-lập-trình-gpgpu"><a class="header" href="#1515-other-languages-for-gpgpu-programming-các-ngôn-ngữ-khác-cho-lập-trình-gpgpu">15.1.5. Other Languages for GPGPU Programming (Các ngôn ngữ khác cho lập trình GPGPU)</a></h3>
@@ -376,7 +376,7 @@ OpenCL hướng tới nhiều nền tảng tính toán không đồng nhất, ba
 <li>
 <p><strong>OpenACC</strong> (Open Accelerator) là mô hình lập trình trừu tượng cấp cao hơn so với CUDA hoặc OpenCL.<br />
 Nó được thiết kế để dễ dàng di chuyển (portability) và thuận tiện cho lập trình viên.<br />
-Lập trình viên chỉ cần chú thích (annotate) các phần mã cần thực thi song song, và trình biên dịch sẽ tạo ra mã song song có thể chạy trên GPU.</p>
+Lập trình viên chỉ cần chú thích (annotate) các phần code cần thực thi song song, và trình biên dịch sẽ tạo ra code song song có thể chạy trên GPU.</p>
 </li>
 <li>
 <p><strong>OpenHMPP</strong> (Open Hybrid Multicore Programming) là một ngôn ngữ khác cung cấp lớp trừu tượng lập trình cấp cao cho lập trình không đồng nhất.</p>

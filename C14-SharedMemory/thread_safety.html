@@ -142,11 +142,11 @@ Tuy nhiên, <strong>không phải lúc nào</strong> cũng an toàn khi giả đ
 Không phải tất cả các hàm trong thư viện C đều <strong>thread safe</strong> (an toàn luồng) — tức là có thể được nhiều thread chạy đồng thời mà vẫn đảm bảo kết quả đúng và không gây ra tác dụng phụ ngoài ý muốn.</p>
 <p>Để đảm bảo các chương trình <em>chúng ta</em> viết là thread safe, điều quan trọng là phải sử dụng <a href="synchronization.html#_synchronizing_threads">synchronization primitives</a> như <strong>mutex</strong> và <strong>barrier</strong> để buộc chương trình đa luồng duy trì tính nhất quán và đúng đắn, bất kể số lượng thread thay đổi ra sao.</p>
 <p>Một khái niệm liên quan chặt chẽ đến thread safety là <strong>re-entrancy</strong> (tái nhập).<br />
-Tất cả mã thread safe đều là re-entrant; tuy nhiên, <strong>không phải</strong> tất cả mã re-entrant đều thread safe.<br />
+Tất cả code thread safe đều là re-entrant; tuy nhiên, <strong>không phải</strong> tất cả code re-entrant đều thread safe.<br />
 Một hàm được gọi là <strong>re-entrant</strong> nếu nó có thể được thực thi lại hoặc thực thi một phần bởi chính nó mà không gây ra vấn đề.<br />
-Theo định nghĩa, mã re-entrant đảm bảo rằng mọi truy cập vào trạng thái toàn cục (global state) của chương trình đều giữ cho trạng thái đó nhất quán.<br />
-Mặc dù re-entrancy thường (một cách sai lầm) được dùng như từ đồng nghĩa với thread safety, vẫn có những trường hợp đặc biệt mà mã re-entrant <strong>không</strong> thread safe.</p>
-<p>Khi viết mã đa luồng, hãy xác minh rằng các hàm thư viện C bạn sử dụng thực sự là thread safe.<br />
+Theo định nghĩa, code re-entrant đảm bảo rằng mọi truy cập vào trạng thái toàn cục (global state) của chương trình đều giữ cho trạng thái đó nhất quán.<br />
+Mặc dù re-entrancy thường (một cách sai lầm) được dùng như từ đồng nghĩa với thread safety, vẫn có những trường hợp đặc biệt mà code re-entrant <strong>không</strong> thread safe.</p>
+<p>Khi viết code đa luồng, hãy xác minh rằng các hàm thư viện C bạn sử dụng thực sự là thread safe.<br />
 May mắn thay, danh sách các hàm <strong>không</strong> thread safe trong thư viện C khá nhỏ.<br />
 <strong>The Open Group</strong> duy trì <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html">danh sách các hàm không thread safe</a>.</p>
 <h3 id="1461-khắc-phục-các-vấn-đề-về-thread-safety"><a class="header" href="#1461-khắc-phục-các-vấn-đề-về-thread-safety">14.6.1. Khắc phục các vấn đề về Thread Safety</a></h3>

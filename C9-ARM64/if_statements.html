@@ -168,7 +168,7 @@ Dump of assembler code for function getSmallest:
 0x0828 &lt;+52&gt;:   add  sp, sp, #0x20
 0x082c &lt;+56&gt;:   ret
 </code></pre>
-<p>Đây là một cách hiển thị khác của mã assembly so với những gì ta đã thấy trước đây. Ở đây, ta thấy <strong>địa chỉ</strong> gắn với mỗi lệnh, nhưng không thấy <strong>byte</strong> mã máy. Đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hơn. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi <code>x0</code> và <code>x1</code>. Vì các tham số của <code>getSmallest</code> có kiểu <code>int</code>, compiler sẽ đặt chúng vào <em>component register</em> tương ứng là <code>w0</code> và <code>w1</code>. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là <code>x</code> và <code>y</code>.</p>
+<p>Đây là một cách hiển thị khác của code assembly so với những gì ta đã thấy trước đây. Ở đây, ta thấy <strong>địa chỉ</strong> gắn với mỗi lệnh, nhưng không thấy <strong>byte</strong> code máy. Đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hơn. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi <code>x0</code> và <code>x1</code>. Vì các tham số của <code>getSmallest</code> có kiểu <code>int</code>, compiler sẽ đặt chúng vào <em>component register</em> tương ứng là <code>w0</code> và <code>w1</code>. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là <code>x</code> và <code>y</code>.</p>
 <p>Hãy lần theo một vài dòng đầu của đoạn assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ <strong>không</strong> vẽ stack ra minh họa. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack bằng cách tự vẽ.</p>
 <ul>
 <li>Lệnh <code>sub</code> mở rộng call stack thêm 32 byte (<code>0x20</code>).</li>
@@ -210,7 +210,7 @@ Dump of assembler code for function getSmallest:
 0x0828 &lt;+52&gt;:  add  sp, sp, #0x20          // thu gọn stack
 0x082c &lt;+56&gt;:  ret                         // trả về smallest
 </code></pre>
-<p>Chuyển ngược đoạn assembly này về mã C thu được:</p>
+<p>Chuyển ngược đoạn assembly này về code C thu được:</p>
 <h4 id="dạng-goto-của-getsmallest"><a class="header" href="#dạng-goto-của-getsmallest"><strong>Dạng goto của <code>getSmallest()</code></strong></a></h4>
 <pre><code class="language-c">int getSmallest(int x, int y) {
     int smallest = y;
@@ -239,8 +239,8 @@ done:
     return smallest;
 }
 </code></pre>
-<p>Trong các ví dụ trên, biến <code>smallest</code> tương ứng với thanh ghi <code>w0</code>. Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, mã sẽ thực thi câu lệnh <code>smallest = x</code>, câu lệnh này gắn với nhãn <code>goto</code> là <code>assign_x</code> trong dạng goto của hàm. Ngược lại, câu lệnh <code>smallest = y</code> sẽ được thực thi. Nhãn <code>goto</code> <code>done</code> được dùng để chỉ ra rằng giá trị trong <code>smallest</code> sẽ được trả về.</p>
-<p>Lưu ý rằng bản dịch C ở trên của mã assembly có hơi khác so với hàm <code>getSmallest</code> gốc. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển mỗi câu lệnh <code>if</code> thành một dạng <code>goto</code> tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. Các ví dụ dưới đây cho thấy dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương.</p>
+<p>Trong các ví dụ trên, biến <code>smallest</code> tương ứng với thanh ghi <code>w0</code>. Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, code sẽ thực thi câu lệnh <code>smallest = x</code>, câu lệnh này gắn với nhãn <code>goto</code> là <code>assign_x</code> trong dạng goto của hàm. Ngược lại, câu lệnh <code>smallest = y</code> sẽ được thực thi. Nhãn <code>goto</code> <code>done</code> được dùng để chỉ ra rằng giá trị trong <code>smallest</code> sẽ được trả về.</p>
+<p>Lưu ý rằng bản dịch C ở trên của code assembly có hơi khác so với hàm <code>getSmallest</code> gốc. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển mỗi câu lệnh <code>if</code> thành một dạng <code>goto</code> tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. Các ví dụ dưới đây cho thấy dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương.</p>
 <h4 id="câu-lệnh-if-trong-c"><a class="header" href="#câu-lệnh-if-trong-c"><strong>Câu lệnh <code>if</code> trong C</strong></a></h4>
 <pre><code class="language-c">if (condition) {
     then_statement;
@@ -260,7 +260,7 @@ else:
 done:
 </code></pre>
 <p><strong>Bảng 2.</strong> Dạng chuẩn của câu lệnh if và dạng goto tương đương.</p>
-<p>Khi dịch mã sang assembly, compiler sẽ tạo một nhánh (<em>branch</em>) khi điều kiện đúng. Điều này khác với cấu trúc của câu lệnh <code>if</code>, nơi một “jump” (nhảy) tới <code>else</code> xảy ra khi điều kiện <em>không</em> đúng. Dạng <code>goto</code> thể hiện rõ sự khác biệt logic này.</p>
+<p>Khi dịch code sang assembly, compiler sẽ tạo một nhánh (<em>branch</em>) khi điều kiện đúng. Điều này khác với cấu trúc của câu lệnh <code>if</code>, nơi một “jump” (nhảy) tới <code>else</code> xảy ra khi điều kiện <em>không</em> đúng. Dạng <code>goto</code> thể hiện rõ sự khác biệt logic này.</p>
 <p>Xét bản dịch <code>goto</code> ban đầu của hàm <code>getSmallest</code>, ta thấy:</p>
 <ul>
 <li><code>x &lt;= y</code> tương ứng với <code>!(condition)</code>.</li>
@@ -280,10 +280,10 @@ done:
     return smallest;
 }
 </code></pre>
-<p>Phiên bản này giống hệt với hàm <code>getSmallest</code> ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.</p>
+<p>Phiên bản này giống hệt với hàm <code>getSmallest</code> ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức code C vẫn có thể được dịch ra cùng một tập lệnh assembly.</p>
 <h4 id="lệnh-conditional-select"><a class="header" href="#lệnh-conditional-select">Lệnh Conditional Select</a></h4>
 <p>Lệnh điều kiện cuối cùng mà chúng ta tìm hiểu là <strong>conditional select</strong> (<code>csel</code>).<br />
-Các lệnh <code>cmp</code>, <code>tst</code> và <code>b</code> thực hiện <strong>conditional transfer of control</strong> (chuyển điều khiển có điều kiện) trong chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng. Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các lệnh nhánh thường tốn kém để thực thi do gây gián đoạn <strong>instruction pipeline</strong> (chi tiết sẽ được đề cập trong <a href="../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards">mục Kiến trúc</a>).</p>
+Các lệnh <code>cmp</code>, <code>tst</code> và <code>b</code> thực hiện <strong>conditional transfer of control</strong> (chuyển điều khiển có điều kiện) trong chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng. Điều này có thể gây bất lợi cho việc tối ưu hóa code, vì các lệnh nhánh thường tốn kém để thực thi do gây gián đoạn <strong>instruction pipeline</strong> (chi tiết sẽ được đề cập trong <a href="../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards">mục Kiến trúc</a>).</p>
 <p>Ngược lại, lệnh <code>csel</code> thực hiện <strong>conditional transfer of data</strong> (chuyển dữ liệu có điều kiện). Nói cách khác, CPU sẽ thực thi <em>cả</em> <code>then_statement</code> và <code>else_statement</code>, sau đó đặt dữ liệu vào thanh ghi thích hợp dựa trên kết quả của điều kiện.</p>
 <p>Việc sử dụng <strong>biểu thức ba ngôi</strong> (<em>ternary expression</em>) trong C thường khiến compiler sinh ra lệnh <code>csel</code> thay cho các lệnh nhánh. Với câu lệnh if-then-else chuẩn, biểu thức ba ngôi có dạng:</p>
 <pre><code class="language-c">result = (condition) ? then_expression : else_expression;
@@ -293,7 +293,7 @@ Các lệnh <code>cmp</code>, <code>tst</code> và <code>b</code> thực hiện 
     return x &gt; y ? y : x;
 }
 </code></pre>
-<p>Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra. Nhớ rằng tham số thứ nhất và thứ hai (<code>x</code> và <code>y</code>) lần lượt được lưu trong các thanh ghi <code>w0</code> và <code>w1</code>:</p>
+<p>Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem code assembly được tạo ra. Nhớ rằng tham số thứ nhất và thứ hai (<code>x</code> và <code>y</code>) lần lượt được lưu trong các thanh ghi <code>w0</code> và <code>w1</code>:</p>
 <pre><code>(gdb) disas getSmallest_csel
 Dump of assembler code for function getSmallest_csel:
 0x0860 &lt;+0&gt;:  sub  sp, sp, #0x10      // mở rộng stack thêm 16 byte
@@ -343,7 +343,7 @@ Dump of assembler code for function getSmallest:
 </code></pre>
 <p><strong>Bảng 3.</strong> Hai hàm cố gắng tăng giá trị của số nguyên <code>x</code>.</p>
 <p>Mỗi hàm nhận một con trỏ tới số nguyên làm tham số và kiểm tra xem nó có phải <code>NULL</code> hay không. Nếu <code>x</code> không phải <code>NULL</code>, hàm sẽ tăng giá trị mà <code>x</code> trỏ tới và trả về giá trị đó. Ngược lại, hàm trả về 1.</p>
-<p>Có thể bạn sẽ nghĩ rằng <code>incrementX2</code> sẽ dùng lệnh <code>csel</code> vì nó dùng biểu thức ba ngôi. Tuy nhiên, cả hai hàm đều sinh ra <strong>mã assembly giống hệt nhau</strong>:</p>
+<p>Có thể bạn sẽ nghĩ rằng <code>incrementX2</code> sẽ dùng lệnh <code>csel</code> vì nó dùng biểu thức ba ngôi. Tuy nhiên, cả hai hàm đều sinh ra <strong>code assembly giống hệt nhau</strong>:</p>
 <pre><code>// tham số x nằm trong thanh ghi x0
 Dump of assembler code for function incrementX2:
 0x0774 &lt;+0&gt;:  mov  w1, #0x1                   // w1 = 0x1

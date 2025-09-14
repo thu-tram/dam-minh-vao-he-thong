@@ -159,7 +159,7 @@
 }
 </code></pre>
 <p><strong>Bảng 1.</strong> Phiên bản lặp (<code>sumDown</code>) và phiên bản đệ quy (<code>sumr</code>)</p>
-<p>Trường hợp cơ sở (<em>base case</em>) trong <strong>recursive function</strong> <code>sumr</code> xử lý mọi giá trị <em>n</em> nhỏ hơn 1, và bước đệ quy (<em>recursive step</em>) sẽ cộng giá trị hiện tại của <em>n</em> với kết quả của lời gọi hàm <code>sumr</code> với giá trị <em>n-1</em>. Khi biên dịch <code>sumr</code> với cờ <code>-m32</code> và dịch ngược (disassemble) bằng GDB, ta thu được đoạn mã Assembly sau:</p>
+<p>Trường hợp cơ sở (<em>base case</em>) trong <strong>recursive function</strong> <code>sumr</code> xử lý mọi giá trị <em>n</em> nhỏ hơn 1, và bước đệ quy (<em>recursive step</em>) sẽ cộng giá trị hiện tại của <em>n</em> với kết quả của lời gọi hàm <code>sumr</code> với giá trị <em>n-1</em>. Khi biên dịch <code>sumr</code> với cờ <code>-m32</code> và dịch ngược (disassemble) bằng GDB, ta thu được đoạn code Assembly sau:</p>
 <pre><code>0x0804841d &lt;+0&gt;:  push  %ebp                  # lưu ebp
 0x0804841e &lt;+1&gt;:  mov   %esp,%ebp             # cập nhật ebp (tạo stack frame mới)
 0x08048420 &lt;+3&gt;:  sub   $0x8,%esp             # cấp thêm 8 byte cho stack frame
@@ -176,7 +176,7 @@
 0x08048443 &lt;+38&gt;: leave                       # chuẩn bị thoát hàm
 0x08048444 &lt;+39&gt;: ret                         # trả về kết quả
 </code></pre>
-<p>Mỗi dòng trong đoạn mã Assembly trên đều được chú thích bằng tiếng Anh. Bảng 2 dưới đây cho thấy dạng tương ứng sử dụng <code>goto</code> và chương trình C không dùng <code>goto</code>:</p>
+<p>Mỗi dòng trong đoạn code Assembly trên đều được chú thích bằng tiếng Anh. Bảng 2 dưới đây cho thấy dạng tương ứng sử dụng <code>goto</code> và chương trình C không dùng <code>goto</code>:</p>
 <h4 id="c-dạng-goto"><a class="header" href="#c-dạng-goto">C dạng goto</a></h4>
 <pre><code class="language-c">int sumr(int n) {
     int result;
@@ -205,7 +205,7 @@
     return result;
 }
 </code></pre>
-<p><strong>Bảng 2.</strong> Dạng C dùng <code>goto</code> và bản dịch từ mã Assembly của <code>sumr</code></p>
+<p><strong>Bảng 2.</strong> Dạng C dùng <code>goto</code> và bản dịch từ code Assembly của <code>sumr</code></p>
 <p>Mặc dù bản dịch này ban đầu có thể trông không hoàn toàn giống với hàm <code>sumr</code> gốc, nhưng khi xem xét kỹ, ta thấy hai hàm này thực sự tương đương nhau.</p>
 <h3 id="861-quan-sát-sự-thay-đổi-của-call-stack"><a class="header" href="#861-quan-sát-sự-thay-đổi-của-call-stack">8.6.1. Quan sát sự thay đổi của Call Stack</a></h3>
 <p>Như một bài tập, chúng tôi khuyến khích bạn tự vẽ ra <em>stack</em> và quan sát cách các giá trị thay đổi. Ảnh dưới đây minh họa cách <em>stack</em> được cập nhật khi chúng ta chạy hàm này với giá trị 3.</p>

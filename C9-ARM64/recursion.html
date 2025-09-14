@@ -165,7 +165,7 @@ Giống như các hàm không đệ quy, hàm đệ quy tạo ra <strong>stack f
 <p><strong>Bảng 1.</strong> Phiên bản lặp và phiên bản đệ quy của hàm <code>sumDown</code>.</p>
 <p>Trong hàm đệ quy <code>sumr</code>, <strong>trường hợp cơ sở</strong> (base case) xử lý mọi giá trị <em>n</em> nhỏ hơn hoặc bằng 0.<br />
 <strong>Bước đệ quy</strong> cộng giá trị hiện tại của <em>n</em> với kết quả của lời gọi <code>sumr(n - 1)</code>.</p>
-<p>Khi biên dịch <code>sumr</code> và dùng GDB để disassemble, ta thu được mã assembly sau:</p>
+<p>Khi biên dịch <code>sumr</code> và dùng GDB để disassemble, ta thu được code assembly sau:</p>
 <pre><code>Dump of assembler code for function sumr:
 0x770 &lt;+0&gt;:  stp   x29, x30, [sp, #-32]! // sp = sp - 32; lưu x29, x30 vào stack
 0x774 &lt;+4&gt;:  mov   x29, sp               // x29 = sp (đỉnh stack)

@@ -144,13 +144,13 @@ Pthreads là một ví dụ của <strong>explicit parallel programming</strong>
 Nói cách khác, ta thường phải viết lại toàn bộ chương trình để sử dụng threads — điều này thường không mong muốn khi cần song song hóa một codebase lớn và đã tồn tại từ trước.</p>
 <p>Thư viện <strong>Open Multiprocessing</strong> (<strong>OpenMP</strong>) cung cấp một giải pháp <em>ngầm định</em> thay thế cho Pthreads.<br />
 OpenMP được tích hợp sẵn trong GCC và các trình biên dịch phổ biến khác như LLVM và Clang, và có thể dùng với các ngôn ngữ C, C++ và Fortran.<br />
-Ưu điểm chính của OpenMP là cho phép lập trình viên song song hóa các thành phần của mã C tuần tự hiện có bằng cách thêm <strong>pragma</strong> (chỉ thị đặc biệt cho trình biên dịch) vào các phần của mã.<br />
+Ưu điểm chính của OpenMP là cho phép lập trình viên song song hóa các thành phần của code C tuần tự hiện có bằng cách thêm <strong>pragma</strong> (chỉ thị đặc biệt cho trình biên dịch) vào các phần của code.<br />
 Các pragma dành riêng cho OpenMP bắt đầu bằng <code>#pragma omp</code>.</p>
 <p>Việc trình bày chi tiết OpenMP nằm ngoài phạm vi của cuốn sách này, nhưng chúng ta sẽ đề cập đến một số pragma thường gặp và minh họa cách sử dụng chúng trong bối cảnh một số ứng dụng ví dụ.</p>
 <h3 id="1471-các-pragma-thường-dùng-common-pragmas"><a class="header" href="#1471-các-pragma-thường-dùng-common-pragmas">14.7.1. Các pragma thường dùng (Common Pragmas)</a></h3>
 <p>Dưới đây là một số pragma được sử dụng phổ biến trong các chương trình OpenMP:</p>
 <p><code>#pragma omp parallel</code></p>
-<p>:   Tạo một <strong>team</strong> (nhóm) các thread và cho mỗi thread chạy đoạn mã trong phạm vi của pragma (thường là một lời gọi hàm).<br />
+<p>:   Tạo một <strong>team</strong> (nhóm) các thread và cho mỗi thread chạy đoạn code trong phạm vi của pragma (thường là một lời gọi hàm).<br />
 Việc gọi pragma này thường tương đương với việc gọi cặp hàm <code>pthread_create</code> và <code>pthread_join</code> <a href="posix.html#_creating_and_joining_threads">đã thảo luận trong phần Pthreads</a>.<br />
 Pragma này có thể đi kèm một số <strong>clause</strong> (mệnh đề), bao gồm:</p>
 <pre><code>- `num_threads`: chỉ định số lượng thread cần tạo.
@@ -171,7 +171,7 @@ Chính sách lập lịch có thể được đặt bằng clause:
 <p>:   Kết hợp giữa <code>omp parallel</code> và <code>omp for</code>.<br />
 Khác với <code>omp for</code>, pragma này <strong>tạo team thread</strong> trước, rồi mới gán cho mỗi thread một tập vòng lặp để thực thi.</p>
 <p><code>#pragma omp critical</code></p>
-<p>:   Chỉ định rằng đoạn mã trong phạm vi của pragma là một <strong>critical section</strong> — chỉ một thread được thực thi đoạn mã này tại một thời điểm để đảm bảo tính đúng đắn.</p>
+<p>:   Chỉ định rằng đoạn code trong phạm vi của pragma là một <strong>critical section</strong> — chỉ một thread được thực thi đoạn code này tại một thời điểm để đảm bảo tính đúng đắn.</p>
 <p>Ngoài ra, OpenMP còn cung cấp một số <strong>hàm</strong> hữu ích cho thread khi thực thi, ví dụ:</p>
 <ul>
 <li><code>omp_get_num_threads</code>: trả về số lượng thread trong team hiện tại.</li>
@@ -241,7 +241,7 @@ Hello world! I am thread 0
 <p>Hành vi này giống với <a href="posix.html#_hello_threading_writing_your_first_multithreaded_program">ví dụ dùng Pthreads</a> mà chúng ta đã thấy trước đó.</p>
 <h3 id="1473-ví-dụ-phức-tạp-hơn-countsort-với-openmp"><a class="header" href="#1473-ví-dụ-phức-tạp-hơn-countsort-với-openmp">14.7.3. Ví dụ phức tạp hơn: CountSort với OpenMP</a></h3>
 <p>Một ưu điểm mạnh mẽ của OpenMP là nó cho phép lập trình viên <strong>song song hóa dần dần</strong> (incrementally parallelize) mã nguồn của mình.<br />
-Để thấy điều này trong thực tế, hãy song song hóa thuật toán <strong>CountSort</strong> phức tạp hơn mà chúng ta đã thảo luận trước đó trong chương này (mã tuần tự nằm tại: <a href="_attachments/countSort.c">countSort.c</a>).</p>
+Để thấy điều này trong thực tế, hãy song song hóa thuật toán <strong>CountSort</strong> phức tạp hơn mà chúng ta đã thảo luận trước đó trong chương này (code tuần tự nằm tại: <a href="_attachments/countSort.c">countSort.c</a>).</p>
 <p>Hãy nhớ rằng thuật toán này sắp xếp các mảng chứa một phạm vi giá trị nhỏ.<br />
 Hàm <code>main</code> của chương trình tuần tự trông như sau:</p>
 <pre><code class="language-c">int main( int argc, char **argv ) {
@@ -290,7 +290,7 @@ Phiên bản đầy đủ của chương trình có tại: <a href="_attachments
    }
 }
 </code></pre>
-<p>Trong phiên bản này của mã, ba pragma được sử dụng:</p>
+<p>Trong phiên bản này của code, ba pragma được sử dụng:</p>
 <ul>
 <li>
 <p><strong><code>#pragma omp parallel</code></strong>: chỉ định rằng một <strong>team</strong> (nhóm) các thread sẽ được tạo.<br />
@@ -308,7 +308,7 @@ Như đã đề cập trước đó, chiến lược mặc định thường là
 Như vậy, mỗi thread sẽ đọc một phần của mảng <code>array</code> chia sẻ và cộng dồn kết quả vào mảng <code>local</code> cục bộ của nó.</p>
 </li>
 <li>
-<p><strong><code>#pragma omp critical</code></strong>: chỉ định rằng đoạn mã trong phạm vi critical section chỉ được thực thi bởi <strong>một thread</strong> tại một thời điểm.<br />
+<p><strong><code>#pragma omp critical</code></strong>: chỉ định rằng đoạn code trong phạm vi critical section chỉ được thực thi bởi <strong>một thread</strong> tại một thời điểm.<br />
 Điều này tương đương với việc dùng <strong>mutex</strong> trong phiên bản Pthreads của chương trình.<br />
 Ở đây, mỗi thread sẽ lần lượt cập nhật mảng <code>counts</code> chia sẻ.</p>
 </li>
@@ -327,7 +327,7 @@ Run Time for Phase 1 is 0.068749
 Hiệu năng thậm chí còn tốt hơn cả phiên bản Pthreads!</p>
 <h4 id="hàm-writearray-trong-openmp"><a class="header" href="#hàm-writearray-trong-openmp">Hàm <code>writeArray</code> trong OpenMP</a></h4>
 <p>Song song hóa hàm <code>writeArray</code> <strong>khó hơn nhiều</strong>.<br />
-Đoạn mã sau minh họa một giải pháp khả thi:</p>
+Đoạn code sau minh họa một giải pháp khả thi:</p>
 <pre><code class="language-c">void writeArray(int *counts, int *array) {
     int i;
 
@@ -357,7 +357,7 @@ Nhắc lại, pragma này là sự kết hợp của <code>omp parallel</code> v
 Điều này dẫn đến việc các thread sẽ không có khối lượng công việc bằng nhau, khiến một số thread bị gán nhiều việc hơn các thread khác.<br />
 Do đó, ta sử dụng mệnh đề <code>schedule(dynamic)</code>, để mỗi thread hoàn thành vòng lặp được gán trước khi yêu cầu một vòng lặp mới từ bộ quản lý thread.</p>
 <p>Vì mỗi thread ghi vào các vị trí khác nhau trong mảng, nên <strong>không cần</strong> dùng mutual exclusion (loại trừ lẫn nhau) cho hàm này.</p>
-<p>Hãy chú ý xem mã OpenMP gọn gàng hơn nhiều so với phiên bản dùng POSIX threads.<br />
+<p>Hãy chú ý xem code OpenMP gọn gàng hơn nhiều so với phiên bản dùng POSIX threads.<br />
 Mã rất dễ đọc và chỉ cần chỉnh sửa rất ít.<br />
 Đây là một trong những sức mạnh của <strong>abstraction</strong> (trừu tượng hóa), khi các chi tiết triển khai được ẩn khỏi lập trình viên.</p>
 <p>Tuy nhiên, một sự đánh đổi cần thiết của abstraction là <strong>quyền kiểm soát</strong>.<br />

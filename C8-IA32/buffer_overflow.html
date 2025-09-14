@@ -139,11 +139,11 @@
                         <h2 id="810-thực-tế-buffer-overflow"><a class="header" href="#810-thực-tế-buffer-overflow">8.10. Thực tế: Buffer Overflow</a></h2>
 <p>Ngôn ngữ C không thực hiện việc kiểm tra giới hạn mảng (array bounds checking) một cách tự động.<br />
 Việc truy cập bộ nhớ nằm ngoài phạm vi của một mảng là vấn đề nghiêm trọng và thường dẫn đến các lỗi như <strong>segmentation fault</strong>.<br />
-Tuy nhiên, một kẻ tấn công tinh vi có thể chèn mã độc để cố ý ghi đè ra ngoài biên của mảng (hay còn gọi là <strong>buffer</strong>) nhằm buộc chương trình thực thi theo cách không mong muốn.<br />
-Trong trường hợp xấu nhất, kẻ tấn công có thể chạy mã cho phép chúng giành được <strong>root privilege</strong> (quyền root) hoặc quyền truy cập cấp hệ điều hành vào hệ thống máy tính.<br />
+Tuy nhiên, một kẻ tấn công tinh vi có thể chèn code độc để cố ý ghi đè ra ngoài biên của mảng (hay còn gọi là <strong>buffer</strong>) nhằm buộc chương trình thực thi theo cách không mong muốn.<br />
+Trong trường hợp xấu nhất, kẻ tấn công có thể chạy code cho phép chúng giành được <strong>root privilege</strong> (quyền root) hoặc quyền truy cập cấp hệ điều hành vào hệ thống máy tính.<br />
 Một phần mềm khai thác lỗ hổng tràn bộ đệm đã biết trong một chương trình được gọi là <strong>buffer overflow exploit</strong>.</p>
 <p>Trong phần này, chúng ta sẽ sử dụng <strong>GDB</strong> và ngôn ngữ assembly để phân tích chi tiết cơ chế của một buffer overflow exploit.<br />
-Trước khi đọc chương này, bạn nên tham khảo chương nói về <a href="../C3-C_debug/gdb_assembly.html#_debugging_assembly_code">GDB để kiểm tra mã assembly</a>.</p>
+Trước khi đọc chương này, bạn nên tham khảo chương nói về <a href="../C3-C_debug/gdb_assembly.html#_debugging_assembly_code">GDB để kiểm tra code assembly</a>.</p>
 <h3 id="8101-các-ví-dụ-nổi-tiếng-về-buffer-overflow"><a class="header" href="#8101-các-ví-dụ-nổi-tiếng-về-buffer-overflow">8.10.1. Các ví dụ nổi tiếng về Buffer Overflow</a></h3>
 <p>Các buffer overflow exploit xuất hiện từ những năm 1980 và vẫn là mối đe dọa lớn của ngành công nghiệp máy tính cho đến đầu những năm 2000.<br />
 Mặc dù nhiều hệ điều hành hiện đại đã có cơ chế bảo vệ chống lại các cuộc tấn công buffer overflow đơn giản nhất, nhưng các lỗi lập trình bất cẩn vẫn có thể khiến chương trình hiện đại dễ bị tấn công.<br />
@@ -224,13 +224,13 @@ int main(void) {
 File header <code>other.h</code> chứa định nghĩa của các hàm <code>getSecretCode</code> và <code>calculateValue</code>, nhưng chúng ta không có file này.<br />
 Vậy làm sao để thắng trò chơi?<br />
 Thử brute force sẽ mất quá nhiều thời gian.<br />
-Một chiến lược là phân tích file thực thi <code>secret</code> trong GDB và bước qua mã assembly để tìm ra số và chuỗi bí mật.<br />
-Quá trình phân tích mã assembly để hiểu cách nó hoạt động được gọi là <strong>reverse engineering</strong>.<br />
+Một chiến lược là phân tích file thực thi <code>secret</code> trong GDB và bước qua code assembly để tìm ra số và chuỗi bí mật.<br />
+Quá trình phân tích code assembly để hiểu cách nó hoạt động được gọi là <strong>reverse engineering</strong>.<br />
 Những người thành thạo GDB và đọc assembly có thể dùng GDB để reverse engineer số và chuỗi bí mật.</p>
 <p>Tuy nhiên, vẫn còn một cách khác tinh vi hơn để chiến thắng.</p>
 <h3 id="8103-xem-xét-kỹ-hơn-under-the-c"><a class="header" href="#8103-xem-xét-kỹ-hơn-under-the-c">8.10.3. Xem xét kỹ hơn (Under the C)</a></h3>
 <p>Chương trình có khả năng chứa lỗ hổng tràn bộ đệm tại lần gọi <code>scanf</code> đầu tiên.<br />
-Để hiểu chuyện gì đang xảy ra, hãy kiểm tra mã assembly của hàm <code>main</code> bằng GDB.<br />
+Để hiểu chuyện gì đang xảy ra, hãy kiểm tra code assembly của hàm <code>main</code> bằng GDB.<br />
 Chúng ta sẽ đặt breakpoint tại địa chỉ <code>0x0804859f</code>, là lệnh ngay trước khi gọi <code>scanf</code> (nếu đặt breakpoint tại địa chỉ của <code>scanf</code>, chương trình sẽ dừng <strong>bên trong</strong> <code>scanf</code>, chứ không phải trong <code>main</code>).</p>
 <pre><code>   0x08048582 &lt;+0&gt;:     push   %ebp
    0x08048583 &lt;+1&gt;:     mov    %esp,%ebp
@@ -251,7 +251,7 @@ Lệnh <code>lea</code> tại <code>&lt;main+21&gt;</code> tạo địa chỉ th
 <strong>[afterScanf]</strong> minh họa stack ngay sau khi <code>scanf</code> hoàn tất:</p>
 <p><img src="_images/afterScanf.png" alt="after" /><br />
 <strong>Hình 2.</strong> Call stack ngay sau khi gọi <code>scanf</code> với input <code>12345678</code></p>
-<p>Hãy nhớ rằng mã hex của các ký tự số từ <code>'0'</code> đến <code>'9'</code> là từ <code>0x30</code> đến <code>0x39</code>, và mỗi ô nhớ trên stack dài 4 byte.<br />
+<p>Hãy nhớ rằng code hex của các ký tự số từ <code>'0'</code> đến <code>'9'</code> là từ <code>0x30</code> đến <code>0x39</code>, và mỗi ô nhớ trên stack dài 4 byte.<br />
 Frame pointer cách stack pointer 56 byte.<br />
 Bạn có thể xác nhận giá trị của <code>%ebp</code> bằng GDB với lệnh:</p>
 <pre><code>p $ebp
@@ -303,7 +303,7 @@ Segmentation fault (core dumped)
 $ echo $?
 139
 </code></pre>
-<p>Thú vị đấy! Lần này chương trình bị crash với lỗi segmentation fault, mã trả về <code>139</code>. <strong>Hình 3</strong> cho thấy call stack của <code>main</code> ngay sau khi gọi <code>scanf</code> với chuỗi nhập mới này:</p>
+<p>Thú vị đấy! Lần này chương trình bị crash với lỗi segmentation fault, code trả về <code>139</code>. <strong>Hình 3</strong> cho thấy call stack của <code>main</code> ngay sau khi gọi <code>scanf</code> với chuỗi nhập mới này:</p>
 <p><img src="_images/afterScanf2.png" alt="after2" /><br />
 <strong>Hình 3.</strong> Call stack ngay sau khi gọi <code>scanf</code> với input <code>1234567890123456789012345678901234</code></p>
 <p>Chuỗi nhập quá dài này không chỉ ghi đè giá trị tại địa chỉ <code>0x428</code>, mà còn tràn xuống ghi đè cả địa chỉ trả về (return address) bên dưới stack frame của <code>main</code>. Hãy nhớ rằng khi một hàm trả về, chương trình sẽ cố tiếp tục thực thi tại địa chỉ được lưu trong return address. Trong ví dụ này, chương trình cố chạy tiếp tại địa chỉ <code>0xf7003433</code> sau khi thoát <code>main</code>, nhưng địa chỉ này không tồn tại. Do đó, chương trình crash với segmentation fault.</p>
@@ -378,17 +378,17 @@ Hãy nhớ rằng mục tiêu của chúng ta là đánh lừa chương trình t
 <p>Exploit của chúng ta đã thành công! Chúng ta đã thắng trò chơi.</p>
 <h3 id="8106-bảo-vệ-chống-lại-buffer-overflow"><a class="header" href="#8106-bảo-vệ-chống-lại-buffer-overflow">8.10.6. Bảo vệ chống lại Buffer Overflow</a></h3>
 <p>Ví dụ trên đã thay đổi luồng điều khiển của file thực thi <code>secret</code>, buộc nó trả về giá trị 0 (thành công). Tuy nhiên, một exploit như vậy có thể gây ra thiệt hại thực sự.<br />
-Hơn nữa, một số hệ thống máy tính cũ <strong>thực thi</strong> các byte từ bộ nhớ stack. Nếu kẻ tấn công đặt các byte tương ứng với lệnh assembly lên call stack, CPU sẽ diễn giải chúng như các lệnh <strong>thật</strong>, cho phép kẻ tấn công buộc CPU thực thi <strong>bất kỳ mã tùy ý nào</strong>.</p>
+Hơn nữa, một số hệ thống máy tính cũ <strong>thực thi</strong> các byte từ bộ nhớ stack. Nếu kẻ tấn công đặt các byte tương ứng với lệnh assembly lên call stack, CPU sẽ diễn giải chúng như các lệnh <strong>thật</strong>, cho phép kẻ tấn công buộc CPU thực thi <strong>bất kỳ code tùy ý nào</strong>.</p>
 <p>May mắn thay, các hệ thống hiện đại có nhiều chiến lược để làm cho việc khai thác buffer overflow trở nên khó khăn hơn:</p>
 <ul>
 <li>
-<p><strong>Stack Randomization</strong>: Hệ điều hành cấp phát địa chỉ bắt đầu của stack tại một vị trí ngẫu nhiên trong bộ nhớ stack, khiến vị trí/kích thước của call stack thay đổi giữa các lần chạy. Nhiều máy chạy cùng một chương trình sẽ có địa chỉ stack khác nhau. Linux hiện đại dùng kỹ thuật này như một tiêu chuẩn. Tuy nhiên, kẻ tấn công kiên trì vẫn có thể brute force bằng cách thử nhiều địa chỉ khác nhau. Một mẹo phổ biến là dùng <strong>NOP sled</strong> — một dãy dài các lệnh <code>nop</code> (<code>0x90</code>) trước mã exploit. Lệnh <code>nop</code> không làm gì ngoài việc tăng program counter sang lệnh tiếp theo. Miễn là CPU bắt đầu thực thi ở đâu đó trong NOP sled, nó sẽ trượt đến đoạn mã exploit phía sau. Bài viết <em>Smashing the Stack for Fun and Profit</em> của Aleph One⁶ mô tả chi tiết cơ chế này.</p>
+<p><strong>Stack Randomization</strong>: Hệ điều hành cấp phát địa chỉ bắt đầu của stack tại một vị trí ngẫu nhiên trong bộ nhớ stack, khiến vị trí/kích thước của call stack thay đổi giữa các lần chạy. Nhiều máy chạy cùng một chương trình sẽ có địa chỉ stack khác nhau. Linux hiện đại dùng kỹ thuật này như một tiêu chuẩn. Tuy nhiên, kẻ tấn công kiên trì vẫn có thể brute force bằng cách thử nhiều địa chỉ khác nhau. Một mẹo phổ biến là dùng <strong>NOP sled</strong> — một dãy dài các lệnh <code>nop</code> (<code>0x90</code>) trước code exploit. Lệnh <code>nop</code> không làm gì ngoài việc tăng program counter sang lệnh tiếp theo. Miễn là CPU bắt đầu thực thi ở đâu đó trong NOP sled, nó sẽ trượt đến đoạn code exploit phía sau. Bài viết <em>Smashing the Stack for Fun and Profit</em> của Aleph One⁶ mô tả chi tiết cơ chế này.</p>
 </li>
 <li>
 <p><strong>Stack corruption detection</strong>: Một biện pháp khác là phát hiện khi stack bị hỏng. Các phiên bản GCC gần đây dùng một cơ chế bảo vệ gọi là <strong>canary</strong> — một giá trị đóng vai trò như “chim hoàng yến” canh gác giữa buffer và các phần tử khác của stack. Canary được lưu ở vùng bộ nhớ không ghi đè được và được so sánh với giá trị đặt trên stack. Nếu canary “chết” trong quá trình chạy, chương trình biết mình đang bị tấn công và sẽ dừng với thông báo lỗi. Tuy nhiên, kẻ tấn công tinh vi có thể thay thế canary để tránh bị phát hiện.</p>
 </li>
 <li>
-<p><strong>Giới hạn vùng có thể thực thi</strong>: Ở biện pháp này, mã thực thi chỉ được phép nằm trong một số vùng bộ nhớ nhất định, nghĩa là call stack không còn khả năng thực thi. Tuy nhiên, biện pháp này cũng có thể bị vượt qua. Trong tấn công <strong>return-oriented programming</strong> (ROP), kẻ tấn công có thể “nhặt” các lệnh trong vùng thực thi và nhảy từ lệnh này sang lệnh khác để tạo thành exploit. Có nhiều ví dụ nổi tiếng về kỹ thuật này, đặc biệt trong các trò chơi điện tử⁷.</p>
+<p><strong>Giới hạn vùng có thể thực thi</strong>: Ở biện pháp này, code thực thi chỉ được phép nằm trong một số vùng bộ nhớ nhất định, nghĩa là call stack không còn khả năng thực thi. Tuy nhiên, biện pháp này cũng có thể bị vượt qua. Trong tấn công <strong>return-oriented programming</strong> (ROP), kẻ tấn công có thể “nhặt” các lệnh trong vùng thực thi và nhảy từ lệnh này sang lệnh khác để tạo thành exploit. Có nhiều ví dụ nổi tiếng về kỹ thuật này, đặc biệt trong các trò chơi điện tử⁷.</p>
 </li>
 </ul>
 <p>Tuy nhiên, tuyến phòng thủ tốt nhất vẫn là lập trình viên.<br />
@@ -459,7 +459,7 @@ You are so wrong!
 $ echo $?
 1
 </code></pre>
-<p>Tất nhiên, bất kỳ ai có kỹ năng <strong>reverse engineering</strong> (kỹ thuật đảo ngược) cơ bản vẫn có thể thắng trò chơi đoán số bằng cách phân tích mã assembly. Nếu bạn chưa thử đánh bại chương trình bằng reverse engineering, chúng tôi khuyến khích bạn thử ngay bây giờ.</p>
+<p>Tất nhiên, bất kỳ ai có kỹ năng <strong>reverse engineering</strong> (kỹ thuật đảo ngược) cơ bản vẫn có thể thắng trò chơi đoán số bằng cách phân tích code assembly. Nếu bạn chưa thử đánh bại chương trình bằng reverse engineering, chúng tôi khuyến khích bạn thử ngay bây giờ.</p>
 <h3 id="tài-liệu-tham-khảo"><a class="header" href="#tài-liệu-tham-khảo">Tài liệu tham khảo</a></h3>
 <ol>
 <li>

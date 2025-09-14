@@ -245,7 +245,7 @@ void *countElems(void *args){
 </code></pre>
 <p>Trong phần thảo luận trước về hàm này, chúng ta đã chỉ ra rằng <strong>data race</strong> có thể khiến mảng <code>counts</code> không được điền đúng tập giá trị đếm.<br />
 Bây giờ, hãy xem điều gì xảy ra nếu chúng ta thử <strong>đo thời gian</strong> chạy hàm này.<br />
-Ta thêm mã đo thời gian vào <code>main</code> bằng <code>gettimeofday</code> giống hệt như trong <a href="_attachments/countElems_p_v3.c">countElems_p_v3.c</a>.</p>
+Ta thêm code đo thời gian vào <code>main</code> bằng <code>gettimeofday</code> giống hệt như trong <a href="_attachments/countElems_p_v3.c">countElems_p_v3.c</a>.</p>
 <p>Kết quả benchmark phiên bản ban đầu của <code>countElems</code> trên 100 triệu phần tử như sau:</p>
 <pre><code>$ ./countElems_p 100000000 0 1
 Time for Step 1 is 0.336239 s
@@ -324,7 +324,7 @@ Trong ví dụ trước, có vẻ như tất cả các core đang truy cập cù
 <h3 id="1453-khắc-phục-false-sharing"><a class="header" href="#1453-khắc-phục-false-sharing">14.5.3. Khắc phục False Sharing</a></h3>
 <p>Một cách để khắc phục false sharing là <strong>padding</strong> (đệm) mảng (trong trường hợp này là <code>counts</code>) bằng các phần tử bổ sung để nó <strong>không vừa</strong> trong một cache line.<br />
 Tuy nhiên, padding có thể gây <strong>lãng phí bộ nhớ</strong> và có thể <strong>không loại bỏ hoàn toàn vấn đề</strong> trên mọi kiến trúc (ví dụ: hai máy khác nhau có kích thước L1 cache khác nhau).<br />
-Trong hầu hết các trường hợp, việc viết mã để hỗ trợ nhiều kích thước cache thường <strong>không đáng</strong> so với lợi ích hiệu năng thu được.</p>
+Trong hầu hết các trường hợp, việc viết code để hỗ trợ nhiều kích thước cache thường <strong>không đáng</strong> so với lợi ích hiệu năng thu được.</p>
 <p>Một giải pháp tốt hơn là để các thread ghi vào <strong>local storage</strong> (bộ nhớ cục bộ) bất cứ khi nào có thể.<br />
 Trong ngữ cảnh này, local storage là vùng nhớ <strong>cục bộ</strong> cho một thread.<br />
 Giải pháp sau đây giảm false sharing bằng cách thực hiện cập nhật vào một biến <code>counts</code> cục bộ được khai báo riêng, gọi là <code>local_counts</code>.</p>
@@ -372,7 +372,7 @@ void *countElems( void *args ){
 </code></pre>
 <p>Vì <strong>cache coherence</strong> được thiết kế để duy trì góc nhìn nhất quán về bộ nhớ chia sẻ, nên invalidation chỉ xảy ra khi <strong>ghi</strong> vào <strong>giá trị chia sẻ</strong> trong bộ nhớ.<br />
 Do <code>local_counts</code> <strong>không được chia sẻ</strong> giữa các thread, việc ghi vào nó sẽ <strong>không</strong> làm invalidate cache line tương ứng.</p>
-<p>Trong phần cuối của mã, <strong>mutex</strong> đảm bảo tính đúng đắn bằng cách chỉ cho phép <strong>một thread</strong> cập nhật mảng <code>counts</code> chia sẻ tại một thời điểm:</p>
+<p>Trong phần cuối của code, <strong>mutex</strong> đảm bảo tính đúng đắn bằng cách chỉ cho phép <strong>một thread</strong> cập nhật mảng <code>counts</code> chia sẻ tại một thời điểm:</p>
 <pre><code class="language-c">// cập nhật mảng counts toàn cục
 pthread_mutex_lock(&amp;mutex); // khóa mutex
 for (i = 0; i &lt; MAX; i++){

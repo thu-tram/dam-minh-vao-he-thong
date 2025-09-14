@@ -395,7 +395,7 @@ Cụ thể, <strong>temporal locality</strong> cho thấy dữ liệu được s
 Do đó, cache áp dụng chiến lược giống như phần trước khi <a href="locality.html#_temporal_locality">quản lý ví dụ tủ sách</a>: khi quyết định line nào trong set sẽ bị thay thế, chọn line <strong>ít được sử dụng gần đây nhất</strong> (<strong>LRU – Least Recently Used</strong>).<br />
 LRU được gọi là <strong>cache replacement policy</strong> vì nó điều khiển cơ chế thay thế của cache.</p>
 <p>Chính sách LRU yêu cầu mỗi set lưu thêm các bit metadata để xác định line nào ít được sử dụng gần đây nhất.<br />
-Số bit cần thiết để mã hóa trạng thái LRU tăng theo số lượng line trong set.<br />
+Số bit cần thiết để code hóa trạng thái LRU tăng theo số lượng line trong set.<br />
 Những bit metadata bổ sung này góp phần làm tăng độ phức tạp của thiết kế set associative so với direct-mapped cache.</p>
 <p><strong>Hình 15</strong> minh họa một cache 2-way set associative, nghĩa là mỗi set chứa 2 line.<br />
 Với chỉ 2 line, mỗi set chỉ cần 1 bit metadata LRU để theo dõi line nào ít được sử dụng gần đây nhất.<br />
@@ -403,7 +403,7 @@ Trong hình, giá trị LRU = 0 nghĩa là line bên trái ít được sử d�
 <p><img src="_images/CacheLRU.png" alt="The LRU bit is a one-bit flag that indicates whether the leftmost line of the set was least recently used (LRU = 0) or the rightmost line of the set was least recently used (LRU = 1)." /><br />
 <strong>Hình 15.</strong> Cache 2-way set associative, mỗi set lưu 1 bit metadata LRU để hỗ trợ quyết định thay thế dữ liệu...</p>
 <blockquote>
-<p><strong>Lưu ý:</strong> Việc Hình 15 chọn quy ước “0 nghĩa là bên trái” và “1 nghĩa là bên phải” chỉ là tùy ý. Cách diễn giải bit LRU có thể khác nhau giữa các loại cache. Nếu bạn được yêu cầu làm việc với cache trong một bài tập, đừng mặc định rằng bài tập đó dùng cùng một sơ đồ mã hóa LRU như ở đây!</p>
+<p><strong>Lưu ý:</strong> Việc Hình 15 chọn quy ước “0 nghĩa là bên trái” và “1 nghĩa là bên phải” chỉ là tùy ý. Cách diễn giải bit LRU có thể khác nhau giữa các loại cache. Nếu bạn được yêu cầu làm việc với cache trong một bài tập, đừng mặc định rằng bài tập đó dùng cùng một sơ đồ code hóa LRU như ở đây!</p>
 </blockquote>
 <h4 id="ví-dụ-về-set-associative-cache"><a class="header" href="#ví-dụ-về-set-associative-cache">Ví dụ về Set Associative Cache</a></h4>
 <p>Xét một CPU có các đặc điểm sau:</p>

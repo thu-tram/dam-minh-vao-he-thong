@@ -201,7 +201,7 @@ Nhớ rằng cú pháp <code>m[i][j]</code> <strong>không hoạt động</stron
     return total;
 }
 </code></pre>
-<p>Dưới đây là mã assembly tương ứng, với chú thích từng dòng:</p>
+<p>Dưới đây là code assembly tương ứng, với chú thích từng dòng:</p>
 <pre><code>Dump of assembler code for function sumMat:
 0x884 &lt;+0&gt;:   sub   sp, sp, #0x20      // mở rộng stack thêm 32 byte (frame mới)
 0x888 &lt;+4&gt;:   str   x0, [sp, #8]       // lưu m tại sp + 8
@@ -245,7 +245,7 @@ Nhớ rằng cú pháp <code>m[i][j]</code> <strong>không hoạt động</stron
 </code></pre>
 <p>Các biến cục bộ <code>i</code>, <code>j</code> và <code>total</code> lần lượt được lưu tại các vị trí trên stack là <code>sp + 20</code>, <code>sp + 24</code> và <code>sp + 28</code>.<br />
 Các tham số đầu vào <code>m</code>, <code>row</code> và <code>cols</code> lần lượt được lưu tại <code>sp + 8</code>, <code>sp + 4</code> và <code>sp</code> (đỉnh stack).</p>
-<p>Với thông tin này, hãy tập trung vào đoạn mã chỉ xử lý việc truy cập phần tử (<em>i</em>, <em>j</em>) trong ma trận (từ địa chỉ 0x8a8 đến 0x8d8):</p>
+<p>Với thông tin này, hãy tập trung vào đoạn code chỉ xử lý việc truy cập phần tử (<em>i</em>, <em>j</em>) trong ma trận (từ địa chỉ 0x8a8 đến 0x8d8):</p>
 <pre><code>0x8a8 &lt;+36&gt;:   ldr   w1, [sp, #20]       // w1 = i
 0x8ac &lt;+40&gt;:   ldr   w0, [sp]            // w0 = cols
 0x8b0 &lt;+44&gt;:   mul   w1, w1, w0          // w1 = cols * i
@@ -312,7 +312,7 @@ Ngược lại, mỗi <code>M2[i]</code> là mảng <code>int</code>, nên các 
 </code></pre>
 <p>Mặc dù hàm này trông gần như giống hệt với hàm <code>sumMat</code> đã trình bày trước đó, nhưng ma trận mà hàm này nhận vào lại bao gồm <strong>một mảng liên tiếp các <em>con trỏ</em></strong>.<br />
 Mỗi con trỏ chứa địa chỉ của một mảng liên tiếp riêng biệt, tương ứng với một hàng riêng trong ma trận.</p>
-<p>Dưới đây là mã assembly tương ứng của <code>sumMatrix</code>. Mỗi dòng đều được chú thích bằng tiếng Anh trong bản gốc:</p>
+<p>Dưới đây là code assembly tương ứng của <code>sumMatrix</code>. Mỗi dòng đều được chú thích bằng tiếng Anh trong bản gốc:</p>
 <pre><code>Dump of assembler code for function sumMatrix:
 0x920 &lt;+0&gt;:   sub   sp, sp, #0x20         // mở rộng stack thêm 32 byte (frame mới)
 0x924 &lt;+4&gt;:   str   x0, [sp, #8]          // lưu matrix tại sp + 8
@@ -355,7 +355,7 @@ Mỗi con trỏ chứa địa chỉ của một mảng liên tiếp riêng biệ
 </code></pre>
 <p>Tương tự như trước, các biến <code>i</code>, <code>j</code> và <code>total</code> lần lượt nằm tại <code>sp + 20</code>, <code>sp + 24</code> và <code>sp + 28</code>.<br />
 Các tham số đầu vào <code>matrix</code>, <code>row</code> và <code>cols</code> lần lượt nằm tại <code>sp + 8</code>, <code>sp + 4</code> và <code>sp</code> (đỉnh stack).</p>
-<p>Hãy tập trung vào đoạn mã xử lý việc truy cập phần tử (<em>i</em>, <em>j</em>) — tức <code>matrix[i][j]</code> — từ địa chỉ 0x944 đến 0x970:</p>
+<p>Hãy tập trung vào đoạn code xử lý việc truy cập phần tử (<em>i</em>, <em>j</em>) — tức <code>matrix[i][j]</code> — từ địa chỉ 0x944 đến 0x970:</p>
 <pre><code>0x944 &lt;+36&gt;:   ldrsw  x0, [sp, #20]          // x0 = signExtend(i)
 0x948 &lt;+40&gt;:   lsl    x0, x0, #3             // x0 = i &lt;&lt; 3 (hay i * 8)
 0x94c &lt;+44&gt;:   ldr    x1, [sp, #8]           // x1 = matrix
