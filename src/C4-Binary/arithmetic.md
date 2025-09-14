@@ -1,5 +1,0 @@
-## 4.4. Binary Integer Arithmetic
-
-Having presented binary representations for [unsigned](bases.html#_unsigned_binary_numbers) and [signed](signed.html#_signed_binary_integers) integers, we're ready to use them in arithmetic operations. Fortunately, due to their encoding, it *does not matter* to the arithmetic procedures whether wechoose to interpret the operands or result as signed or unsigned. This observation is great news for hardware designers because it allows them to build one set of hardware components that can be shared for both unsigned and signed operations. The [hardware chapter](../C5-Arch/circuits.html#_circuits) describes the circuitry for performing arithmetic in more detail.
-
-Luckily, the same pencil-and-paper algorithms you learned in gradeschool for performing arithmetic on decimal numbers also work for binary numbers. Though the hardware might not compute them in exactly the same way, you should at least be able to make sense of the calculations.

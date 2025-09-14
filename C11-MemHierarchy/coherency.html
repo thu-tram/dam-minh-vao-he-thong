@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Looking Ahead: Caching on Multicore Processors - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html" class="active"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="116-nhìn-về-phía-trước-caching-trên-bộ-xử-lý-đa-nhân-multicore-processors"><a class="header" href="#116-nhìn-về-phía-trước-caching-trên-bộ-xử-lý-đa-nhân-multicore-processors">11.6. Nhìn về phía trước: Caching trên bộ xử lý đa nhân (multicore processors)</a></h2>
+<p>Cho đến giờ, phần thảo luận của chúng ta về caching mới chỉ tập trung vào một cấp bộ nhớ cache duy nhất trên bộ xử lý đơn nhân (single-core processor). Tuy nhiên, các bộ xử lý hiện đại là <strong>multicore</strong> (đa nhân) với nhiều cấp bộ nhớ cache. Thông thường, mỗi <strong>core</strong> duy trì bộ nhớ cache riêng ở cấp cao nhất trong <strong>memory hierarchy</strong> (hệ phân cấp bộ nhớ) và chia sẻ một bộ nhớ cache chung với tất cả các core ở các cấp thấp hơn. Hình 1 minh họa ví dụ về hệ phân cấp bộ nhớ trên một bộ xử lý bốn nhân, trong đó mỗi core có một <strong>L1 cache</strong> riêng, và <strong>L2 cache</strong> được chia sẻ bởi cả bốn core.</p>
+<p><img src="_images/MulticoreCache.png" alt="An example four-core processor system where each core has its own L1 cache, and all cores share a single L2 cache, with shared RAM underneath." /></p>
+<p><strong>Hình 1.</strong> Ví dụ về hệ phân cấp bộ nhớ trên một bộ xử lý đa nhân. Mỗi core trong bốn core có một <strong>L1 cache</strong> riêng, và cả bốn core chia sẻ một <strong>L2 cache</strong> duy nhất, truy cập thông qua một <strong>shared bus</strong> (bus chia sẻ). Bộ xử lý đa nhân kết nối tới <strong>RAM</strong> thông qua <strong>memory bus</strong>.</p>
+<p>Hãy nhớ rằng các cấp cao hơn trong <strong>memory hierarchy</strong> có tốc độ truy cập nhanh hơn và dung lượng nhỏ hơn so với các cấp thấp hơn. Do đó, <strong>L1 cache</strong> nhỏ hơn và nhanh hơn <strong>L2 cache</strong>, và <strong>L2 cache</strong> lại nhỏ hơn và nhanh hơn <strong>RAM</strong>. Ngoài ra, bộ nhớ cache lưu trữ một bản sao của giá trị từ cấp thấp hơn trong hệ phân cấp bộ nhớ; giá trị trong <strong>L1 cache</strong> là bản sao của giá trị trong <strong>L2 cache</strong>, và <strong>L2 cache</strong> lại là bản sao của giá trị trong <strong>RAM</strong>. Vì vậy, các cấp cao hơn trong hệ phân cấp bộ nhớ đóng vai trò là cache cho các cấp thấp hơn. Trong ví dụ ở Hình 1, <strong>L2 cache</strong> là cache của nội dung <strong>RAM</strong>, và <strong>L1 cache</strong> của mỗi core là cache của nội dung <strong>L2 cache</strong>.</p>
+<p>Mỗi core trong bộ xử lý đa nhân đồng thời thực thi một luồng lệnh (instruction stream) độc lập, thường đến từ các chương trình khác nhau. Việc cung cấp cho mỗi core một <strong>L1 cache</strong> riêng cho phép core đó lưu trữ các bản sao dữ liệu và lệnh chỉ từ luồng lệnh mà nó đang thực thi, trong bộ nhớ cache nhanh nhất của nó. Nói cách khác, <strong>L1 cache</strong> của mỗi core chỉ lưu các khối bộ nhớ thuộc luồng thực thi của nó, thay vì phải cạnh tranh không gian trong một <strong>L1 cache</strong> chung cho tất cả các core. Thiết kế này giúp tăng <strong>hit rate</strong> (tỉ lệ truy cập trúng) trong <strong>L1 cache</strong> riêng của mỗi core so với trường hợp tất cả các core chia sẻ một <strong>L1 cache</strong> duy nhất.</p>
+<p>Các bộ xử lý ngày nay thường có nhiều hơn hai cấp cache. Ba cấp là phổ biến trong các hệ thống desktop, với cấp cao nhất (<strong>L1</strong>) thường được tách thành hai <strong>L1 cache</strong> riêng: một cho lệnh chương trình (<strong>instruction cache</strong>) và một cho dữ liệu chương trình (<strong>data cache</strong>). Các cache ở cấp thấp hơn thường là <strong>unified caches</strong> (cache hợp nhất), nghĩa là lưu trữ cả dữ liệu và lệnh chương trình. Mỗi core thường duy trì một <strong>L1 cache</strong> riêng và chia sẻ một <strong>L3 cache</strong> chung với tất cả các core. Lớp <strong>L2 cache</strong>, nằm giữa <strong>L1 cache</strong> riêng của mỗi core và <strong>L3 cache</strong> chung, có sự khác biệt đáng kể trong các thiết kế CPU hiện đại: <strong>L2 cache</strong> có thể là riêng cho từng core, có thể được chia sẻ bởi tất cả các core, hoặc là dạng lai (hybrid) với nhiều <strong>L2 cache</strong>, mỗi cái được chia sẻ bởi một nhóm core.</p>
+<blockquote>
+<p><strong>Thông tin về Processor và Cache trên hệ thống Linux</strong></p>
+<p>Nếu bạn tò mò về thiết kế CPU của mình, có nhiều cách để lấy thông tin về bộ xử lý và tổ chức cache trên hệ thống. Ví dụ, lệnh <code>lscpu</code> hiển thị thông tin về bộ xử lý, bao gồm số lượng core và các cấp, kích thước của cache:</p>
+<pre><code>$ lscpu
+...
+CPU(s):                          12
+Thread(s) per core:              2
+Core(s) per socket:              6
+Socket(s):                       1
+...
+L1d cache:                       192 KiB
+L1i cache:                       384 KiB
+L2 cache:                        3 MiB
+L3 cache:                        16 MiB
+</code></pre>
+<p>Kết quả này cho thấy có tổng cộng 6 core (số <code>Socket(s)</code> nhân với <code>Core(s) per socket</code>), và mỗi core hỗ trợ <strong>hyperthreading</strong> hai luồng (<code>Thread(s) per core</code>), khiến 6 core vật lý xuất hiện như 12 CPU đối với hệ điều hành (xem <a href="../C5-Arch/modern.html#_multicore_and_hardware_multithreading">Chương 5.9.2</a> để biết thêm về <strong>hardware multithreading</strong>). Ngoài ra, kết quả cho thấy có ba cấp cache (<code>L1</code>, <code>L2</code>, và <code>L3</code>), và có hai <strong>L1 cache</strong> riêng biệt: một cho dữ liệu (<code>L1d</code>) và một cho lệnh (<code>L1i</code>).</p>
+<p>Ngoài <code>lscpu</code>, các tệp trong <strong>/proc</strong> và <strong>/sys</strong> cũng chứa thông tin về bộ xử lý. Ví dụ, lệnh <code>cat /proc/cpuinfo</code> xuất thông tin về CPU, và lệnh sau liệt kê thông tin về cache của một core cụ thể (lưu ý rằng các thư mục này được đặt tên theo CPU logic của core hỗ trợ hyperthreading; trong ví dụ này <code>cpu0</code> và <code>cpu6</code> là hai CPU logic của core 0):</p>
+<pre><code>$ ls /sys/devices/system/cpu/cpu0/cache
+index0/  index1/  index2/  index3/
+</code></pre>
+<p>Kết quả này cho thấy core 0 có bốn cache (<code>index0</code> đến <code>index3</code>). Để xem chi tiết từng cache, ta đọc các tệp <code>type</code>, <code>level</code>, và <code>shared_cpu_list</code> trong mỗi thư mục index:</p>
+<pre><code>$ cat /sys/devices/system/cpu/cpu0/cache/index*/type
+Data
+Instruction
+Unified
+Unified
+$ cat /sys/devices/system/cpu/cpu0/cache/index*/level
+1
+1
+2
+3
+$ cat /sys/devices/system/cpu/cpu0/cache/index*/shared_cpu_list
+0,6
+0,6
+0,6
+0-11
+</code></pre>
+<p>Kết quả <code>type</code> cho thấy core 0 có cache dữ liệu và cache lệnh riêng, cùng với hai cache hợp nhất khác. Kết hợp với <code>level</code>, ta thấy cache dữ liệu và cache lệnh đều là <strong>L1 cache</strong>, trong khi hai cache hợp nhất là <strong>L2</strong> và <strong>L3</strong>. Thông tin <code>shared_cpu_list</code> cho thấy <strong>L1</strong> và <strong>L2 cache</strong> là riêng cho core 0 (chỉ chia sẻ giữa CPU <code>0</code> và <code>6</code> — hai luồng hyperthread của core 0), còn <strong>L3 cache</strong> được chia sẻ bởi tất cả 6 core (tất cả 12 CPU logic, <code>0-11</code>).</p>
+</blockquote>
+<h3 id="1161-cache-coherency-tính-nhất-quán-của-cache"><a class="header" href="#1161-cache-coherency-tính-nhất-quán-của-cache">11.6.1. Cache Coherency (Tính nhất quán của cache)</a></h3>
+<p>Vì các chương trình thường có <strong>locality of reference</strong> (tính cục bộ truy cập) cao, nên việc mỗi core có <strong>L1 cache</strong> riêng để lưu trữ bản sao dữ liệu và lệnh từ luồng lệnh mà nó thực thi là rất có lợi. Tuy nhiên, nhiều <strong>L1 cache</strong> có thể dẫn đến vấn đề <strong>cache coherency</strong> (tính nhất quán của cache). Vấn đề này xảy ra khi giá trị của một bản sao khối bộ nhớ trong <strong>L1 cache</strong> của một core khác với giá trị của bản sao cùng khối đó trong <strong>L1 cache</strong> của core khác. Tình huống này xuất hiện khi một core ghi dữ liệu vào một khối đang được cache trong <strong>L1 cache</strong> của nó, và khối đó cũng đang được cache trong <strong>L1 cache</strong> của core khác. Vì mỗi khối cache chỉ là bản sao của nội dung bộ nhớ, hệ thống cần duy trì một giá trị thống nhất cho nội dung bộ nhớ trên tất cả các bản sao của khối cache đó.</p>
+<p>Các bộ xử lý đa nhân triển khai <strong>cache-coherence protocol</strong> (giao thức duy trì tính nhất quán cache) để đảm bảo một cái nhìn nhất quán về bộ nhớ, có thể được cache và truy cập bởi nhiều core. Một <strong>cache-coherence protocol</strong> đảm bảo rằng bất kỳ core nào truy cập một vị trí bộ nhớ đều nhìn thấy giá trị mới nhất đã được sửa đổi của vị trí đó, thay vì nhìn thấy một bản sao cũ (stale) có thể đang được lưu trong <strong>L1 cache</strong> của nó.</p>
+<h3 id="1162-giao-thức-msi-msi-protocol"><a class="header" href="#1162-giao-thức-msi-msi-protocol">11.6.2. Giao thức MSI (MSI Protocol)</a></h3>
+<p>Có nhiều <strong>cache coherency protocol</strong> (giao thức duy trì tính nhất quán cache) khác nhau. Ở đây, chúng ta sẽ tìm hiểu chi tiết một ví dụ: <strong>MSI protocol</strong> (Modified, Shared, Invalid). <strong>MSI protocol</strong> thêm ba <strong>flag</strong> (hoặc bit) vào mỗi <strong>cache line</strong>. Giá trị của một flag có thể là <strong>clear</strong> (0) hoặc <strong>set</strong> (1). Ba flag này mã hóa trạng thái của <strong>data block</strong> (khối dữ liệu) liên quan đến tính nhất quán cache với các bản sao khác của cùng khối dữ liệu, và giá trị của chúng sẽ kích hoạt các hành động duy trì tính nhất quán khi có truy cập đọc hoặc ghi vào khối dữ liệu trong cache line. Ba flag được sử dụng trong <strong>MSI protocol</strong> gồm:</p>
+<ul>
+<li><strong>M</strong> flag: nếu được set, cho biết khối dữ liệu đã bị <strong>modified</strong> (sửa đổi), nghĩa là core này đã ghi vào bản sao giá trị được cache.</li>
+<li><strong>S</strong> flag: nếu được set, cho biết khối dữ liệu chưa bị sửa đổi và có thể <strong>safely shared</strong> (chia sẻ an toàn), nghĩa là nhiều <strong>L1 cache</strong> có thể lưu bản sao của khối và đọc từ bản sao đó.</li>
+<li><strong>I</strong> flag: nếu được set, cho biết khối dữ liệu trong cache là <strong>invalid</strong> (không hợp lệ) hoặc chứa dữ liệu <strong>stale</strong> (lỗi thời — bản sao cũ không phản ánh giá trị hiện tại của khối dữ liệu trong bộ nhớ).</li>
+</ul>
+<p><strong>MSI protocol</strong> được kích hoạt khi có truy cập đọc hoặc ghi vào các mục trong cache.</p>
+<h4 id="khi-truy-cập-đọc-read-access"><a class="header" href="#khi-truy-cập-đọc-read-access">Khi truy cập đọc (read access):</a></h4>
+<ul>
+<li>
+<p>Nếu cache block đang ở trạng thái <strong>M</strong> hoặc <strong>S</strong>, giá trị trong cache được dùng để đáp ứng yêu cầu đọc (bản sao này chứa giá trị mới nhất của khối dữ liệu trong bộ nhớ).</p>
+</li>
+<li>
+<p>Nếu cache block đang ở trạng thái <strong>I</strong>, bản sao trong cache đã lỗi thời so với phiên bản mới hơn của khối dữ liệu, và giá trị mới cần được nạp vào cache line trước khi có thể thực hiện đọc.</p>
+<p>Nếu <strong>L1 cache</strong> của core khác đang lưu giá trị mới (với <strong>M flag</strong> được set, nghĩa là nó lưu bản sao đã được sửa đổi), core đó phải <strong>write-back</strong> (ghi ngược) giá trị của mình xuống cấp thấp hơn (ví dụ: <strong>L2 cache</strong>). Sau khi ghi ngược, nó <strong>clear</strong> M flag (bản sao của nó và bản sao ở cấp thấp hơn giờ đã nhất quán) và <strong>set</strong> S flag để cho biết khối dữ liệu trong cache line này có thể được cache an toàn bởi các core khác (L1 block nhất quán với bản sao trong L2 cache và core đọc giá trị hiện tại từ bản sao L1 này).</p>
+<p>Core khởi tạo truy cập đọc trên một cache line có <strong>I flag</strong> được set sẽ nạp giá trị mới của khối dữ liệu vào cache line của mình. Nó <strong>clear</strong> I flag (khối dữ liệu giờ hợp lệ), lưu giá trị mới, <strong>set</strong> S flag (khối có thể chia sẻ an toàn, nhất quán với các bản sao khác), và <strong>clear</strong> M flag (giá trị trong L1 block khớp với bản sao trong L2 cache — đọc không làm thay đổi bản sao trong L1).</p>
+</li>
+</ul>
+<h4 id="khi-truy-cập-ghi-write-access"><a class="header" href="#khi-truy-cập-ghi-write-access">Khi truy cập ghi (write access):</a></h4>
+<ul>
+<li>Nếu block đang ở trạng thái <strong>M</strong>, ghi trực tiếp vào bản sao trong cache. Không cần thay đổi flag (block vẫn ở trạng thái M).</li>
+<li>Nếu block đang ở trạng thái <strong>I</strong> hoặc <strong>S</strong>, thông báo cho các core khác rằng block đang bị ghi (modified). Các <strong>L1 cache</strong> khác đang lưu block ở trạng thái <strong>S</strong> phải <strong>clear</strong> S bit và <strong>set</strong> I bit (bản sao của chúng giờ đã lỗi thời so với bản sao đang được ghi). Nếu một <strong>L1 cache</strong> khác có block ở trạng thái <strong>M</strong>, nó sẽ ghi ngược block xuống cấp thấp hơn và đặt bản sao của mình về trạng thái <strong>I</strong>. Core thực hiện ghi sau đó sẽ nạp giá trị mới của block vào <strong>L1 cache</strong> của mình, <strong>set</strong> M flag (bản sao sẽ bị sửa đổi bởi thao tác ghi), <strong>clear</strong> I flag (bản sao giờ hợp lệ), và ghi vào block trong cache.</li>
+</ul>
+<p>Từ <strong>Hình 2</strong> đến <strong>Hình 4</strong> minh họa từng bước của <strong>MSI protocol</strong> khi đảm bảo tính nhất quán cho các truy cập đọc và ghi vào một khối dữ liệu được cache trong <strong>L1 cache</strong> riêng của hai core. Trong <strong>Hình 2</strong>, ví dụ bắt đầu với khối dữ liệu dùng chung được sao chép vào <strong>L1 cache</strong> của cả hai core với <strong>S flag</strong> được set, nghĩa là các bản sao trong L1 cache giống với giá trị của block trong <strong>L2 cache</strong> (tất cả bản sao lưu giá trị hiện tại của block là 6). Lúc này, cả core 0 và core 1 đều có thể đọc an toàn từ bản sao trong L1 cache của mình mà không kích hoạt hành động duy trì tính nhất quán (S flag cho biết bản sao chia sẻ là mới nhất).</p>
+<p><img src="_images/MSIstart.png" alt="An example illustrating a block of memory copied into two core's L1 caches, both in the S state." /></p>
+<p><strong>Hình 2.</strong> Ban đầu, cả hai core đều có bản sao của block trong L1 cache riêng với <strong>S flag</strong> được set (trạng thái Shared)</p>
+<p>Nếu core 0 ghi vào bản sao của block trong L1 cache của mình, <strong>L1 cache controller</strong> của nó sẽ thông báo cho các L1 cache khác <strong>invalidate</strong> (vô hiệu hóa) bản sao của block. <strong>L1 cache controller</strong> của core 1 sẽ <strong>clear</strong> S flag và <strong>set</strong> I flag trên bản sao của mình, cho biết bản sao đã lỗi thời. Core 0 ghi vào bản sao trong L1 cache (thay đổi giá trị thành 7 trong ví dụ), <strong>set</strong> M flag và <strong>clear</strong> S flag trên cache line để cho biết bản sao đã bị sửa đổi và lưu giá trị hiện tại của block. Lúc này, bản sao trong <strong>L2 cache</strong> và trong <strong>L1 cache</strong> của core 1 đều đã lỗi thời. Trạng thái cache sau đó được thể hiện trong <strong>Hình 3</strong>.</p>
+<p><img src="_images/MSIwrite.png" alt="An example illustrating the steps taken by the MSI protocol on a write to a block of memory that is shared by more than one L1 cache." /></p>
+<p><strong>Hình 3.</strong> Trạng thái cache sau khi core 0 ghi vào bản sao của block</p>
+<p>Lúc này, core 0 có thể đọc an toàn từ bản sao trong cache vì nó đang ở trạng thái <strong>M</strong>, nghĩa là lưu giá trị mới nhất của block.</p>
+<p>Nếu core 1 tiếp theo đọc từ block, <strong>I flag</strong> trên bản sao trong L1 cache của nó cho biết bản sao đã lỗi thời và không thể dùng để đáp ứng yêu cầu đọc. <strong>L1 cache controller</strong> của core 1 phải nạp giá trị mới của block vào L1 cache trước khi đọc. Để làm điều này, <strong>L1 cache controller</strong> của core 0 phải ghi ngược giá trị đã sửa đổi của block xuống <strong>L2 cache</strong>, để <strong>L1 cache</strong> của core 1 có thể đọc giá trị mới vào. Kết quả của các hành động này (thể hiện trong <strong>Hình 4</strong>) là bản sao trong <strong>L1 cache</strong> của cả core 0 và core 1 đều ở trạng thái <strong>S</strong>, cho biết mỗi bản sao đều mới nhất và có thể dùng an toàn cho các lần đọc tiếp theo.</p>
+<p><img src="_images/MSIread.png" alt="An example illustrating the steps taken by the MSI protocol on a read to a block of memory that is cached in the I state." /></p>
+<p><strong>Hình 4.</strong> Trạng thái cache sau khi Core 1 thực hiện đọc block</p>
+<h3 id="1163-triển-khai-các-cache-coherency-protocol-giao-thức-duy-trì-tính-nhất-quán-cache"><a class="header" href="#1163-triển-khai-các-cache-coherency-protocol-giao-thức-duy-trì-tính-nhất-quán-cache">11.6.3. Triển khai các Cache Coherency Protocol (Giao thức duy trì tính nhất quán cache)</a></h3>
+<p>Để triển khai một <strong>cache coherency protocol</strong>, bộ xử lý cần một cơ chế để xác định khi nào việc truy cập vào nội dung <strong>L1 cache</strong> của một core đòi hỏi thay đổi trạng thái nhất quán liên quan đến nội dung <strong>L1 cache</strong> của các core khác.<br />
+Một cách để thực hiện cơ chế này là thông qua <strong>snooping</strong> (theo dõi) trên một <strong>bus</strong> được chia sẻ bởi tất cả các L1 cache. Một <strong>snooping cache controller</strong> sẽ lắng nghe (hoặc snoop) trên bus để phát hiện các thao tác đọc hoặc ghi vào những block mà nó đang cache.<br />
+Vì mọi yêu cầu đọc và ghi đều được xác định theo địa chỉ bộ nhớ, một <strong>snooping L1 cache controller</strong> có thể nhận biết bất kỳ thao tác đọc hoặc ghi nào từ một L1 cache khác đối với block mà nó lưu trữ, và sau đó phản hồi phù hợp dựa trên <strong>coherency protocol</strong>.<br />
+Ví dụ, nó có thể <strong>set</strong> I flag trên một cache line khi snoop thấy một thao tác ghi vào cùng địa chỉ đó bởi một L1 cache khác. Đây là cách một <strong>write-invalidate protocol</strong> (giao thức ghi-vô hiệu hóa) được triển khai với snooping.</p>
+<p><strong>MSI</strong> và các giao thức tương tự như <strong>MESI</strong> và <strong>MOESI</strong> đều là <strong>write-invalidate protocol</strong> — tức là các giao thức sẽ vô hiệu hóa các bản sao cache khi có thao tác ghi.<br />
+Snooping cũng có thể được sử dụng trong các <strong>write-update cache coherency protocol</strong> (giao thức duy trì tính nhất quán cache kiểu ghi-cập nhật), trong đó giá trị mới của dữ liệu được snoop từ bus và áp dụng để cập nhật tất cả các bản sao được lưu trong các L1 cache khác.</p>
+<p>Thay vì snooping, có thể sử dụng <strong>directory-based cache coherence mechanism</strong> (cơ chế duy trì tính nhất quán cache dựa trên bảng chỉ mục) để kích hoạt các <strong>cache coherency protocol</strong>.<br />
+Phương pháp này mở rộng tốt hơn snooping do hạn chế về hiệu năng khi nhiều core chia sẻ một bus duy nhất. Tuy nhiên, cơ chế dựa trên bảng chỉ mục yêu cầu lưu trữ nhiều trạng thái hơn để phát hiện khi nào các block bộ nhớ được chia sẻ, và thường chậm hơn snooping.</p>
+<h3 id="1164-thêm-về-multicore-caching"><a class="header" href="#1164-thêm-về-multicore-caching">11.6.4. Thêm về Multicore Caching</a></h3>
+<p>Lợi ích về hiệu năng khi mỗi core của một <strong>multicore processor</strong> có cache riêng ở cấp cao nhất của <strong>memory hierarchy</strong> — dùng để lưu trữ bản sao dữ liệu và lệnh chương trình mà core đó thực thi — là xứng đáng với sự phức tạp bổ sung do bộ xử lý phải triển khai <strong>cache coherency protocol</strong>.</p>
+<p>Mặc dù <strong>cache coherency</strong> giải quyết vấn đề nhất quán bộ nhớ trên các bộ xử lý đa nhân với <strong>L1 cache</strong> riêng, vẫn tồn tại một vấn đề khác có thể phát sinh do các <strong>cache coherency protocol</strong> trên bộ xử lý đa nhân.<br />
+Vấn đề này gọi là <strong>false sharing</strong> (chia sẻ giả), có thể xảy ra khi nhiều <strong>thread</strong> của một chương trình song song đa luồng chạy đồng thời trên nhiều core và truy cập các vị trí bộ nhớ gần với các vị trí được truy cập bởi các thread khác.<br />
+Trong <a href="../C14-SharedMemory/cache_coherence.html#_cache_coherence_and_false_sharing">Chương 14.5</a>, chúng ta sẽ thảo luận về vấn đề <strong>false sharing</strong> và một số giải pháp.</p>
+<p>Để biết thêm thông tin chi tiết về <strong>hardware caching</strong> trên <strong>multicore processor</strong>, bao gồm các giao thức khác nhau và cách chúng được triển khai, hãy tham khảo một giáo trình <strong>computer architecture</strong> (kiến trúc máy tính)^1^.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C11-MemHierarchy/cachegrind.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C11-MemHierarchy/summary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C11-MemHierarchy/cachegrind.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C11-MemHierarchy/summary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

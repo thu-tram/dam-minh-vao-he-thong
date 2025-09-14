@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hardware Acceleration and CUDA - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html" class="active"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="151-heterogeneous-computing-hardware-accelerators-gpgpu-computing-and-cuda"><a class="header" href="#151-heterogeneous-computing-hardware-accelerators-gpgpu-computing-and-cuda">15.1. Heterogeneous Computing: Hardware Accelerators, GPGPU Computing, and CUDA</a></h2>
+<p><strong>Heterogeneous computing</strong> (tính toán không đồng nhất) là hình thức tính toán sử dụng nhiều đơn vị xử lý khác nhau có trong một máy tính.<br />
+Các đơn vị xử lý này thường có <strong>ISA</strong> (Instruction Set Architecture – kiến trúc tập lệnh) khác nhau, một số được hệ điều hành quản lý, số khác thì không.<br />
+Thông thường, heterogeneous computing nghĩa là hỗ trợ tính toán song song bằng cách sử dụng các lõi CPU của máy tính cùng với một hoặc nhiều <strong>accelerator unit</strong> (bộ tăng tốc phần cứng) như <strong>graphics processing unit</strong> (GPU – bộ xử lý đồ họa) hoặc <strong>field programmable gate array</strong> (FPGA – mảng cổng lập trình được)^1^.</p>
+<p>Ngày càng phổ biến việc các lập trình viên triển khai giải pháp heterogeneous computing cho các bài toán lớn, đòi hỏi xử lý dữ liệu và tính toán chuyên sâu.<br />
+Những loại bài toán này xuất hiện nhiều trong <strong>tính toán khoa học</strong> (scientific computing), cũng như trong nhiều ứng dụng khác liên quan đến xử lý Big Data, phân tích và trích xuất thông tin.<br />
+Bằng cách tận dụng khả năng xử lý của cả CPU và các accelerator unit có sẵn trên máy tính, lập trình viên có thể tăng mức độ thực thi song song trong ứng dụng, từ đó cải thiện hiệu năng và khả năng mở rộng.</p>
+<p>Trong phần này, chúng ta sẽ giới thiệu về heterogeneous computing sử dụng <strong>hardware accelerator</strong> (bộ tăng tốc phần cứng) để hỗ trợ tính toán song song đa mục đích.<br />
+Chúng ta sẽ tập trung vào GPU và ngôn ngữ lập trình <strong>CUDA</strong>.</p>
+<h3 id="1511-hardware-accelerators"><a class="header" href="#1511-hardware-accelerators">15.1.1. Hardware Accelerators</a></h3>
+<p>Ngoài CPU, máy tính còn có các đơn vị xử lý khác được thiết kế để thực hiện các tác vụ cụ thể.<br />
+Những đơn vị này không phải là bộ xử lý đa dụng như CPU, mà là phần cứng chuyên dụng được tối ưu hóa để thực hiện các chức năng đặc thù cho một số thiết bị hoặc để xử lý các loại tác vụ chuyên biệt trong hệ thống.<br />
+FPGA, <strong>Cell processor</strong> và GPU là ba ví dụ tiêu biểu của loại đơn vị xử lý này.</p>
+<h4 id="fpgas"><a class="header" href="#fpgas">FPGAs</a></h4>
+<p><strong>FPGA</strong> (Field Programmable Gate Array) là một vi mạch tích hợp bao gồm các cổng logic, bộ nhớ và các thành phần kết nối.<br />
+FPGA có thể <strong>lập trình lại</strong> (reprogrammable), nghĩa là có thể cấu hình lại để thực hiện một chức năng cụ thể ở mức phần cứng, và thường được dùng để tạo nguyên mẫu cho <strong>ASIC</strong> (Application-Specific Integrated Circuit – mạch tích hợp chuyên dụng).</p>
+<p>FPGA thường tiêu thụ ít điện năng hơn so với một CPU đầy đủ, giúp vận hành tiết kiệm năng lượng.<br />
+Một số cách FPGA được tích hợp vào hệ thống máy tính bao gồm: làm bộ điều khiển thiết bị (device controller), xử lý dữ liệu cảm biến, thực hiện các tác vụ mật mã (cryptography), và thử nghiệm các thiết kế phần cứng mới (do có thể lập trình lại, các thiết kế có thể được triển khai, gỡ lỗi và kiểm thử trực tiếp trên FPGA).</p>
+<p>FPGA có thể được thiết kế như một mạch với số lượng lớn các đơn vị xử lý đơn giản.<br />
+Chúng cũng là các thiết bị có <strong>độ trễ thấp</strong> (low-latency) và có thể kết nối trực tiếp với bus hệ thống.<br />
+Nhờ đó, FPGA đã được sử dụng để triển khai các phép tính song song tốc độ cao, bao gồm các mẫu xử lý song song độc lập lặp lại trên nhiều kênh dữ liệu đầu vào.</p>
+<p>Tuy nhiên, việc lập trình lại FPGA mất nhiều thời gian, và việc sử dụng chúng thường giới hạn ở việc hỗ trợ thực thi nhanh các phần cụ thể của khối lượng công việc song song hoặc chạy một khối lượng công việc cố định^2^.</p>
+<h4 id="gpus-và-cell-processors"><a class="header" href="#gpus-và-cell-processors">GPUs và Cell Processors</a></h4>
+<p><strong>Cell processor</strong> là một bộ xử lý đa lõi bao gồm một bộ xử lý đa dụng và nhiều <strong>co-processor</strong> (đồng xử lý) chuyên dụng để tăng tốc một loại tính toán cụ thể, chẳng hạn như xử lý đa phương tiện.<br />
+Hệ thống chơi game <strong>Sony PlayStation 3</strong> là kiến trúc Cell đầu tiên, sử dụng các bộ đồng xử lý Cell để xử lý đồ họa nhanh.</p>
+<p><strong>GPU</strong> thực hiện các phép tính đồ họa máy tính — chúng xử lý dữ liệu hình ảnh để hỗ trợ kết xuất đồ họa và xử lý ảnh tốc độ cao.<br />
+GPU ghi kết quả vào <strong>frame buffer</strong>, sau đó dữ liệu này được đưa tới màn hình máy tính.<br />
+Được thúc đẩy bởi các ứng dụng game máy tính, ngày nay các GPU mạnh mẽ đã trở thành tiêu chuẩn trong máy tính để bàn và laptop.</p>
+<p>Vào giữa những năm 2000, các nhà nghiên cứu tính toán song song đã nhận ra tiềm năng của việc sử dụng <strong>accelerator</strong> kết hợp với các lõi CPU của máy tính để hỗ trợ tính toán song song đa mục đích.</p>
+<h3 id="1512-tổng-quan-kiến-trúc-gpu-gpu-architecture-overview"><a class="header" href="#1512-tổng-quan-kiến-trúc-gpu-gpu-architecture-overview">15.1.2. Tổng quan kiến trúc GPU (GPU architecture overview)</a></h3>
+<p>Phần cứng GPU được thiết kế cho đồ họa máy tính và xử lý hình ảnh.<br />
+Lịch sử phát triển GPU gắn liền với ngành công nghiệp trò chơi điện tử.<br />
+Để hỗ trợ đồ họa chi tiết hơn và tốc độ dựng khung hình nhanh hơn, GPU bao gồm <strong>hàng nghìn bộ xử lý chuyên dụng</strong>, được thiết kế đặc biệt để xử lý hiệu quả dữ liệu hình ảnh, chẳng hạn như giá trị pixel của một ảnh 2D, theo phương thức song song.</p>
+<p>Mô hình thực thi phần cứng mà GPU áp dụng là <strong>SIMT</strong> (Single Instruction / Multiple Thread – một lệnh, nhiều luồng), một biến thể của SIMD.<br />
+SIMT giống như SIMD đa luồng, trong đó một lệnh được thực thi đồng bộ (lockstep) bởi nhiều thread chạy trên các đơn vị xử lý.<br />
+Trong SIMT, tổng số thread có thể lớn hơn tổng số đơn vị xử lý, đòi hỏi phải lập lịch nhiều nhóm thread trên các bộ xử lý để thực thi cùng một chuỗi lệnh.</p>
+<p>Ví dụ: GPU của <strong>NVIDIA</strong> bao gồm nhiều <strong>Streaming Multiprocessor</strong> (SM), mỗi SM có các đơn vị điều khiển thực thi và không gian bộ nhớ riêng (register, L1 cache và shared memory).<br />
+Mỗi SM bao gồm nhiều lõi <strong>Scalar Processor</strong> (SP).<br />
+SM có một <strong>warp scheduler</strong> để lập lịch các <strong>warp</strong> (tập hợp các thread của ứng dụng) thực thi đồng bộ trên các lõi SP.</p>
+<p>Trong thực thi đồng bộ (lockstep execution), mỗi thread trong một warp thực thi cùng một lệnh ở mỗi chu kỳ nhưng trên dữ liệu khác nhau.<br />
+Ví dụ: nếu một ứng dụng chuyển đổi ảnh màu sang ảnh xám, mỗi thread trong warp sẽ thực thi cùng một chuỗi lệnh tại cùng thời điểm để đặt giá trị RGB của một pixel thành giá trị xám tương ứng.<br />
+Mỗi thread xử lý một pixel khác nhau, dẫn đến nhiều pixel của ảnh được cập nhật song song.</p>
+<p>Vì các thread được thực thi đồng bộ, thiết kế bộ xử lý có thể được đơn giản hóa để nhiều lõi chia sẻ cùng một đơn vị điều khiển lệnh.<br />
+Mỗi đơn vị chứa bộ nhớ cache và nhiều thanh ghi để lưu dữ liệu trong quá trình xử lý đồng bộ bởi các lõi xử lý song song.</p>
+<p><strong>Hình 1</strong> minh họa kiến trúc GPU đơn giản hóa, bao gồm cái nhìn chi tiết về một SM.<br />
+Mỗi SM bao gồm nhiều lõi SP, một warp scheduler, một đơn vị điều khiển thực thi, một L1 cache và vùng bộ nhớ chia sẻ.</p>
+<p><img src="_images/gpugpu.png" alt="Example GPU architecture with showing multiple SM units with32 SP cores." /></p>
+<p><strong>Hình 1.</strong> Ví dụ về kiến trúc GPU đơn giản hóa với 2.048 lõi.<br />
+Hình này cho thấy GPU được chia thành 64 đơn vị SM, và chi tiết của một SM bao gồm 32 lõi SP. <strong>Warp scheduler</strong> của SM sẽ lập lịch các warp thread trên các lõi SP. Một warp gồm nhiều thread sẽ thực thi đồng bộ (lockstep) trên các lõi SP.</p>
+<h3 id="1513-gpgpu-computing"><a class="header" href="#1513-gpgpu-computing">15.1.3. GPGPU Computing</a></h3>
+<p><strong>General Purpose GPU</strong> (GPGPU – GPU đa dụng) là hình thức sử dụng các bộ xử lý GPU chuyên dụng để thực hiện các tác vụ tính toán song song đa mục đích.<br />
+GPGPU computing kết hợp việc tính toán trên các lõi CPU của host với tính toán <strong>SIMT</strong> trên các bộ xử lý GPU.<br />
+GPGPU hoạt động hiệu quả nhất với các ứng dụng song song (hoặc các phần của ứng dụng) có thể được xây dựng dưới dạng xử lý dòng (stream processing) trên một lưới dữ liệu đa chiều.</p>
+<p>Hệ điều hành của host <strong>không</strong> quản lý bộ xử lý hoặc bộ nhớ của GPU.<br />
+Do đó, lập trình viên phải tự cấp phát vùng nhớ trên GPU cho dữ liệu của chương trình và sao chép dữ liệu giữa bộ nhớ host và bộ nhớ GPU.<br />
+Các ngôn ngữ và thư viện lập trình GPGPU thường cung cấp giao diện lập trình cho bộ nhớ GPU, giúp ẩn bớt hoặc toàn bộ sự phức tạp của việc quản lý bộ nhớ GPU một cách tường minh.</p>
+<p>Ví dụ: trong <strong>CUDA</strong>, lập trình viên có thể gọi các hàm thư viện CUDA để cấp phát bộ nhớ CUDA trên GPU và sao chép dữ liệu giữa bộ nhớ CUDA trên GPU và bộ nhớ host.<br />
+Lập trình viên CUDA cũng có thể sử dụng <strong>CUDA unified memory</strong> — một lớp trừu tượng của CUDA về không gian bộ nhớ thống nhất giữa host và GPU.<br />
+CUDA unified memory ẩn đi sự tách biệt giữa bộ nhớ GPU và host, cũng như việc sao chép dữ liệu giữa chúng, khỏi lập trình viên CUDA.</p>
+<p>GPU cũng chỉ hỗ trợ hạn chế cho việc đồng bộ hóa thread, điều này có nghĩa là GPGPU đặc biệt hiệu quả với các ứng dụng song song <strong>embarrassingly parallel</strong> (hoàn toàn độc lập) hoặc có phạm vi lớn các phép tính song song dạng luồng độc lập với rất ít điểm đồng bộ.<br />
+GPU là các bộ xử lý song song quy mô lớn, và bất kỳ chương trình nào thực hiện các chuỗi dài các bước tính toán độc lập, giống hệt (hoặc gần giống hệt) trên dữ liệu đều có thể đạt hiệu năng tốt khi triển khai dưới dạng ứng dụng song song GPGPU.</p>
+<p>GPGPU cũng hoạt động tốt khi số lần sao chép dữ liệu giữa bộ nhớ host và thiết bị là ít.<br />
+Nếu việc truyền dữ liệu GPU–CPU chiếm phần lớn thời gian thực thi, hoặc nếu ứng dụng yêu cầu đồng bộ hóa tinh vi (fine-grained synchronization), thì GPGPU có thể không đạt hiệu năng tốt hoặc không mang lại nhiều lợi ích so với phiên bản đa luồng chạy trên CPU.</p>
+<h3 id="1514-cuda"><a class="header" href="#1514-cuda">15.1.4. CUDA</a></h3>
+<p><strong>CUDA</strong> (Compute Unified Device Architecture)^3^ là giao diện lập trình của NVIDIA dành cho GPGPU computing trên các thiết bị đồ họa của hãng.<br />
+CUDA được thiết kế cho <strong>heterogeneous computing</strong> (tính toán không đồng nhất), trong đó một số hàm của chương trình chạy trên CPU của host, và các hàm khác chạy trên GPU.</p>
+<p>Lập trình viên thường viết chương trình CUDA bằng <strong>C</strong> hoặc <strong>C++</strong> với các annotation chỉ định <strong>CUDA kernel function</strong> (hàm kernel CUDA), và gọi các hàm thư viện CUDA để quản lý bộ nhớ thiết bị GPU.<br />
+Một <strong>kernel function</strong> trong CUDA là một hàm được thực thi trên GPU, và một <strong>CUDA thread</strong> là đơn vị thực thi cơ bản trong chương trình CUDA.<br />
+Các CUDA thread được lập lịch thành các <strong>warp</strong> và thực thi đồng bộ (lockstep) trên các SM của GPU, chạy mã kernel CUDA trên phần dữ liệu của chúng được lưu trong bộ nhớ GPU.</p>
+<p>Các hàm kernel được đánh dấu bằng từ khóa <code>global</code> để phân biệt với các hàm chạy trên host.<br />
+Các hàm <code>device</code> trong CUDA là các hàm phụ trợ có thể được gọi từ một hàm kernel CUDA.</p>
+<p>Không gian bộ nhớ của một chương trình CUDA được chia thành bộ nhớ host và bộ nhớ GPU.<br />
+Chương trình phải <strong>tường minh</strong> cấp phát và giải phóng vùng nhớ GPU để lưu trữ dữ liệu chương trình được xử lý bởi các kernel CUDA.<br />
+Lập trình viên CUDA phải hoặc là sao chép dữ liệu một cách tường minh giữa bộ nhớ host và GPU, hoặc sử dụng <strong>CUDA unified memory</strong> để có một không gian bộ nhớ được chia sẻ trực tiếp giữa GPU và host.</p>
+<p>Dưới đây là ví dụ về các hàm cơ bản của CUDA để cấp phát bộ nhớ, giải phóng bộ nhớ và sao chép dữ liệu một cách tường minh:</p>
+<pre><code class="language-c">/* &quot;returns&quot; through pass-by-pointer param dev_ptr GPU memory of size bytes
+ * returns cudaSuccess or a cudaError value on error
+ */
+cudaMalloc(void **dev_ptr, size_t size);
+
+/* free GPU memory
+ * returns cudaSuccess or cudaErrorInvalidValue on error
+ */
+cudaFree(void *data);
+
+/* copies data from src to dst, direction is based on value of kind
+ *   kind: cudaMemcpyHosttoDevice is copy from cpu to gpu memory
+ *   kind: cudaMemcpyDevicetoHost is copy from gpu to cpu memory
+ * returns cudaSuccess or a cudaError value on error
+ */
+cudaMemcpy(void *dst, const void *src, size_t count, cudaMemcpyKind kind);
+</code></pre>
+<p>Các CUDA thread được tổ chức thành <strong>block</strong>, và các block được tổ chức thành <strong>grid</strong>.<br />
+Grid có thể được tổ chức thành nhóm block một chiều, hai chiều hoặc ba chiều.<br />
+Tương tự, block có thể được tổ chức thành nhóm thread một chiều, hai chiều hoặc ba chiều.</p>
+<p>Mỗi thread được định danh duy nhất bởi vị trí (<em>x</em>, <em>y</em>, <em>z</em>) của nó trong block chứa nó, và vị trí (<em>x</em>, <em>y</em>, <em>z</em>) của block đó trong grid.</p>
+<p>Ví dụ: lập trình viên có thể định nghĩa kích thước block và grid hai chiều như sau:</p>
+<pre><code class="language-c">dim3 blockDim(16,16);  // 256 thread mỗi block, sắp xếp 2D 16x16
+dim3 gridDim(20,20);   // 400 block mỗi grid, sắp xếp 2D 20x20
+</code></pre>
+<p>Khi gọi một kernel, cấu hình block/grid và thread/block được chỉ định trong lời gọi.<br />
+Ví dụ: đây là lời gọi tới một kernel function tên <code>do_something</code>, chỉ định cấu hình grid và block sử dụng <code>gridDim</code> và <code>blockDim</code> ở trên (và truyền tham số <code>dev_array</code> và 100):</p>
+<pre><code class="language-c">ret = do_something&lt;&lt;&lt;gridDim,blockDim&gt;&gt;&gt;(dev_array, 100);
+</code></pre>
+<p><strong>Hình 2</strong> minh họa ví dụ về cách sắp xếp hai chiều của các block thread.<br />
+Trong ví dụ này, grid là một mảng 3 × 2 block, và mỗi block là một mảng 4 × 3 thread.</p>
+<p><img src="_images/gridblockthr.png" alt="An grid of 2D blocks, each block contains a 2D set of threads." /></p>
+<p><strong>Hình 2.</strong> Mô hình thread trong CUDA. Một <strong>grid</strong> gồm các <strong>block</strong> chứa các thread. Các block và thread có thể được tổ chức theo bố cục một chiều, hai chiều hoặc ba chiều. Ví dụ này minh họa một grid gồm các block hai chiều, với 3 × 2 block mỗi grid, và mỗi block chứa một tập hợp thread hai chiều, 4 × 3 thread mỗi block.</p>
+<p>Vị trí của một thread trong bố cục này được xác định bởi tọa độ (<em>x</em>, <em>y</em>) của nó trong block chứa nó (<code>threadIdx.x</code>, <code>threadIdx.y</code>) và tọa độ (<em>x</em>, <em>y</em>) của block đó trong grid (<code>blockIdx.x</code>, <code>blockIdx.y</code>).<br />
+Lưu ý rằng tọa độ của block và thread đều dựa trên (<em>x</em>, <em>y</em>), với trục x nằm ngang và trục y nằm dọc. Phần tử (0,0) nằm ở góc trên bên trái.</p>
+<p>CUDA kernel cũng có các biến xác định kích thước của block (<code>blockDim.x</code> và <code>blockDim.y</code>).<br />
+Do đó, với bất kỳ thread nào đang thực thi kernel, vị trí (row, col) của nó trong mảng hai chiều các thread, bên trong mảng hai chiều các block, có thể được xác định logic như sau:</p>
+<pre><code class="language-c">int row = blockIdx.y * blockDim.y + threadIdx.y;
+int col = blockIdx.x * blockDim.x + threadIdx.x;
+</code></pre>
+<p>Mặc dù không bắt buộc, các lập trình viên CUDA thường tổ chức block và thread sao cho phù hợp với cách tổ chức logic của dữ liệu chương trình.<br />
+Ví dụ: nếu một chương trình thao tác trên ma trận hai chiều, việc tổ chức thread và block thành cấu trúc hai chiều sẽ hợp lý hơn.<br />
+Cách này cho phép sử dụng tọa độ (<em>x</em>, <em>y</em>) của block và thread bên trong block để ánh xạ vị trí của thread trong các block hai chiều tới một hoặc nhiều giá trị dữ liệu trong mảng hai chiều.</p>
+<h4 id="ví-dụ-chương-trình-cuda-nhân-vô-hướng-scalar-multiply"><a class="header" href="#ví-dụ-chương-trình-cuda-nhân-vô-hướng-scalar-multiply">Ví dụ chương trình CUDA: Nhân vô hướng (Scalar Multiply)</a></h4>
+<p>Ví dụ, hãy xét một chương trình CUDA thực hiện phép nhân vô hướng trên một vector:</p>
+<pre><code class="language-c">x = a * x    // trong đó x là vector và a là giá trị vô hướng
+</code></pre>
+<p>Vì dữ liệu chương trình là các mảng một chiều, nên việc sử dụng bố cục một chiều cho blocks/grid và threads/block sẽ phù hợp.<br />
+Điều này không bắt buộc, nhưng giúp việc ánh xạ thread tới dữ liệu dễ dàng hơn.</p>
+<p>Khi chạy, hàm <code>main</code> của chương trình sẽ thực hiện các bước sau:</p>
+<ol>
+<li>Cấp phát bộ nhớ phía host cho vector <code>x</code> và khởi tạo nó.</li>
+<li>Cấp phát bộ nhớ phía device cho vector <code>x</code> và sao chép dữ liệu từ bộ nhớ host sang bộ nhớ GPU.</li>
+<li>Gọi hàm CUDA kernel để thực hiện phép nhân vô hướng trên vector song song, truyền vào địa chỉ vector <code>x</code> trên device và giá trị vô hướng <code>a</code>.</li>
+<li>Sao chép kết quả từ bộ nhớ GPU về vector <code>x</code> trong bộ nhớ host.</li>
+</ol>
+<p>Trong ví dụ dưới đây, chúng tôi trình bày một chương trình CUDA thực hiện các bước trên để triển khai phép nhân vô hướng trên vector.<br />
+Một số phần xử lý lỗi và chi tiết đã được lược bỏ, nhưng bạn có thể xem mã nguồn đầy đủ tại: <a href="_attachments/scalar_multiply_cuda.cu">scalar_multiply_cuda.cu</a>.</p>
+<p>Hàm <code>main</code> của chương trình CUDA^3^ thực hiện bốn bước đã liệt kê ở trên:</p>
+<pre><code class="language-c">#include &lt;cuda.h&gt;
+
+#define BLOCK_SIZE       64     /* threads per block */
+#define N              10240    /* vector size */
+
+// some host-side init function
+void init_array(int *vector, int size, int step);
+
+// host-side function: main
+int main(int argc, char **argv) {
+
+  int *vector, *dev_vector, scalar;
+
+  scalar = 3;     // init scalar to some default value
+  if(argc == 2) { // get scalar's value from a command line argument
+    scalar = atoi(argv[1]);
+  }
+
+  // 1. allocate host memory space for the vector (missing error handling)
+  vector = (int *)malloc(sizeof(int)*N);
+
+  // initialize vector in host memory
+  // (a user-defined initialization function not listed here)
+  init_array(vector, N, 7);
+
+  // 2. allocate GPU device memory for vector (missing error handling)
+  cudaMalloc(&amp;dev_vector, sizeof(int)*N);
+
+  // 2. copy host vector to device memory (missing error handling)
+  cudaMemcpy(dev_vector, vector, sizeof(int)*N, cudaMemcpyHostToDevice);
+
+  // 3. call the CUDA scalar_multiply kernel
+  // specify the 1D layout for blocks/grid (N/BLOCK_SIZE)
+  //    and the 1D layout for threads/block (BLOCK_SIZE)
+  scalar_multiply&lt;&lt;&lt;(N/BLOCK_SIZE), BLOCK_SIZE&gt;&gt;&gt;(dev_vector, scalar);
+
+  // 4. copy device vector to host memory (missing error handling)
+  cudaMemcpy(vector, dev_vector, sizeof(int)*N, cudaMemcpyDeviceToHost);
+
+  // ...(do something on the host with the result copied into vector)
+
+  // free allocated memory space on host and GPU
+  cudaFree(dev_vector);
+  free(vector);
+
+  return 0;
+}
+</code></pre>
+<p>Mỗi CUDA thread sẽ thực thi hàm CUDA kernel <code>scalar_multiply</code>.<br />
+Một hàm kernel CUDA được viết từ góc nhìn của <strong>một thread riêng lẻ</strong>.<br />
+Nó thường gồm hai bước chính:</p>
+<ol>
+<li>Thread gọi hàm xác định phần dữ liệu mà nó chịu trách nhiệm xử lý, dựa trên vị trí của thread trong block chứa nó và vị trí của block đó trong grid.</li>
+<li>Thread gọi hàm thực hiện phép tính cụ thể của ứng dụng trên phần dữ liệu của mình.</li>
+</ol>
+<p>Trong ví dụ này, mỗi thread chịu trách nhiệm thực hiện phép nhân vô hướng trên <strong>chính xác một phần tử</strong> trong mảng.<br />
+Mã hàm kernel trước tiên tính toán một giá trị chỉ số (index) duy nhất dựa trên block và thread identifier của thread gọi hàm.<br />
+Sau đó, nó sử dụng giá trị này làm chỉ số để truy cập vào mảng dữ liệu và thực hiện phép nhân vô hướng trên phần tử đó:</p>
+<pre><code class="language-c">array[index] = array[index] * scalar;
+</code></pre>
+<p>Các CUDA thread chạy trên các SM của GPU sẽ tính toán các giá trị index khác nhau để cập nhật các phần tử mảng song song.</p>
+<pre><code class="language-c">/*
+ * CUDA kernel function that performs scalar multiply
+ * of a vector on the GPU device
+ *
+ * This assumes that there are enough threads to associate
+ * each array[i] element with a signal thread
+ * (in general, each thread would be responsible for a set of data elements)
+ */
+__global__ void scalar_multiply(int *array, int scalar) {
+
+  int index;
+
+  // compute the calling thread's index value based on
+  // its position in the enclosing block and grid
+  index = blockIdx.x * blockDim.x + threadIdx.x;
+
+  // the thread's uses its index value is to
+  // perform scalar multiply on its array element
+  array[index] = array[index] * scalar;
+}
+</code></pre>
+<h4 id="cuda-thread-scheduling-and-synchronization-lập-lịch-và-đồng-bộ-hóa-thread-trong-cuda"><a class="header" href="#cuda-thread-scheduling-and-synchronization-lập-lịch-và-đồng-bộ-hóa-thread-trong-cuda">CUDA Thread Scheduling and Synchronization (Lập lịch và đồng bộ hóa thread trong CUDA)</a></h4>
+<p>Mỗi <strong>CUDA thread block</strong> được thực thi bởi một đơn vị <strong>SM</strong> (Streaming Multiprocessor) của GPU.<br />
+Một SM sẽ lập lịch một <strong>warp</strong> gồm các thread từ cùng một thread block để chạy trên các lõi xử lý của nó.<br />
+Tất cả các thread trong một warp sẽ thực thi cùng một tập lệnh theo kiểu <strong>lockstep</strong> (đồng bộ từng bước), thường là trên các dữ liệu khác nhau.<br />
+Các thread chia sẻ <strong>instruction pipeline</strong> (đường ống lệnh) nhưng mỗi thread có <strong>register</strong> và <strong>stack space</strong> riêng cho biến cục bộ và tham số.</p>
+<p>Vì các block của thread được lập lịch trên các SM riêng biệt, việc tăng số lượng thread mỗi block sẽ làm tăng mức độ thực thi song song.<br />
+Do SM lập lịch các warp thread để chạy trên các đơn vị xử lý của nó, nếu số lượng thread mỗi block là bội số của kích thước warp, sẽ không có lõi xử lý nào của SM bị lãng phí trong quá trình tính toán.<br />
+Trên thực tế, việc sử dụng số lượng thread mỗi block là một bội số nhỏ của số lõi xử lý trong một SM thường cho hiệu quả tốt.</p>
+<p>CUDA đảm bảo rằng tất cả các thread từ một lần gọi <strong>kernel</strong> sẽ hoàn thành trước khi bất kỳ thread nào từ lần gọi kernel tiếp theo được lập lịch.<br />
+Do đó, tồn tại một <strong>điểm đồng bộ ngầm</strong> giữa các lần gọi kernel riêng biệt.<br />
+Tuy nhiên, trong một lần gọi kernel duy nhất, các thread block có thể được lập lịch chạy mã kernel theo bất kỳ thứ tự nào trên các SM của GPU.<br />
+Vì vậy, lập trình viên <strong>không nên</strong> giả định bất kỳ thứ tự thực thi nào giữa các thread thuộc các thread block khác nhau.<br />
+CUDA cung cấp một số hỗ trợ đồng bộ hóa thread, nhưng <strong>chỉ</strong> cho các thread nằm trong cùng một thread block.</p>
+<h3 id="1515-other-languages-for-gpgpu-programming-các-ngôn-ngữ-khác-cho-lập-trình-gpgpu"><a class="header" href="#1515-other-languages-for-gpgpu-programming-các-ngôn-ngữ-khác-cho-lập-trình-gpgpu">15.1.5. Other Languages for GPGPU Programming (Các ngôn ngữ khác cho lập trình GPGPU)</a></h3>
+<p>Ngoài CUDA, còn có các ngôn ngữ lập trình khác cho GPGPU computing.<br />
+<strong>OpenCL</strong>, <strong>OpenACC</strong> và <strong>OpenHMPP</strong> là ba ví dụ về các ngôn ngữ có thể được dùng để lập trình cho bất kỳ thiết bị đồ họa nào (không chỉ dành riêng cho thiết bị NVIDIA).</p>
+<ul>
+<li>
+<p><strong>OpenCL</strong> (Open Computing Language) có mô hình lập trình tương tự CUDA; cả hai đều triển khai mô hình lập trình cấp thấp (hoặc lớp trừu tượng mỏng hơn) trên kiến trúc phần cứng đích.<br />
+OpenCL hướng tới nhiều nền tảng tính toán không đồng nhất, bao gồm CPU của host kết hợp với các đơn vị tính toán khác, có thể là CPU hoặc accelerator như GPU và FPGA.</p>
+</li>
+<li>
+<p><strong>OpenACC</strong> (Open Accelerator) là mô hình lập trình trừu tượng cấp cao hơn so với CUDA hoặc OpenCL.<br />
+Nó được thiết kế để dễ dàng di chuyển (portability) và thuận tiện cho lập trình viên.<br />
+Lập trình viên chỉ cần chú thích (annotate) các phần mã cần thực thi song song, và trình biên dịch sẽ tạo ra mã song song có thể chạy trên GPU.</p>
+</li>
+<li>
+<p><strong>OpenHMPP</strong> (Open Hybrid Multicore Programming) là một ngôn ngữ khác cung cấp lớp trừu tượng lập trình cấp cao cho lập trình không đồng nhất.</p>
+</li>
+</ul>
+<h3 id="1516-tài-liệu-tham-khảo-references"><a class="header" href="#1516-tài-liệu-tham-khảo-references">15.1.6. Tài liệu tham khảo (References)</a></h3>
+<ol>
+<li>
+<p><em>A Survey Of Techniques for Architecting and Managing Asymmetric Multicore Processors</em>, Sparsh Mittal, trong <strong>ACM Computing Surveys</strong> 48(3), tháng 2 năm 2016.</p>
+</li>
+<li>
+<p><em>FPGAs and the Road to Reprogrammable HPC</em>, inside HPC, tháng 7 năm 2019<br />
+<a href="https://insidehpc.com/2019/07/fpgas-and-the-road-to-reprogrammable-hpc/">https://insidehpc.com/2019/07/fpgas-and-the-road-to-reprogrammable-hpc/</a></p>
+</li>
+<li>
+<p><strong>CUDA Toolkit documentation</strong>:<br />
+<a href="https://docs.nvidia.com/cuda/index.html">https://docs.nvidia.com/cuda/index.html</a></p>
+</li>
+<li>
+<p><em>GPU Programming</em>, từ <strong>CSinParallel</strong>:<br />
+<a href="https://csinparallel.org/csinparallel/modules/gpu_programming.html">https://csinparallel.org/csinparallel/modules/gpu_programming.html</a><br />
+và các module lập trình GPU khác tại:<br />
+<a href="https://csinparallel.org">https://csinparallel.org</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C15-Parallel/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C15-Parallel/distrmem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C15-Parallel/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C15-Parallel/distrmem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

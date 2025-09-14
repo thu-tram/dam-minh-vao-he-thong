@@ -1,0 +1,463 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Code Optimization - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html" class="active"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="12-tối-ưu-hóa-mã-code-optimization"><a class="header" href="#12-tối-ưu-hóa-mã-code-optimization">12. Tối ưu hóa mã (Code Optimization)</a></h2>
+<p><strong>Code optimization</strong> (tối ưu hóa mã) là quá trình cải thiện một chương trình bằng cách giảm kích thước mã, độ phức tạp, mức sử dụng bộ nhớ hoặc thời gian chạy (hoặc kết hợp các yếu tố này) mà không thay đổi chức năng vốn có của chương trình.<br />
+Nhiều hệ thống biên dịch bao gồm một <strong>code optimizer</strong> (bộ tối ưu mã) như một bước trung gian. Cụ thể, một <strong>optimizing compiler</strong> (trình biên dịch tối ưu) sẽ áp dụng các phép biến đổi cải thiện mã như một phần của quá trình biên dịch. Hầu như tất cả các trình biên dịch hiện đại (bao gồm GCC) đều là optimizing compiler.<br />
+Trình biên dịch C của GCC triển khai nhiều <strong>optimization flag</strong> (cờ tối ưu hóa) cho phép lập trình viên truy cập trực tiếp một tập con các tối ưu hóa đã được triển khai. Các cờ tối ưu hóa này giúp tối ưu mã nhưng phải đánh đổi với thời gian biên dịch và khả năng gỡ lỗi.<br />
+Để đơn giản, GCC gói một tập con các cờ tối ưu hóa này thành các <strong>optimization level</strong> (mức tối ưu hóa) khác nhau mà lập trình viên có thể gọi trực tiếp. Ví dụ, lệnh sau biên dịch một chương trình mẫu với mức tối ưu hóa cấp 1:</p>
+<pre><code class="language-bash">$ gcc -O1 -o program program.c
+</code></pre>
+<p>Mức tối ưu hóa 1 (<code>-O1</code> hoặc <code>-O</code>) trong GCC thực hiện các tối ưu hóa cơ bản để giảm kích thước mã và thời gian thực thi, đồng thời cố gắng giữ thời gian biên dịch ở mức tối thiểu.<br />
+Mức tối ưu hóa 2 (<code>-O2</code>) bao gồm hầu hết các tối ưu hóa đã được GCC triển khai mà không liên quan đến sự đánh đổi giữa dung lượng và hiệu năng.<br />
+Cuối cùng, mức tối ưu hóa 3 (<code>-O3</code>) thực hiện thêm các tối ưu hóa bổ sung (chẳng hạn như <strong>function inlining</strong> — nội tuyến hàm, sẽ được thảo luận sau trong chương này) và có thể khiến chương trình mất nhiều thời gian biên dịch hơn đáng kể.<br />
+<a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">Tài liệu GCC</a> mô tả chi tiết các cờ tối ưu hóa đã được triển khai.</p>
+<p>Việc thảo luận chi tiết về optimizing compiler và cách xây dựng, vận hành của chúng nằm ngoài phạm vi của cuốn sách này; chúng tôi khuyến khích bạn đọc quan tâm tìm hiểu cuốn sách kinh điển <em>Compilers: Principles, Techniques, and Tools</em> của Aho, Sethi và Ullman.<br />
+Mục đích của chương này là làm nổi bật một số điều mà hầu hết các trình biên dịch có thể (và không thể) làm, cũng như cách lập trình viên có thể phối hợp với trình biên dịch và các công cụ profiling để giúp cải thiện mã của mình.</p>
+<h3 id="những-gì-trình-biên-dịch-đã-làm-sẵn"><a class="header" href="#những-gì-trình-biên-dịch-đã-làm-sẵn">Những gì trình biên dịch đã làm sẵn</a></h3>
+<p>Một số tối ưu hóa phổ biến được hầu hết mọi trình biên dịch thực hiện sẽ được mô tả ngắn gọn trong các phần tiếp theo.<br />
+Sinh viên <em>không bao giờ</em> nên tự tay triển khai các tối ưu hóa này, vì chúng đã được trình biên dịch thực hiện sẵn.</p>
+<p><strong>Constant Folding</strong> (gộp hằng)</p>
+<p>:   Các hằng số trong mã được tính toán ngay tại thời điểm biên dịch để giảm số lượng lệnh sinh ra.<br />
+Ví dụ, trong đoạn mã dưới đây, <strong>macro expansion</strong> (mở rộng macro) thay câu lệnh <code>int debug = N-5</code> bằng <code>int debug = 5-5</code>. Sau đó, <strong>constant folding</strong> cập nhật câu lệnh này thành <code>int debug = 0</code>.</p>
+<pre><code class="language-c">#define N 5
+int debug = N - 5; // constant folding thay đổi câu lệnh này thành debug = 0;
+</code></pre>
+<p><strong>Constant Propagation</strong> (truyền hằng)</p>
+<p>:   <strong>Constant propagation</strong> thay thế biến bằng một giá trị hằng nếu giá trị đó được biết tại thời điểm biên dịch.<br />
+Xem đoạn mã sau:</p>
+<pre><code class="language-c">int debug = 0;
+
+// sums up all the elements in an array
+int doubleSum(int *array, int length){
+    int i, total = 0;
+    for (i = 0; i &lt; length; i++){
+        total += array[i];
+        if (debug) {
+            printf(&quot;array[%d] is: %d\n&quot;, i, array[i]);
+        }
+    }
+    return 2 * total;
+}
+</code></pre>
+<p>Một trình biên dịch áp dụng constant propagation sẽ thay <code>if (debug)</code> thành <code>if (0)</code>.</p>
+<p><strong>Dead Code Elimination</strong> (loại bỏ mã chết)</p>
+<p>:   Không hiếm khi một chương trình chứa các biến, phép gán hoặc câu lệnh không được sử dụng.<br />
+Mặc dù các câu lệnh không cần thiết này hiếm khi được đưa vào một cách cố ý, nhưng chúng thường là sản phẩm phụ tự nhiên của quá trình phát triển và tinh chỉnh phần mềm liên tục.<br />
+Nếu không được phát hiện, các đoạn mã gọi là <strong>dead code</strong> này có thể khiến trình biên dịch sinh ra các lệnh assembly không cần thiết, từ đó lãng phí thời gian xử lý.<br />
+Hầu hết các trình biên dịch sử dụng các kỹ thuật như <strong>dataflow analysis</strong> (phân tích luồng dữ liệu) để xác định các đoạn mã không thể truy cập và loại bỏ chúng.<br />
+<strong>Dead code elimination</strong> thường giúp chương trình chạy nhanh hơn bằng cách thu nhỏ kích thước mã và tập lệnh liên quan.<br />
+Ví dụ, hãy xem lại hàm <code>doubleSum</code> trong đó trình biên dịch đã áp dụng constant propagation để thay <code>debug</code> bằng <code>0</code> trong câu lệnh <code>if</code>:</p>
+<pre><code class="language-c">int debug = 0;
+
+// sums up all the elements in an array
+int doubleSum(int *array, int length){
+    int i, total = 0;
+    for (i = 0; i &lt; length; i++){
+        total += array[i];
+        if (0) { // debug đã được thay bằng hằng số 0 bởi trình biên dịch
+            printf(&quot;array[%d] is: %d\n&quot;, i, array[i]);
+        }
+    }
+    return 2 * total;
+}
+</code></pre>
+<p>Một trình biên dịch sử dụng dataflow analysis sẽ nhận ra rằng câu lệnh <code>if</code> này luôn sai và câu lệnh <code>printf</code> sẽ không bao giờ được thực thi.<br />
+Do đó, trình biên dịch sẽ loại bỏ câu lệnh <code>if</code> và lời gọi <code>printf</code> trong file thực thi đã biên dịch.<br />
+Một lượt tối ưu khác cũng sẽ loại bỏ câu lệnh <code>debug = 0</code>.</p>
+<p><strong>Simplifying expressions</strong> (đơn giản hóa biểu thức)</p>
+<p>:   Một số lệnh tốn nhiều chi phí hơn các lệnh khác.<br />
+Ví dụ, các lệnh số học <code>imul</code> và <code>idiv</code> trong assembly mất nhiều thời gian để thực thi.<br />
+Trình biên dịch thường cố gắng giảm số lượng các lệnh tốn kém này bằng cách đơn giản hóa các phép toán bất cứ khi nào có thể.<br />
+Ví dụ, trong hàm <code>doubleSum</code>, trình biên dịch có thể thay biểu thức <code>2 * total</code> bằng <code>total + total</code> vì lệnh cộng ít tốn chi phí hơn phép nhân:</p>
+<pre><code>//declaration of debug removed through dead-code elimination
+
+//sums up all the elements in an array
+int doubleSum(int *array, int length){
+    int i, total = 0;
+    for (i = 0; i &lt; length; i++){
+        total += array[i];
+        //if statement removed through data-flow analysis
+    }
+    return total + total; //simplifying expression
+}
+</code></pre>
+<p>Tương tự, trình biên dịch cũng sẽ biến đổi các đoạn mã sử dụng <strong>bit-shifting</strong> (dịch bit) và các toán tử bitwise khác để đơn giản hóa biểu thức.<br />
+Ví dụ, trình biên dịch có thể thay biểu thức <code>total * 8</code> bằng <code>total &lt;&lt; 3</code>, hoặc thay biểu thức <code>total % 8</code> bằng <code>total &amp; 7</code>, vì các phép toán bitwise được thực hiện chỉ với một lệnh nhanh duy nhất.</p>
+<h3 id="những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-mã"><a class="header" href="#những-gì-trình-biên-dịch-không-phải-lúc-nào-cũng-làm-được-lợi-ích-của-việc-học-tối-ưu-hóa-mã">Những gì trình biên dịch không phải lúc nào cũng làm được: Lợi ích của việc học tối ưu hóa mã</a></h3>
+<p>Với những lợi ích mà <strong>optimizing compiler</strong> (trình biên dịch tối ưu) mang lại, có thể sẽ không rõ ràng ngay lập tức tại sao việc học tối ưu hóa mã lại hữu ích.<br />
+Bạn có thể dễ dàng nghĩ về trình biên dịch như một “hộp đen” thông minh kỳ diệu. Nhưng cuối cùng, trình biên dịch cũng chỉ là một phần mềm thực hiện một loạt các phép biến đổi mã nhằm tăng tốc độ chạy.<br />
+Trình biên dịch cũng bị giới hạn trong các loại tối ưu hóa mà nó có thể thực hiện.</p>
+<p><strong>Algorithmic Strength Reduction Is Impossible</strong> (Không thể giảm độ phức tạp thuật toán một cách tự động)</p>
+<p>:   Nguyên nhân hàng đầu dẫn đến hiệu năng kém là do lựa chọn sai <strong>data structure</strong> (cấu trúc dữ liệu) và <strong>algorithm</strong> (thuật toán).<br />
+Trình biên dịch không thể “phép màu” sửa chữa những quyết định sai này.<br />
+Ví dụ, một trình biên dịch sẽ không bao giờ tối ưu một chương trình đang cài đặt <strong>bubble sort</strong> thành một chương trình dùng <strong>quick sort</strong>.<br />
+Mặc dù độ tinh vi của trình biên dịch và các tối ưu hóa của nó ngày càng được cải thiện, nhưng <em>chất lượng</em> tối ưu hóa của từng trình biên dịch cụ thể vẫn khác nhau giữa các nền tảng.<br />
+Do đó, trách nhiệm thuộc về lập trình viên trong việc đảm bảo mã của mình sử dụng các thuật toán và cấu trúc dữ liệu tốt nhất.</p>
+<p><strong>Compiler Optimization Flags Are Not Guaranteed to Make Code &quot;Optimal&quot; (or Consistent)</strong><br />
+(Các cờ tối ưu hóa của trình biên dịch không đảm bảo mã sẽ “tối ưu” hoặc nhất quán)</p>
+<p>:   Việc tăng mức tối ưu hóa của trình biên dịch (ví dụ: từ <code>-O2</code> lên <code>-O3</code>) không phải lúc nào cũng làm giảm thời gian chạy của chương trình.<br />
+Đôi khi, lập trình viên có thể phát hiện rằng việc nâng cờ tối ưu từ <code>-O2</code> lên <code>-O3</code> lại <em>làm chậm</em> chương trình, hoặc không mang lại cải thiện hiệu năng nào.<br />
+Trong một số trường hợp khác, lập trình viên có thể thấy rằng chương trình biên dịch <strong>không</strong> dùng cờ tối ưu thì chạy bình thường, nhưng khi biên dịch với <code>-O2</code> hoặc <code>-O3</code> lại gây ra <strong>segmentation fault</strong> hoặc lỗi khác.<br />
+Những lỗi lập trình kiểu này đặc biệt khó gỡ, vì cờ debug (<code>-g</code>) của GCC không tương thích với các cờ tối ưu (<code>-O</code>), do các phép biến đổi mà trình biên dịch thực hiện ở các mức <code>-O</code> gây cản trở khả năng phân tích mã của <strong>debugger</strong>.<br />
+Cờ <code>-g</code> lại là yêu cầu bắt buộc của nhiều công cụ profiling phổ biến như GDB và Valgrind.</p>
+<p>Một nguyên nhân lớn gây ra hành vi không nhất quán là do tiêu chuẩn C/C++ không đưa ra hướng dẫn rõ ràng về cách xử lý <strong>undefined behavior</strong> (hành vi không xác định).<br />
+Kết quả là, thường thì trình biên dịch sẽ tự quyết định cách xử lý sự mơ hồ này.<br />
+Sự khác biệt trong cách các mức tối ưu hóa xử lý undefined behavior có thể khiến kết quả <em>thay đổi</em>.<br />
+Xem ví dụ sau từ John Regehr¹:</p>
+<pre><code class="language-c">int silly(int a) {
+  return (a + 1) &gt; a;
+}
+</code></pre>
+<p>Giả sử <code>silly</code> được chạy với <code>a = INT_MAX</code>. Trong trường hợp này, phép tính <code>a + 1</code> gây <strong>integer overflow</strong> (tràn số nguyên).<br />
+Tuy nhiên, tiêu chuẩn C/C++ không định nghĩa <em>cách</em> trình biên dịch phải xử lý tràn số nguyên.<br />
+Thực tế, biên dịch chương trình <strong>không</strong> dùng tối ưu hóa khiến hàm trả về 0, trong khi biên dịch với tối ưu hóa <code>-O3</code> lại khiến hàm trả về 1.</p>
+<p>Tóm lại, các cờ tối ưu hóa nên được sử dụng một cách thận trọng, có cân nhắc và khi thật sự cần thiết.<br />
+Việc hiểu rõ cờ tối ưu nào nên dùng cũng giúp lập trình viên <strong>hợp tác</strong> với trình biên dịch thay vì “đối đầu” với nó.</p>
+<blockquote>
+<p><strong>The compiler is not required to handle undefined behavior</strong><br />
+Hàm <code>silly</code> khi chạy với <code>a = INT_MAX</code> là một ví dụ về undefined behavior.<br />
+Lưu ý rằng kết quả không nhất quán do trình biên dịch tạo ra <strong>không</strong> phải là lỗi thiết kế của trình biên dịch hay là hậu quả của việc dùng cờ tối ưu hóa.<br />
+Trình biên dịch được thiết kế để tuân theo <strong>specification</strong> (đặc tả) của ngôn ngữ.<br />
+Tiêu chuẩn ngôn ngữ C không quy định trình biên dịch phải làm gì khi gặp undefined behavior; chương trình có thể bị crash, không biên dịch được, hoặc tạo ra kết quả không nhất quán hoặc sai.<br />
+Cuối cùng, lập trình viên phải chịu trách nhiệm phát hiện và loại bỏ undefined behavior trong mã.<br />
+Việc <code>silly</code> nên trả về 0, 1 hay giá trị khác là quyết định mà lập trình viên phải đưa ra.<br />
+Để tìm hiểu thêm về undefined behavior và các vấn đề liên quan trong C, hãy xem <strong>C FAQ²</strong> hoặc blog của John Regehr¹.</p>
+</blockquote>
+<p><strong>Pointers Can Prove Problematic</strong> (Con trỏ có thể gây rắc rối)</p>
+<p>:   Hãy nhớ rằng trình biên dịch chỉ thực hiện các phép biến đổi mà không làm thay đổi hành vi cơ bản của chương trình nguồn.<br />
+Nếu một phép biến đổi có nguy cơ thay đổi hành vi của chương trình, trình biên dịch sẽ không thực hiện nó.<br />
+Điều này đặc biệt đúng trong trường hợp <strong>memory aliasing</strong> (trùng địa chỉ bộ nhớ), khi hai con trỏ khác nhau trỏ đến cùng một địa chỉ trong bộ nhớ.<br />
+Ví dụ, hãy xem hàm <code>shiftAdd</code> dưới đây, nhận hai con trỏ số nguyên làm tham số. Hàm này nhân số thứ nhất với 10 và cộng số thứ hai vào.<br />
+Vì vậy, nếu <code>shiftAdd</code> được truyền vào hai số nguyên 5 và 6, kết quả sẽ là 56.</p>
+<h4 id="averagemat_v1"><a class="header" href="#averagemat_v1">averageMat_v1</a></h4>
+<pre><code class="language-c">float averageMat_v1(int **mat, int n) {
+    int i, j, total = 0;
+    for (i = 0; i &lt; n; i++) {
+        for (j = 0; j &lt; n; j++) {
+            // Note indexing: [i][j]
+            total += mat[i][j];
+        }
+    }
+    return (float) total / (n * n);
+}
+</code></pre>
+<h4 id="averagemat_v2"><a class="header" href="#averagemat_v2">averageMat_v2</a></h4>
+<pre><code class="language-c">float averageMat_v2(int **mat, int n) {
+    int i, j, total = 0;
+    for (i = 0; i &lt; n; i++) {
+        for (j = 0; j &lt; n; j++) {
+            // Note indexing: [j][i]
+            total += mat[j][i];
+        }
+    }
+    return (float) total / (n * n);
+}
+</code></pre>
+<p><strong>Bảng 1.</strong> So sánh hai hàm nhân số thứ nhất với 10 và cộng số thứ hai vào. Có tại <a href="_attachments/shiftadd.c">liên kết này</a>.</p>
+<p>Hàm <code>shiftAddOpt</code> tối ưu hàm <code>shiftAdd</code> bằng cách loại bỏ một lần truy cập bộ nhớ bổ sung tới <code>a</code>, dẫn đến tập lệnh nhỏ hơn trong mã assembly đã biên dịch.<br />
+Tuy nhiên, trình biên dịch sẽ <strong>không bao giờ</strong> tự thực hiện tối ưu hóa này do rủi ro <strong>memory aliasing</strong> (trùng địa chỉ bộ nhớ).<br />
+Để hiểu lý do, hãy xem xét hàm <code>main</code> sau:</p>
+<pre><code class="language-c">int main(void){
+    int x = 5;
+    int y = 6;
+    shiftAdd(&amp;x, &amp;y); // should produce 56
+    printf(&quot;shiftAdd produces: %d\n&quot;, x);
+
+    x = 5; // reset x
+    shiftAddOpt(&amp;x, &amp;y); // should produce 56
+    printf(&quot;shiftAddOpt produces: %d\n&quot;, x);
+
+    return 0;
+}
+</code></pre>
+<p>Biên dịch và chạy chương trình này cho kết quả như mong đợi:</p>
+<pre><code class="language-bash">$ gcc -o shiftadd shiftadd.c
+$ ./shiftadd
+shiftAdd produces: 56
+shiftAddOpt produces: 56
+</code></pre>
+<p>Giả sử, thay vào đó, chương trình được sửa đổi để <code>shiftAdd</code> nhận <strong>cùng một con trỏ tới <code>x</code></strong> cho cả hai tham số:</p>
+<pre><code class="language-c">int main(void){
+    int x = 5;
+    shiftAdd(&amp;x, &amp;x); // should produce 55
+    printf(&quot;shiftAdd produces: %d\n&quot;, x);
+
+    x = 5; // reset x
+    shiftAddOpt(&amp;x, &amp;x); // should produce 55
+    printf(&quot;shiftAddOpt produces: %d\n&quot;, x);
+
+    return 0;
+}
+</code></pre>
+<p>Kết quả mong đợi là <strong>55</strong>.<br />
+Tuy nhiên, khi biên dịch và chạy lại mã đã cập nhật, ta nhận được <strong>hai kết quả khác nhau</strong>:</p>
+<pre><code class="language-bash">$ gcc -o shiftadd shiftadd.c
+$ ./shiftadd
+shiftAdd produces: 100
+shiftAddOpt produces: 55
+</code></pre>
+<p>Lần theo quá trình thực thi của các hàm <code>shiftAdd</code> với giả định rằng <code>a</code> và <code>b</code> cùng trỏ tới <strong>cùng một vị trí bộ nhớ</strong> sẽ thấy vấn đề:<br />
+Phép nhân <code>a</code> với 10 trong <code>shiftAdd</code> cập nhật <code>x</code> thành 50.<br />
+Tiếp theo, phép cộng <code>a</code> với <code>b</code> trong <code>shiftAdd</code> khiến <code>x</code> tăng gấp đôi thành 100.</p>
+<p>Rủi ro <strong>memory aliasing</strong> cho thấy <code>shiftAdd</code> và <code>shiftAddOpt</code> <strong>thực tế không tương đương</strong>, mặc dù lập trình viên có thể đã dự định như vậy.</p>
+<p>Để khắc phục, cần nhận ra rằng tham số thứ hai của <code>shiftAdd</code> <strong>không cần</strong> truyền vào dưới dạng con trỏ.<br />
+Thay thế tham số thứ hai bằng một số nguyên sẽ loại bỏ rủi ro aliasing và cho phép trình biên dịch tối ưu một hàm thành hàm còn lại:</p>
+<h4 id="shiftadd-phiên-bản-chưa-tối-ưu---đã-sửa"><a class="header" href="#shiftadd-phiên-bản-chưa-tối-ưu---đã-sửa">shiftAdd (phiên bản chưa tối ưu - đã sửa)</a></h4>
+<pre><code class="language-c">void shiftAdd(int *a, int b){
+    *a = *a * 10; // multiply by 10
+    *a += b;      // add b
+}
+</code></pre>
+<h4 id="shiftaddopt-phiên-bản-tối-ưu---đã-sửa"><a class="header" href="#shiftaddopt-phiên-bản-tối-ưu---đã-sửa">shiftAddOpt (phiên bản tối ưu - đã sửa)</a></h4>
+<pre><code class="language-c">void shiftAddOpt(int *a, int b){
+    *a = (*a * 10) + b;
+}
+</code></pre>
+<p><strong>Bảng 2.</strong> Các hàm đã cải tiến, nhân số thứ nhất với 10 và cộng số thứ hai vào. Có tại <a href="_attachments/shiftadd.c">liên kết này</a>.</p>
+<p>Việc loại bỏ truy cập bộ nhớ không cần thiết giúp lập trình viên giữ nguyên khả năng đọc của hàm <code>shiftAdd</code> gốc, đồng thời cho phép trình biên dịch tối ưu hàm.</p>
+<h3 id="hợp-tác-với-trình-biên-dịch-một-chương-trình-mẫu"><a class="header" href="#hợp-tác-với-trình-biên-dịch-một-chương-trình-mẫu">Hợp tác với trình biên dịch: Một chương trình mẫu</a></h3>
+<p>Trong các phần tiếp theo, chúng ta sẽ tập trung tìm hiểu thêm về các loại tối ưu hóa phổ biến và thảo luận các chiến lược lập trình, profiling để giúp trình biên dịch dễ dàng tối ưu mã hơn.<br />
+Để dẫn dắt nội dung, chúng ta sẽ cùng tối ưu chương trình sau (được viết chưa tối ưu) nhằm tìm tất cả các số nguyên tố từ 2 đến <em>n</em> (mã nguồn có tại <a href="_attachments/optExample.c">liên kết này</a>).</p>
+<pre><code class="language-c">//helper function: checks to see if a number is prime
+int isPrime(int x) {
+    int i;
+    for (i = 2; i &lt; sqrt(x) + 1; i++) { //no prime number is less than 2
+        if (x % i == 0) { //if the number is divisible by i
+            return 0; //it is not prime
+        }
+    }
+    return 1; //otherwise it is prime
+}
+
+// finds the next prime
+int getNextPrime(int prev) {
+    int next = prev + 1;
+    while (!isPrime(next)) { //while the number is not prime
+        next++; //increment and check again
+    }
+    return next;
+}
+
+// generates a sequence of primes
+int genPrimeSequence(int *array, int limit) {
+    int i;
+    int len = limit;
+    if (len == 0) return 0;
+    array[0] = 2; //initialize the first number to 2
+    for (i = 1; i &lt; len; i++) {
+        array[i] = getNextPrime(array[i-1]); //fill in the array
+        if (array[i] &gt; limit) {
+            len = i;
+            return len;
+        }
+    }
+    return len;
+}
+
+int main(int argc, char **argv) {
+  //omitted for brevity
+  int *array = allocateArray(limit);
+  int length = genPrimeSequence(array, limit);
+
+  return 0;
+}
+</code></pre>
+<p><strong>Bảng 3</strong> cho thấy kết quả đo thời gian để tạo ra các số nguyên tố từ 2 đến 5.000.000 với các cờ tối ưu hóa khác nhau, sử dụng lệnh biên dịch cơ bản sau:</p>
+<pre><code class="language-bash">$ gcc -o optExample optExample.c -lm
+</code></pre>
+<h4 id="kết-quả-thời-gian-giây"><a class="header" href="#kết-quả-thời-gian-giây">Kết quả thời gian (giây)</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>Unoptimized</th><th><code>-O1</code></th><th><code>-O2</code></th><th><code>-O3</code></th></tr></thead><tbody>
+<tr><td>3.86</td><td>2.32</td><td>2.14</td><td>2.15</td></tr>
+</tbody></table>
+</div>
+<p><strong>Bảng 3.</strong> Thời gian (giây) để tạo các số nguyên tố từ 2 đến 5.000.000</p>
+<p>Thời gian nhanh nhất quan sát được khi dùng cờ tối ưu hóa là khoảng <strong>2,14 giây</strong>.<br />
+Mặc dù việc sử dụng các cờ tối ưu hóa giúp giảm hơn một giây so với thời gian chạy ban đầu của chương trình, nhưng việc tăng mức tối ưu hóa chỉ mang lại cải thiện rất nhỏ.<br />
+Trong các phần tiếp theo, chúng ta sẽ thảo luận cách có thể chỉnh sửa chương trình để giúp trình biên dịch dễ dàng tối ưu hơn.</p>
+<h3 id="tài-liệu-tham-khảo"><a class="header" href="#tài-liệu-tham-khảo">Tài liệu tham khảo</a></h3>
+<ol>
+<li>
+<p>John Regehr. <em>&quot;A Guide to Undefined Behavior in C and C++, Part 1&quot;</em>.<br />
+<a href="https://blog.regehr.org/archives/213">https://blog.regehr.org/archives/213</a></p>
+</li>
+<li>
+<p>C FAQ. <em>&quot;comp.lang.c FAQ list: Question 11.33&quot;</em>.<br />
+<a href="http://c-faq.com/ansi/undef.html">http://c-faq.com/ansi/undef.html</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C11-MemHierarchy/summary.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C12-CodeOpt/basic.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C11-MemHierarchy/summary.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C12-CodeOpt/basic.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

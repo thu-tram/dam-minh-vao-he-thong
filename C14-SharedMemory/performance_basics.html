@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Parallel Performance Basics - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html" class="active"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="1441-kiến-thức-cơ-bản-về-hiệu-năng-song-song-parallel-performance-basics"><a class="header" href="#1441-kiến-thức-cơ-bản-về-hiệu-năng-song-song-parallel-performance-basics">14.4.1. Kiến thức cơ bản về hiệu năng song song (Parallel Performance Basics)</a></h3>
+<h4 id="speedup-tăng-tốc"><a class="header" href="#speedup-tăng-tốc">Speedup (Tăng tốc)</a></h4>
+<p>Giả sử một chương trình mất thời gian T~<em>c</em>~ để thực thi trên <em>c</em> core.<br />
+Như vậy, phiên bản <strong>tuần tự</strong> của chương trình sẽ mất thời gian T~1~ để chạy.</p>
+<p><strong>Speedup</strong> của chương trình trên <em>c</em> core được biểu diễn bằng công thức:</p>
+<p><img src="_images/speedup.png" alt="speedup" /></p>
+<p>Ví dụ: nếu một chương trình tuần tự mất 60 giây để chạy, trong khi phiên bản song song của nó mất 30 giây trên 2 core, thì <strong>speedup</strong> tương ứng là 2.<br />
+Tương tự, nếu chương trình đó mất 15 giây trên 4 core, thì speedup là 4.<br />
+Trong kịch bản lý tưởng, một chương trình chạy trên <em>n</em> core với <em>n</em> thread sẽ có speedup bằng <em>n</em>.</p>
+<p>Nếu speedup của chương trình <strong>lớn hơn 1</strong>, điều đó cho thấy việc song song hóa đã mang lại cải thiện hiệu năng.<br />
+Nếu speedup <strong>nhỏ hơn 1</strong>, thì giải pháp song song thực tế còn chậm hơn giải pháp tuần tự.<br />
+Cũng có thể xảy ra trường hợp speedup <strong>lớn hơn <em>n</em></strong> (ví dụ: do hiệu ứng phụ của việc có thêm cache giúp giảm số lần truy cập bộ nhớ).<br />
+Những trường hợp này được gọi là <strong>superlinear speedup</strong> (tăng tốc siêu tuyến tính).</p>
+<h4 id="efficiency-hiệu-suất"><a class="header" href="#efficiency-hiệu-suất">Efficiency (Hiệu suất)</a></h4>
+<p>Speedup <strong>không</strong> tính đến số lượng core — nó chỉ đơn thuần là tỷ lệ giữa thời gian chạy tuần tự và thời gian chạy song song.<br />
+Ví dụ: nếu một chương trình tuần tự mất 60 giây, nhưng chương trình song song mất 30 giây trên <strong>4 core</strong>, thì speedup vẫn là 2.<br />
+Tuy nhiên, chỉ số này <strong>không phản ánh</strong> việc chương trình đã chạy trên 4 core.</p>
+<p>Để đo <strong>tốc độ tăng trên mỗi core</strong>, ta sử dụng <strong>efficiency</strong>:</p>
+<p><img src="_images/efficiency.png" alt="efficiency" /></p>
+<p>Efficiency thường nằm trong khoảng từ 0 đến 1.</p>
+<ul>
+<li>Efficiency = 1 nghĩa là các core được sử dụng <strong>hoàn hảo</strong>.</li>
+<li>Nếu efficiency gần 0, thì song song hóa hầu như <strong>không mang lại lợi ích</strong>, vì thêm core không cải thiện hiệu năng.</li>
+<li>Nếu efficiency &gt; 1, điều đó cho thấy có <strong>superlinear speedup</strong>.</li>
+</ul>
+<p>Xét lại ví dụ trước:</p>
+<ul>
+<li>Chương trình tuần tự mất 60 giây.</li>
+<li>Nếu phiên bản song song mất 30 giây trên <strong>2 core</strong>, efficiency = 1 (100%).</li>
+<li>Nếu mất 30 giây trên <strong>4 core</strong>, efficiency giảm xuống 0.5 (50%).</li>
+</ul>
+<h4 id="hiệu-năng-song-song-trong-thực-tế"><a class="header" href="#hiệu-năng-song-song-trong-thực-tế">Hiệu năng song song trong thực tế</a></h4>
+<p>Trong thế giới lý tưởng, speedup là <strong>tuyến tính</strong>: mỗi đơn vị tính toán bổ sung sẽ mang lại mức tăng tốc tương ứng.<br />
+Tuy nhiên, điều này <strong>hiếm khi</strong> xảy ra trong thực tế.</p>
+<p>Hầu hết các chương trình đều chứa một phần <strong>bắt buộc phải tuần tự</strong> do các phụ thuộc nội tại trong mã.<br />
+Chuỗi phụ thuộc dài nhất trong một chương trình được gọi là <strong>critical path</strong> (đường tới hạn).<br />
+Giảm độ dài của critical path là bước quan trọng đầu tiên trong việc song song hóa chương trình.</p>
+<p>Ngoài ra, các <strong>điểm đồng bộ hóa thread</strong> và (đối với các chương trình chạy trên nhiều nút tính toán) <strong>chi phí giao tiếp giữa các process</strong> cũng là những yếu tố có thể giới hạn hiệu năng song song.</p>
+<blockquote>
+<p><strong>Không phải mọi chương trình đều là ứng viên tốt cho song song hóa!</strong><br />
+Độ dài của critical path có thể khiến một số chương trình <strong>rất khó</strong> để song song hóa.<br />
+Ví dụ: bài toán tính số Fibonacci thứ <em>n</em>.<br />
+Vì mỗi số Fibonacci phụ thuộc vào <strong>hai số trước đó</strong>, nên việc song song hóa hiệu quả chương trình này là <strong>rất khó</strong>.</p>
+</blockquote>
+<p>Xét việc song song hóa hàm <code>countElems</code> trong thuật toán <strong>CountSort</strong> đã đề cập trước đó trong chương này.<br />
+Trong thế giới lý tưởng, ta kỳ vọng speedup của chương trình sẽ <strong>tuyến tính</strong> theo số lượng core.<br />
+Tuy nhiên, hãy đo thời gian chạy của nó (trong trường hợp này, chạy trên hệ thống <strong>quad-core</strong> với <strong>8 thread logic</strong>):</p>
+<p>$ ./countElems_p_v3 100000000 0 1
+Time for Step 1 is 0.331831 s</p>
+<p>$ ./countElems_p_v3 100000000 0 2
+Time for Step 1 is 0.197245 s</p>
+<p>$ ./countElems_p_v3 100000000 0 4
+Time for Step 1 is 0.140642 s</p>
+<p>$ ./countElems_p_v3 100000000 0 8
+Time for Step 1 is 0.107649 s</p>
+<p>Bảng 1 cho thấy <strong>speedup</strong> và <strong>efficiency</strong> cho các lần thực thi đa luồng này:</p>
+<div class="table-wrapper"><table><thead><tr><th>Number of threads</th><th>2</th><th>4</th><th>8</th></tr></thead><tbody>
+<tr><td>Speedup</td><td>1.68</td><td>2.36</td><td>3.08</td></tr>
+<tr><td>Efficiency</td><td>0.84</td><td>0.59</td><td>0.39</td></tr>
+</tbody></table>
+</div>
+<p><strong>Bảng 1.</strong> Kết quả benchmark hiệu năng</p>
+<p>Mặc dù chúng ta đạt <strong>84% efficiency</strong> với 2 core, nhưng efficiency giảm xuống <strong>39%</strong> khi dùng 8 core.<br />
+Hãy lưu ý rằng <strong>speedup lý tưởng</strong> bằng 8 đã <strong>không đạt được</strong>.<br />
+Một lý do là <strong>overhead</strong> của việc phân công công việc cho các thread và việc cập nhật tuần tự mảng <code>counts</code> bắt đầu chiếm ưu thế khi số lượng thread tăng cao.<br />
+Thứ hai, <strong>resource contention</strong> (tranh chấp tài nguyên) giữa 8 thread (hãy nhớ đây là bộ xử lý <strong>quad-core</strong>) làm giảm efficiency của core.</p>
+<h4 id="amdahls-law"><a class="header" href="#amdahls-law">Amdahl's Law</a></h4>
+<p>Năm 1967, <strong>Gene Amdahl</strong>, một kiến trúc sư máy tính hàng đầu tại IBM, đã dự đoán rằng <strong>tốc độ tối đa</strong> mà một chương trình máy tính có thể đạt được bị giới hạn bởi kích thước của thành phần <strong>bắt buộc phải tuần tự</strong> (hiện được gọi là <strong>Amdahl’s Law</strong>).</p>
+<p>Nói chung, Amdahl’s Law phát biểu rằng:</p>
+<ul>
+<li>Mỗi chương trình đều có một phần <strong>có thể tăng tốc</strong> (tức là phần có thể tối ưu hóa hoặc song song hóa, ký hiệu <em>P</em>),</li>
+<li>Và một phần <strong>không thể tăng tốc</strong> (tức là phần vốn dĩ tuần tự, ký hiệu <em>S</em>).</li>
+</ul>
+<p>Ngay cả khi thời gian thực thi của phần <em>P</em> được giảm xuống <strong>0</strong>, thì phần <em>S</em> vẫn tồn tại và cuối cùng sẽ <strong>chi phối hiệu năng</strong>.<br />
+Vì <em>S</em> và <em>P</em> là các tỷ lệ, nên <em>S</em> + <em>P</em> = 1.</p>
+<p>Xét một chương trình chạy trên 1 core mất thời gian T~1~.</p>
+<ul>
+<li>Phần tuần tự chiếm <em>S</em> × T~1~ thời gian.</li>
+<li>Phần song song hóa (<em>P</em> = 1 − <em>S</em>) chiếm <em>P</em> × T~1~ thời gian.</li>
+</ul>
+<p>Khi chương trình chạy trên <em>c</em> core, phần tuần tự <strong>vẫn</strong> mất <em>S</em> × T~1~ thời gian (giả sử các điều kiện khác không đổi), nhưng phần song song hóa được chia cho <em>c</em> core.<br />
+Do đó, mức cải thiện tối đa cho bộ xử lý song song với <em>c</em> core để chạy cùng một công việc là:</p>
+<p><img src="_images/amdahl.png" alt="amdahl" /></p>
+<p>Khi <em>c</em> tăng, thời gian thực thi trên bộ xử lý song song sẽ bị <strong>chi phối</strong> bởi phần tuần tự của chương trình.</p>
+<p>Để hiểu tác động của Amdahl’s Law, xét một chương trình <strong>90% song song hóa</strong> và chạy trong 10 giây trên 1 core.<br />
+Theo công thức:</p>
+<ul>
+<li><em>P</em> = 0.9</li>
+<li><em>S</em> = 0.1</li>
+</ul>
+<p>Bảng 2 cho thấy <strong>tổng thời gian</strong> trên <em>c</em> core (T~<em>c</em>~) theo Amdahl’s Law và <strong>speedup</strong> tương ứng:</p>
+<div class="table-wrapper"><table><thead><tr><th>Number of cores</th><th>Serial time (s)</th><th>Parallel time (s)</th><th>Total Time T~c~ (s)</th><th>Speedup (so với 1 core)</th></tr></thead><tbody>
+<tr><td>1</td><td>1</td><td>9</td><td>10</td><td>1</td></tr>
+<tr><td>10</td><td>1</td><td>0.9</td><td>1.9</td><td>5.26</td></tr>
+<tr><td>100</td><td>1</td><td>0.09</td><td>1.09</td><td>9.17</td></tr>
+<tr><td>1000</td><td>1</td><td>0.009</td><td>1.009</td><td>9.91</td></tr>
+</tbody></table>
+</div>
+<p><strong>Bảng 2.</strong> Ảnh hưởng của Amdahl’s Law lên một chương trình 10 giây với 90% khả năng song song hóa</p>
+<p>Có thể thấy rằng, theo thời gian, <strong>phần tuần tự</strong> của chương trình bắt đầu chiếm ưu thế, và việc thêm nhiều core hơn gần như <strong>không còn tác dụng</strong>.</p>
+<p>Một cách nhìn chính xác hơn là đưa công thức tính T~<em>c</em>~ của Amdahl vào công thức tính speedup:</p>
+<p><img src="_images/amdahl_speed.png" alt="amdahl speed" /></p>
+<p>Khi lấy giới hạn của công thức này, ta thấy rằng khi <em>c</em> tiến tới vô hạn, <strong>speedup tiến tới 1/<em>S</em></strong>.<br />
+Trong ví dụ ở Bảng 2, speedup tiến tới 1/0.1 = <strong>10</strong>.</p>
+<p>Ví dụ khác: xét một chương trình với <em>P</em> = 0.99 (tức 99% chương trình có thể song song hóa).<br />
+Khi <em>c</em> tiến tới vô hạn, thời gian tuần tự (<em>S</em> = 0.01) bắt đầu chi phối hiệu năng.<br />
+Do đó, speedup tiến tới 1/0.01 = <strong>100</strong>.<br />
+Nói cách khác, ngay cả với <strong>một triệu core</strong>, tốc độ tối đa mà chương trình này đạt được cũng chỉ là 100.</p>
+<blockquote>
+<p><strong>Không phải đã hết hy vọng: Giới hạn của Amdahl’s Law</strong><br />
+Khi tìm hiểu về Amdahl’s Law, cần xem xét <strong>mục đích</strong> ban đầu của Gene Amdahl.<br />
+Theo lời ông, định luật này được đề xuất để chứng minh &quot;<em>tính đúng đắn liên tục của cách tiếp cận bộ xử lý đơn, và sự yếu kém của cách tiếp cận đa bộ xử lý khi áp dụng vào các bài toán thực tế với những bất thường đi kèm</em>”<sup class="footnote-reference"><a href="#1">1</a></sup>.<br />
+Trong bài báo năm 1967, Amdahl viết: &quot;<em>Trong hơn một thập kỷ, nhiều người đã cho rằng cấu trúc của một máy tính đơn đã đạt tới giới hạn, và những bước tiến thực sự quan trọng chỉ có thể đạt được bằng cách kết nối nhiều máy tính lại với nhau để cho phép giải quyết hợp tác</em>”<sup class="footnote-reference"><a href="#1">1</a></sup>.</p>
+</blockquote>
+<p>Những nghiên cứu sau này đã thách thức một số giả định chính của Amdahl.<br />
+Xem <a href="performance_advanced.html#_gustafson_barsis_law">Gustafson–Barsis Law</a> để tìm hiểu về giới hạn của Amdahl’s Law và một cách tiếp cận khác khi đánh giá lợi ích của song song hóa.</p>
+<h4 id="references"><a class="header" href="#references">References</a></h4>
+<ol>
+<li>Gene Amdahl. &quot;Validity of the single processor approach to
+achieving large scale computing capabilities&quot; <em>Proceedings of the
+April 18-20, 1967, Spring Joint Computer Conference</em>. pp. 483---​485.
+ACM. 1967.</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C14-SharedMemory/performance.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C14-SharedMemory/performance_advanced.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C14-SharedMemory/performance.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C14-SharedMemory/performance_advanced.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

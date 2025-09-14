@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Loops - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html" class="active"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="943-vòng-lặp-trong-assembly"><a class="header" href="#943-vòng-lặp-trong-assembly">9.4.3. Vòng lặp trong Assembly</a></h3>
+<p>Tương tự như câu lệnh <code>if</code>, các vòng lặp trong assembly cũng được triển khai bằng <strong>branch instruction</strong> (lệnh rẽ nhánh).<br />
+Tuy nhiên, vòng lặp cho phép các lệnh được <strong>thực thi lại</strong> dựa trên kết quả của một điều kiện được đánh giá.</p>
+<p>Hàm <code>sumUp</code> trong ví dụ dưới đây tính tổng tất cả các số nguyên dương từ 1 đến một số nguyên <em>n</em> do người dùng nhập.<br />
+Đoạn code này được viết <strong>không tối ưu</strong> để minh họa cách hoạt động của vòng lặp <code>while</code> trong C.</p>
+<pre><code class="language-c">int sumUp(int n) {
+    // khởi tạo total và i
+    int total = 0;
+    int i = 1;
+
+    while (i &lt;= n) {  // khi i nhỏ hơn hoặc bằng n
+        total += i;   // cộng i vào total
+        i++;          // tăng i thêm 1
+    }
+    return total;
+}
+</code></pre>
+<p>Khi biên dịch và dùng GDB để disassemble, ta thu được mã assembly sau:</p>
+<pre><code>Dump of assembler code for function sumUp:
+0x0724 &lt;+0&gt;:   sub   sp, sp, #0x20
+0x0728 &lt;+4&gt;:   str   w0, [sp, #12]
+0x072c &lt;+8&gt;:   str   wzr, [sp, #24]
+0x0730 &lt;+12&gt;:  mov   w0, #0x1
+0x0734 &lt;+16&gt;:  str   w0, [sp, #28]
+0x0738 &lt;+20&gt;:  b     0x758 &lt;sumUp+52&gt;
+0x073c &lt;+24&gt;:  ldr   w1, [sp, #24]
+0x0740 &lt;+28&gt;:  ldr   w0, [sp, #28]
+0x0744 &lt;+32&gt;:  add   w0, w1, w0
+0x0748 &lt;+36&gt;:  str   w0, [sp, #24]
+0x074c &lt;+40&gt;:  ldr   w0, [sp, #28]
+0x0750 &lt;+44&gt;:  add   w0, w0, #0x1
+0x0754 &lt;+48&gt;:  str   w0, [sp, #28]
+0x0758 &lt;+52&gt;:  ldr   w1, [sp, #28]
+0x075c &lt;+56&gt;:  ldr   w0, [sp, #12]
+0x0760 &lt;+60&gt;:  cmp   w1, w0
+0x0764 &lt;+64&gt;:  b.le  0x73c &lt;sumUp+24&gt;
+0x0768 &lt;+68&gt;:  ldr   w0, [sp, #24]
+0x076c &lt;+72&gt;:  add   sp, sp, #0x20
+0x0770 &lt;+76&gt;:  ret
+</code></pre>
+<p>Trong ví dụ này, chúng ta sẽ <strong>không</strong> vẽ sơ đồ stack chi tiết, nhưng bạn nên tự thực hành để hiểu rõ hơn.</p>
+<h4 id="năm-lệnh-đầu-tiên"><a class="header" href="#năm-lệnh-đầu-tiên">Năm lệnh đầu tiên</a></h4>
+<p>Năm lệnh đầu tiên của hàm này thiết lập stack để thực thi hàm và lưu trữ một số giá trị tạm thời:</p>
+<pre><code>0x0724 &lt;+0&gt;:  sub  sp, sp, #0x20   // mở rộng stack thêm 32 byte (tạo stack frame mới)
+0x0728 &lt;+4&gt;:  str  w0, [sp, #12]   // lưu n tại sp+12 (n)
+0x072c &lt;+8&gt;:  str  wzr, [sp, #24]  // lưu 0 tại sp+24 (total)
+0x0730 &lt;+12&gt;: mov  w0, #0x1        // w0 = 1
+0x0734 &lt;+16&gt;: str  w0, [sp, #28]   // lưu 1 tại sp+28 (i)
+</code></pre>
+<p>Cụ thể, chúng thực hiện:</p>
+<ul>
+<li>Mở rộng call stack thêm 32 byte, đánh dấu frame mới.</li>
+<li>Lưu tham số đầu tiên (<code>n</code>) tại vị trí <code>sp + 12</code>.</li>
+<li>Lưu giá trị 0 tại <code>sp + 24</code> (biến <code>total</code>).</li>
+<li>Gán giá trị 1 vào thanh ghi <code>w0</code>.</li>
+<li>Lưu giá trị 1 tại <code>sp + 28</code> (biến <code>i</code>).</li>
+</ul>
+<p>Hãy nhớ rằng các vị trí trên stack lưu <strong>biến tạm thời</strong> trong hàm.<br />
+Để đơn giản, ta sẽ gọi vị trí <code>sp + 24</code> là <code>total</code> và <code>sp + 28</code> là <code>i</code>.<br />
+Tham số đầu vào <code>n</code> của <code>sumUp</code> nằm tại địa chỉ <code>sp + 12</code>.</p>
+<p>Mặc dù các biến tạm thời được đặt trên stack, nhưng stack pointer <strong>không thay đổi</strong> sau khi thực thi lệnh đầu tiên (<code>sub sp, sp, #0x20</code>).</p>
+<h4 id="trọng-tâm-của-vòng-lặp-the-heart-of-the-loop"><a class="header" href="#trọng-tâm-của-vòng-lặp-the-heart-of-the-loop">Trọng tâm của vòng lặp (The Heart of the Loop)</a></h4>
+<p>12 lệnh tiếp theo trong hàm <code>sumUp</code> chính là <strong>trọng tâm</strong> của vòng lặp:</p>
+<pre><code>0x0738 &lt;+20&gt;: b     0x758 &lt;sumUp+52&gt;  // nhảy tới &lt;sumUp+52&gt;
+0x073c &lt;+24&gt;: ldr   w1, [sp, #24]     // w1 = total
+0x0740 &lt;+28&gt;: ldr   w0, [sp, #28]     // w0 = i
+0x0744 &lt;+32&gt;: add   w0, w1, w0        // w0 = i + total
+0x0748 &lt;+36&gt;: str   w0, [sp, #24]     // lưu (total + i) vào total
+0x074c &lt;+40&gt;: ldr   w0, [sp, #28]     // w0 = i
+0x0750 &lt;+44&gt;: add   w0, w0, #0x1      // w0 = i + 1
+0x0754 &lt;+48&gt;: str   w0, [sp, #28]     // lưu (i+1) vào i (i++)
+0x0758 &lt;+52&gt;: ldr   w1, [sp, #28]     // w1 = i
+0x075c &lt;+56&gt;: ldr   w0, [sp, #12]     // w0 = n
+0x0760 &lt;+60&gt;: cmp   w1, w0            // so sánh i và n
+0x0764 &lt;+64&gt;: b.le  0x73c &lt;sumUp+24&gt;  // nếu (i &lt;= n) thì nhảy tới &lt;sumUp+24&gt;
+</code></pre>
+<ul>
+<li>Lệnh đầu tiên là một cú nhảy trực tiếp tới <code>&lt;sumUp+52&gt;</code>, đặt thanh ghi <strong>program counter</strong> (<code>pc</code>) thành địa chỉ <code>0x758</code>.</li>
+<li>Hai lệnh tiếp theo (tại <code>&lt;sumUp+52&gt;</code> và <code>&lt;sumUp+56&gt;</code>) nạp <code>i</code> và <code>n</code> vào các thanh ghi <code>w1</code> và <code>w0</code>.</li>
+<li>Lệnh <code>cmp</code> tại <code>&lt;sumUp+60&gt;</code> so sánh <code>i</code> và <code>n</code>, thiết lập các cờ điều kiện thích hợp. Thanh ghi <code>pc</code> sau đó trỏ tới lệnh tiếp theo (<code>0x764</code>).</li>
+<li>Lệnh <code>b.le</code> tại <code>&lt;sumUp+64&gt;</code> thay giá trị của <code>pc</code> bằng <code>0x73c</code> nếu <code>i &lt;= n</code>.</li>
+</ul>
+<p>Nếu <strong>nhánh được thực hiện</strong> (tức <code>i &lt;= n</code>), chương trình nhảy tới <code>&lt;sumUp+24&gt;</code> và thực thi các lệnh sau:</p>
+<ul>
+<li><code>ldr</code> tại <code>&lt;sumUp+24&gt;</code> và <code>&lt;sumUp+28&gt;</code> nạp <code>total</code> và <code>i</code> vào <code>w1</code> và <code>w0</code>.</li>
+<li><code>add</code> tại <code>&lt;sumUp+32&gt;</code> cộng <code>total</code> với <code>i</code> và lưu kết quả vào <code>w0</code>.</li>
+<li><code>str</code> tại <code>&lt;sumUp+36&gt;</code> cập nhật <code>total</code> bằng giá trị trong <code>w0</code>.</li>
+<li><code>ldr</code> tại <code>&lt;sumUp+40&gt;</code> nạp <code>i</code> vào <code>w0</code>.</li>
+<li><code>add</code> tại <code>&lt;sumUp+44&gt;</code> cộng 1 vào <code>i</code> và lưu vào <code>w0</code>.</li>
+<li><code>str</code> tại <code>&lt;sumUp+48&gt;</code> cập nhật <code>i</code> bằng giá trị trong <code>w0</code>.</li>
+<li><code>ldr</code> tại <code>&lt;sumUp+52&gt;</code> và <code>&lt;sumUp+56&gt;</code> nạp <code>i</code> và <code>n</code> vào <code>w1</code> và <code>w0</code>.</li>
+<li><code>cmp</code> tại <code>&lt;sumUp+60&gt;</code> so sánh <code>i</code> với <code>n</code> và thiết lập cờ điều kiện.</li>
+<li><code>b.le</code> thực thi: nếu <code>i &lt;= n</code>, chương trình quay lại <code>&lt;sumUp+24&gt;</code> và lặp lại các lệnh từ <code>&lt;sumUp+24&gt;</code> đến <code>&lt;sumUp+64&gt;</code>. Nếu không, <code>pc</code> được đặt thành <code>0x768</code> (<code>&lt;sumUp+68&gt;</code>).</li>
+</ul>
+<p>Nếu <strong>nhánh không được thực hiện</strong> (<code>i &gt; n</code>), các lệnh sau chạy:</p>
+<pre><code>0x0768 &lt;+68&gt;:  ldr   w0, [sp, #24]   // w0 = total
+0x076c &lt;+72&gt;:  add   sp, sp, #0x20   // khôi phục stack
+0x0770 &lt;+76&gt;:  ret                   // trả về w0 (total)
+</code></pre>
+<p>Các lệnh này sao chép <code>total</code> vào thanh ghi trả về <code>w0</code>, thu nhỏ stack (<code>sp</code>) để khôi phục call stack, và thoát hàm.<br />
+Kết quả là hàm trả về <code>total</code>.</p>
+<p><strong>Bảng 1</strong> dưới đây so sánh mã assembly và dạng C sử dụng <code>goto</code> của hàm <code>sumUp</code>:</p>
+<h4 id="assembly"><a class="header" href="#assembly">Assembly</a></h4>
+<pre><code class="language-asm">&lt;sumUp&gt;:
+  &lt;+0&gt;:   sub   sp, sp, #0x20
+  &lt;+4&gt;:   str   w0, [sp, #12]
+  &lt;+8&gt;:   str   wzr, [sp, #24]
+  &lt;+12&gt;:  mov   w0, #0x1
+  &lt;+16&gt;:  str   w0, [sp, #28]
+  &lt;+20&gt;:  b     0x758 &lt;sumUp+52&gt;
+  &lt;+24&gt;:  ldr   w1, [sp, #24]
+  &lt;+28&gt;:  ldr   w0, [sp, #28]
+  &lt;+32&gt;:  add   w0, w1, w0
+  &lt;+36&gt;:  str   w0, [sp, #24]
+  &lt;+40&gt;:  ldr   w0, [sp, #28]
+  &lt;+44&gt;:  add   w0, w0, #0x1
+  &lt;+48&gt;:  str   w0, [sp, #28]
+  &lt;+52&gt;:  ldr   w1, [sp, #28]
+  &lt;+56&gt;:  ldr   w0, [sp, #12]
+  &lt;+60&gt;:  cmp   w1, w0
+  &lt;+64&gt;:  b.le  0x73c &lt;sumUp+24&gt;
+  &lt;+68&gt;:  ldr   w0, [sp, #24]
+  &lt;+72&gt;:  add   sp, sp, #0x20
+  &lt;+76&gt;:  ret
+</code></pre>
+<h4 id="dạng-c-với-goto"><a class="header" href="#dạng-c-với-goto">Dạng C với goto</a></h4>
+<pre><code class="language-c">int sumUp(int n) {
+    int total = 0;
+    int i = 1;
+    goto start;
+body:
+    total += i;
+    i += 1;
+start:
+    if (i &lt;= n) {
+        goto body;
+    }
+    return total;
+}
+</code></pre>
+<p><strong>Bảng 1.</strong> Dịch <code>sumUp()</code> sang dạng C sử dụng <code>goto</code>.</p>
+<p>Đoạn code ở trên cũng tương đương với đoạn mã C sau đây <strong>không</strong> sử dụng câu lệnh <code>goto</code>:</p>
+<pre><code class="language-c">int sumUp(int n) {
+    int total = 0;
+    int i = 1;
+    while (i &lt;= n) {
+        total += i;
+        i += 1;
+    }
+    return total;
+}
+</code></pre>
+<h4 id="vòng-lặp-for-trong-assembly"><a class="header" href="#vòng-lặp-for-trong-assembly">Vòng lặp for trong Assembly</a></h4>
+<p>Vòng lặp chính trong hàm <code>sumUp</code> cũng có thể được viết lại dưới dạng vòng lặp <code>for</code>:</p>
+<pre><code class="language-c">int sumUp2(int n) {
+    int total = 0;             // khởi tạo total = 0
+    int i;
+    for (i = 1; i &lt;= n; i++) { // khởi tạo i = 1, tăng i thêm 1 khi i &lt;= n
+        total += i;            // cộng i vào total
+    }
+    return total;
+}
+</code></pre>
+<p>Phiên bản này tạo ra <strong>mã assembly giống hệt</strong> với ví dụ vòng lặp <code>while</code>.<br />
+Dưới đây là mã assembly của <code>sumUp2</code> kèm chú thích từng dòng:</p>
+<pre><code>Dump of assembler code for function sumUp2:
+0x0774 &lt;+0&gt;:  sub   sp, sp, #0x20     // mở rộng stack thêm 32 byte (frame mới)
+0x0778 &lt;+4&gt;:  str   w0, [sp, #12]     // lưu n tại sp+12 (n)
+0x077c &lt;+8&gt;:  str   wzr, [sp, #24]    // lưu 0 tại sp+24 (total)
+0x0780 &lt;+12&gt;: mov   w0, #0x1          // w0 = 1
+0x0784 &lt;+16&gt;: str   w0, [sp, #28]     // lưu 1 tại sp+28 (i)
+0x0788 &lt;+20&gt;: b     0x7a8 &lt;sumUp2+52&gt; // nhảy tới &lt;sumUp2+52&gt;
+0x078c &lt;+24&gt;: ldr   w1, [sp, #24]     // w1 = total
+0x0790 &lt;+28&gt;: ldr   w0, [sp, #28]     // w0 = i
+0x0794 &lt;+32&gt;: add   w0, w1, w0        // w0 = total + i
+0x0798 &lt;+36&gt;: str   w0, [sp, #24]     // lưu (total+i) vào total
+0x079c &lt;+40&gt;: ldr   w0, [sp, #28]     // w0 = i
+0x07a0 &lt;+44&gt;: add   w0, w0, #0x1      // w0 = i + 1
+0x07a4 &lt;+48&gt;: str   w0, [sp, #28]     // lưu (i+1) vào i (i += 1)
+0x07a8 &lt;+52&gt;: ldr   w1, [sp, #28]     // w1 = i
+0x07ac &lt;+56&gt;: ldr   w0, [sp, #12]     // w0 = n
+0x07b0 &lt;+60&gt;: cmp   w1, w0            // so sánh i và n
+0x07b4 &lt;+64&gt;: b.le  0x78c &lt;sumUp2+24&gt; // nếu (i &lt;= n) nhảy tới &lt;sumUp2+24&gt;
+0x07b8 &lt;+68&gt;: ldr   w0, [sp, #24]     // w0 = total
+0x07bc &lt;+72&gt;: add   sp, sp, #0x20     // khôi phục stack
+0x07c0 &lt;+76&gt;: ret                     // trả về w0 (total)
+</code></pre>
+<p>Để hiểu tại sao phiên bản vòng lặp <code>for</code> này tạo ra mã assembly giống hệt với phiên bản vòng lặp <code>while</code>, hãy nhớ rằng vòng lặp <code>for</code> có dạng:</p>
+<pre><code class="language-c">for (&lt;khởi tạo&gt;; &lt;biểu thức điều kiện&gt;; &lt;bước lặp&gt;) {
+    &lt;thân vòng lặp&gt;
+}
+</code></pre>
+<p>Điều này tương đương với vòng lặp <code>while</code> sau:</p>
+<pre><code class="language-c">&lt;khởi tạo&gt;
+while (&lt;biểu thức điều kiện&gt;) {
+    &lt;thân vòng lặp&gt;
+    &lt;bước lặp&gt;
+}
+</code></pre>
+<p>Vì <a href="../C1-C_intro/conditionals.html#_for_loops">mọi vòng lặp <code>for</code> đều có thể được biểu diễn bằng vòng lặp <code>while</code></a>, nên hai chương trình C dưới đây là các cách viết tương đương cho cùng một đoạn assembly ở trên:</p>
+<h4 id="for-loop"><a class="header" href="#for-loop">For loop</a></h4>
+<pre><code class="language-c">int sumUp2(int n) {
+    int total = 0;
+    int i = 1;
+    for (i; i &lt;= n; i++) {
+        total += i;
+    }
+    return total;
+}
+</code></pre>
+<h4 id="while-loop"><a class="header" href="#while-loop">While loop</a></h4>
+<pre><code class="language-c">int sumUp(int n) {
+    int total = 0;
+    int i = 1;
+    while (i &lt;= n) {
+        total += i;
+        i += 1;
+    }
+    return total;
+}
+</code></pre>
+<p><strong>Bảng 2.</strong> Các cách viết tương đương của hàm <code>sumUp</code>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C9-ARM64/if_statements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C9-ARM64/functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C9-ARM64/if_statements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C9-ARM64/functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

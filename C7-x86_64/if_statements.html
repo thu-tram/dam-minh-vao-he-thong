@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>If Statements - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html" class="active"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="742-câu-lệnh-if-trong-assembly"><a class="header" href="#742-câu-lệnh-if-trong-assembly">7.4.2. Câu lệnh if trong Assembly</a></h3>
+<p>Hãy cùng xem hàm <code>getSmallest</code> ở dạng assembly. Để tiện theo dõi, hàm được trích lại dưới đây:</p>
+<pre><code class="language-c">int getSmallest(int x, int y) {
+    int smallest;
+    if ( x &gt; y ) {
+        smallest = y;
+    }
+    else {
+        smallest = x;
+    }
+    return smallest;
+}
+</code></pre>
+<p>Mã assembly tương ứng được trích xuất từ GDB trông tương tự như sau:</p>
+<pre><code>(gdb) disas getSmallest
+Dump of assembler code for function getSmallest:
+   0x40059a &lt;+4&gt;:   mov    %edi,-0x14(%rbp)
+   0x40059d &lt;+7&gt;:   mov    %esi,-0x18(%rbp)
+   0x4005a0 &lt;+10&gt;:  mov    -0x14(%rbp),%eax
+   0x4005a3 &lt;+13&gt;:  cmp    -0x18(%rbp),%eax
+   0x4005a6 &lt;+16&gt;:  jle    0x4005b0 &lt;getSmallest+26&gt;
+   0x4005a8 &lt;+18&gt;:  mov    -0x18(%rbp),%eax
+   0x4005ae &lt;+24&gt;:  jmp    0x4005b9 &lt;getSmallest+35&gt;
+   0x4005b0 &lt;+26&gt;:  mov    -0x14(%rbp),%eax
+   0x4005b9 &lt;+35&gt;:  pop    %rbp
+   0x4005ba &lt;+36&gt;:  retq
+</code></pre>
+<p>Đây là một cách hiển thị khác của mã assembly so với những gì ta đã thấy trước đây. Ở đây, ta có thể thấy <strong>địa chỉ</strong> gắn với mỗi lệnh, nhưng không thấy <strong>byte</strong> mã máy. Lưu ý rằng đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hóa. Các lệnh thường xuất hiện khi tạo hàm (tức <code>push %rbp</code>, <code>mov %rsp, %rbp</code>) đã được lược bỏ. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi <code>%rdi</code> và <code>%rsi</code>. Vì các tham số của <code>getSmallest</code> có kiểu <code>int</code>, compiler đặt chúng vào các <strong>component register</strong> tương ứng là <code>%edi</code> và <code>%esi</code>. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là <code>x</code> và <code>y</code>.</p>
+<p>Hãy lần lượt phân tích một số dòng đầu tiên của đoạn mã assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ không vẽ stack một cách tường minh. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack.</p>
+<ul>
+<li>
+<p>Lệnh <code>mov</code> đầu tiên sao chép giá trị trong thanh ghi <code>%edi</code> (tham số thứ nhất, <code>x</code>) và đặt nó vào vị trí bộ nhớ <code>%rbp-0x14</code> trên call stack. Instruction pointer (<code>%rip</code>) được đặt tới địa chỉ của lệnh tiếp theo, 0x40059d.</p>
+</li>
+<li>
+<p>Lệnh <code>mov</code> thứ hai sao chép giá trị trong thanh ghi <code>%esi</code> (tham số thứ hai, <code>y</code>) và đặt nó vào vị trí bộ nhớ <code>%rbp-0x18</code> trên call stack. <code>%rip</code> được cập nhật trỏ tới địa chỉ của lệnh tiếp theo, 0x4005a0.</p>
+</li>
+<li>
+<p>Lệnh <code>mov</code> thứ ba sao chép <code>x</code> vào thanh ghi <code>%eax</code>. <code>%rip</code> được cập nhật trỏ tới địa chỉ của lệnh tiếp theo trong chuỗi.</p>
+</li>
+<li>
+<p>Lệnh <code>cmp</code> so sánh giá trị tại vị trí <code>%rbp-0x18</code> (tham số thứ hai, <code>y</code>) với <code>x</code> và thiết lập các <strong>condition code flag register</strong> phù hợp. <code>%rip</code> tăng tới địa chỉ của lệnh tiếp theo, 0x4005a6.</p>
+</li>
+<li>
+<p>Lệnh <code>jle</code> tại địa chỉ 0x4005a6 cho biết nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, lệnh tiếp theo sẽ được thực thi ở vị trí <code>&lt;getSmallest+26&gt;</code> và <code>%rip</code> sẽ được đặt thành 0x4005b0. Ngược lại, <code>%rip</code> sẽ được đặt tới lệnh tiếp theo trong chuỗi, 0x4005a8.</p>
+</li>
+</ul>
+<p>Các lệnh tiếp theo sẽ phụ thuộc vào việc chương trình có thực hiện nhánh (jump) tại địa chỉ 0x4005a6 hay không.</p>
+<p><strong>Trường hợp 1:</strong> Nhánh <em>không</em> được thực hiện. Khi đó, <code>%rip</code> được đặt thành 0x4005a8 (<code>&lt;getSmallest+18&gt;</code>) và chuỗi lệnh sau sẽ chạy:</p>
+<ul>
+<li>
+<p>Lệnh <code>mov -0x18(%rbp), %eax</code> tại <code>&lt;getSmallest+18&gt;</code> sao chép <code>y</code> vào <code>%eax</code>. <code>%rip</code> tăng lên 0x4005ae.</p>
+</li>
+<li>
+<p>Lệnh <code>jmp</code> tại <code>&lt;getSmallest+24&gt;</code> đặt <code>%rip</code> thành 0x4005b9.</p>
+</li>
+<li>
+<p>Các lệnh cuối cùng được thực thi là <code>pop %rbp</code> và <code>retq</code>, dọn dẹp stack và trả về từ lời gọi hàm. Trong trường hợp này, <code>y</code> nằm trong thanh ghi trả về.</p>
+</li>
+</ul>
+<p><strong>Trường hợp 2:</strong> Nhánh được thực hiện tại <code>&lt;getSmallest+16&gt;</code>. Nói cách khác, lệnh <code>jle</code> đặt <code>%rip</code> thành 0x4005b0 (<code>&lt;getSmallest+26&gt;</code>). Khi đó, các lệnh tiếp theo là:</p>
+<ul>
+<li>
+<p>Lệnh <code>mov -0x14(%rbp), %eax</code> tại địa chỉ 0x4005b0 sao chép <code>x</code> vào <code>%eax</code>. <code>%rip</code> tăng lên 0x4005b9.</p>
+</li>
+<li>
+<p>Các lệnh cuối cùng được thực thi là <code>pop %rbp</code> và <code>retq</code>, dọn dẹp stack và trả về giá trị trong thanh ghi trả về. Trong trường hợp này, <code>%eax</code> chứa <code>x</code>, và <code>getSmallest</code> trả về <code>x</code>.</p>
+</li>
+</ul>
+<p>Chúng ta có thể chú thích đoạn assembly trên như sau:</p>
+<pre><code>0x40059a &lt;+4&gt;:  mov %edi,-0x14(%rbp)          # copy x to %rbp-0x14
+0x40059d &lt;+7&gt;:  mov %esi,-0x18(%rbp)          # copy y to %rbp-0x18
+0x4005a0 &lt;+10&gt;: mov -0x14(%rbp),%eax          # copy x to %eax
+0x4005a3 &lt;+13&gt;: cmp -0x18(%rbp),%eax          # compare x with y
+0x4005a6 &lt;+16&gt;: jle 0x4005b0 &lt;getSmallest+26&gt; # if x&lt;=y goto &lt;getSmallest+26&gt;
+0x4005a8 &lt;+18&gt;: mov -0x18(%rbp),%eax          # copy y to %eax
+0x4005ae &lt;+24&gt;: jmp 0x4005b9 &lt;getSmallest+35&gt; # goto &lt;getSmallest+35&gt;
+0x4005b0 &lt;+26&gt;: mov -0x14(%rbp),%eax          # copy x to %eax
+0x4005b9 &lt;+35&gt;: pop %rbp                      # restore %rbp (clean up stack)
+0x4005ba &lt;+36&gt;: retq                          # exit function (return %eax)
+</code></pre>
+<p>Chuyển ngược đoạn assembly này về mã C sẽ cho ra:</p>
+<h2 id="bảng-1"><a class="header" href="#bảng-1">Bảng 1:</a></h2>
+<table>
+  <thead>
+    <tr>
+      <th>Dạng goto</th>
+      <th>Mã C đã dịch</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+      <pre><code>int getSmallest(int x, int y) {
+    int smallest;
+    if (x <= y) {
+        goto assign_x;
+    }
+    smallest = y;
+    goto done;
+<p>assign_x:
+smallest = x;</p>
+<p>done:
+return smallest;
+}
+</code></pre>
+</td>
+<td>
+<pre><code>int getSmallest(int x, int y) {
+int smallest;
+if (x &lt;= y) {
+smallest = x;
+} else {
+smallest = y;
+}
+return smallest;
+}
+</code></pre>
+</td>
+</tr></p>
+</tbody>
+</table>
+<p><strong>Bảng 1.</strong> Dịch <code>getSmallest()</code> sang dạng C dùng <code>goto</code> và dạng C thông thường.</p>
+<p>Trong <strong>Bảng 1</strong>, biến <code>smallest</code> tương ứng với thanh ghi <code>%eax</code>. Nếu <code>x</code> nhỏ hơn hoặc bằng <code>y</code>, mã sẽ thực thi câu lệnh <code>smallest = x</code>, câu lệnh này gắn với nhãn <code>goto</code> là <code>assign_x</code> trong dạng <code>goto</code> của hàm. Ngược lại, câu lệnh <code>smallest = y</code> sẽ được thực thi. Nhãn <code>goto</code> <code>done</code> được dùng để chỉ ra rằng giá trị trong <code>smallest</code> sẽ được trả về.</p>
+<p>Hãy lưu ý rằng bản dịch C ở trên của đoạn assembly có một chút khác biệt so với hàm <code>getSmallest</code> ban đầu. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển bất kỳ câu lệnh <code>if</code> nào thành dạng <code>goto</code> tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. <strong>Bảng 2</strong> cho thấy dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương:</p>
+<table>
+  <thead>
+    <tr>
+      <th>C if statement</th>
+      <th>Dạng goto tương đương của compiler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+      <pre><code>if (condition) {
+    then_statement;
+} else {
+    else_statement;
+}
+</code></pre>
+      </td>
+      <td>
+      <pre><code>if (!condition) {
+    goto else;
+}
+    then_statement;
+    goto done;
+else:
+    else_statement;
+done:
+</code></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Bảng 2.</strong> Dạng chuẩn của câu lệnh <code>if</code> và dạng <code>goto</code> tương đương.</p>
+<p>Khi dịch mã sang assembly, compiler sẽ tạo một lệnh nhảy (jump) khi điều kiện <strong>đúng</strong>. Điều này trái ngược với cấu trúc của câu lệnh <code>if</code>, nơi “nhảy” (tới <code>else</code>) xảy ra khi điều kiện <strong>không</strong> đúng. Dạng <code>goto</code> thể hiện rõ sự khác biệt về logic này.</p>
+<p>Xét bản dịch <code>goto</code> ban đầu của hàm <code>getSmallest</code>, ta thấy rằng:</p>
+<ul>
+<li><code>x &lt;= y</code> tương ứng với <code>!condition</code>.</li>
+<li><code>smallest = x</code> là <code>else_statement</code>.</li>
+<li>Dòng <code>smallest = y</code> là <code>then_statement</code>.</li>
+<li>Dòng cuối cùng của hàm là <code>return smallest</code>.</li>
+</ul>
+<p>Viết lại phiên bản gốc của hàm với các chú thích ở trên sẽ cho:</p>
+<pre><code class="language-c">int getSmallest(int x, int y) {
+    int smallest;
+    if (x &gt; y) {     // !(x &lt;= y)
+        smallest = y; // then_statement
+    }
+    else {
+        smallest = x; // else_statement
+    }
+    return smallest;
+}
+</code></pre>
+<p>Phiên bản này giống hệt với hàm <code>getSmallest</code> ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.</p>
+<h4 id="các-lệnh-cmov"><a class="header" href="#các-lệnh-cmov">Các lệnh cmov</a></h4>
+<p>Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là <strong>conditional move</strong> (<code>cmov</code>). Các lệnh <code>cmp</code>, <code>test</code> và <code>jmp</code> thực hiện <em>conditional transfer of control</em> (chuyển điều khiển có điều kiện) trong một chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng khác nhau. Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các nhánh này thường tốn kém về hiệu năng.</p>
+<p>Ngược lại, lệnh <code>cmov</code> thực hiện <em>conditional transfer of data</em> (chuyển dữ liệu có điều kiện). Nói cách khác, cả <code>then_statement</code> và <code>else_statement</code> của cấu trúc điều kiện đều được thực thi, và dữ liệu sẽ được đặt vào thanh ghi thích hợp dựa trên kết quả của điều kiện.</p>
+<p>Việc sử dụng <strong>biểu thức ba ngôi</strong> (ternary expression) trong C thường khiến compiler sinh ra lệnh <code>cmov</code> thay vì các lệnh nhảy. Với câu lệnh if-then-else thông thường, biểu thức ba ngôi có dạng:</p>
+<pre><code class="language-c">result = (condition) ? then_statement : else_statement;
+</code></pre>
+<p>Hãy sử dụng dạng này để viết lại hàm <code>getSmallest</code> dưới dạng biểu thức ba ngôi. Lưu ý rằng phiên bản mới này hoạt động hoàn toàn giống với hàm <code>getSmallest</code> ban đầu:</p>
+<pre><code class="language-c">int getSmallest_cmov(int x, int y) {
+    return x &gt; y ? y : x;
+}
+</code></pre>
+<p>Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra. Hãy nhớ rằng tham số thứ nhất và thứ hai (<code>x</code> và <code>y</code>) lần lượt được lưu trong các thanh ghi <code>%edi</code> và <code>%esi</code>:</p>
+<pre><code>0x4005d7 &lt;+0&gt;:   push   %rbp             #save %rbp
+0x4005d8 &lt;+1&gt;:   mov    %rsp,%rbp        #update %rbp
+0x4005db &lt;+4&gt;:   mov    %edi,-0x4(%rbp)  #copy x to %rbp-0x4
+0x4005de &lt;+7&gt;:   mov    %esi,-0x8(%rbp)  #copy y to %rbp-0x8
+0x4005e1 &lt;+10&gt;:  mov    -0x8(%rbp),%eax  #copy y to %eax
+0x4005e4 &lt;+13&gt;:  cmp    %eax,-0x4(%rbp)  #compare x and y
+0x4005e7 &lt;+16&gt;:  cmovle -0x4(%rbp),%eax  #if (x &lt;=y) copy x to %eax
+0x4005eb &lt;+20&gt;:  pop    %rbp             #restore %rbp
+0x4005ec &lt;+21&gt;:  retq                    #return %eax
+</code></pre>
+<p>Đoạn mã assembly này <strong>không có lệnh nhảy</strong>. Sau khi so sánh <code>x</code> và <code>y</code>, <code>x</code> sẽ được chuyển vào thanh ghi trả về chỉ khi <code>x</code> nhỏ hơn hoặc bằng <code>y</code>. Giống như các lệnh nhảy, hậu tố của lệnh <code>cmov</code> cho biết điều kiện mà việc chuyển dữ liệu có điều kiện sẽ xảy ra. <strong>Bảng 3</strong> liệt kê tập hợp các lệnh conditional move.</p>
+<div class="table-wrapper"><table><thead><tr><th>Signed</th><th>Unsigned</th><th>Mô tả</th></tr></thead><tbody>
+<tr><td><code>cmove</code> (<code>cmovz</code>)</td><td></td><td>move if equal (==)</td></tr>
+<tr><td><code>cmovne</code> (<code>cmovnz</code>)</td><td></td><td>move if not equal (!=)</td></tr>
+<tr><td><code>cmovs</code></td><td></td><td>move if negative</td></tr>
+<tr><td><code>cmovns</code></td><td></td><td>move if non-negative</td></tr>
+<tr><td><code>cmovg</code> (<code>cmovnle</code>)</td><td><code>cmova</code> (<code>cmovnbe</code>)</td><td>move if greater (&gt;)</td></tr>
+<tr><td><code>cmovge</code> (<code>cmovnl</code>)</td><td><code>cmovae</code> (<code>cmovnb</code>)</td><td>move if greater than or equal (&gt;=)</td></tr>
+<tr><td><code>cmovl</code> (<code>cmovnge</code>)</td><td><code>cmovb</code> (<code>cmovnae</code>)</td><td>move if less (&lt;)</td></tr>
+<tr><td><code>cmovle</code> (<code>cmovng</code>)</td><td><code>cmovbe</code> (<code>cmovna</code>)</td><td>move if less than or equal (&lt;=)</td></tr>
+</tbody></table>
+</div>
+<p><strong>Bảng 3.</strong> Các lệnh cmov.</p>
+<p>Trong trường hợp của hàm <code>getSmallest</code> ban đầu, <strong>trình tối ưu hóa nội bộ</strong> của compiler (xem Chương 12) sẽ thay thế các lệnh nhảy bằng một lệnh <code>cmov</code> nếu bật tối ưu hóa cấp độ 1 (tức <code>-O1</code>):</p>
+<pre><code>#compiled with: gcc -O1 -o getSmallest getSmallest.c
+&lt;getSmallest&gt;:
+    0x400546 &lt;+0&gt;: cmp    %esi,%edi      #compare x and y
+    0x400548 &lt;+2&gt;: mov    %esi,%eax      #copy y to %eax
+    0x40054a &lt;+4&gt;: cmovle %edi,%eax      #if (x&lt;=y) copy x to %eax
+    0x40054d &lt;+7&gt;: retq                  #return %eax
+</code></pre>
+<p>Nói chung, <strong>compiler</strong> rất thận trọng khi tối ưu hóa các lệnh nhảy (<strong>jump instructions</strong>) thành các lệnh <code>cmov</code>, đặc biệt trong các trường hợp có liên quan đến <strong>side effects</strong> (tác dụng phụ) và giá trị con trỏ (<strong>pointer values</strong>). <strong>Bảng 4</strong> cho thấy hai cách viết tương đương của một hàm <code>incrementX</code>:</p>
+<p>C code</p>
+<pre><code>int incrementX(int *x) {
+    if (x != NULL) { //if x is not NULL
+        return (*x)++; //increment x
+    }
+    else { //if x is NULL
+        return 1; //return 1
+    }
+}
+</code></pre>
+<p>C ternary form:</p>
+<pre><code>int incrementX2(int *x){
+    return x ? (*x)++ : 1;
+}
+</code></pre>
+<p><strong>Bảng 4.</strong> Hai hàm cố gắng tăng giá trị của số nguyên <code>x</code>.</p>
+<p>Mỗi hàm nhận vào một con trỏ tới một số nguyên và kiểm tra xem nó có phải <code>NULL</code> hay không. Nếu <code>x</code> không phải <code>NULL</code>, hàm sẽ tăng giá trị được giải tham chiếu của <code>x</code> và trả về giá trị đó. Ngược lại, hàm sẽ trả về giá trị 1.</p>
+<p>Thoạt nhìn, có thể bạn sẽ nghĩ rằng <code>incrementX2</code> sử dụng lệnh <code>cmov</code> vì nó dùng <strong>biểu thức ba ngôi</strong> (ternary expression). Tuy nhiên, cả hai hàm đều sinh ra <strong>chính xác cùng một mã assembly</strong>.</p>
+<pre><code>0x4005ed &lt;+0&gt;:   push   %rbp
+0x4005ee &lt;+1&gt;:   mov    %rsp,%rbp
+0x4005f1 &lt;+4&gt;:   mov    %rdi,-0x8(%rbp)
+0x4005f5 &lt;+8&gt;:   cmpq   $0x0,-0x8(%rbp)
+0x4005fa &lt;+13&gt;:  je     0x40060d &lt;incrementX+32&gt;
+0x4005fc &lt;+15&gt;:  mov    -0x8(%rbp),%rax
+0x400600 &lt;+19&gt;:  mov    (%rax),%eax
+0x400602 &lt;+21&gt;:  lea    0x1(%rax),%ecx
+0x400605 &lt;+24&gt;:  mov    -0x8(%rbp),%rdx
+0x400609 &lt;+28&gt;:  mov    %ecx,(%rdx)
+0x40060b &lt;+30&gt;:  jmp    0x400612 &lt;incrementX+37&gt;
+0x40060d &lt;+32&gt;:  mov    $0x1,%eax
+0x400612 &lt;+37&gt;:  pop    %rbp
+0x400613 &lt;+38&gt;:  retq
+</code></pre>
+<p>Hãy nhớ rằng lệnh <code>cmov</code> <em>thực thi cả hai nhánh của điều kiện</em>. Nói cách khác, <code>x</code> sẽ luôn bị giải tham chiếu (<strong>dereference</strong>) bất kể điều kiện là gì. Xét trường hợp <code>x</code> là một con trỏ null: việc giải tham chiếu một con trỏ null sẽ dẫn đến <strong>null pointer exception</strong> trong mã, gây ra lỗi <strong>segmentation fault</strong>. Để loại bỏ hoàn toàn khả năng này, compiler chọn cách an toàn và sử dụng các lệnh nhảy.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C7-x86_64/preliminaries.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C7-x86_64/loops.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C7-x86_64/preliminaries.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C7-x86_64/loops.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

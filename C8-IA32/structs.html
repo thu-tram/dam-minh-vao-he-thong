@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Structs in Assembly - Đắm mình vào hệ thống - Dive into Systems</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Home</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../copyright.html"><strong aria-hidden="true">1.1.</strong> Copyright</a></li><li class="chapter-item expanded "><a href="../acknowledgements.html"><strong aria-hidden="true">1.2.</strong> Acknowledgements</a></li><li class="chapter-item expanded "><a href="../preface.html"><strong aria-hidden="true">1.3.</strong> Preface</a></li></ol></li><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">2.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/index.html"><strong aria-hidden="true">3.</strong> Binary and Data Representation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/bases.html"><strong aria-hidden="true">3.1.</strong> Number Bases and Unsigned Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/conversion.html"><strong aria-hidden="true">3.2.</strong> Converting Between Bases</a></li><li class="chapter-item expanded "><a href="../C4-Binary/signed.html"><strong aria-hidden="true">3.3.</strong> Signed Binary Integers</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic.html"><strong aria-hidden="true">3.4.</strong> Binary Integer Arithmetic</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_addition.html"><strong aria-hidden="true">3.4.1.</strong> Addition</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_subtraction.html"><strong aria-hidden="true">3.4.2.</strong> Subtraction</a></li><li class="chapter-item expanded "><a href="../C4-Binary/arithmetic_mult_div.html"><strong aria-hidden="true">3.4.3.</strong> Multiplication & Division</a></li></ol></li><li class="chapter-item expanded "><a href="../C4-Binary/overflow.html"><strong aria-hidden="true">3.5.</strong> Overflow</a></li><li class="chapter-item expanded "><a href="../C4-Binary/bitwise.html"><strong aria-hidden="true">3.6.</strong> Bitwise Operators</a></li><li class="chapter-item expanded "><a href="../C4-Binary/byte_order.html"><strong aria-hidden="true">3.7.</strong> Integer Byte Order</a></li><li class="chapter-item expanded "><a href="../C4-Binary/floating_point.html"><strong aria-hidden="true">3.8.</strong> Real Numbers in Binary</a></li><li class="chapter-item expanded "><a href="../C4-Binary/summary.html"><strong aria-hidden="true">3.9.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/index.html"><strong aria-hidden="true">4.</strong> What von Neumann Knew: Computer Architecture</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/hist.html"><strong aria-hidden="true">4.1.</strong> The Origins of Modern Computing</a></li><li class="chapter-item expanded "><a href="../C5-Arch/von.html"><strong aria-hidden="true">4.2.</strong> The von Neumann Architecture</a></li><li class="chapter-item expanded "><a href="../C5-Arch/gates.html"><strong aria-hidden="true">4.3.</strong> Logic Gates</a></li><li class="chapter-item expanded "><a href="../C5-Arch/circuits.html"><strong aria-hidden="true">4.4.</strong> Circuits</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C5-Arch/arithlogiccircs.html"><strong aria-hidden="true">4.4.1.</strong> Arithmetic and Logic Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/controlcircs.html"><strong aria-hidden="true">4.4.2.</strong> Control Circuits</a></li><li class="chapter-item expanded "><a href="../C5-Arch/storagecircs.html"><strong aria-hidden="true">4.4.3.</strong> Storage Circuits</a></li></ol></li><li class="chapter-item expanded "><a href="../C5-Arch/cpu.html"><strong aria-hidden="true">4.5.</strong> Building a Processor</a></li><li class="chapter-item expanded "><a href="../C5-Arch/instrexec.html"><strong aria-hidden="true">4.6.</strong> The Processor’s Execution of Program Instructions</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining.html"><strong aria-hidden="true">4.7.</strong> Pipelining Instruction Execution</a></li><li class="chapter-item expanded "><a href="../C5-Arch/pipelining_advanced.html"><strong aria-hidden="true">4.8.</strong> Advanced Pipelining Considerations</a></li><li class="chapter-item expanded "><a href="../C5-Arch/modern.html"><strong aria-hidden="true">4.9.</strong> Looking Ahead: CPUs Today</a></li><li class="chapter-item expanded "><a href="../C5-Arch/summary.html"><strong aria-hidden="true">4.10.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C6-asm_intro/index.html"><strong aria-hidden="true">5.</strong> Under the C: Dive into Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/index.html"><strong aria-hidden="true">6.</strong> -bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/basics.html"><strong aria-hidden="true">6.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/common.html"><strong aria-hidden="true">6.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arithmetic.html"><strong aria-hidden="true">6.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/conditional_control_loops.html"><strong aria-hidden="true">6.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C7-x86_64/preliminaries.html"><strong aria-hidden="true">6.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/if_statements.html"><strong aria-hidden="true">6.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/loops.html"><strong aria-hidden="true">6.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C7-x86_64/functions.html"><strong aria-hidden="true">6.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/recursion.html"><strong aria-hidden="true">6.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/arrays.html"><strong aria-hidden="true">6.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/matrices.html"><strong aria-hidden="true">6.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/structs.html"><strong aria-hidden="true">6.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C7-x86_64/buffer_overflow.html"><strong aria-hidden="true">6.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/index.html"><strong aria-hidden="true">7.</strong> 64-bit x86 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/basics.html"><strong aria-hidden="true">7.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C8-IA32/common.html"><strong aria-hidden="true">7.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arithmetic.html"><strong aria-hidden="true">7.3.</strong> Additional Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C8-IA32/conditional_control_loops.html"><strong aria-hidden="true">7.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C8-IA32/preliminaries.html"><strong aria-hidden="true">7.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C8-IA32/if_statements.html"><strong aria-hidden="true">7.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C8-IA32/loops.html"><strong aria-hidden="true">7.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C8-IA32/functions.html"><strong aria-hidden="true">7.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/recursion.html"><strong aria-hidden="true">7.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C8-IA32/arrays.html"><strong aria-hidden="true">7.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/matrices.html"><strong aria-hidden="true">7.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/structs.html" class="active"><strong aria-hidden="true">7.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C8-IA32/buffer_overflow.html"><strong aria-hidden="true">7.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/index.html"><strong aria-hidden="true">8.</strong> ARMv8 Assembly</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/basics.html"><strong aria-hidden="true">8.1.</strong> Assembly Basics</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/common.html"><strong aria-hidden="true">8.2.</strong> Common Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arithmetic.html"><strong aria-hidden="true">8.3.</strong> Arithmetic Instructions</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/conditional_control_loops.html"><strong aria-hidden="true">8.4.</strong> Conditional Control and Loops</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C9-ARM64/preliminaries.html"><strong aria-hidden="true">8.4.1.</strong> Preliminaries</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/if_statements.html"><strong aria-hidden="true">8.4.2.</strong> If Statements</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/loops.html"><strong aria-hidden="true">8.4.3.</strong> Loops</a></li></ol></li><li class="chapter-item expanded "><a href="../C9-ARM64/functions.html"><strong aria-hidden="true">8.5.</strong> Functions in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/recursion.html"><strong aria-hidden="true">8.6.</strong> Recursion</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/arrays.html"><strong aria-hidden="true">8.7.</strong> Arrays in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/matrices.html"><strong aria-hidden="true">8.8.</strong> Matrices in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/structs.html"><strong aria-hidden="true">8.9.</strong> Structs in Assembly</a></li><li class="chapter-item expanded "><a href="../C9-ARM64/buffer_overflow.html"><strong aria-hidden="true">8.10.</strong> Buffer Overflows</a></li></ol></li><li class="chapter-item expanded "><a href="../C10-asm_takeaways/index.html"><strong aria-hidden="true">9.</strong> Key Assembly Takeaways</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/index.html"><strong aria-hidden="true">10.</strong> Storage and the Memory Hierarchy</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C11-MemHierarchy/mem_hierarchy.html"><strong aria-hidden="true">10.1.</strong> The Memory Hierarchy</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/devices.html"><strong aria-hidden="true">10.2.</strong> Storage Devices</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/locality.html"><strong aria-hidden="true">10.3.</strong> Locality</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/caching.html"><strong aria-hidden="true">10.4.</strong> Caching</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/cachegrind.html"><strong aria-hidden="true">10.5.</strong> Cache Analysis and Cachegrind</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/coherency.html"><strong aria-hidden="true">10.6.</strong> Looking Ahead: Caching on Multicore Processors</a></li><li class="chapter-item expanded "><a href="../C11-MemHierarchy/summary.html"><strong aria-hidden="true">10.7.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/index.html"><strong aria-hidden="true">11.</strong> Code Optimization</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C12-CodeOpt/basic.html"><strong aria-hidden="true">11.1.</strong> First Steps</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/loops_functions.html"><strong aria-hidden="true">11.2.</strong> Other Compiler Optimizations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/memory_considerations.html"><strong aria-hidden="true">11.3.</strong> Memory Considerations</a></li><li class="chapter-item expanded "><a href="../C12-CodeOpt/summary.html"><strong aria-hidden="true">11.4.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/index.html"><strong aria-hidden="true">12.</strong> The Operating System</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/impl.html"><strong aria-hidden="true">12.1.</strong> Booting and Running</a></li><li class="chapter-item expanded "><a href="../C13-OS/processes.html"><strong aria-hidden="true">12.2.</strong> Processes</a></li><li class="chapter-item expanded "><a href="../C13-OS/vm.html"><strong aria-hidden="true">12.3.</strong> Virtual Memory</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc.html"><strong aria-hidden="true">12.4.</strong> Interprocess Communication</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C13-OS/ipc_signals.html"><strong aria-hidden="true">12.4.1.</strong> Signals</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_msging.html"><strong aria-hidden="true">12.4.2.</strong> Message Passing</a></li><li class="chapter-item expanded "><a href="../C13-OS/ipc_shm.html"><strong aria-hidden="true">12.4.3.</strong> Shared Memory</a></li></ol></li><li class="chapter-item expanded "><a href="../C13-OS/advanced.html"><strong aria-hidden="true">12.5.</strong> Summary and Other OS Functionality</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/index.html"><strong aria-hidden="true">13.</strong> Leveraging Shared Memory in the Multicore Era</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/multicore.html"><strong aria-hidden="true">13.1.</strong> Programming Multicore Systems</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/posix.html"><strong aria-hidden="true">13.2.</strong> POSIX Threads</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/synchronization.html"><strong aria-hidden="true">13.3.</strong> Synchronizing Threads</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/mutex.html"><strong aria-hidden="true">13.3.1.</strong> Mutual Exclusion</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/semaphores.html"><strong aria-hidden="true">13.3.2.</strong> Semaphores</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/other_syncs.html"><strong aria-hidden="true">13.3.3.</strong> Other Synchronization Constructs</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance.html"><strong aria-hidden="true">13.4.</strong> Measuring Parallel Performance</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_basics.html"><strong aria-hidden="true">13.4.1.</strong> Parallel Performance Basics</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/performance_advanced.html"><strong aria-hidden="true">13.4.2.</strong> Advanced Topics</a></li></ol></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/cache_coherence.html"><strong aria-hidden="true">13.5.</strong> Cache Coherence</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/thread_safety.html"><strong aria-hidden="true">13.6.</strong> Thread Safety</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/openmp.html"><strong aria-hidden="true">13.7.</strong> Implicit Threading with OpenMP</a></li><li class="chapter-item expanded "><a href="../C14-SharedMemory/summary.html"><strong aria-hidden="true">13.8.</strong> Summary</a></li></ol></li><li class="chapter-item expanded "><a href="../C15-Parallel/index.html"><strong aria-hidden="true">14.</strong> Looking Ahead: Other Parallel Systems</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../C15-Parallel/gpu.html"><strong aria-hidden="true">14.1.</strong> Hardware Acceleration and CUDA</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/distrmem.html"><strong aria-hidden="true">14.2.</strong> Distributed Memory Systems</a></li><li class="chapter-item expanded "><a href="../C15-Parallel/cloud.html"><strong aria-hidden="true">14.3.</strong> To Exascale and Beyond</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Đắm mình vào hệ thống - Dive into Systems</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="89-struct-trong-assembly"><a class="header" href="#89-struct-trong-assembly">8.9. struct trong Assembly</a></h2>
+<p>Một <strong>struct</strong> là một cách khác để tạo ra một tập hợp các kiểu dữ liệu trong C. Khác với <strong>array</strong> (mảng), <strong>struct</strong> cho phép nhóm các kiểu dữ liệu khác nhau lại với nhau. Ngôn ngữ C lưu trữ một <code>struct</code> giống như một <strong>single-dimension array</strong> (mảng một chiều), trong đó các phần tử dữ liệu (<em>field</em>) được lưu trữ liên tiếp nhau trong bộ nhớ.</p>
+<p>Hãy cùng xem lại <code>struct studentT</code> từ Chương 1:</p>
+<pre><code class="language-c">struct studentT {
+    char name[64];
+    int  age;
+    int  grad_yr;
+    float gpa;
+};
+
+struct studentT student;
+</code></pre>
+<p>Hình 1 minh họa cách <code>student</code> được bố trí trong bộ nhớ.<br />
+Để đơn giản, giả sử <code>student</code> bắt đầu tại địa chỉ x~0~. Mỗi x~i~ biểu thị địa chỉ của một <em>field</em>.</p>
+<p><img src="_images/structArray.png" alt="structArray" /></p>
+<p><strong>Hình 1.</strong> Sơ đồ bố trí bộ nhớ của struct <code>student</code></p>
+<p>Các <em>field</em> được lưu trữ liên tiếp nhau trong bộ nhớ theo đúng thứ tự mà chúng được khai báo. Trong Hình 1, <em>field</em> <code>age</code> được cấp phát ngay sau <em>field</em> <code>name</code> (tại byte offset x~64~), tiếp theo là <code>grad_yr</code> (byte offset x~68~) và <code>gpa</code> (byte offset x~72~). Cách tổ chức này cho phép truy cập các <em>field</em> một cách hiệu quả về mặt bộ nhớ.</p>
+<p>Để hiểu cách <strong>compiler</strong> (trình biên dịch) sinh mã Assembly để làm việc với một <code>struct</code>, hãy xem xét hàm <code>initStudent</code>:</p>
+<pre><code class="language-c">void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
+    strncpy(s-&gt;name, nm, 64);
+    s-&gt;grad_yr = gr;
+    s-&gt;age = ag;
+    s-&gt;gpa = g;
+}
+</code></pre>
+<p>Hàm <code>initStudent</code> sử dụng địa chỉ cơ sở của một <code>struct studentT</code> làm tham số đầu tiên, và các giá trị mong muốn cho từng <em>field</em> làm các tham số còn lại. Danh sách dưới đây mô tả hàm này ở dạng Assembly.<br />
+Nói chung, tham số thứ <em>i</em> của hàm <code>initStudent</code> nằm tại địa chỉ stack <code>(ebp+8)</code> + 4 × <em>i</em>.</p>
+<pre><code>&lt;initStudent&gt;:
+ &lt;+0&gt;:   push  %ebp                     # lưu ebp
+ &lt;+1&gt;:   mov   %esp,%ebp                # cập nhật ebp (tạo stack frame mới)
+ &lt;+3&gt;:   sub   $0x18,%esp               # cấp thêm 24 byte cho stack frame
+ &lt;+6&gt;:   mov   0x8(%ebp),%eax           # copy tham số 1 (s) vào eax
+ &lt;+9&gt;:   mov   0xc(%ebp),%edx           # copy tham số 2 (nm) vào edx
+ &lt;+12&gt;:  mov   $0x40,0x8(%esp)          # copy 0x40 (64) vào esp+8
+ &lt;+16&gt;:  mov   %edx,0x4(%esp)           # copy nm vào esp+4
+ &lt;+20&gt;:  mov   %eax,(%esp)              # copy s lên đỉnh stack (esp)
+ &lt;+23&gt;:  call  0x8048320 &lt;strncpy@plt&gt;  # gọi strncpy(s-&gt;name, nm, 64)
+ &lt;+28&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
+ &lt;+32&gt;:  mov   0x14(%ebp),%edx          # copy tham số 4 (gr) vào edx
+ &lt;+35&gt;:  mov   %edx,0x44(%eax)          # copy gr vào offset eax+68 (s-&gt;grad_yr)
+ &lt;+38&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
+ &lt;+41&gt;:  mov   0x10(%ebp),%edx          # copy tham số 3 (ag) vào edx
+ &lt;+44&gt;:  mov   %edx,0x40(%eax)          # copy ag vào offset eax+64 (s-&gt;age)
+ &lt;+47&gt;:  mov   0x8(%ebp),%edx           # copy s vào edx
+ &lt;+50&gt;:  mov   0x18(%ebp),%eax          # copy g vào eax
+ &lt;+53&gt;:  mov   %eax,0x48(%edx)          # copy g vào offset edx+72 (s-&gt;gpa)
+ &lt;+56&gt;:  leave                          # chuẩn bị thoát hàm
+ &lt;+57&gt;:  ret                            # trả về
+</code></pre>
+<p>Việc chú ý đến <strong>byte offset</strong> (độ lệch tính theo byte) của từng <em>field</em> là chìa khóa để hiểu đoạn mã này. Dưới đây là một số điểm cần lưu ý:</p>
+<ul>
+<li>Lời gọi <code>strncpy</code> nhận ba đối số: địa chỉ cơ sở của <em>field</em> <code>name</code> trong <code>s</code>, địa chỉ của mảng <code>nm</code>, và một giá trị chỉ định độ dài. Hãy nhớ rằng vì <code>name</code> là <em>field</em> đầu tiên trong <code>struct studentT</code>, nên địa chỉ của <code>s</code> cũng chính là địa chỉ của <code>s→name</code>.</li>
+</ul>
+<pre><code> &lt;+6&gt;:   mov   0x8(%ebp),%eax           # copy tham số 1 (s) vào eax
+ &lt;+9&gt;:   mov   0xc(%ebp),%edx           # copy tham số 2 (nm) vào edx
+ &lt;+12&gt;:  mov   $0x40,0x8(%esp)          # copy 0x40 (64) vào esp+8
+ &lt;+16&gt;:  mov   %edx,0x4(%esp)           # copy nm vào esp+4
+ &lt;+20&gt;:  mov   %eax,(%esp)              # copy s lên đỉnh stack (esp)
+ &lt;+23&gt;:  call  0x8048320 &lt;strncpy@plt&gt;  # gọi strncpy(s-&gt;name, nm, 64)
+</code></pre>
+<ul>
+<li>Phần tiếp theo của mã (các lệnh <code>&lt;initStudent+28&gt;</code> đến <code>&lt;initStudent+35&gt;</code>) đặt giá trị của tham số <code>gr</code> tại vị trí cách đầu <code>s</code> <strong>68 byte</strong>. Xem lại sơ đồ bố trí bộ nhớ trong Hình 1 cho thấy địa chỉ này tương ứng với <code>s→grad_yr</code>.</li>
+</ul>
+<pre><code> &lt;+28&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
+ &lt;+32&gt;:  mov   0x14(%ebp),%edx          # copy tham số 4 (gr) vào edx
+ &lt;+35&gt;:  mov   %edx,0x44(%eax)          # copy gr vào offset eax+68 (s-&gt;grad_yr)
+</code></pre>
+<ul>
+<li>Phần tiếp theo của mã (các lệnh <code>&lt;initStudent+38&gt;</code> đến <code>&lt;initStudent+53&gt;</code>) sao chép tham số <code>ag</code> vào <em>field</em> <code>s→age</code>. Sau đó, giá trị của tham số <code>g</code> được sao chép vào <em>field</em> <code>s→gpa</code> (byte offset 72):</li>
+</ul>
+<pre><code> &lt;+38&gt;:  mov   0x8(%ebp),%eax           # copy s vào eax
+ &lt;+41&gt;:  mov   0x10(%ebp),%edx          # copy tham số 3 (ag) vào edx
+ &lt;+44&gt;:  mov   %edx,0x40(%eax)          # copy ag vào offset eax+64 (s-&gt;age)
+ &lt;+47&gt;:  mov   0x8(%ebp),%edx           # copy s vào edx
+ &lt;+50&gt;:  mov   0x18(%ebp),%eax          # copy g vào eax
+ &lt;+53&gt;:  mov   %eax,0x48(%edx)          # copy g vào offset edx+72 (s-&gt;gpa)
+</code></pre>
+<h3 id="891-data-alignment-và-struct"><a class="header" href="#891-data-alignment-và-struct">8.9.1. Data Alignment và struct</a></h3>
+<p>Xem xét khai báo <code>struct studentT</code> đã được chỉnh sửa như sau:</p>
+<pre><code class="language-c">struct studentTM {
+    char name[63]; // cập nhật thành 63 thay vì 64
+    int  age;
+    int  grad_yr;
+    float gpa;
+};
+
+struct studentTM student2;
+</code></pre>
+<p>Kích thước của <em>field</em> <code>name</code> được thay đổi thành 63 byte, thay vì 64 như ban đầu. Hãy xem điều này ảnh hưởng thế nào đến cách <code>struct</code> được bố trí trong bộ nhớ. Có thể bạn sẽ hình dung nó như trong <a href="#wrongLayout32">Hình 2</a>:</p>
+<p><img src="_images/struct2wrong.png" alt="struct2wrong" /></p>
+<p><strong>Hình 2.</strong> Sơ đồ bố trí bộ nhớ <strong>sai</strong> cho <code>struct studentTM</code> đã chỉnh sửa. Lưu ý rằng <em>field</em> <code>name</code> của struct đã giảm từ 64 xuống 63 byte.</p>
+<p>Trong hình minh họa này, <em>field</em> <code>age</code> chiếm ngay byte liền sau <em>field</em> <code>name</code>. Nhưng điều này là <strong>sai</strong>. <a href="#correctLayout32">Hình 3</a> mô tả bố trí thực tế trong bộ nhớ:</p>
+<p><img src="_images/struct2right.png" alt="struct2right" /></p>
+<p><strong>Hình 3.</strong> Sơ đồ bố trí bộ nhớ <strong>đúng</strong> cho <code>struct studentTM</code> đã chỉnh sửa. Byte x~63~ được <strong>compiler</strong> thêm vào để đáp ứng yêu cầu <strong>memory alignment</strong> (căn chỉnh bộ nhớ), nhưng nó không thuộc về bất kỳ <em>field</em> nào.</p>
+<p>Chính sách căn chỉnh của IA32 yêu cầu:</p>
+<ul>
+<li>Kiểu dữ liệu 2 byte (ví dụ: <code>short</code>) phải nằm tại địa chỉ chia hết cho 2.</li>
+<li>Kiểu dữ liệu 4 byte (<code>int</code>, <code>float</code>, <code>long</code>, và các kiểu con trỏ) phải nằm tại địa chỉ chia hết cho 4.</li>
+<li>Kiểu dữ liệu 8 byte (<code>double</code>, <code>long long</code>) phải nằm tại địa chỉ chia hết cho 8.</li>
+</ul>
+<p>Đối với một <code>struct</code>, <strong>compiler</strong> sẽ thêm các byte trống (<strong>padding</strong>) giữa các <em>field</em> để đảm bảo mỗi <em>field</em> đáp ứng yêu cầu căn chỉnh của nó. Ví dụ, trong <code>struct</code> ở đoạn code trên, <strong>compiler</strong> thêm một byte trống tại byte x~63~ để đảm bảo <em>field</em> <code>age</code> bắt đầu tại một địa chỉ chia hết cho 4. Khi dữ liệu được căn chỉnh đúng trong bộ nhớ, CPU có thể đọc hoặc ghi nó chỉ trong một thao tác, giúp tăng hiệu suất.</p>
+<p>Xem xét trường hợp khi một <code>struct</code> được định nghĩa như sau:</p>
+<pre><code class="language-c">struct studentTM {
+    int  age;
+    int  grad_yr;
+    float gpa;
+    char name[63];
+};
+
+struct studentTM student3;
+</code></pre>
+<p>Việc chuyển mảng <code>name</code> xuống cuối sẽ dời byte <strong>padding</strong> về cuối <code>struct</code>, đảm bảo rằng <code>age</code>, <code>grad_yr</code> và <code>gpa</code> đều được căn chỉnh theo 4 byte.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../C8-IA32/matrices.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../C8-IA32/buffer_overflow.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../C8-IA32/matrices.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../C8-IA32/buffer_overflow.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
