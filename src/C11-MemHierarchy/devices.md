@@ -1,7 +1,4 @@
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 11.2. Thiết bị lưu trữ (Storage Devices)
 
@@ -32,8 +29,6 @@ Ngược lại, các thiết bị secondary storage như ổ đĩa truyền dữ
 
 Phần còn lại của mục này sẽ xem xét chi tiết về các thiết bị primary và secondary storage, đồng thời phân tích đặc điểm hiệu năng của chúng.
 
----
-
 ### 11.2.1. Primary Storage
 
 **Primary storage** bao gồm **random access memory** (RAM — bộ nhớ truy cập ngẫu nhiên), nghĩa là thời gian truy cập dữ liệu không phụ thuộc vào vị trí dữ liệu trong thiết bị. Nói cách khác, RAM không cần quan tâm đến việc di chuyển các bộ phận cơ học vào đúng vị trí hoặc tua lại cuộn băng từ.  
@@ -49,8 +44,6 @@ Có hai loại RAM được sử dụng rộng rãi: **static RAM** (SRAM) và *
 
 **Bảng 1.** Đặc điểm của các thiết bị **Primary Storage** (bộ nhớ chính) trên một workstation điển hình năm 2020
 
----
-
 **SRAM** lưu trữ dữ liệu trong các mạch điện nhỏ (ví dụ: [latch](../C5-Arch/storagecircs.html#_rs_latch)). Đây thường là loại bộ nhớ nhanh nhất, và các kỹ sư tích hợp trực tiếp nó vào CPU để xây dựng [register](../C5-Arch/storagecircs.html#_cpu_register) và cache.  
 Tuy nhiên, **SRAM** tương đối đắt — cả về chi phí sản xuất, chi phí vận hành (tiêu thụ điện năng), và diện tích chiếm dụng trên chip. Tổng hợp các yếu tố này giới hạn lượng SRAM mà một CPU có thể tích hợp.
 
@@ -63,8 +56,6 @@ Các hệ thống hiện đại sử dụng DRAM để triển khai **main memor
 ![The registers and ALU are nearby one another on the CPU. The CPU connects to main memory via a memory bus, which consists of several collections of wires for exchanging addresses, data, and control signals between the CPU and memory.](_images/MemoryBus.png)
 
 **Hình 1.** Kiến trúc primary storage và memory bus
-
----
 
 Mặc dù CPU và main memory chỉ cách nhau vài inch về mặt vật lý, dữ liệu vẫn phải đi qua **memory bus** khi di chuyển giữa CPU và main memory. Khoảng cách bổ sung và các mạch điện trung gian này làm tăng **latency** (độ trễ) và giảm **transfer rate** (tốc độ truyền) của main memory so với bộ nhớ nằm trực tiếp trên CPU.  
 Vì lý do này, memory bus đôi khi được gọi là **von Neumann bottleneck** (nút thắt cổ chai von Neumann).  
@@ -82,9 +73,6 @@ Phần còn lại của mục này sẽ mô tả hệ thống chỉ có một ca
 > Nếu bạn tò mò về kích thước cache và main memory trên hệ thống của mình, lệnh `lscpu` sẽ in thông tin về CPU (bao gồm dung lượng cache).  
 > Chạy `free -m` sẽ hiển thị dung lượng main memory của hệ thống tính theo megabyte.
 
-Dưới đây là bản dịch tiếng Việt của mục **11.2.2. Secondary Storage**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
 
 ### 11.2.2. Secondary Storage (Bộ nhớ phụ)
 
@@ -102,8 +90,6 @@ Các **removable media** (phương tiện lưu trữ rời) như [floppy disk](h
 Floppy disk chứa một trục quay của vật liệu ghi từ, quay dưới một **disk head** (đầu đọc/ghi) để đọc và ghi nội dung.  
 Optical disc như CD, DVD và Blu-ray lưu thông tin thông qua các vết lõm nhỏ trên bề mặt đĩa. Ổ đọc đĩa chiếu tia laser vào bề mặt, và sự có hoặc không có vết lõm sẽ làm tia phản xạ (hoặc không), mã hóa thành các bit 0 và 1.
 
----
-
 #### Modern Secondary Storage (Bộ nhớ phụ hiện đại)
 
 | Thiết bị (Device) | Dung lượng (Capacity) | Độ trễ (Latency) | Tốc độ truyền (Transfer rate) |
@@ -114,8 +100,6 @@ Optical disc như CD, DVD và Blu-ray lưu thông tin thông qua các vết lõm
 
 **Bảng 2.** Đặc điểm của các thiết bị secondary storage trên một workstation điển hình năm 2020
 
----
-
 **Bảng 2** mô tả các thiết bị secondary storage thường có trên workstation hiện nay.  
 **Hình 3** cho thấy đường đi từ secondary storage đến main memory thường phải qua nhiều **device controller** (bộ điều khiển thiết bị) trung gian.  
 Ví dụ, một ổ cứng thông thường kết nối tới **Serial ATA controller**, sau đó kết nối tới **system I/O controller**, rồi mới kết nối tới **memory bus**.  
@@ -124,8 +108,6 @@ Các thiết bị trung gian này giúp ổ đĩa dễ sử dụng hơn bằng c
 ![The CPU cache is located on the CPU, in between the registers and the CPU's connection to the memory bus. Also connected to the memory bus is an I/O controller, which in turn connects to several other more specific controllers like SATA, USB, and IDE.](_images/IOBus.png)
 
 **Hình 3.** Secondary storage và kiến trúc I/O bus
-
----
 
 Hai loại secondary storage phổ biến nhất hiện nay là **hard disk drive** (HDD) và **solid-state drive** (SSD) dựa trên flash.  
 Một HDD gồm một số **platter** (đĩa) phẳng, tròn, làm từ vật liệu cho phép ghi từ. Các platter quay nhanh, thường ở tốc độ từ 5.000 đến 15.000 vòng/phút. Khi platter quay, một **mechanical arm** (cần cơ khí) nhỏ với **disk head** ở đầu di chuyển qua bề mặt platter để đọc hoặc ghi dữ liệu trên các **track** (rãnh) đồng tâm.
@@ -139,8 +121,6 @@ Do đặc điểm cơ học này, HDD có độ trễ truy cập cao hơn đáng
 ![A photo of the internals of a hard disk with its parts labeled.](_images/DiskParts.png)
 
 **Hình 4.** Các thành phần chính của một hard disk drive
-
----
 
 Trong vài năm gần đây, **SSD** — không có bộ phận chuyển động (và do đó có độ trễ thấp hơn) — đã nhanh chóng trở nên phổ biến. Chúng được gọi là **solid-state drive** vì không dựa vào chuyển động cơ học.  
 Mặc dù tồn tại nhiều công nghệ solid-state khác nhau, [flash memory](https://en.wikipedia.org/wiki/Flash_memory) vẫn chiếm ưu thế trong các thiết bị SSD thương mại.  

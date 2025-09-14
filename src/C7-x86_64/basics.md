@@ -60,9 +60,6 @@ Mỗi dòng trong ví dụ trên chứa **địa chỉ 64-bit** của lệnh tro
 > Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch mã dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong [một chương sau](../C12-CodeOpt/index.html#_code_optimization).
 
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 7.1.1. Thanh ghi (Registers)
 
@@ -73,8 +70,6 @@ Hãy nhớ rằng **register** (thanh ghi) là một đơn vị lưu trữ có k
 Thanh ghi `%rsp` và `%rbp` lần lượt được gọi là **stack pointer** (con trỏ stack) và **frame pointer** (hoặc **base pointer**). Compiler dành riêng các thanh ghi này cho các thao tác duy trì cấu trúc của **program stack** (ngăn xếp chương trình). Ví dụ, `%rsp` luôn trỏ tới đỉnh của stack. Trong các hệ thống x86 trước đây (ví dụ IA32), frame pointer thường theo dõi đáy của **stack frame** đang hoạt động và hỗ trợ tham chiếu các tham số. Tuy nhiên, trong các hệ thống x86-64, base pointer ít được sử dụng hơn. Compiler thường lưu 6 tham số đầu tiên của hàm vào các thanh ghi `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8` và `%r9`. Thanh ghi `%rax` lưu giá trị trả về từ một hàm.
 
 Thanh ghi cuối cùng đáng nhắc đến là `%rip` hay **instruction pointer** (đôi khi gọi là **program counter** — PC). Nó trỏ tới lệnh tiếp theo mà CPU sẽ thực thi. Không giống như 16 thanh ghi đã đề cập ở trên, chương trình không thể ghi trực tiếp vào `%rip`.
-
----
 
 ### 7.1.2. Cú pháp nâng cao của thanh ghi (Advanced Register Notation)
 
@@ -109,19 +104,12 @@ Tám thanh ghi đầu tiên (`%rax`, `%rbx`, `%rcx`, `%rdx`, `%rdi`, `%rsi`, `%r
 
 ISA cung cấp một cơ chế riêng để truy cập các thành phần 8-bit bên trong 16 bit thấp của bốn thanh ghi đầu tiên. [Hình 1](#Register) minh họa cơ chế truy cập cho `%rax`. **Higher byte** (byte cao) và **lower byte** (byte thấp) trong 16 bit thấp của bốn thanh ghi đầu tiên có thể được truy cập bằng cách lấy hai chữ cái cuối của tên thanh ghi và thay chữ cái cuối bằng `h` (cho *higher*) hoặc `l` (cho *lower*), tùy thuộc vào byte muốn truy cập. Ví dụ, `%al` tham chiếu đến 8 bit thấp của `%ax`, trong khi `%ah` tham chiếu đến 8 bit cao của `%ax`. Các thanh ghi 8-bit này thường được dùng để lưu trữ giá trị 1 byte cho một số thao tác nhất định, chẳng hạn như **bitwise shift** (dịch bit), vì một thanh ghi 32-bit không thể dịch quá 32 vị trí, và số 32 chỉ cần 1 byte để lưu trữ.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 > **Compiler có thể chọn component register tùy thuộc vào kiểu dữ liệu**  
 > Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng các **component register** 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.  
 > Ví dụ, trong hàm `adder2` ở ví dụ trước, compiler tham chiếu đến component register `%eax` thay vì `%rax` vì kiểu `int` thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm `adder2` có tham số kiểu `long` thay vì `int`, compiler sẽ lưu `a` trong thanh ghi `%rax` thay vì `%eax`.
 
----
-
 Tám thanh ghi cuối (`%r8`–`%r15`) không thuộc **IA32 ISA**. Tuy nhiên, chúng cũng có cơ chế để truy cập các thành phần byte khác nhau. Để truy cập 32 bit thấp, 16 bit thấp hoặc byte thấp nhất của tám thanh ghi này, lần lượt thêm các hậu tố `d`, `w` hoặc `b` vào cuối tên thanh ghi. Ví dụ, `%r9d` truy cập 32 bit thấp của `%r9`, `%r9w` truy cập 16 bit thấp, và `%r9b` truy cập byte thấp nhất của `%r9`.
-
----
 
 ### 7.1.3. Cấu trúc lệnh (Instruction Structure)
 
@@ -135,8 +123,6 @@ Có nhiều loại operand:
 - **Constant (literal)**: giá trị hằng, được đặt trước dấu `$`. Ví dụ, trong lệnh `add $0x2, %eax`, `$0x2` là một giá trị hằng, tương ứng với giá trị hexa 0x2.
 - **Register**: tham chiếu trực tiếp đến một thanh ghi. Ví dụ, lệnh `mov %rsp, %rbp` chỉ định rằng giá trị trong thanh ghi nguồn `%rsp` sẽ được sao chép vào thanh ghi đích `%rbp`.
 - **Memory**: tham chiếu đến một giá trị trong bộ nhớ chính (RAM) và thường được dùng để tra cứu địa chỉ. Dạng địa chỉ bộ nhớ có thể chứa sự kết hợp giữa thanh ghi và giá trị hằng. Ví dụ, trong lệnh `mov -0x4(%rbp), %eax`, toán hạng `-0x4(%rbp)` là một dạng địa chỉ bộ nhớ. Nó có thể hiểu nôm na là “cộng -0x4 vào giá trị trong thanh ghi `%rbp` (tức là trừ 0x4 khỏi `%rbp`), sau đó thực hiện truy xuất bộ nhớ”. Nếu điều này nghe giống như **pointer dereference** (giải tham chiếu con trỏ), thì đúng là như vậy.
-
----
 
 ### 7.1.4. Ví dụ với các toán hạng (An Example with Operands)
 
@@ -162,9 +148,6 @@ Giả sử thêm rằng các thanh ghi sau chứa các giá trị như sau:
 Khi đó, các operand trong **Bảng 2** sẽ được đánh giá thành các giá trị tương ứng. Mỗi hàng trong bảng khớp một operand với dạng của nó (ví dụ: constant, register, memory), cách nó được dịch, và giá trị của nó.  
 Lưu ý rằng ký hiệu `M[x]` trong ngữ cảnh này biểu thị giá trị tại vị trí bộ nhớ có địa chỉ `x`.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 | Operand         | Form       | Translation                  | Value   |
 |-----------------|------------|------------------------------|---------|
@@ -189,8 +172,6 @@ Một vài lưu ý quan trọng trước khi tiếp tục: mặc dù **Bảng 2*
 - Trong các phép toán có **scaling** (tỉ lệ nhân — xem hai toán hạng cuối trong [Bảng 2](#Operands)), hệ số nhân là tham số thứ ba trong dấu ngoặc. Hệ số nhân có thể là 1, 2, 4 hoặc 8.
 
 **Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích mã assembly.
-
----
 
 ### 7.1.5. Hậu tố của lệnh (Instruction Suffixes)
 

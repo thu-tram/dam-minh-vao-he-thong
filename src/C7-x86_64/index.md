@@ -12,8 +12,6 @@ x86_64
 
 Vì x86-64 là phần mở rộng của ISA IA32 nhỏ hơn, một số bạn đọc có thể muốn tìm hiểu về IA32 trước. Để đọc thêm về IA32, hãy xem **Chương 8**.
 
----
-
 > **Các nhánh cú pháp của x86**
 
 Kiến trúc x86 thường tuân theo một trong hai nhánh cú pháp khác nhau.  

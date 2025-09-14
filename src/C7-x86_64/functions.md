@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 ## 7.5. Functions in Assembly
 
@@ -37,8 +34,6 @@ Các lệnh `callq` và `retq` đóng vai trò quan trọng trong quá trình m�
 
 Lệnh `retq` khôi phục giá trị `%rip` từ giá trị đã lưu trên stack, đảm bảo chương trình tiếp tục thực thi tại địa chỉ được chỉ định trong hàm caller. Bất kỳ giá trị trả về nào của callee sẽ được lưu trong `%rax` hoặc một trong các **component register** của nó (ví dụ `%eax`). Lệnh `retq` thường là lệnh cuối cùng được thực thi trong bất kỳ hàm nào.
 
----
-
 ### 7.5.1. Function Parameters
 
 Không giống IA32, các tham số của hàm trong x86-64 thường được nạp sẵn vào các thanh ghi trước khi gọi hàm. **Bảng 2** liệt kê các tham số của hàm và thanh ghi (nếu có) mà chúng được nạp vào trước khi gọi hàm.
@@ -56,8 +51,6 @@ Không giống IA32, các tham số của hàm trong x86-64 thường được n
 | Parameter 7+ | trên call stack |
 
 Sáu tham số đầu tiên của hàm lần lượt được nạp vào các thanh ghi `%rdi`, `%rsi`, `%rdx`, `%rcx`, `%r8`, và `%r9`. Bất kỳ tham số bổ sung nào sẽ được nạp lần lượt vào call stack dựa trên kích thước của chúng (dịch 4 byte cho dữ liệu 32-bit, dịch 8 byte cho dữ liệu 64-bit).
-
----
 
 ### 7.5.2. Tracing Through an Example
 
@@ -137,8 +130,6 @@ objdump -d
 
 Mỗi hàm bắt đầu bằng một **symbolic label** (nhãn ký hiệu) tương ứng với tên được khai báo của nó trong chương trình. Ví dụ, `<main>:` là symbolic label cho hàm `main`. Địa chỉ của một nhãn hàm cũng chính là địa chỉ của lệnh đầu tiên trong hàm đó. Để tiết kiệm không gian trong các hình minh họa bên dưới, chúng ta rút gọn địa chỉ xuống 12 bit thấp. Vì vậy, địa chỉ chương trình `0x400542` sẽ được hiển thị thành `0x542`.
 
----
-
 ### 7.5.3. Tracing Through main
 
 **Hình 3** cho thấy execution stack ngay trước khi thực thi `main`.
@@ -151,25 +142,17 @@ Hãy nhớ rằng stack phát triển về phía các địa chỉ thấp hơn. 
 
 Vì các hàm trong ví dụ trước sử dụng dữ liệu kiểu số nguyên, chúng ta làm nổi bật các **component register** `%eax` và `%edi`, vốn ban đầu chứa giá trị rác. Mũi tên đỏ (góc trên bên trái) biểu thị lệnh đang được thực thi. Ban đầu, `%rip` chứa địa chỉ `0x542`, là địa chỉ trong bộ nhớ chương trình của dòng đầu tiên trong hàm `main`.
 
----
-
 ![slide2](_images/procedures/Slide2.png)
 
 Lệnh đầu tiên lưu giá trị hiện tại của `%rbp` bằng cách **push** `0x830` lên stack. Vì stack phát triển về phía địa chỉ thấp hơn, stack pointer `%rsp` được cập nhật thành `0xd40`, tức nhỏ hơn `0xd48` 8 byte. `%rip` tăng tới lệnh tiếp theo.
-
----
 
 ![slide3](_images/procedures/Slide3.png)
 
 Lệnh tiếp theo (`mov %rsp, %rbp`) cập nhật giá trị `%rbp` thành bằng `%rsp`. Frame pointer (`%rbp`) giờ trỏ tới đầu stack frame của hàm `main`. `%rip` tăng tới lệnh tiếp theo.
 
----
-
 ![slide4](_images/procedures/Slide4.png)
 
 Lệnh `sub` trừ `0x10` khỏi địa chỉ của stack pointer, về cơ bản làm stack “mở rộng” thêm 16 byte, được biểu diễn bằng hai ô nhớ 8 byte trên stack. `%rsp` giờ có giá trị mới là `0xd30`. `%rip` tăng tới lệnh tiếp theo.
-
----
 
 ![slide5](_images/procedures/Slide5.png)
 
@@ -177,74 +160,50 @@ Lệnh `callq <assign>` **push** giá trị trong `%rip` (địa chỉ của l�
 
 Tiếp đó, lệnh `callq` đưa địa chỉ của hàm `assign` (`0x526`) vào `%rip`, báo hiệu chương trình sẽ tiếp tục thực thi trong hàm callee `assign` thay vì lệnh tiếp theo trong `main`.
 
----
-
 ![slide6](_images/procedures/Slide6.png)
 
 Hai lệnh đầu tiên trong hàm `assign` là phần “dọn dẹp sổ sách” (book-keeping) mà mọi hàm đều thực hiện. Lệnh đầu tiên **push** giá trị trong `%rbp` (địa chỉ `0xd40`) lên stack. Hãy nhớ rằng địa chỉ này trỏ tới đầu stack frame của `main`. `%rip` tăng tới lệnh thứ hai trong `assign`.
-
----
 
 ![slide7](_images/procedures/Slide7.png)
 
 Lệnh tiếp theo (`mov %rsp, %rbp`) cập nhật `%rbp` để trỏ tới đỉnh stack, đánh dấu đầu stack frame của `assign`. `%rip` tăng tới lệnh tiếp theo trong `assign`.
 
----
-
 ![slide8](_images/procedures/Slide8.png)
 
 Lệnh `mov` tại địa chỉ `0x52a` đưa giá trị `$0x28` (tức 40) vào stack tại địa chỉ `-0x4(%rbp)`, tức 4 byte phía trên frame pointer. Frame pointer thường được dùng để tham chiếu các vị trí trên stack. Lưu ý rằng thao tác này **không** thay đổi `%rsp` — stack pointer vẫn trỏ tới `0xd20`. `%rip` tăng tới lệnh tiếp theo trong `assign`.
-
----
 
 ![slide9](_images/procedures/Slide9.png)
 
 Lệnh `mov` tại địa chỉ `0x531` đưa giá trị `$0x28` vào `%eax`, thanh ghi chứa giá trị trả về của hàm. `%rip` tăng tới lệnh `pop` trong `assign`.
 
----
-
 ![slide10](_images/procedures/Slide10.png)
 
 Lúc này, hàm `assign` gần như đã hoàn tất. Lệnh tiếp theo là `pop %rbp`, khôi phục `%rbp` về giá trị trước đó (`0xd40`). Vì `pop` thay đổi stack pointer, `%rsp` được cập nhật thành `0xd28`.
 
----
-
 ![slide11](_images/procedures/Slide11.png)
 
 Lệnh cuối cùng trong `assign` là `retq`. Khi `retq` thực thi, return address được **pop** khỏi stack vào `%rip`. Trong ví dụ này, `%rip` giờ trỏ tới lệnh `callq` trong `main` tại địa chỉ `0x55f`.
-
----
 
 Một số điểm quan trọng cần lưu ý:
 
 - Stack pointer và frame pointer đã được khôi phục về giá trị trước khi gọi `assign`, cho thấy stack frame của `main` lại trở thành active frame.
 - Các giá trị cũ trên stack từ stack frame trước **không** bị xóa. Chúng vẫn tồn tại trên call stack.
 
----
-
 ![slide12](_images/procedures/Slide12.png)
 
 Quay lại `main`, lệnh gọi `adder` **ghi đè** return address cũ trên stack bằng return address mới (`0x554`). Return address này trỏ tới lệnh sẽ thực thi sau khi `adder` trả về, tức `mov %eax, -0x4(%rbp)`. `%rip` được cập nhật trỏ tới lệnh đầu tiên trong `adder` tại địa chỉ `0x536`.
-
----
 
 ![slide13](_images/procedures/Slide13.png)
 
 Lệnh đầu tiên trong `adder` lưu frame pointer của caller (`%rbp` của `main`) lên stack.
 
----
-
 ![slide14](_images/procedures/Slide14.png)
 
 Lệnh tiếp theo cập nhật `%rbp` bằng giá trị hiện tại của `%rsp` (`0xd20`). Hai lệnh này thiết lập đầu stack frame cho `adder`.
 
----
-
 ![slide15](_images/procedures/Slide15.png)
 
 Hãy chú ý tới lệnh tiếp theo. Hãy nhớ rằng `$0x28` đã được đặt trên stack khi gọi `assign`. Lệnh `mov $-0x4(%rbp), %eax` di chuyển **giá trị cũ** trên stack vào `%eax`! Điều này sẽ không xảy ra nếu lập trình viên đã khởi tạo biến `a` trong `adder`.
-
----
 
 ![slide16](_images/procedures/Slide16.png)
 
@@ -255,45 +214,30 @@ int a;
 return a + 2;
 ```
 
----
-
 ![slide20](_images/procedures/Slide17.png)
 
 Sau khi `pop` thực thi, frame pointer lại trỏ tới đầu stack frame của `main` (`0xd40`). Stack pointer lúc này chứa địa chỉ `0xd28`.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 ![slide18](_images/procedures/Slide18.png)
 
 Việc thực thi lệnh `retq` sẽ **pop** địa chỉ trả về (return address) ra khỏi stack, khôi phục **instruction pointer** về `0x554`, tức địa chỉ của lệnh tiếp theo sẽ được thực thi trong `main`. Địa chỉ chứa trong `%rsp` lúc này là `0xd30`.
 
----
-
 ![slide19](_images/procedures/Slide19.png)
 
 Quay lại `main`, lệnh `mov %eax, -0x4(%rbp)` đặt giá trị trong `%eax` vào vị trí bộ nhớ cách `%rbp` 4 byte, tức địa chỉ `0xd3c`. Lệnh tiếp theo lại đưa giá trị này trở lại vào thanh ghi `%eax`.
-
----
 
 ![slide21](_images/procedures/Slide21.png)
 
 Bỏ qua một vài bước, lệnh `mov` tại địa chỉ `0x55a` sao chép giá trị trong `%eax` (tức `0x2A`) vào thanh ghi `%esi`, là **component register** 32-bit của `%rsi` và thường lưu tham số thứ hai của một hàm.
 
----
-
 ![slide22](_images/procedures/Slide22.png)
 
 Lệnh tiếp theo (`mov $0x400604, %edi`) sao chép một giá trị hằng (một địa chỉ trong **code segment memory**) vào thanh ghi `%edi`. Hãy nhớ rằng `%edi` là **component register** 32-bit của `%rdi`, thường lưu tham số thứ nhất của một hàm. Địa chỉ `0x400604` trong code segment là địa chỉ bắt đầu của chuỗi `"x is %d\n"`.
 
----
-
 ![slide23](_images/procedures/Slide23.png)
 
 Lệnh tiếp theo đặt lại giá trị của `%eax` thành 0. Instruction pointer lúc này trỏ tới lời gọi hàm `printf` (được ký hiệu là `<printf@plt>`).
-
----
 
 ![slide24](_images/procedures/Slide24.png)
 
@@ -320,13 +264,9 @@ Với bất kỳ hàm nào có *n* tham số, GCC sẽ đặt 6 tham số đầu
 
 Sau khi gọi `printf`, giá trị `0x2A` sẽ được in ra cho người dùng ở dạng số nguyên. Do đó, giá trị **42** được in ra màn hình.
 
----
-
 ![slide25](_images/procedures/Slide25.png)
 
 Sau khi gọi `printf`, một vài lệnh cuối sẽ dọn dẹp stack và chuẩn bị thoát sạch sẽ khỏi hàm `main`. Đầu tiên, lệnh `mov` tại địa chỉ `0x56b` đảm bảo rằng giá trị 0 nằm trong thanh ghi trả về (vì việc cuối cùng `main` làm là `return 0`).
-
----
 
 ![slide26](_images/procedures/Slide26.png)
 
@@ -340,7 +280,5 @@ pop %rbp
 Nói cách khác, CPU ghi đè stack pointer bằng frame pointer. Trong ví dụ này, stack pointer được cập nhật từ `0xd30` thành `0xd40`. Tiếp đó, CPU thực thi `pop %rbp`, lấy giá trị tại `0xd40` (trong ví dụ này là địa chỉ `0x830`) và đặt vào `%rbp`. Sau khi `leaveq` thực thi, stack pointer và frame pointer trở lại giá trị ban đầu trước khi `main` chạy.
 
 Lệnh cuối cùng được thực thi là `retq`. Với giá trị `0x0` trong thanh ghi trả về `%eax`, chương trình trả về 0, báo hiệu kết thúc thành công.
-
----
 
 Nếu bạn đã đọc kỹ phần này, bạn sẽ hiểu vì sao chương trình in ra giá trị **42**. Về bản chất, chương trình đã vô tình sử dụng các giá trị cũ trên stack, khiến nó hoạt động theo cách mà ta không ngờ tới. Ví dụ này khá vô hại; tuy nhiên, ở các phần sau, chúng ta sẽ thảo luận cách tin tặc lợi dụng lời gọi hàm để khiến chương trình hoạt động sai lệch theo những cách thực sự nguy hiểm.

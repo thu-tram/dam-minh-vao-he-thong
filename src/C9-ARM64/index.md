@@ -1,102 +1,28 @@
+## 9. ARM Assembly  
 
+Trong chương này, chúng ta sẽ tìm hiểu về kiến trúc **ARM version 8 application profile (ARMv8-A)** với **A64 ISA**, phiên bản ARM ISA mới nhất đang được sử dụng trên tất cả các máy tính ARM chạy hệ điều hành Linux.  
+Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA — “kiến trúc tập lệnh”) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.  
 
- 
+Để chạy được các ví dụ trong chương này, bạn cần có một máy với bộ xử lý ARMv8-A và hệ điều hành 64-bit. Các ví dụ trong chương này được thực hiện trên **Raspberry Pi 3B+** chạy hệ điều hành **Ubuntu Mate 64-bit**. Lưu ý rằng mọi phiên bản Raspberry Pi phát hành từ năm 2016 đều có thể sử dụng A64 ISA. Tuy nhiên, **Raspberry Pi OS** (hệ điều hành mặc định của Raspberry Pi) vẫn là bản 32-bit tại thời điểm viết sách này.  
 
+Bạn có thể kiểm tra xem hệ thống của mình đang chạy hệ điều hành 64-bit hay không bằng cách chạy lệnh `uname -m`. Một hệ điều hành 64-bit sẽ cho kết quả như sau:
 
+```
+$ uname -m
+aarch64
+```
 
+Mặc dù có thể *biên dịch* (build) các tệp thực thi ARM trên máy Intel bằng [bộ công cụ cross-compilation GNU của ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads), nhưng bạn **không thể** *chạy* trực tiếp các tệp ARM trên hệ thống x86.  
+Nếu muốn học ARM assembly trực tiếp trên laptop, bạn có thể thử [QEMU](https://www.qemu.org/), một trình **giả lập** (emulator) hệ thống ARM. Trình giả lập khác với máy ảo ở chỗ nó mô phỏng cả phần cứng của hệ thống khác.  
 
+Một lựa chọn khác là sử dụng [EC2 A1 instances](https://aws.amazon.com/ec2/instance-types/a1/) mà Amazon mới phát hành. Mỗi instance cung cấp cho bạn quyền truy cập vào bộ xử lý **Graviton 64-bit**, tuân theo đặc tả ARMv8-A.  
 
+Tuy nhiên, cần lưu ý rằng các lệnh assembly cụ thể do compiler sinh ra phụ thuộc nhiều vào hệ điều hành và kiến trúc phần cứng chính xác. Do đó, mã assembly sinh ra trên AWS hoặc qua QEMU có thể hơi khác so với các ví dụ trong chương này.  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 9. ARM Assembly 
-
-In this chapter, we cover the ARM version 8 application profile
-(ARMv8-A) architecture A64 ISA, the latest ARM ISA that is in use on all
-Linux OS ARM computers. Recall that an [instruction set
-architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture)
-(or ISA) defines the set of instructions and binary encodings of a
-machine-level program. To run the examples in this chapter, you will
-need access to a machine with an ARMv8-A processor with a 64-bit
-operating system installed. The examples in this chapter use a Raspberry
-Pi 3B+ running the 64-bit Ubuntu Mate operating system. Note that every
-Raspberry Pi released since 2016 can use the A64 ISA. However, Raspberry
-Pi OS (the default Raspberry Pi operating system) is still 32-bit as of
-this writing.
-
-
-Readers can confirm that they have a 64-bit version of the OS on their
-system by running the `uname -m` command. A system with a 64-bit
-operating system will output the following:
-
-
-
-
-    $ uname -m
-    aarch64
-
-
-Although it is possible to *build* ARM binaries on Intel machines using
-ARM's [GNU toolchain cross-compilation
-tools](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads),
-you cannot *run* ARM binaries directly on a x86 system. Readers
-interested in learning about ARM assembly directly on their laptops are
-encouraged to explore [QEMU](https://www.qemu.org/), which can
-**emulate** an ARM system. Emulators differ from virtual machines in
-that they also simulate the hardware of another system.
-
-
-Another alternative is to use one of Amazon's recently released [EC2 A1
-instances](https://aws.amazon.com/ec2/instance-types/a1/). Each instance
-gives users access to a 64-bit Graviton processor, which follows the
-ARMv8-A specification.
-
-
-Keep in mind, however, that the specific assembly instructions produced
-by a compiler are highly influenced by the operating system and precise
-machine architecture. Therefore, the assembly produced on AWS instances
-or through QEMU emulation may differ slightly from the examples shown in
-this chapter.
-
-
->> RISC and ARM processors
-
-
-For many years, complex instruction set computer (CISC) architectures
-dominated the personal computing and server markets. Common examples of
-CISC architectures include Intel and AMD processors. However, reduced
-instruction set computer (RISC) architectures gained momentum over the
-past decade due to demand from the mobile computing sector. ARM (which
-stands for Acorn RISC machine) is an example of a RISC architecture,
-along with RISC-V and MIPS. RISC architectures are especially attractive
-to mobile computing due to the energy efficiency of their processors,
-which prolongs battery life. In recent years, ARM and other RISC
-processors have begun making headway in the server and high performance
-computing (HPC) markets. For example, Japan's Fugaku supercomputer, the
-fastest in the world as of 2020, uses ARM processors.
-
-
-
-
-
+> **RISC và bộ xử lý ARM**  
+>  
+> Trong nhiều năm, kiến trúc **CISC** (*complex instruction set computer*) chiếm ưu thế trên thị trường máy tính cá nhân và máy chủ. Ví dụ phổ biến của CISC là các bộ xử lý Intel và AMD.  
+> Tuy nhiên, kiến trúc **RISC** (*reduced instruction set computer*) đã phát triển mạnh trong thập kỷ qua nhờ nhu cầu từ lĩnh vực điện toán di động. ARM (viết tắt của *Acorn RISC Machine*) là một ví dụ của kiến trúc RISC, bên cạnh RISC-V và MIPS.  
+> RISC đặc biệt hấp dẫn đối với điện toán di động nhờ hiệu suất năng lượng cao, giúp kéo dài tuổi thọ pin.  
+> Trong những năm gần đây, ARM và các bộ xử lý RISC khác đã bắt đầu thâm nhập vào thị trường máy chủ và **HPC** (*high performance computing*). Ví dụ, siêu máy tính **Fugaku** của Nhật Bản — nhanh nhất thế giới vào năm 2020 — sử dụng bộ xử lý ARM.
 

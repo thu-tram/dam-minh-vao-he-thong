@@ -1,5 +1,4 @@
 Ok Khánh 👍  
-Dưới đây là bản dịch tiếng Việt của phần **4.2. Converting Between Bases** trong tệp bạn gửi, tuân thủ đầy đủ các quy ước bạn đã nêu.
 
 ## 4.2. Chuyển đổi giữa các hệ cơ số (Converting Between Bases)
 

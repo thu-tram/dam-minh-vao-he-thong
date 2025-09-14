@@ -10,8 +10,6 @@ Do đó, có lẽ chính xác hơn khi xem kiến trúc máy tính hiện đại
 
 Việc thảo luận toàn diện về sự hình thành của kiến trúc máy tính nằm ngoài phạm vi của cuốn sách này (xem *Turing’s Cathedral*⁴ của George Dyson và *The Innovators*⁶ của Walter Isaacson để có cái nhìn chi tiết hơn); tuy nhiên, chúng ta sẽ điểm qua một số đổi mới quan trọng trong thập niên 1930 và 1940 đã góp phần hình thành kiến trúc máy tính hiện đại.
 
----
-
 ### 5.1.1. Máy Turing
 
 Năm 1937, nhà toán học người Anh Alan Turing đã đề xuất⁷ “Logical Computing Machine” – một máy tính lý thuyết. Turing sử dụng cỗ máy này để chứng minh rằng không tồn tại lời giải cho bài toán quyết định (tiếng Đức: *Entscheidungsproblem*) do các nhà toán học David Hilbert và Wilhelm Ackermann đặt ra vào năm 1928. Bài toán quyết định là một thuật toán nhận đầu vào là một mệnh đề và xác định xem mệnh đề đó có đúng với mọi trường hợp hay không. Turing chứng minh rằng không tồn tại thuật toán như vậy bằng cách chỉ ra rằng *halting problem* (liệu máy *X* có dừng lại với đầu vào *y* hay không?) là không thể quyết định được đối với máy của ông. Trong quá trình chứng minh, Turing mô tả một cỗ máy phổ quát có khả năng thực hiện các tác vụ của bất kỳ máy tính nào khác. Alonzo Church – giáo sư hướng dẫn luận văn của Turing tại Đại học Princeton – là người đầu tiên gọi “logical computing machine” là *Turing machine*, và phiên bản phổ quát của nó là *universal Turing machine*.
@@ -19,8 +17,6 @@ Năm 1937, nhà toán học người Anh Alan Turing đã đề xuất⁷ “Log
 Sau đó, Turing trở về Anh và phục vụ đất nước trong đơn vị giải mã tại Bletchley Park trong Thế chiến II. Ông đóng vai trò quan trọng trong việc thiết kế và chế tạo *Bombe* – một thiết bị điện cơ giúp phá mã do máy Enigma tạo ra, vốn được Đức Quốc xã sử dụng phổ biến để bảo vệ thông tin liên lạc nhạy cảm trong chiến tranh.
 
 Sau chiến tranh, Turing thiết kế *automatic computing engine* (ACE). ACE là một máy tính lưu trữ chương trình, nghĩa là cả lệnh chương trình và dữ liệu đều được nạp vào bộ nhớ máy tính và được thực thi bởi máy tính đa dụng. Bài báo của ông, công bố năm 1946, có lẽ là mô tả chi tiết nhất về một máy tính như vậy⁸.
-
----
 
 ### 5.1.2. Các Máy Tính Điện Tử Đầu Tiên
 
@@ -32,15 +28,11 @@ Trong khi đó, các kỹ sư Mỹ John Mauchly và Presper Eckert tại Đại 
 
 Dưới đây là bản dịch hoàn chỉnh của phần văn bản bạn cung cấp, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật và cú pháp footnote Markdown như bạn yêu cầu:
 
----
-
 Khi nam giới được điều động vào quân đội trong Thế chiến II, phụ nữ được tuyển dụng để hỗ trợ nỗ lực chiến tranh với vai trò là các máy tính con người. Khi những máy tính điện tử đầu tiên xuất hiện, phụ nữ trở thành những lập trình viên đầu tiên, vì công việc lập trình lúc đó được xem là công việc thư ký. Không có gì ngạc nhiên khi nhiều đổi mới ban đầu trong lập trình – như trình biên dịch đầu tiên, khái niệm phân chia chương trình thành mô-đun, kỹ thuật gỡ lỗi (debugging), và ngôn ngữ assembly – đều được ghi nhận là do phụ nữ sáng tạo. Ví dụ, Grace Hopper đã phát triển ngôn ngữ lập trình cấp cao đầu tiên, độc lập với phần cứng (COBOL), cùng với trình biên dịch của nó. Bà cũng là lập trình viên cho máy Mark I và là tác giả cuốn sách mô tả cách vận hành của nó.
 
 Những lập trình viên của ENIAC gồm sáu phụ nữ: Jean Jennings Bartik, Betty Snyder Holberton, Kay McNulty Mauchly, Frances Bilas Spence, Marlyn Wescoff Meltzer, và Ruth Lichterman Teitelbaum. Khác với các Wrens, nhóm phụ nữ ENIAC được trao quyền tự chủ rất lớn trong công việc; họ chỉ được cung cấp sơ đồ dây nối của ENIAC và được yêu cầu tự tìm hiểu cách hoạt động và cách lập trình nó. Ngoài việc sáng tạo ra cách lập trình (và gỡ lỗi) cho một trong những máy tính điện tử đa dụng đầu tiên trên thế giới, các lập trình viên ENIAC còn phát triển khái niệm sơ đồ luồng thuật toán (algorithmic flow chart), và các khái niệm lập trình quan trọng như thủ tục con (subroutine) và lồng ghép (nesting). Giống như Grace Hopper, Jean Jennings Bartik và Betty Snyder Holberton sau này đều có sự nghiệp lâu dài trong ngành điện toán, và là những người tiên phong trong lĩnh vực này. Đáng tiếc là mức độ đóng góp của phụ nữ trong giai đoạn đầu của ngành điện toán vẫn chưa được ghi nhận đầy đủ. Do không thể thăng tiến, nhiều phụ nữ đã rời khỏi lĩnh vực này sau Thế chiến II. Để tìm hiểu thêm về các lập trình viên nữ thời kỳ đầu, bạn đọc có thể tham khảo *Recoding Gender* của Janet Abbate[^11], phim tài liệu *Top Secret Rosies* do PBS sản xuất[^12] do LeAnn Erickson đạo diễn, và *The Computers* của Kathy Kleiman[^13].
 
 Không chỉ Anh và Mỹ quan tâm đến tiềm năng của máy tính. Tại Đức, Konrad Zuse đã phát triển máy tính số điện cơ đa dụng đầu tiên có khả năng lập trình – Z3 – hoàn thành vào năm 1941. Zuse tự mình thiết kế máy này mà không hề biết đến công trình của Turing hay các nhà khoa học khác. Đáng chú ý, thiết kế của Zuse sử dụng hệ nhị phân (thay vì thập phân), là máy tính đầu tiên thuộc loại này dùng hệ nhị phân. Tuy nhiên, Z3 đã bị phá hủy trong một cuộc không kích vào Berlin, và Zuse không thể tiếp tục công việc cho đến năm 1950. Công trình của ông phần lớn không được công nhận cho đến nhiều năm sau. Ngày nay, ông được xem là cha đẻ của ngành điện toán tại Đức.
-
----
 
 ### 5.1.3. Vậy von Neumann Biết Những Gì?
 

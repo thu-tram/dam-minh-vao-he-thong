@@ -9,8 +9,6 @@ Mảng một chiều được cấp phát tĩnh ([single-dimension arrays](../C2
 
 Khai báo mảng tĩnh như `Type arr[N]` hoặc cấp phát động như `arr = malloc(N*sizeof(Type))` sẽ cấp phát tổng cộng *N* × sizeof(*Type*) byte bộ nhớ, với `arr` trỏ tới vùng nhớ đó.
 
----
-
 Để truy cập phần tử tại chỉ số *i* trong mảng `arr`, sử dụng cú pháp `arr[i]`.  
 Compiler thường chuyển đổi các truy cập mảng thành [pointer arithmetic](../C2-C_depth/pointers.html#_pointer_variables) trước khi dịch sang assembly.  
 Do đó:
@@ -19,8 +17,6 @@ Do đó:
 - `*(arr + i)` tương đương với `arr[i]`
 
 Vì mỗi phần tử trong `arr` có kiểu `Type`, nên `arr + i` ngụ ý rằng phần tử *i* được lưu tại địa chỉ `arr + sizeof(Type) * i`.
-
----
 
 **Bảng 1** liệt kê một số thao tác mảng phổ biến và lệnh assembly tương ứng.  
 Giả sử:
@@ -40,8 +36,6 @@ Giả sử:
 
 **Bảng 1.** Các thao tác mảng phổ biến và lệnh assembly tương ứng.
 
----
-
 Hãy chú ý đến **kiểu dữ liệu** của từng biểu thức trong bảng trên.  
 Thông thường, compiler dùng lệnh `movl` để dereference con trỏ và lệnh `leal` để tính toán địa chỉ.
 
@@ -49,8 +43,6 @@ Lưu ý: để truy cập phần tử `arr[3]` (hoặc `*(arr+3)` khi dùng poin
 Nguyên nhân: bất kỳ phần tử nào tại chỉ số *i* trong mảng đều được lưu tại địa chỉ `arr + sizeof(Type) * i`.  
 Do đó, compiler phải nhân chỉ số với kích thước kiểu dữ liệu để tính đúng offset.  
 Hãy nhớ rằng bộ nhớ được đánh địa chỉ theo byte; việc dịch chuyển đúng số byte tương đương với việc tính toán địa chỉ chính xác.
-
----
 
 Ví dụ: xét một mảng (`array`) gồm 5 phần tử kiểu `int` (**Hình 1**):
 
@@ -62,8 +54,6 @@ Do đó, một mảng `int` gồm 5 phần tử sẽ tiêu tốn 20 byte bộ nh
 
 Để tính địa chỉ của phần tử thứ 3, compiler nhân chỉ số 3 với kích thước kiểu `int` (4) để được offset 12.  
 Quả thật, phần tử thứ 3 trong **Hình 1** nằm tại byte offset x~12~.
-
----
 
 Hãy xem một hàm C đơn giản `sumArray` tính tổng tất cả các phần tử trong mảng:
 
@@ -108,8 +98,6 @@ Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu đư�
 Ví dụ: lệnh tại `<sumArray+13>` khiến `%ebp-4` chứa một biến kiểu `int`, ban đầu được gán giá trị 0.  
 Ngược lại, đối số được lưu tại `%ebp+8` là tham số đầu tiên của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ cơ sở của mảng.  
 Một biến khác (chúng ta gọi là `total`) được lưu tại `%ebp-8`.
-
----
 
 Hãy xem kỹ hơn 5 lệnh từ `<sumArray+22>` đến `<sumArray+39>`:
 

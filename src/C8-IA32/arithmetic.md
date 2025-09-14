@@ -20,8 +20,6 @@
 
 Lệnh chia (`idiv`) hoạt động hơi khác: trước khi thực thi `idiv`, giả định rằng thanh ghi `%eax` chứa số bị chia (dividend). Gọi `idiv` với toán hạng S sẽ chia nội dung `%eax` cho S, đưa thương số (quotient) vào `%eax` và số dư (remainder) vào `%edx`.
 
----
-
 ### 8.3.1. Bit Shifting Instructions (Các lệnh dịch bit)
 
 Các lệnh dịch bit cho phép compiler thực hiện các phép dịch bit.  
@@ -49,13 +47,9 @@ Mỗi lệnh dịch nhận hai toán hạng:
 Trên hệ thống 32-bit, giá trị dịch được mã hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).  
 Giá trị dịch *v* phải là một hằng số hoặc được lưu trong thanh ghi `%cl`.
 
----
-
 **Ghi chú:**  
 Ở cấp độ assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là số có dấu hay không dấu.  
 Compiler sử dụng các lệnh khác nhau để phân biệt giữa dịch logic và dịch số học.
-
----
 
 ### 8.3.2. Bitwise Instructions (Các lệnh thao tác bit)
 
@@ -82,8 +76,6 @@ Cần cẩn thận để không nhầm lẫn hai lệnh này.
 >> **Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong code C của bạn!**
 >> 
 >> Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này **không** được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để tự thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi thích hợp, vì vậy lập trình viên không cần phải làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của code bất cứ khi nào có thể và tránh tối ưu hóa quá sớm. |
-
----
 
 ### 8.3.3. Lệnh Load Effective Address
 

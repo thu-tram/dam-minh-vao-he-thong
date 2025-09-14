@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **14.7. Implicit Threading with OpenMP**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 14.7. Đa luồng ngầm định với OpenMP (Implicit Threading with OpenMP)
 
@@ -8,29 +5,19 @@ Cho đến nay, chúng ta đã trình bày lập trình bộ nhớ chia sẻ b�
 Mặc dù Pthreads rất hữu ích cho các ứng dụng đơn giản, nhưng khi chương trình trở nên phức tạp hơn, chúng lại ngày càng khó sử dụng.  
 Pthreads là một ví dụ của **explicit parallel programming** (lập trình song song tường minh) với threads, yêu cầu lập trình viên phải chỉ rõ **chính xác** mỗi thread cần làm gì và khi nào thread đó bắt đầu hoặc kết thúc.
 
----
-
 Với Pthreads, việc *bổ sung dần* (incrementally) khả năng song song vào một chương trình tuần tự hiện có cũng là một thách thức.  
 Nói cách khác, ta thường phải viết lại toàn bộ chương trình để sử dụng threads — điều này thường không mong muốn khi cần song song hóa một codebase lớn và đã tồn tại từ trước.
-
----
 
 Thư viện **Open Multiprocessing** (**OpenMP**) cung cấp một giải pháp *ngầm định* thay thế cho Pthreads.  
 OpenMP được tích hợp sẵn trong GCC và các trình biên dịch phổ biến khác như LLVM và Clang, và có thể dùng với các ngôn ngữ C, C++ và Fortran.  
 Ưu điểm chính của OpenMP là cho phép lập trình viên song song hóa các thành phần của mã C tuần tự hiện có bằng cách thêm **pragma** (chỉ thị đặc biệt cho trình biên dịch) vào các phần của mã.  
 Các pragma dành riêng cho OpenMP bắt đầu bằng `#pragma omp`.
 
----
-
 Việc trình bày chi tiết OpenMP nằm ngoài phạm vi của cuốn sách này, nhưng chúng ta sẽ đề cập đến một số pragma thường gặp và minh họa cách sử dụng chúng trong bối cảnh một số ứng dụng ví dụ.
-
----
 
 ### 14.7.1. Các pragma thường dùng (Common Pragmas)
 
 Dưới đây là một số pragma được sử dụng phổ biến trong các chương trình OpenMP:
-
----
 
 `#pragma omp parallel`  
 
@@ -43,8 +30,6 @@ Dưới đây là một số pragma được sử dụng phổ biến trong các
     - `shared`: danh sách các biến sẽ được **shared** (chia sẻ) giữa các thread. Chỉ có **một bản sao** của biến được chia sẻ giữa tất cả các thread.
     - `default`: chỉ định việc xác định biến nào là shared sẽ do trình biên dịch quyết định hay không. Trong hầu hết các trường hợp, ta nên dùng `default(none)` và chỉ rõ biến nào là shared, biến nào là private.
 
----
-
 `#pragma omp for`  
 
 :   Chỉ định rằng mỗi thread sẽ thực thi một **tập con** các vòng lặp của một vòng `for`.  
@@ -56,20 +41,14 @@ Dưới đây là một số pragma được sử dụng phổ biến trong các
 
     - `schedule(dynamic)`: chỉ định sử dụng lập lịch **dynamic**. Mặc dù hữu ích trong một số trường hợp, lập lịch static (mặc định) thường nhanh hơn.
 
----
-
 `#pragma omp parallel for`  
 
 :   Kết hợp giữa `omp parallel` và `omp for`.  
     Khác với `omp for`, pragma này **tạo team thread** trước, rồi mới gán cho mỗi thread một tập vòng lặp để thực thi.
 
----
-
 `#pragma omp critical`  
 
 :   Chỉ định rằng đoạn mã trong phạm vi của pragma là một **critical section** — chỉ một thread được thực thi đoạn mã này tại một thời điểm để đảm bảo tính đúng đắn.
-
----
 
 Ngoài ra, OpenMP còn cung cấp một số **hàm** hữu ích cho thread khi thực thi, ví dụ:
 
@@ -77,19 +56,11 @@ Ngoài ra, OpenMP còn cung cấp một số **hàm** hữu ích cho thread khi 
 - `omp_set_num_threads`: đặt số lượng thread mà một team sẽ có.
 - `omp_get_thread_num`: trả về **ID** của thread đang gọi hàm.
 
----
-
 > **Lưu ý:**  
 > `omp parallel for` **chỉ hoạt động với vòng lặp `for`**.  
 > Các loại vòng lặp khác như `while` hoặc `do`-`while` **không được hỗ trợ**.
 
----
 
-Bạn có muốn tôi dịch tiếp sang phần **14.7.2. Ví dụ sử dụng OpenMP** để minh họa các pragma này trong thực tế không?
-
-Dưới đây là bản dịch tiếng Việt của mục **14.7.2** và phần mở đầu **14.7.3**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 14.7.2. Hello Threading: Phiên bản OpenMP
 
@@ -134,12 +105,8 @@ Pragma này cũng sẽ **join** (hợp nhất) tất cả các thread đã tạo
 Nói cách khác, toàn bộ công việc cấp thấp như tạo và join thread được **trừu tượng hóa** khỏi lập trình viên và chỉ cần một pragma duy nhất để thực hiện.  
 Vì lý do này, OpenMP được xem là một thư viện **implicit threading** (đa luồng ngầm định).
 
----
-
 OpenMP cũng trừu tượng hóa việc quản lý **thread ID**.  
 Trong ngữ cảnh của `HelloWorld`, hàm `omp_get_thread_num` sẽ lấy ra **ID duy nhất** gắn với thread đang chạy nó.
-
----
 
 #### Biên dịch mã nguồn
 
@@ -166,8 +133,6 @@ Hello world! I am thread 0
 ```
 
 Hành vi này giống với [ví dụ dùng Pthreads](posix.html#_hello_threading_writing_your_first_multithreaded_program) mà chúng ta đã thấy trước đó.
-
----
 
 ### 14.7.3. Ví dụ phức tạp hơn: CountSort với OpenMP
 
@@ -200,16 +165,12 @@ int main( int argc, char **argv ) {
 
 Hàm `main`, sau khi phân tích các tham số dòng lệnh và tạo một mảng ngẫu nhiên, sẽ gọi hàm `countsElems` rồi đến hàm `writeArray`.
 
----
-
 #### Song song hóa CountElems bằng OpenMP
 
 Có nhiều cách để song song hóa chương trình trên.  
 Một cách (được minh họa trong ví dụ sau) là sử dụng **pragma** `omp parallel` trong ngữ cảnh của các hàm `countElems` và `writeArray`.  
 Kết quả là **không cần** thay đổi gì trong hàm `main`.  
 Phiên bản đầy đủ của chương trình có tại: [countSort_mp.c](_attachments/countSort_mp.c).
-
----
 
 Trước tiên, hãy xem cách song song hóa hàm `countElems` bằng OpenMP:
 
@@ -256,8 +217,6 @@ Trong phiên bản này của mã, ba pragma được sử dụng:
   Điều này tương đương với việc dùng **mutex** trong phiên bản Pthreads của chương trình.  
   Ở đây, mỗi thread sẽ lần lượt cập nhật mảng `counts` chia sẻ.
 
----
-
 Hãy đánh giá hiệu năng của hàm này khi chạy với 100 triệu phần tử:
 
 ```
@@ -273,8 +232,6 @@ Run Time for Phase 1 is 0.068749
 
 Kết quả rất tốt: hàm đạt **speedup** bằng 2 khi chạy với 2 thread, và **speedup** 3.63 khi chạy với 4 thread.  
 Hiệu năng thậm chí còn tốt hơn cả phiên bản Pthreads!
-
----
 
 #### Hàm `writeArray` trong OpenMP
 
@@ -303,8 +260,6 @@ void writeArray(int *counts, int *array) {
 }
 ```
 
----
-
 Trước khi song song hóa, chúng tôi đã thay đổi hàm này vì [phiên bản cũ](_attachments/countSort.c) của `writeArray` khiến biến `j` phụ thuộc vào các vòng lặp trước đó.  
 Trong phiên bản mới, mỗi thread sẽ tính toán giá trị `start` duy nhất của mình dựa trên tổng của tất cả các phần tử trước đó trong `counts`.
 
@@ -312,36 +267,24 @@ Khi loại bỏ sự phụ thuộc này, việc song song hóa trở nên khá �
 Pragma `#pragma omp parallel for` sẽ tạo ra một nhóm thread và song song hóa vòng lặp `for` bằng cách gán cho mỗi thread một tập con các vòng lặp cần thực hiện.  
 Nhắc lại, pragma này là sự kết hợp của `omp parallel` và `omp for` (đã được sử dụng trong phần song song hóa hàm `countElems`).
 
----
-
 Cách lập lịch theo kiểu **chunking** (như trong hàm `countElems` trước đó) **không phù hợp** ở đây, vì có khả năng mỗi phần tử trong `counts` có tần suất rất khác nhau.  
 Điều này dẫn đến việc các thread sẽ không có khối lượng công việc bằng nhau, khiến một số thread bị gán nhiều việc hơn các thread khác.  
 Do đó, ta sử dụng mệnh đề `schedule(dynamic)`, để mỗi thread hoàn thành vòng lặp được gán trước khi yêu cầu một vòng lặp mới từ bộ quản lý thread.
 
----
-
 Vì mỗi thread ghi vào các vị trí khác nhau trong mảng, nên **không cần** dùng mutual exclusion (loại trừ lẫn nhau) cho hàm này.
-
----
 
 Hãy chú ý xem mã OpenMP gọn gàng hơn nhiều so với phiên bản dùng POSIX threads.  
 Mã rất dễ đọc và chỉ cần chỉnh sửa rất ít.  
 Đây là một trong những sức mạnh của **abstraction** (trừu tượng hóa), khi các chi tiết triển khai được ẩn khỏi lập trình viên.
-
----
 
 Tuy nhiên, một sự đánh đổi cần thiết của abstraction là **quyền kiểm soát**.  
 Lập trình viên giả định rằng trình biên dịch “đủ thông minh” để xử lý các chi tiết song song hóa, nhờ đó việc song song hóa ứng dụng trở nên dễ dàng hơn.  
 Tuy nhiên, lập trình viên sẽ không còn đưa ra các quyết định chi tiết về cách song song hóa đó.  
 Nếu không hiểu rõ cách các pragma OpenMP thực thi bên trong, sẽ khó để debug một ứng dụng OpenMP hoặc biết pragma nào là phù hợp nhất để dùng trong một tình huống cụ thể.
 
----
-
 ### 14.7.4. Tìm hiểu thêm về OpenMP
 
 Phần thảo luận sâu hơn về OpenMP nằm ngoài phạm vi của cuốn sách này, nhưng có một số tài nguyên miễn phí hữu ích[^1][^2] để học OpenMP.
-
----
 
 ### Tài liệu tham khảo:
 

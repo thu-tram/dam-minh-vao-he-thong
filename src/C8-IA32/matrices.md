@@ -1,35 +1,3 @@
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 8.8. Matrices 
 
 A matrix is a two-dimensional (2D) array. A matrix in the C language can

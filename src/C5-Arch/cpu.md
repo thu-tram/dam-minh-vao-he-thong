@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **5.5. Building a Processor: Putting It All Together** từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
-
----
 
 ## 5.5. Xây dựng Bộ xử lý: Tổng hợp tất cả thành phần
 
@@ -18,8 +15,6 @@ CPU được xây dựng từ các khối mạch cơ bản: mạch số học/lo
 - Và một **clock** (xung nhịp) điều khiển hoạt động của mạch CPU để thực thi các lệnh chương trình.
 
 Trong phần này, ta sẽ trình bày các thành phần chính của CPU, bao gồm ALU và tập thanh ghi, và cách chúng được kết hợp để tạo thành một CPU. Trong phần tiếp theo, ta sẽ tìm hiểu cách CPU thực thi các lệnh chương trình và cách xung nhịp được sử dụng để điều khiển quá trình thực thi.
-
----
 
 ### 5.5.1. ALU
 
@@ -49,9 +44,6 @@ Hình 2 minh họa một mạch ALU ví dụ thực hiện bốn phép toán kh�
 
 ![the 4 operations alu with single condition code for zero](_images/alu.png)
 
-Dưới đây là bản dịch tiếng Việt của các mục **5.5.1. The ALU**, **5.5.2. The Register File**, và **5.5.3. The CPU** từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật bạn đã đề ra:
-
----
 
 **Hình 2. Một ALU thực hiện bốn phép toán: ADD, OR, AND và EQUALS trên hai toán hạng 32-bit. Nó có một bit đầu ra mã điều kiện cho biết kết quả có bằng 0 hay không.**
 
@@ -71,8 +63,6 @@ Hình 3 minh họa cách các bit opcode và toán hạng của một lệnh ADD
 
 **Hình 3. Các bit opcode từ một lệnh được ALU sử dụng để chọn phép toán cần xuất ra.** Trong ví dụ này, các bit khác nhau từ một lệnh ADD được đưa vào đầu vào toán hạng và opcode của ALU để thực hiện phép cộng 6 và 8.
 
----
-
 ### 5.5.2. Register File
 
 Ở đỉnh của hệ phân cấp bộ nhớ, tập hợp các thanh ghi đa dụng của CPU lưu trữ các giá trị tạm thời. CPU chỉ cung cấp một số lượng rất nhỏ thanh ghi, thường là từ 8 đến 32 (ví dụ: kiến trúc IA32 cung cấp 8, MIPS cung cấp 16, và ARM cung cấp 13). Các lệnh thường lấy giá trị toán hạng từ các thanh ghi đa dụng, hoặc lưu kết quả vào đó. Ví dụ, một lệnh ADD có thể được mã hóa là *"cộng giá trị từ Register 1 với giá trị từ Register 2 và lưu kết quả vào Register 3"*.
@@ -85,13 +75,9 @@ Hình 4 minh họa một ví dụ về mạch register file với bốn thanh gh
 
 **Hình 4. Register file: tập hợp các thanh ghi đa dụng của CPU dùng để lưu trữ toán hạng và giá trị kết quả của lệnh.**
 
----
-
 #### Special-Purpose Registers
 
 Ngoài tập hợp các thanh ghi đa dụng trong register file, CPU còn có các thanh ghi chuyên dụng (special-purpose registers) dùng để lưu địa chỉ và nội dung của lệnh. **Program counter** (PC – "bộ đếm chương trình") lưu địa chỉ bộ nhớ của lệnh tiếp theo cần thực thi, và **instruction register** (IR – "thanh ghi lệnh") lưu các bit của lệnh hiện tại đang được CPU thực thi. Các bit của lệnh được lưu trong IR sẽ được sử dụng làm đầu vào cho các phần khác nhau của CPU trong quá trình thực thi lệnh. Ta sẽ thảo luận chi tiết hơn về các thanh ghi này trong phần tiếp theo về [instruction execution](instrexec.html#_the_processors_execution_of_program_instructions) (thực thi lệnh của bộ xử lý).
-
----
 
 ### 5.5.3. CPU
 

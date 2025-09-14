@@ -2,9 +2,6 @@
 
 
 
-Dưới đây là bản dịch tiếng Việt của mục **13.3. Virtual Memory**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
 
 ## 13.3. Bộ nhớ ảo (Virtual Memory)
 
@@ -17,8 +14,6 @@ Các process **không thể** truy cập nội dung của không gian địa ch�
 
 Một số phần của không gian địa chỉ ảo của process đến từ **binary executable file** (tệp thực thi nhị phân) mà nó đang chạy (ví dụ: phần *text* chứa các lệnh chương trình từ tệp `a.out`).  
 Các phần khác của không gian địa chỉ ảo được tạo ra **tại thời gian chạy** (runtime) (ví dụ: phần *stack*).
-
----
 
 Hệ điều hành triển khai virtual memory như một phần của abstraction **lone view** (cái nhìn riêng biệt) của process.  
 Nghĩa là, mỗi process chỉ tương tác với bộ nhớ thông qua **không gian địa chỉ ảo của riêng nó**, thay vì thực tế là nhiều process đang đồng thời chia sẻ bộ nhớ vật lý (RAM) của máy tính.  
@@ -51,15 +46,11 @@ int main(int argc, char* argv[]) {
 Nếu hai process đồng thời thực thi chương trình này, mỗi process sẽ nhận được **bản sao riêng** của bộ nhớ stack như một phần của không gian địa chỉ ảo riêng biệt.  
 Kết quả là, nếu một process thực thi `x = 6` thì điều đó **không ảnh hưởng** đến giá trị của `x` trong process còn lại — mỗi process có bản sao riêng của `x` trong không gian địa chỉ ảo riêng của mình, như minh họa trong **Hình 1**.
 
----
-
 ![virtual address space](_images/vas.png)
 
 **Hình 1.** Hai lần thực thi `a.out` tạo ra hai process, mỗi process chạy một instance độc lập của chương trình `a.out`.  
 Mỗi process có **không gian địa chỉ ảo riêng**, chứa bản sao của lệnh chương trình, biến toàn cục, và vùng bộ nhớ stack và heap.  
 Ví dụ: mỗi process có thể có một biến cục bộ `x` trong phần stack của không gian địa chỉ ảo của nó.
-
----
 
 Không gian địa chỉ ảo của một process được chia thành nhiều **section** (phần), mỗi phần lưu trữ một loại dữ liệu khác nhau của process:
 
@@ -67,8 +58,6 @@ Không gian địa chỉ ảo của một process được chia thành nhiều *
 - **Phần text** và **phần data** của không gian địa chỉ ảo được khởi tạo từ tệp thực thi chương trình (`a.out`):
   - **Text section** chứa các lệnh chương trình.
   - **Data section** chứa các biến toàn cục (thực tế phần data được chia thành hai phần: một cho biến toàn cục đã khởi tạo và một cho biến toàn cục chưa khởi tạo).
-
----
 
 **Stack** và **heap** của một process thay đổi kích thước khi process chạy:
 
@@ -78,16 +67,12 @@ Không gian địa chỉ ảo của một process được chia thành nhiều *
 Thông thường, heap và stack được đặt **xa nhau** trong không gian địa chỉ để tối đa hóa dung lượng mà mỗi bên có thể sử dụng.  
 Thông thường, stack nằm ở **cuối không gian địa chỉ** (gần địa chỉ tối đa) và **tăng ngược xuống** các địa chỉ thấp hơn khi thêm **stack frame** mới vào đỉnh stack khi có lời gọi hàm.
 
----
-
 > **Về bộ nhớ Heap và Stack**
 
 Tổng dung lượng thực tế của heap và stack **không** thay đổi ở mỗi lần gọi `malloc`/`free` hoặc mỗi lần gọi/trả về hàm.  
 Thay vào đó, các thao tác này thường chỉ thay đổi lượng bộ nhớ heap và stack **đang được sử dụng** trong phần dung lượng đã được cấp phát.  
 
 Tuy nhiên, đôi khi các thao tác này **có thể** dẫn đến thay đổi tổng dung lượng heap hoặc stack.
-
----
 
 OS chịu trách nhiệm quản lý **virtual address space** của process, bao gồm việc thay đổi tổng dung lượng heap và stack.  
 Các system call `brk`, `sbrk` hoặc `mmap` có thể được dùng để yêu cầu OS thay đổi tổng dung lượng bộ nhớ heap.  
@@ -96,9 +81,6 @@ Lập trình viên C thường **không** gọi trực tiếp các system call n
 Thay vào đó, họ gọi **hàm thư viện C chuẩn** `malloc` (và `free`) để cấp phát (và giải phóng) bộ nhớ heap.  
 Bên trong, **user-level heap manager** (bộ quản lý heap ở mức người dùng) của thư viện C chuẩn có thể gọi một trong các system call này để yêu cầu OS thay đổi kích thước bộ nhớ heap nhằm đáp ứng yêu cầu `malloc`.
 
-Dưới đây là bản dịch tiếng Việt của mục **13.3.1. Memory Addresses** và **13.3.2. Virtual Address to Physical Address Translation**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 13.3.1. Địa chỉ bộ nhớ (Memory Addresses)
 
@@ -106,8 +88,6 @@ Vì các **process** (tiến trình) hoạt động trong **virtual address spac
 
 - **Virtual address**: tham chiếu đến vị trí lưu trữ trong không gian địa chỉ ảo của một process.
 - **Physical address**: tham chiếu đến vị trí lưu trữ trong **physical memory** (bộ nhớ vật lý – RAM).
-
----
 
 #### Physical Memory (RAM) và Physical Memory Addresses
 
@@ -130,8 +110,6 @@ Mỗi process có vùng lưu trữ vật lý riêng cho nội dung không gian �
 
 **Hình 2.** Ví dụ nội dung RAM, với OS được nạp tại địa chỉ `0x0` và các process được nạp tại các địa chỉ bộ nhớ vật lý khác nhau trong RAM. Nếu P1 và P2 chạy cùng một `a.out`, physical address của `x` trong P1 sẽ khác với physical address của `x` trong P2.
 
----
-
 #### Virtual Memory và Virtual Addresses
 
 **Virtual memory** là góc nhìn của từng process về không gian bộ nhớ của nó, và **virtual address** là địa chỉ trong góc nhìn đó.  
@@ -143,8 +121,6 @@ Nói cách khác, cả hai process sẽ có cùng virtual address cho vị trí 
 ![virtual addresses for two processes running the same a.out](_images/va.png)
 
 **Hình 3.** Ví dụ nội dung virtual memory của hai process chạy cùng một tệp `a.out`. P1 và P2 có cùng virtual address cho biến toàn cục `x`.
-
----
 
 ### 13.3.2. Chuyển đổi địa chỉ ảo sang địa chỉ vật lý (Virtual Address to Physical Address Translation)
 
@@ -161,15 +137,11 @@ movl $6, (%eax)        # lưu giá trị 6 vào địa chỉ bộ nhớ 0x24100
 Tại runtime, OS sẽ nạp biến `x` của mỗi process vào **physical address** khác nhau (tức là ở các vị trí khác nhau trong RAM).  
 Điều này có nghĩa là bất cứ khi nào CPU thực thi lệnh load hoặc store tới bộ nhớ với virtual address, địa chỉ ảo này phải được **dịch** sang physical address tương ứng trong RAM trước khi đọc hoặc ghi dữ liệu.
 
----
-
 Vì virtual memory là một abstraction quan trọng và cốt lõi do OS triển khai, nên **processor** (bộ xử lý) thường cung cấp một số hỗ trợ phần cứng cho virtual memory.  
 OS có thể tận dụng hỗ trợ phần cứng này để thực hiện việc dịch địa chỉ từ ảo sang vật lý nhanh chóng, tránh việc phải **trap** (ngắt) về OS để xử lý từng lần dịch địa chỉ.  
 
 Một OS cụ thể sẽ quyết định mức độ sử dụng hỗ trợ phần cứng cho **paging** (phân trang) trong việc triển khai virtual memory.  
 Thường tồn tại sự đánh đổi giữa **tốc độ** và **tính linh hoạt** khi lựa chọn giữa tính năng được triển khai bằng phần cứng và tính năng được triển khai bằng phần mềm.
-
----
 
 **Memory Management Unit** (MMU – đơn vị quản lý bộ nhớ) là phần phần cứng của máy tính thực hiện việc dịch địa chỉ.  
 MMU và OS phối hợp để dịch địa chỉ ảo sang địa chỉ vật lý khi ứng dụng truy cập bộ nhớ.  
@@ -182,22 +154,15 @@ Trong phần thảo luận này, chúng ta giả định một MMU hoàn chỉnh
 
 ![mmu maps virtual addresses to physical addresses](_images/mmu.png)
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 **Hình 4.** **Memory Management Unit** (MMU – đơn vị quản lý bộ nhớ) ánh xạ địa chỉ ảo (**virtual address**) sang địa chỉ vật lý (**physical address**).  
 Virtual address được sử dụng trong các lệnh do CPU thực thi.  
 Khi CPU cần nạp dữ liệu từ bộ nhớ vật lý, virtual address trước tiên sẽ được MMU dịch sang physical address, và địa chỉ vật lý này sẽ được dùng để truy cập RAM.
 
----
-
 OS duy trì **bảng ánh xạ bộ nhớ ảo** cho từng process để đảm bảo có thể dịch chính xác địa chỉ ảo sang địa chỉ vật lý cho bất kỳ process nào đang chạy trên CPU.  
 Trong quá trình **context switch** (chuyển ngữ cảnh), OS sẽ cập nhật phần cứng MMU để tham chiếu tới bảng ánh xạ bộ nhớ ảo–vật lý của process vừa được chuyển vào CPU.  
 
 OS bảo vệ các process khỏi việc truy cập vào không gian bộ nhớ của nhau bằng cách hoán đổi trạng thái ánh xạ địa chỉ của từng process trong mỗi lần context switch — việc hoán đổi này đảm bảo rằng virtual address của một process sẽ không ánh xạ tới physical address đang lưu trữ không gian địa chỉ ảo của process khác.
-
----
 
 ### 13.3.3. Phân trang (Paging)
 
@@ -209,15 +174,11 @@ Ngày nay, trong các hệ điều hành đa dụng, kích thước page thườ
 Tương tự, OS cũng chia bộ nhớ vật lý thành các khối có kích thước bằng page, gọi là **frame** (khung).  
 Vì page và frame có cùng kích thước, nên bất kỳ page nào của bộ nhớ ảo của một process cũng có thể được lưu trữ trong bất kỳ frame nào của RAM vật lý.
 
----
-
 Trong một hệ thống phân trang:
 
 - Page và frame có cùng kích thước, nên bất kỳ page nào của bộ nhớ ảo cũng có thể được nạp vào (lưu tại) bất kỳ frame vật lý nào của RAM.
 - Các page của một process **không cần** phải được lưu trong các frame RAM liên tiếp (tức là không cần nằm ở các địa chỉ liền kề nhau trong RAM).
 - Không phải tất cả các page của không gian địa chỉ ảo đều cần được nạp vào RAM để process có thể chạy.
-
----
 
 **Hình 5** minh họa ví dụ cách các page từ không gian địa chỉ ảo của một process có thể ánh xạ tới các frame của RAM vật lý.
 
@@ -228,8 +189,6 @@ Bất kỳ page nào của không gian địa chỉ ảo cũng có thể đượ
 Trong ví dụ này:  
 - Virtual page 1000 của P1 được lưu tại physical frame 100, và page 500 của nó nằm ở frame 513.  
 - Virtual page 1000 của P2 được lưu tại physical frame 880, và page 230 của nó nằm ở frame 102.
-
----
 
 #### Virtual Address và Physical Address trong hệ thống phân trang
 
@@ -248,13 +207,8 @@ Virtual address và physical address khác nhau ở các bit cao, vốn xác đ�
 
 ![virtual and physical address bits](_images/addrbits.png)
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 **Hình 6.** Các bit địa chỉ trong **virtual address** và **physical address**
-
----
 
 Ví dụ, hãy xét một hệ thống (rất nhỏ) với:
 
@@ -271,13 +225,9 @@ Vì kích thước page là 8 byte, nên **3 bit thấp** (low-order bits) của
 
 Như minh họa trong ví dụ ở **Hình 7**.
 
----
-
 ![interpreting address bits in example](_images/expavaaddrbits.png)
 
 **Hình 7.** Cách chia bit của virtual address và physical address trong một hệ thống ví dụ có virtual address 16 bit, physical address 14 bit, và kích thước page là 8 byte.
-
----
 
 Trong ví dụ ở **Hình 7**:
 
@@ -287,16 +237,12 @@ Trong ví dụ ở **Hình 7**:
 
 Điều này có nghĩa là địa chỉ ảo này nằm ở **byte thứ 5** tính từ đầu của **page 5419**.
 
----
-
 Nếu page này của bộ nhớ ảo được nạp vào **frame 43** (`0b00000101011`) của bộ nhớ vật lý, thì **physical address** sẽ là `349` (`0b00000101011101`), trong đó:
 
 - **3 bit thấp** (`0b101`) xác định byte offset.
 - **11 bit cao** (`0b00000101011`) xác định frame number.
 
 Điều này có nghĩa là địa chỉ vật lý này nằm ở **byte thứ 5** tính từ đầu của **frame 43** trong RAM.
-
----
 
 #### Page Table cho ánh xạ từ Virtual Page sang Physical Frame
 
@@ -308,22 +254,16 @@ Page table là một **data structure** (cấu trúc dữ liệu) do OS triển 
 **Hình 8** minh họa ví dụ OS lưu page table của hai process trong RAM.  
 Page table của mỗi process lưu ánh xạ từ các virtual page của nó sang các physical frame trong RAM, sao cho bất kỳ page nào của bộ nhớ ảo cũng có thể được lưu ở bất kỳ frame vật lý nào trong RAM.
 
----
-
 ![two process's page tables stored in RAM](_images/pagetables.png)
 
 **Hình 8.** Mỗi process có một page table chứa ánh xạ từ virtual page sang physical frame.  
 Page table, được lưu trong RAM, được hệ thống dùng để dịch virtual address của process sang physical address để truy cập vị trí trong RAM.  
 Ví dụ này cho thấy các page table riêng biệt được lưu trong RAM cho P1 và P2, mỗi bảng có ánh xạ riêng từ virtual page sang physical frame.
 
----
-
 Với mỗi page của bộ nhớ ảo, page table lưu một **page table entry** (**PTE**) chứa **frame number** của bộ nhớ vật lý (RAM) đang lưu page ảo đó.  
 
 Ngoài ra, một PTE có thể chứa các thông tin khác về page ảo, bao gồm **valid bit** (bit hợp lệ) dùng để chỉ ra liệu PTE có lưu một ánh xạ hợp lệ hay không.  
 Nếu valid bit của một page bằng 0, nghĩa là page đó trong không gian địa chỉ ảo của process hiện **chưa được nạp** vào bộ nhớ vật lý.
-
----
 
 ![page table entry](_images/pte.png)
 
@@ -331,9 +271,6 @@ Nếu valid bit của một page bằng 0, nghĩa là page đó trong không gia
 Chúng ta liệt kê frame number (23) ở dạng thập phân, mặc dù thực tế nó được mã hóa ở dạng nhị phân trong PTE (`0...010111`).  
 Valid bit bằng 1 cho biết entry này lưu một ánh xạ hợp lệ.
 
-Dưới đây là bản dịch tiếng Việt của phần bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 #### Sử dụng Page Table để ánh xạ từ Virtual Address sang Physical Address
 
@@ -341,8 +278,6 @@ Có **4 bước** để dịch một **virtual address** (địa chỉ ảo) san
 Tùy vào sự kết hợp cụ thể giữa **OS** và phần cứng, một phần hoặc toàn bộ các bước này có thể được thực hiện bởi OS hoặc phần cứng.  
 
 Trong phần mô tả này, ta giả định một **MMU** (Memory Management Unit – đơn vị quản lý bộ nhớ) đầy đủ tính năng, thực hiện càng nhiều công việc dịch địa chỉ bằng phần cứng càng tốt; tuy nhiên, trên một số hệ thống, OS có thể đảm nhận một phần các bước này.
-
----
 
 1. **MMU** chia các bit của virtual address thành hai phần:  
    - Với kích thước page là \( 2^k \) byte, **k bit thấp** (VA bit từ \(k-1\) đến 0) mã hóa **byte offset** (*d*) trong page.  
@@ -359,14 +294,10 @@ Trong phần mô tả này, ta giả định một **MMU** (Memory Management Un
    - Lấy các bit frame number (*f*) từ PTE làm **bit cao**.  
    - Lấy các bit page offset (*d*) từ VA làm **bit thấp** của physical address.
 
----
-
 ![the steps of address translation using PTE](_images/pagingxlation.png)
 
 **Hình 10.** Page table của một process được dùng để dịch từ virtual address sang physical address.  
 **PTBR** lưu địa chỉ gốc của page table của process đang chạy.
-
----
 
 #### Ví dụ: Ánh xạ VA sang PA bằng Page Table
 
@@ -393,8 +324,6 @@ Giả sử page table của process **P1** trong hệ thống này như **Bảng
 
 **Bảng 1.** Page table của process P1
 
----
-
 Từ ví dụ này, ta rút ra một số điểm quan trọng về kích thước địa chỉ, các thành phần của địa chỉ và việc dịch địa chỉ:
 
 - **Kích thước (số lượng entry) của page table** được xác định bởi số bit trong virtual address và kích thước page của hệ thống.  
@@ -414,9 +343,6 @@ Từ ví dụ này, ta rút ra một số điểm quan trọng về kích thư�
 - **Kích thước page**, số bit của virtual/physical address, và page table quyết định cách ánh xạ từ VA sang PA.  
   Ví dụ: nếu process P1 thực thi lệnh load từ virtual address `0b001110`, page table sẽ được dùng để dịch VA này sang physical address `0b1000010`, và địa chỉ này sẽ được dùng để truy cập giá trị trong RAM.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Các bước dịch **virtual address** (VA) sang **physical address** (PA) như sau:
 
@@ -435,8 +361,6 @@ Các bước dịch **virtual address** (VA) sang **physical address** (PA) như
    - Lấy 2 bit offset từ VA (`0b10`) làm **bit thấp**.  
    → Physical address là `0b1000010` (nằm ở frame 16 của RAM, byte offset 2).
 
----
-
 #### Triển khai Paging (Paging Implementation)
 
 Hầu hết phần cứng máy tính đều hỗ trợ ở mức nào đó cho **paged virtual memory**, và OS cùng phần cứng phối hợp để triển khai paging trên một hệ thống cụ thể.  
@@ -452,15 +376,11 @@ Nói cách khác:
 Một số kiến trúc có thể hỗ trợ **tra cứu toàn bộ page table** bằng cách xử lý các bit PTE trong phần cứng.  
 Nếu không, OS sẽ phải được **ngắt** để xử lý một số phần của quá trình tra cứu page table và truy cập các bit PTE để dịch VA sang PA.
 
----
-
 Khi **context switch**, OS sẽ **lưu và khôi phục** giá trị PTBR của các process để đảm bảo rằng khi một process chạy trên CPU, nó sẽ truy cập ánh xạ VA–PA của riêng nó từ page table của chính nó trong RAM.  
 
 Đây là một cơ chế giúp OS bảo vệ **virtual address space** của các process khỏi nhau:  
 - Việc thay đổi giá trị PTBR khi context switch đảm bảo một process **không thể** truy cập ánh xạ VA–PA của process khác.  
 - Nhờ đó, nó không thể đọc hoặc ghi dữ liệu tại các physical address đang lưu nội dung không gian địa chỉ ảo của bất kỳ process nào khác.
-
----
 
 #### Ví dụ: Ánh xạ VA–PA của hai process
 
@@ -470,7 +390,6 @@ Ví dụ, xét một hệ thống với:
 - Virtual address: **7 bit**  
 - Physical address: **6 bit**
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
 
 **Bảng trang của P1** | | | | **Bảng trang của P2** | | |
@@ -484,8 +403,6 @@ Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tu
 ...                   | ...   | ...      |  | ...                   | ...   | ...  
 
 **Bảng 2.** Ví dụ bảng trang của các process
-
----
 
 Với trạng thái hiện tại (chỉ hiển thị một phần) của bảng trang của hai process (P1 và P2) trong **Bảng 2**,  
 hãy tính **physical address** cho chuỗi **virtual memory address** sau được CPU tạo ra  
@@ -503,20 +420,14 @@ P2: 1011001
 P1: 1011001
 ```
 
----
-
 **Bước 1:** Xác định cách chia bit trong virtual address và physical address.  
 Vì kích thước page là 8 byte, **3 bit thấp** của mỗi địa chỉ mã hóa **page offset** (*d*).  
 Virtual address dài 7 bit → 3 bit thấp cho page offset, còn lại **4 bit cao** để xác định **page number** (*p*).  
 Physical address dài 6 bit → 3 bit thấp cho page offset, **3 bit cao** xác định **frame number**.
 
----
-
 **Bước 2:** Với mỗi virtual address, dùng các bit page number (*p*) để tra trong page table của process tương ứng, lấy **PTE** cho page *p*.  
 Nếu **valid bit** trong PTE = 1 → dùng **frame number** (*f*) làm các bit cao của PA.  
 Các bit thấp của PA lấy từ byte offset (*d*) của VA.
-
----
 
 Kết quả được thể hiện trong **Bảng 3** (lưu ý bảng trang nào được dùng để dịch địa chỉ ở mỗi bước):
 
@@ -535,8 +446,6 @@ Kết quả được thể hiện trong **Bảng 3** (lưu ý bảng trang nào 
 **Bảng 3.** Ánh xạ địa chỉ cho chuỗi truy cập bộ nhớ ví dụ từ P1 và P2.  
 Lưu ý rằng **context switch** sẽ thay đổi bảng trang được dùng để dịch địa chỉ.
 
----
-
 **Ví dụ giải thích:**  
 Xét lần truy cập địa chỉ đầu tiên của P1:  
 - P1 truy cập VA = 8 (`0b0000100`).  
@@ -544,17 +453,12 @@ Xét lần truy cập địa chỉ đầu tiên của P1:
 - Page number 0 → tra PTE entry 0: `valid bit = 1` (ánh xạ hợp lệ), `frame number = 3` (`0b011`).  
 - PA được tạo: bit cao = `0b011` (frame number), bit thấp = `0b100` (offset) → PA = `0b011100`.
 
----
-
 Khi P2 được **context switch** lên CPU, bảng trang của P2 sẽ được dùng.  
 Lưu ý rằng khi P1 và P2 truy cập cùng một VA `0b0010000`, chúng nhận được **physical address khác nhau**.  
 Nếu P2 truy cập một PTE có valid bit = 0, sẽ xảy ra **page fault**, yêu cầu OS xử lý.
 
 (TODO)
 
-Dưới đây là bản dịch tiếng Việt của mục **13.3.4. Memory Efficiency**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 13.3.4. Hiệu quả sử dụng bộ nhớ (Memory Efficiency)
 
@@ -562,15 +466,11 @@ Một trong những mục tiêu chính của **operating system** (OS – hệ �
 Hiệu năng của hệ thống phụ thuộc đặc biệt vào cách OS quản lý **memory hierarchy** (hệ thống phân cấp bộ nhớ).  
 Ví dụ: nếu một **process** truy cập dữ liệu được lưu trong RAM, nó sẽ chạy nhanh hơn nhiều so với khi dữ liệu đó nằm trên đĩa.
 
----
-
 OS luôn cố gắng tăng **mức độ multiprogramming** (đa chương trình) trong hệ thống để giữ cho CPU bận rộn thực hiện công việc thực sự, ngay cả khi một số process đang bị **blocked** (chặn) chờ một sự kiện như **disk I/O**.  
 Tuy nhiên, vì RAM là bộ nhớ có dung lượng cố định, OS phải quyết định process nào sẽ được nạp vào RAM tại mỗi thời điểm, điều này có thể giới hạn mức độ multiprogramming của hệ thống.  
 
 Ngay cả những hệ thống có lượng RAM lớn (hàng chục hoặc hàng trăm gigabyte) cũng thường không thể đồng thời lưu trữ toàn bộ **address space** (không gian địa chỉ) của tất cả các process trong hệ thống.  
 Do đó, OS có thể sử dụng tài nguyên hiệu quả hơn bằng cách chỉ chạy các process với **một phần** không gian địa chỉ ảo của chúng được nạp vào RAM.
-
----
 
 #### Triển khai Virtual Memory bằng RAM, đĩa và thay thế trang (Page Replacement)
 
@@ -580,16 +480,12 @@ Trong ngữ cảnh **paging**, điều này có nghĩa là các process có xu h
 Nó cũng có nghĩa là tại bất kỳ thời điểm nào trong quá trình thực thi, một process thường **không** truy cập một phạm vi lớn trong không gian địa chỉ của nó.  
 Trên thực tế, các process thường **không bao giờ** sử dụng hết toàn bộ không gian stack hoặc heap của mình.
 
----
-
 Một cách để OS sử dụng hiệu quả cả RAM và CPU là **coi RAM như một bộ nhớ đệm (cache) cho đĩa**.  
 Bằng cách này, OS cho phép các process chạy trong hệ thống chỉ với **một số** page bộ nhớ ảo của chúng được nạp vào các **physical frame** của RAM.  
 Các page bộ nhớ ảo khác vẫn nằm trên **secondary storage** (bộ nhớ phụ) như đĩa, và OS chỉ nạp chúng vào RAM khi process truy cập tới địa chỉ thuộc các page đó.  
 
 Đây là một phần khác của abstraction **virtual memory** — OS triển khai một góc nhìn về một “bộ nhớ vật lý” lớn duy nhất, được xây dựng từ RAM kết hợp với đĩa hoặc các thiết bị lưu trữ phụ khác.  
 Lập trình viên **không cần** quản lý thủ công bộ nhớ của chương trình, cũng như không cần xử lý việc di chuyển dữ liệu vào/ra RAM khi chương trình cần.
-
----
 
 Bằng cách coi RAM như cache cho đĩa, OS chỉ giữ trong RAM **những page** từ không gian địa chỉ ảo của các process **đang được truy cập** hoặc **vừa được truy cập gần đây**.  
 Kết quả là:
@@ -600,8 +496,6 @@ Kết quả là:
 Điều này giúp sử dụng RAM hiệu quả hơn vì OS chỉ dùng RAM để lưu các page thực sự được dùng, tránh lãng phí dung lượng RAM cho các page sẽ không được truy cập trong thời gian dài hoặc không bao giờ.  
 
 Nó cũng giúp CPU hoạt động hiệu quả hơn bằng cách cho phép nhiều process cùng chia sẻ RAM để lưu các page đang hoạt động, từ đó tăng số lượng process ở trạng thái **ready** trong hệ thống, giảm thời gian CPU rảnh do tất cả process đều đang chờ sự kiện như disk I/O.
-
----
 
 Tuy nhiên, trong hệ thống virtual memory, đôi khi process cố gắng truy cập một page **chưa được lưu trong RAM** (gây ra **page fault**).  
 Khi xảy ra page fault, OS cần đọc page đó từ đĩa vào RAM trước khi process có thể tiếp tục thực thi.  
@@ -615,9 +509,6 @@ Khi gặp một PTE có valid bit = 0, MMU sẽ **trap** (ngắt) về OS, và O
 4. **Khởi động lại process** tại lệnh đã gây ra page fault.  
    Lúc này, page table đã có ánh xạ hợp lệ cho page bị lỗi, process có thể truy cập địa chỉ bộ nhớ ảo ánh xạ tới offset trong physical frame *j*.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Để xử lý **page fault**, OS cần theo dõi những **RAM frame** nào đang trống để có thể tìm một frame trống và nạp page được đọc từ đĩa vào đó.  
 Hệ điều hành thường duy trì một **danh sách các frame trống** sẵn sàng để cấp phát khi xảy ra page fault.  
@@ -632,8 +523,6 @@ PTE thường bao gồm một **dirty bit** để cho biết bản sao trong RAM
 Trong quá trình thay thế trang, nếu dirty bit của page bị thay thế được đặt, page đó cần được ghi ra đĩa trước khi thay bằng page bị lỗi.  
 Nếu dirty bit = 0, bản trên đĩa của page bị thay thế giống với bản trong RAM, và page không cần ghi ra đĩa khi bị thay thế.
 
----
-
 Trong phần thảo luận về **virtual memory**, chúng ta chủ yếu tập trung vào phần **mechanism** (cơ chế) của việc triển khai bộ nhớ ảo phân trang.  
 Tuy nhiên, còn một phần quan trọng khác là **policy** (chính sách) trong việc triển khai paging của OS.  
 
@@ -646,8 +535,6 @@ LRU hoạt động tốt khi các truy cập bộ nhớ có tính cục bộ cao
 Ngoài ra còn nhiều chính sách khác mà OS có thể lựa chọn để triển khai.  
 Xem thêm trong giáo trình hệ điều hành để biết chi tiết về các chính sách thay thế trang.
 
----
-
 #### Tăng tốc độ truy cập trang (Making Page Accesses Faster)
 
 Mặc dù **paging** có nhiều lợi ích, nó cũng gây ra sự **chậm lại đáng kể** cho mỗi lần truy cập bộ nhớ.  
@@ -658,13 +545,9 @@ Trong hệ thống bộ nhớ ảo phân trang, mỗi lệnh **load** hoặc **s
 
 Do đó, trong hệ thống bộ nhớ ảo phân trang, mỗi lần truy cập bộ nhớ sẽ chậm gấp đôi so với hệ thống hỗ trợ truy cập trực tiếp vào RAM vật lý.
 
----
-
 Một cách để giảm chi phí phụ trội của paging là **cache** (lưu tạm) ánh xạ từ virtual page number sang physical frame number.  
 Khi dịch một virtual address, **MMU** sẽ kiểm tra page number trong cache trước.  
 Nếu tìm thấy, ánh xạ frame number của page có thể được lấy trực tiếp từ cache entry, tránh được một lần truy cập RAM để đọc PTE.
-
----
 
 **Translation Look-aside Buffer** (**TLB**) là một **hardware cache** (bộ nhớ đệm phần cứng) lưu trữ các ánh xạ (page number, frame number).  
 Đây là một cache nhỏ, **fully associative** (liên kết đầy đủ), được tối ưu hóa cho việc tra cứu nhanh trong phần cứng.  
@@ -675,14 +558,9 @@ Nếu tìm thấy, ánh xạ frame number của page có thể được lấy tr
 
 Với tính cục bộ cao trong các truy cập bộ nhớ, **tỉ lệ hit** trong TLB thường rất cao, giúp truy cập bộ nhớ trong hệ thống bộ nhớ ảo phân trang nhanh hơn nhiều — hầu hết các truy cập bộ nhớ ảo chỉ cần **một** lần truy cập RAM.
 
----
-
 ![TLB lookup for virtual page to physical frame mapping](_images/tlb.png)
 
 **Hình 11.** **Translation Look-aside Buffer** (TLB) là một cache phần cứng nhỏ lưu trữ ánh xạ từ virtual page sang physical frame.  
 TLB được tìm kiếm trước cho entry của page *p*. Nếu tìm thấy, không cần tra cứu page table để dịch địa chỉ ảo sang địa chỉ vật lý.
 
----
-
-Bạn có muốn mình dịch tiếp sang **13.4. Interprocess Communication** để nối tiếp nội dung không?
 

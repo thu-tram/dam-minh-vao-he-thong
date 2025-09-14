@@ -1,7 +1,4 @@
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 ## 7.8. Ma trận (Matrices)
 
@@ -42,8 +39,6 @@ M3 = malloc(ROWS * COLS * sizeof(int));
 ```
 
 Với khai báo `M3`, phần tử (*i*, *j*) **không thể** truy cập bằng cú pháp `M[i][j]`. Thay vào đó, chúng ta phải truy cập bằng công thức `M3[i*COLS + j]`.
-
----
 
 ### 7.8.1. Ma trận hai chiều liên tiếp (Contiguous Two-Dimensional Arrays)
 
@@ -100,9 +95,6 @@ Dump of assembler code for function sumMat:
 0x4006ec <+102>: pop  %rbp                 # dọn dẹp stack
 ```
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 Các biến cục bộ `i`, `j` và `total` lần lượt được lưu tại các địa chỉ `%rbp-0xc`, `%rbp-0x8` và `%rbp-0x4` trên stack. Các tham số đầu vào `m`, `row` và `cols` lần lượt được lưu tại `%rbp-0x18`, `%rbp-0x1c` và `%rbp-0x20`. Với thông tin này, hãy phóng to vào phần chỉ xử lý việc truy cập phần tử (*i*, *j*) trong ma trận:
 
@@ -114,8 +106,6 @@ Các biến cục bộ `i`, `j` và `total` lần lượt được lưu tại c�
 
 Bộ lệnh đầu tiên tính giá trị `i*cols` và đặt vào thanh ghi `%edx`. Hãy nhớ rằng với một ma trận tên `matrix`, biểu thức `matrix + (i * cols)` tương đương với `&matrix[i]`.
 
----
-
 ```
 0x4006b6 <+48>: mov  -0x8(%rbp),%eax    # copy j to %eax
 0x4006b9 <+51>: add  %edx,%eax          # add i*cols with j, place in %eax
@@ -124,8 +114,6 @@ Bộ lệnh đầu tiên tính giá trị `i*cols` và đặt vào thanh ghi `%e
 ```
 
 Bộ lệnh tiếp theo tính `(i*cols + j) * 4`. Compiler nhân chỉ số `i*cols + j` với 4 vì mỗi phần tử trong ma trận là một số nguyên 4 byte, và phép nhân này giúp tính đúng offset. Lệnh `cltq` ở dòng `<sumMat+53>` được dùng để **sign-extend** nội dung của `%eax` thành số nguyên 64-bit, vì giá trị này sắp được dùng để tính địa chỉ.
-
----
 
 Tiếp theo, bộ lệnh sau cộng offset vừa tính vào con trỏ ma trận và dereference để lấy giá trị phần tử (*i*, *j*):
 
@@ -141,16 +129,12 @@ Tiếp theo, bộ lệnh sau cộng offset vừa tính vào con trỏ ma trận 
 - Lệnh thứ ba dereference địa chỉ trong `%rax` và đặt giá trị vào `%eax`. Lưu ý việc dùng `%eax` làm thanh ghi đích: vì ma trận chứa số nguyên (4 byte), nên **component register** `%eax` được dùng thay vì `%rax`.  
 - Lệnh cuối cộng giá trị trong `%eax` vào biến tích lũy `total` tại `%rbp-0x4`.
 
----
-
 Hãy xét cách truy cập phần tử (1,2) trong **Hình 2** (được lặp lại dưới đây):
 
 ![matrixArray](_images/matrixArray.png)  
 **Hình 3.** Cách sắp xếp bộ nhớ của ma trận M1 theo thứ tự hàng (row-major order)
 
 Phần tử (1,2) nằm tại địa chỉ `M1 + 1*COLS + 2`. Vì `COLS = 3`, phần tử (1,2) tương ứng với `M1 + 5`. Để truy cập phần tử này, compiler phải nhân 5 với kích thước kiểu dữ liệu `int` (4 byte), thu được offset `M1 + 20`, tương ứng với byte x~20~ trong hình. Dereference vị trí này sẽ lấy được giá trị 5, chính là phần tử (1,2) trong ma trận.
-
----
 
 ### 7.8.2. Ma trận không liên tiếp (Noncontiguous Matrix)
 
@@ -178,8 +162,6 @@ int sumMatrix(int **matrix, int rows, int cols) {
 
 Mặc dù hàm này trông gần như giống hệt `sumMat` ở trên, ma trận mà nó nhận vào là một mảng liên tiếp các *con trỏ*. Mỗi con trỏ chứa địa chỉ của một mảng liên tiếp khác, tương ứng với một hàng riêng trong ma trận.
 
----
-
 Mã assembly tương ứng của `sumMatrix` (mỗi dòng được chú thích):
 
 ```
@@ -204,9 +186,6 @@ Dump of assembler code for function sumMatrix:
 0x40072f <+65>:  movsl
 ```
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 Một lần nữa, các biến `i`, `j` và `total` lần lượt nằm tại các địa chỉ stack `%rbp-0xc`, `%rbp-0x8` và `%rbp-0x4`. Các tham số đầu vào `matrix`, `row` và `cols` lần lượt nằm tại các địa chỉ stack `%rbp-0x18`, `%rbp-0x1c` và `%rbp-0x20`.  
 Hãy phóng to vào đoạn mã xử lý riêng việc truy cập phần tử (*i*, *j*), hay `matrix[i][j]`:
@@ -225,8 +204,6 @@ Vì `matrix[i]` chứa một con trỏ, nên `i` trước tiên được chuyể
 
 Vì `matrix` là một mảng các con trỏ `int`, phần tử tại `matrix[i]` bản thân nó là một con trỏ `int`. Phần tử thứ *j* trong `matrix[i]` nằm tại offset `j × 4` trong mảng `matrix[i]`.
 
----
-
 Bộ lệnh tiếp theo trích xuất phần tử thứ *j* trong mảng `matrix[i]`:
 
 ```
@@ -243,8 +220,6 @@ Bộ lệnh tiếp theo trích xuất phần tử thứ *j* trong mảng `matrix
 - Compiler sau đó dùng lệnh dịch trái (`shl`) để nhân `j` với 4 và lưu kết quả vào `%rdx`.  
 - Compiler cuối cùng cộng giá trị này vào địa chỉ trong `matrix[i]` để lấy địa chỉ của phần tử `matrix[i][j]`.  
 - Các lệnh tại `<sumMatrix+75>` và `<sumMatrix+77>` lấy giá trị tại `matrix[i][j]` và cộng giá trị này vào `total`.
-
----
 
 Hãy quay lại **Hình 4** và xét ví dụ truy cập `M2[1][2]`.  
 Để tiện theo dõi, hình được lặp lại dưới đây:

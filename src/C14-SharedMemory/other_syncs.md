@@ -3,8 +3,6 @@
 **Mutex** và **semaphore** không phải là những ví dụ duy nhất về cấu trúc đồng bộ hóa có thể được sử dụng trong ngữ cảnh các chương trình đa luồng.  
 Trong tiểu mục này, chúng ta sẽ thảo luận ngắn gọn về hai cấu trúc đồng bộ hóa khác là **barrier** và **condition variable**, cả hai đều là một phần của thư viện **Pthreads**.
 
----
-
 #### Barriers
 
 **Barrier** là một loại cấu trúc đồng bộ hóa buộc **tất cả** các thread phải đạt đến một điểm chung trong quá trình thực thi trước khi cho phép chúng tiếp tục chạy song song.  
@@ -15,8 +13,6 @@ Pthreads cung cấp một primitive đồng bộ hóa dạng barrier.
 - Khởi tạo barrier trong `main` (`pthread_barrier_init(&barrier)`)
 - Hủy barrier trong `main` sau khi sử dụng (`pthread_barrier_destroy(&barrier)`)
 - Sử dụng hàm `pthread_barrier_wait` để tạo một điểm đồng bộ hóa.
-
----
 
 Chương trình sau minh họa cách sử dụng barrier trong một hàm có tên `threadEx`:
 
@@ -44,8 +40,6 @@ Trong ví dụ này, **không thread nào** có thể bắt đầu xử lý ph�
 Nếu không có barrier, có thể một thread đã hoàn thành công việc trước khi các thread khác kịp in thông báo bắt đầu.  
 Lưu ý rằng **vẫn** có thể xảy ra trường hợp một thread in thông báo hoàn thành công việc trước khi một thread khác thực sự kết thúc.
 
----
-
 #### Condition Variables
 
 **Condition variable** buộc một thread phải **block** (chặn) cho đến khi một điều kiện cụ thể được thỏa mãn.  
@@ -55,15 +49,11 @@ Nếu không có condition variable, thread sẽ phải liên tục kiểm tra x
 Condition variable **luôn** được sử dụng cùng với mutex.  
 Trong loại cấu trúc đồng bộ hóa này, mutex đảm bảo **mutual exclusion** (loại trừ lẫn nhau), trong khi condition variable đảm bảo rằng điều kiện cụ thể được đáp ứng trước khi một thread giành được mutex.
 
----
-
 Condition variable trong POSIX có kiểu `pthread_cond_t`.  
 Giống như mutex và barrier, condition variable phải được **khởi tạo trước khi sử dụng** và **hủy sau khi sử dụng**.
 
 - Để khởi tạo condition variable, dùng hàm `pthread_cond_init`.
 - Để hủy condition variable, dùng hàm `pthread_cond_destroy`.
-
----
 
 Hai hàm thường được gọi khi sử dụng condition variable là `pthread_cond_wait` và `pthread_cond_signal`.  
 Cả hai hàm này đều yêu cầu **địa chỉ của một mutex** ngoài địa chỉ của condition variable:
@@ -74,8 +64,6 @@ Cả hai hàm này đều yêu cầu **địa chỉ của một mutex** ngoài �
 - `pthread_cond_signal(&cond)`: khiến thread gọi hàm này **đánh thức** một thread khác đang chờ trên condition variable `cond` (theo ưu tiên lập lịch).  
   Nếu không có thread nào đang bị block trên condition đó, hàm sẽ không có tác dụng.  
   Khác với `pthread_cond_wait`, hàm `pthread_cond_signal` có thể được gọi bởi một thread **bất kể** nó có đang giữ mutex liên quan hay không.
-
----
 
 #### Ví dụ về Condition Variable
 
@@ -132,9 +120,6 @@ Sau đó, nó tạo **hai thread Chicken** và **hai thread Farmer**.
 
 
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Mỗi **Chicken thread** (thread “gà”) chịu trách nhiệm đẻ một số lượng trứng nhất định:
 
@@ -168,8 +153,6 @@ void *chicken(void *args ) {
 Để đẻ một quả trứng, Chicken thread sẽ **ngủ** một lúc, sau đó **giành mutex** và cập nhật tổng số trứng hiện có (`num_eggs`) tăng thêm 1.  
 Trước khi **nhả mutex**, Chicken thread sẽ **đánh thức** một Farmer thread đang ngủ (có thể là bằng tiếng kêu “cục tác”).  
 Chicken thread lặp lại chu trình này cho đến khi đẻ hết số trứng mà nó dự định (`total_eggs`).
-
----
 
 Mỗi **Farmer thread** (thread “nông dân”) chịu trách nhiệm thu thập `total_eggs` quả trứng từ đàn gà (có thể là để ăn sáng):
 
@@ -208,17 +191,11 @@ void *farmer(void *args ) {
 Mỗi Farmer thread sẽ **giành mutex** trước khi kiểm tra biến chia sẻ `num_eggs` để xem có trứng nào sẵn sàng không (`*num_eggs == 0`).  
 Trong khi **không có** trứng, Farmer thread sẽ **block** (tức là “ngủ”).
 
----
-
 Sau khi Farmer thread được “đánh thức” bởi tín hiệu từ một Chicken thread, nó sẽ kiểm tra lại xem trứng vẫn còn không (vì có thể một Farmer khác đã lấy trước).  
 Nếu còn, Farmer sẽ “thu thập” trứng (giảm `num_eggs` đi 1) và **nhả mutex**.
 
----
-
 Theo cách này, Chicken và Farmer phối hợp nhịp nhàng để đẻ và thu thập trứng.  
 **Condition variable** đảm bảo rằng không Farmer thread nào thu thập trứng cho đến khi trứng được đẻ bởi một Chicken thread.
-
----
 
 #### Broadcasting
 
@@ -279,16 +256,10 @@ Trong ví dụ này, condition variable được đặt tên là `barrier`.
 Khi mỗi thread giành được lock, nó sẽ tăng biến `n_reached` — số lượng thread đã đến điểm barrier.  
 Trong khi số thread đã đến barrier **nhỏ hơn** tổng số thread, thread sẽ **chờ** trên condition variable `barrier` và mutex `mutex`.
 
----
-
 Tuy nhiên, khi **thread cuối cùng** đến barrier, nó sẽ gọi `pthread_cond_broadcast(&barrier)`, giải phóng **tất cả** các thread khác đang chờ trên condition variable `barrier`, cho phép chúng tiếp tục thực thi.
-
----
 
 Ví dụ này hữu ích để minh họa hàm `pthread_cond_broadcast`;  
 tuy nhiên, tốt nhất là nên sử dụng **Pthreads barrier primitive** bất cứ khi nào cần barrier trong chương trình.
-
----
 
 Một câu hỏi mà sinh viên thường đặt ra là:  
 Vòng lặp `while` bao quanh lời gọi `pthread_cond_wait` trong code `farmer` và `threadEx_v2` có thể thay bằng câu lệnh `if` không?  

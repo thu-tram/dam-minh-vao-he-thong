@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **14.5. Cache Coherence and False Sharing**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 14.5. Tính nhất quán bộ nhớ đệm (Cache Coherence) và Chia sẻ sai (False Sharing)
 
@@ -25,8 +22,6 @@ Trước tiên, hãy cùng điểm lại nhanh một số [khái niệm cơ bả
   - **Write-through**: dữ liệu được ghi đồng thời vào cache và main memory.  
   - **Write-back**: dữ liệu chỉ được ghi vào cache và sẽ được ghi xuống các mức thấp hơn trong hierarchy **sau khi** block bị loại bỏ (evict) khỏi cache.
 
----
-
 ### 14.5.1. Cache trên hệ thống đa lõi (Caches on Multicore Systems)
 
 [Nhớ lại](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors) rằng, trong **shared memory architecture** (kiến trúc bộ nhớ chia sẻ), mỗi **core** có thể có cache riêng, và nhiều core có thể chia sẻ một cache chung.  
@@ -34,13 +29,9 @@ Trước tiên, hãy cùng điểm lại nhanh một số [khái niệm cơ bả
 **Hình 1** minh họa một ví dụ CPU hai lõi (**dual-core CPU**).  
 Mặc dù mỗi core có **L1 cache** riêng, nhưng cả hai core chia sẻ chung một **L2 cache**.
 
----
-
 ![dual core processor with separate L1 caches and shared L2 cache](_images/multicore-cache.png)
 
 **Hình 1.** Ví dụ CPU hai lõi với L1 cache riêng và L2 cache dùng chung
-
----
 
 Nhiều **thread** trong cùng một chương trình thực thi có thể chạy các **function** khác nhau.  
 Nếu không có [**cache coherence strategy**](../C11-MemHierarchy/coherency.html#_cache_coherency) (chiến lược đảm bảo tính nhất quán bộ nhớ đệm) để đảm bảo mỗi cache duy trì một góc nhìn nhất quán về bộ nhớ chia sẻ, các biến chia sẻ có thể bị cập nhật **không đồng bộ**.
@@ -61,8 +52,6 @@ Ví dụ: xét CPU hai lõi trong **Hình 1**, mỗi core đang chạy một thr
 
 **Bảng 1.** Chia sẻ dữ liệu gây vấn đề do caching
 
----
-
 Giả sử giá trị ban đầu của `g` là **10**, và giá trị ban đầu của `x` và `y` đều là **0**.  
 Vậy giá trị cuối cùng của `y` sau chuỗi thao tác này là bao nhiêu?  
 
@@ -71,8 +60,6 @@ Không có **cache coherence**, đây là câu hỏi rất khó trả lời, vì
 1. Một bản trong **L1 cache** của Core 0.  
 2. Một bản trong **L1 cache** của Core 1.  
 3. Một bản khác trong **L2 cache** dùng chung.
-
----
 
 ![A problematic update to the caches](_images/mc-cache-example.png)
 
@@ -85,30 +72,20 @@ Giá trị `g` trong **L1 cache** của Core 1 vẫn là `10`, và bản sao tro
 Ngay cả khi sử dụng **write-through policy** (chính sách ghi-xuyên), cũng không có gì đảm bảo rằng bản sao `g` trong L1 cache của Core 1 sẽ được cập nhật!  
 Trong trường hợp này, `y` sẽ có giá trị cuối cùng là **60**.
 
----
-
 Một **cache coherence strategy** (chiến lược đảm bảo tính nhất quán bộ nhớ đệm) sẽ **invalide** (vô hiệu hóa) hoặc **update** (cập nhật) các bản sao dữ liệu chia sẻ trong các cache khác khi một cache ghi dữ liệu vào giá trị chia sẻ đó.  
 **Protocol Modified Shared Invalid (MSI)** (xem chi tiết trong [Chương 11.6](../C11-MemHierarchy/coherency.html#_the_msi_protocol)) là một ví dụ về **invalidating cache coherence protocol** (giao thức nhất quán bộ nhớ đệm kiểu vô hiệu hóa).
-
----
 
 Một kỹ thuật phổ biến để triển khai MSI là **snooping**.  
 Một **snoopy cache** sẽ “nghe lén” (snoop) trên **memory bus** để phát hiện các tín hiệu ghi.  
 Nếu snoopy cache phát hiện một thao tác ghi vào một **shared cache block** (khối cache chia sẻ), nó sẽ **invalidate** line chứa block đó.  
 Kết quả là chỉ còn **một bản hợp lệ duy nhất** của block nằm trong cache vừa được ghi, trong khi **tất cả các bản sao khác** của block trong các cache khác sẽ bị đánh dấu là **invalid**.
 
----
-
 Việc áp dụng giao thức MSI với snooping sẽ cho ra kết quả đúng là gán giá trị **30** cho biến `y` trong ví dụ trước.
-
----
 
 ### 14.5.2. False Sharing
 
 **Cache coherence** đảm bảo tính đúng đắn, nhưng nó cũng có thể gây ảnh hưởng tiêu cực đến hiệu năng.  
 Hãy nhớ rằng khi thread trên Core 0 cập nhật `g`, **snoopy cache** sẽ **invalidate** không chỉ `g`, mà **toàn bộ cache line** chứa `g`.
-
----
 
 Xét [phiên bản thử nghiệm ban đầu](_attachments/countElems_p.c) của chúng ta khi **parallelize** (song song hóa) hàm `countElems` trong thuật toán **CountSort**.  
 Để tiện theo dõi, hàm này được trích lại ở đây:
@@ -162,21 +139,15 @@ Time for Step 1 is 0.767003 s
 
 Ngay cả **khi không có bất kỳ cơ chế đồng bộ nào**, phiên bản này của chương trình **vẫn chạy chậm hơn** khi số lượng thread tăng lên!
 
----
-
 Để hiểu chuyện gì đang xảy ra, hãy xem lại mảng `counts`.  
 Mảng `counts` lưu tần suất xuất hiện của mỗi số trong mảng đầu vào.  
 Giá trị lớn nhất được xác định bởi biến `MAX`.  
 Trong chương trình ví dụ, `MAX = 10`.  
 Nói cách khác, mảng `counts` chiếm **40 byte** dung lượng.
 
----
-
 Hãy nhớ rằng thông tin [cache details](../C11-MemHierarchy/coherency.html#_looking_ahead_caching_on_multicore_processors) trên hệ thống Linux nằm trong thư mục `/sys/devices/system/cpu/`.  
 Mỗi **logical core** có thư mục con `cpuk` (trong đó `k` là số thứ tự core).  
 Mỗi thư mục `cpu` lại có các thư mục `index` riêng, biểu thị các cache có sẵn cho core đó.
-
----
 
 Các thư mục `index` chứa nhiều tệp mô tả chi tiết về cache của từng logical core.  
 Nội dung ví dụ của thư mục `index0` (thường tương ứng với L1 cache trên Linux) như sau:
@@ -198,8 +169,6 @@ $ cat /sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size
 
 Kết quả cho thấy **L1 cache line size** của máy là **64 byte**.  
 Điều này có nghĩa là mảng `counts` 40 byte **nằm gọn trong một cache line**.
-
----
 
 Hãy nhớ rằng với các **invalidating cache coherence protocol** như MSI, mỗi khi chương trình cập nhật một biến chia sẻ, **toàn bộ cache line** trong các cache khác chứa biến đó sẽ bị **invalidate**.  
 
@@ -234,12 +203,8 @@ Một kịch bản thực thi có thể xảy ra được thể hiện trong **B
 
 - Kết quả là, mặc dù đang cập nhật **các vị trí bộ nhớ khác nhau** trong `counts`, nhưng bất kỳ cache line nào chứa `counts` cũng sẽ bị **invalidate** với **mỗi lần cập nhật** `counts`!
 
----
-
 Việc invalidation buộc tất cả các L1 cache phải cập nhật lại cache line này bằng một phiên bản “hợp lệ” từ L2.  
 Việc lặp đi lặp lại quá trình invalidation và ghi đè cache line từ L1 cache là một ví dụ về **thrashing** — khi các xung đột lặp lại trong cache gây ra hàng loạt **cache miss**.
-
----
 
 Khi số lượng core tăng, vấn đề càng trở nên nghiêm trọng, vì lúc này có nhiều L1 cache hơn cùng thực hiện invalidation trên cache line.  
 Kết quả là, việc thêm thread mới sẽ làm **thời gian chạy chậm lại**, mặc dù mỗi thread đang truy cập các phần tử **khác nhau** của mảng `counts`!  
@@ -247,21 +212,15 @@ Kết quả là, việc thêm thread mới sẽ làm **thời gian chạy chậm
 Đây là một ví dụ về **false sharing** — hiện tượng “ảo giác” rằng các phần tử riêng lẻ đang được nhiều core chia sẻ.  
 Trong ví dụ trước, có vẻ như tất cả các core đang truy cập cùng một phần tử của `counts`, mặc dù thực tế không phải vậy.
 
----
-
 ### 14.5.3. Khắc phục False Sharing
 
 Một cách để khắc phục false sharing là **padding** (đệm) mảng (trong trường hợp này là `counts`) bằng các phần tử bổ sung để nó **không vừa** trong một cache line.  
 Tuy nhiên, padding có thể gây **lãng phí bộ nhớ** và có thể **không loại bỏ hoàn toàn vấn đề** trên mọi kiến trúc (ví dụ: hai máy khác nhau có kích thước L1 cache khác nhau).  
 Trong hầu hết các trường hợp, việc viết mã để hỗ trợ nhiều kích thước cache thường **không đáng** so với lợi ích hiệu năng thu được.
 
----
-
 Một giải pháp tốt hơn là để các thread ghi vào **local storage** (bộ nhớ cục bộ) bất cứ khi nào có thể.  
 Trong ngữ cảnh này, local storage là vùng nhớ **cục bộ** cho một thread.  
 Giải pháp sau đây giảm false sharing bằng cách thực hiện cập nhật vào một biến `counts` cục bộ được khai báo riêng, gọi là `local_counts`.
-
----
 
 Hãy xem lại phiên bản cuối cùng của hàm `countElems` (trích từ [countElems_p_v3.c](_attachments/countElems_p_v3.c)):
 
@@ -313,8 +272,6 @@ for (i = start; i < end; i++){
 
 Vì **cache coherence** được thiết kế để duy trì góc nhìn nhất quán về bộ nhớ chia sẻ, nên invalidation chỉ xảy ra khi **ghi** vào **giá trị chia sẻ** trong bộ nhớ.  
 Do `local_counts` **không được chia sẻ** giữa các thread, việc ghi vào nó sẽ **không** làm invalidate cache line tương ứng.
-
----
 
 Trong phần cuối của mã, **mutex** đảm bảo tính đúng đắn bằng cách chỉ cho phép **một thread** cập nhật mảng `counts` chia sẻ tại một thời điểm:
 

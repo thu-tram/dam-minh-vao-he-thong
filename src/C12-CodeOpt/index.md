@@ -17,14 +17,10 @@ Cuối cùng, mức tối ưu hóa 3 (`-O3`) thực hiện thêm các tối ưu 
 Việc thảo luận chi tiết về optimizing compiler và cách xây dựng, vận hành của chúng nằm ngoài phạm vi của cuốn sách này; chúng tôi khuyến khích bạn đọc quan tâm tìm hiểu cuốn sách kinh điển *Compilers: Principles, Techniques, and Tools* của Aho, Sethi và Ullman.  
 Mục đích của chương này là làm nổi bật một số điều mà hầu hết các trình biên dịch có thể (và không thể) làm, cũng như cách lập trình viên có thể phối hợp với trình biên dịch và các công cụ profiling để giúp cải thiện mã của mình.
 
----
-
 ### Những gì trình biên dịch đã làm sẵn
 
 Một số tối ưu hóa phổ biến được hầu hết mọi trình biên dịch thực hiện sẽ được mô tả ngắn gọn trong các phần tiếp theo.  
 Sinh viên *không bao giờ* nên tự tay triển khai các tối ưu hóa này, vì chúng đã được trình biên dịch thực hiện sẵn.
-
----
 
 **Constant Folding** (gộp hằng)
 
@@ -35,8 +31,6 @@ Sinh viên *không bao giờ* nên tự tay triển khai các tối ưu hóa nà
 #define N 5
 int debug = N - 5; // constant folding thay đổi câu lệnh này thành debug = 0;
 ```
-
----
 
 **Constant Propagation** (truyền hằng)
 
@@ -60,8 +54,6 @@ int doubleSum(int *array, int length){
 ```
 
 Một trình biên dịch áp dụng constant propagation sẽ thay `if (debug)` thành `if (0)`.
-
----
 
 **Dead Code Elimination** (loại bỏ mã chết)
 
@@ -92,16 +84,12 @@ Một trình biên dịch sử dụng dataflow analysis sẽ nhận ra rằng c�
 Do đó, trình biên dịch sẽ loại bỏ câu lệnh `if` và lời gọi `printf` trong file thực thi đã biên dịch.  
 Một lượt tối ưu khác cũng sẽ loại bỏ câu lệnh `debug = 0`.
 
----
-
 **Simplifying expressions** (đơn giản hóa biểu thức)
 
 :   Một số lệnh tốn nhiều chi phí hơn các lệnh khác.  
     Ví dụ, các lệnh số học `imul` và `idiv` trong assembly mất nhiều thời gian để thực thi.  
     Trình biên dịch thường cố gắng giảm số lượng các lệnh tốn kém này bằng cách đơn giản hóa các phép toán bất cứ khi nào có thể.  
     Ví dụ, trong hàm `doubleSum`, trình biên dịch có thể thay biểu thức `2 * total` bằng `total + total` vì lệnh cộng ít tốn chi phí hơn phép nhân:
-
----
 
 ```
 //declaration of debug removed through dead-code elimination
@@ -117,22 +105,15 @@ int doubleSum(int *array, int length){
 }
 ```
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Tương tự, trình biên dịch cũng sẽ biến đổi các đoạn mã sử dụng **bit-shifting** (dịch bit) và các toán tử bitwise khác để đơn giản hóa biểu thức.  
 Ví dụ, trình biên dịch có thể thay biểu thức `total * 8` bằng `total << 3`, hoặc thay biểu thức `total % 8` bằng `total & 7`, vì các phép toán bitwise được thực hiện chỉ với một lệnh nhanh duy nhất.
-
----
 
 ### Những gì trình biên dịch không phải lúc nào cũng làm được: Lợi ích của việc học tối ưu hóa mã
 
 Với những lợi ích mà **optimizing compiler** (trình biên dịch tối ưu) mang lại, có thể sẽ không rõ ràng ngay lập tức tại sao việc học tối ưu hóa mã lại hữu ích.  
 Bạn có thể dễ dàng nghĩ về trình biên dịch như một “hộp đen” thông minh kỳ diệu. Nhưng cuối cùng, trình biên dịch cũng chỉ là một phần mềm thực hiện một loạt các phép biến đổi mã nhằm tăng tốc độ chạy.  
 Trình biên dịch cũng bị giới hạn trong các loại tối ưu hóa mà nó có thể thực hiện.
-
----
 
 **Algorithmic Strength Reduction Is Impossible** (Không thể giảm độ phức tạp thuật toán một cách tự động)
 
@@ -141,8 +122,6 @@ Trình biên dịch cũng bị giới hạn trong các loại tối ưu hóa mà
     Ví dụ, một trình biên dịch sẽ không bao giờ tối ưu một chương trình đang cài đặt **bubble sort** thành một chương trình dùng **quick sort**.  
     Mặc dù độ tinh vi của trình biên dịch và các tối ưu hóa của nó ngày càng được cải thiện, nhưng *chất lượng* tối ưu hóa của từng trình biên dịch cụ thể vẫn khác nhau giữa các nền tảng.  
     Do đó, trách nhiệm thuộc về lập trình viên trong việc đảm bảo mã của mình sử dụng các thuật toán và cấu trúc dữ liệu tốt nhất.
-
----
 
 **Compiler Optimization Flags Are Not Guaranteed to Make Code "Optimal" (or Consistent)**  
 (Các cờ tối ưu hóa của trình biên dịch không đảm bảo mã sẽ “tối ưu” hoặc nhất quán)
@@ -180,8 +159,6 @@ Việc hiểu rõ cờ tối ưu nào nên dùng cũng giúp lập trình viên 
 > Việc `silly` nên trả về 0, 1 hay giá trị khác là quyết định mà lập trình viên phải đưa ra.  
 > Để tìm hiểu thêm về undefined behavior và các vấn đề liên quan trong C, hãy xem **C FAQ²** hoặc blog của John Regehr¹.
 
----
-
 **Pointers Can Prove Problematic** (Con trỏ có thể gây rắc rối)
 
 :   Hãy nhớ rằng trình biên dịch chỉ thực hiện các phép biến đổi mà không làm thay đổi hành vi cơ bản của chương trình nguồn.  
@@ -189,8 +166,6 @@ Việc hiểu rõ cờ tối ưu nào nên dùng cũng giúp lập trình viên 
     Điều này đặc biệt đúng trong trường hợp **memory aliasing** (trùng địa chỉ bộ nhớ), khi hai con trỏ khác nhau trỏ đến cùng một địa chỉ trong bộ nhớ.  
     Ví dụ, hãy xem hàm `shiftAdd` dưới đây, nhận hai con trỏ số nguyên làm tham số. Hàm này nhân số thứ nhất với 10 và cộng số thứ hai vào.  
     Vì vậy, nếu `shiftAdd` được truyền vào hai số nguyên 5 và 6, kết quả sẽ là 56.
-
----
 
 #### averageMat_v1
 
@@ -308,8 +283,6 @@ void shiftAddOpt(int *a, int b){
 
 Việc loại bỏ truy cập bộ nhớ không cần thiết giúp lập trình viên giữ nguyên khả năng đọc của hàm `shiftAdd` gốc, đồng thời cho phép trình biên dịch tối ưu hàm.
 
----
-
 ### Hợp tác với trình biên dịch: Một chương trình mẫu
 
 Trong các phần tiếp theo, chúng ta sẽ tập trung tìm hiểu thêm về các loại tối ưu hóa phổ biến và thảo luận các chiến lược lập trình, profiling để giúp trình biên dịch dễ dàng tối ưu mã hơn.  
@@ -362,9 +335,6 @@ int main(int argc, char **argv) {
 }
 ```
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước trước đó và áp dụng cách trình bày mới:
-
----
 
 **Bảng 3** cho thấy kết quả đo thời gian để tạo ra các số nguyên tố từ 2 đến 5.000.000 với các cờ tối ưu hóa khác nhau, sử dụng lệnh biên dịch cơ bản sau:
 
@@ -380,13 +350,9 @@ $ gcc -o optExample optExample.c -lm
 
 **Bảng 3.** Thời gian (giây) để tạo các số nguyên tố từ 2 đến 5.000.000
 
----
-
 Thời gian nhanh nhất quan sát được khi dùng cờ tối ưu hóa là khoảng **2,14 giây**.  
 Mặc dù việc sử dụng các cờ tối ưu hóa giúp giảm hơn một giây so với thời gian chạy ban đầu của chương trình, nhưng việc tăng mức tối ưu hóa chỉ mang lại cải thiện rất nhỏ.  
 Trong các phần tiếp theo, chúng ta sẽ thảo luận cách có thể chỉnh sửa chương trình để giúp trình biên dịch dễ dàng tối ưu hơn.
-
----
 
 ### Tài liệu tham khảo
 

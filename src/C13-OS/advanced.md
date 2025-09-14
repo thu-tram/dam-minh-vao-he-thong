@@ -12,15 +12,11 @@ Abstraction này bảo vệ các process khỏi việc nhìn thấy tác động
 **Paging** (phân trang) là một cách triển khai virtual memory, ánh xạ từng **page** (trang) trong không gian địa chỉ ảo của mỗi process tới các **frame** (khung) trong RAM vật lý.  
 Virtual memory cũng giúp OS sử dụng RAM hiệu quả hơn; bằng cách coi RAM như một **cache** cho ổ đĩa, nó cho phép các page của không gian bộ nhớ ảo được lưu trữ trong RAM hoặc trên đĩa.
 
----
-
 Trọng tâm của chương này là vai trò của OS trong việc chạy một chương trình, bao gồm các abstraction và cơ chế mà nó triển khai để chạy chương trình hiệu quả. Tuy nhiên, đây **không phải** là toàn bộ bức tranh.  
 Còn rất nhiều lựa chọn triển khai, chi tiết kỹ thuật và vấn đề về **policy** (chính sách) liên quan đến process, quản lý process, virtual memory và quản lý bộ nhớ.  
 
 Ngoài ra, OS còn triển khai nhiều abstraction, chức năng và chính sách quan trọng khác để quản lý và sử dụng máy tính.  
 Ví dụ: OS triển khai abstraction **filesystem** (hệ thống tệp) để truy cập dữ liệu lưu trữ, các cơ chế bảo vệ và **security policy** (chính sách bảo mật) để bảo vệ người dùng và hệ thống, cũng như các **scheduling policy** (chính sách lập lịch) cho các tài nguyên phần cứng và phần mềm khác nhau.
-
----
 
 Các hệ điều hành hiện đại cũng hỗ trợ **interprocess communication** (giao tiếp liên tiến trình), **networking** (mạng máy tính), và **parallel & distributed computing** (tính toán song song và phân tán).  
 Ngoài ra, hầu hết OS ngày nay đều bao gồm hỗ trợ **hypervisor**, cho phép **virtualize** (ảo hóa) phần cứng hệ thống và cho phép **host OS** (hệ điều hành chủ) chạy nhiều **virtual guest OS** (hệ điều hành khách ảo).  
@@ -28,16 +24,12 @@ Ngoài ra, hầu hết OS ngày nay đều bao gồm hỗ trợ **hypervisor**, 
 Virtualization cho phép host OS — vốn quản lý phần cứng máy tính — khởi động và chạy nhiều hệ điều hành khác trên chính nó, mỗi hệ điều hành có một **virtualized view** (góc nhìn ảo hóa) riêng về phần cứng bên dưới.  
 Hỗ trợ hypervisor của host OS quản lý quá trình ảo hóa, bao gồm việc bảo vệ và chia sẻ tài nguyên vật lý giữa các guest OS.
 
----
-
 Cuối cùng, hầu hết các OS cung cấp một mức độ **extensibility** (khả năng mở rộng) nhất định, cho phép người dùng (thường là **system administrator** – quản trị hệ thống) tinh chỉnh OS.  
 Ví dụ: hầu hết các hệ thống kiểu Unix cho phép người dùng (thường yêu cầu quyền **root** hoặc **superuser**) thay đổi kích thước **OS buffer**, **cache**, **swap partition**, và lựa chọn từ nhiều **scheduling policy** khác nhau trong các **OS subsystem** và thiết bị phần cứng.  
 Thông qua các thay đổi này, người dùng có thể tinh chỉnh hệ thống cho phù hợp với loại **application workload** (khối lượng công việc ứng dụng) mà họ chạy.
 
 Các OS loại này thường hỗ trợ **loadable kernel module** (mô-đun nhân có thể nạp), là các đoạn mã thực thi có thể được nạp vào **kernel** và chạy ở **kernel mode**.  
 Loadable kernel module thường được dùng để bổ sung abstraction hoặc chức năng mới vào kernel, cũng như để nạp **device driver** (trình điều khiển thiết bị) vào kernel nhằm quản lý một phần cứng cụ thể.
-
----
 
 Để tìm hiểu sâu và rộng hơn về hệ điều hành, chúng tôi khuyến nghị đọc các giáo trình hệ điều hành, chẳng hạn như *Operating Systems: Three Easy Pieces*¹.
 

@@ -9,8 +9,6 @@ Một phần mềm khai thác lỗ hổng tràn bộ đệm đã biết trong m�
 Trong phần này, chúng ta sẽ sử dụng **GDB** và ngôn ngữ assembly để phân tích chi tiết cơ chế của một buffer overflow exploit.  
 Trước khi đọc chương này, bạn nên tham khảo chương nói về [GDB để kiểm tra mã assembly](../C3-C_debug/gdb_assembly.html#_debugging_assembly_code).
 
----
-
 ### 8.10.1. Các ví dụ nổi tiếng về Buffer Overflow
 
 Các buffer overflow exploit xuất hiện từ những năm 1980 và vẫn là mối đe dọa lớn của ngành công nghiệp máy tính cho đến đầu những năm 2000.  
@@ -36,8 +34,6 @@ Các kỹ sư Microsoft tìm ra cách để MMS giả lập thông điệp của
 AOL đáp trả bằng cách thay đổi định dạng tin nhắn của AIM, và MMS lại chỉnh sửa để bắt chước.  
 Cuộc “chiến tranh chat” này tiếp diễn cho đến khi AOL sử dụng một lỗi buffer overflow **ngay trong client của họ** để xác minh tin nhắn đến từ AIM.  
 Vì MMS không có lỗ hổng này, cuộc chiến kết thúc với phần thắng thuộc về AOL.
-
----
 
 ### 8.10.2. Cái nhìn đầu tiên: Trò chơi đoán số
 
@@ -111,8 +107,6 @@ Những người thành thạo GDB và đọc assembly có thể dùng GDB để
 
 Tuy nhiên, vẫn còn một cách khác tinh vi hơn để chiến thắng.
 
----
-
 ### 8.10.3. Xem xét kỹ hơn (Under the C)
 
 Chương trình có khả năng chứa lỗ hổng tràn bộ đệm tại lần gọi `scanf` đầu tiên.  
@@ -176,14 +170,10 @@ Lệnh này sẽ cho kết quả tương tự như sau:
 
 Mỗi dòng trong kết quả hiển thị đại diện cho hai từ 32-bit. Vì vậy, dòng đầu tiên biểu diễn các từ tại địa chỉ `0xffffd3f0` và `0xffffd3f4`. Nhìn vào đỉnh của stack, ta có thể thấy địa chỉ bộ nhớ trỏ tới chuỗi `"%s"` (hay `0x0804871c`), theo sau là địa chỉ của `buf` (hay `0xffffd40c`). Lưu ý rằng trong các hình minh họa của phần này, địa chỉ của `buf` được rút gọn thành `0x40c`.
 
----
-
 |   |   |
 |---|---|
 |   | **Các giá trị nhiều byte (multibyte) được lưu theo thứ tự little-endian** |
 |   | > Trong đoạn assembly trước đó, byte tại địa chỉ `0xfffffd3f0` là `0x1c`, byte tại `0xfffffd3f1` là `0x87`, byte tại `0xfffffd3f2` là `0x04`, và byte tại `0xfffffd3f3` là `0x08`. Tuy nhiên, *giá trị* 32-bit (tương ứng với địa chỉ bộ nhớ của chuỗi `"%s"`) tại địa chỉ `0xfffffd3f0` thực chất là `0x0804871c`. Hãy nhớ rằng vì x86 là hệ thống [little-endian](../C4-Binary/byte_order.html#_integer_byte_order), các byte của giá trị nhiều byte như địa chỉ sẽ được lưu theo thứ tự đảo ngược. Tương tự, các byte tương ứng với địa chỉ của mảng `buf` (`0xffffd40c`) cũng được lưu theo thứ tự đảo ngược tại địa chỉ `0xfffffd3f4`. |
-
----
 
 Các byte liên quan đến địa chỉ `0xffffd40c` nằm trên cùng một dòng với các byte tại địa chỉ `0xffffd408`, và là từ thứ hai trên dòng đó. Vì mảng `buf` dài 12 byte, các phần tử của `buf` chiếm 12 byte từ địa chỉ `0xffffd40c` đến `0xffffd417`. Kiểm tra các byte tại những địa chỉ này cho kết quả:
 
@@ -193,8 +183,6 @@ Các byte liên quan đến địa chỉ `0xffffd40c` nằm trên cùng một d�
 ```
 
 Tại đây, ta có thể thấy rõ biểu diễn hex của chuỗi nhập `12345678`. Byte kết thúc null `\0` xuất hiện ở vị trí byte ngoài cùng bên trái tại địa chỉ `0xffffd414`. Hãy nhớ rằng `scanf` sẽ kết thúc tất cả các chuỗi bằng một byte null.
-
----
 
 Tất nhiên, `12345678` không phải là số bí mật. Đây là kết quả khi chạy `secret` với chuỗi nhập `12345678`:
 
@@ -208,8 +196,6 @@ $ echo $?
 ```
 
 Lệnh `echo $?` in ra giá trị trả về của lệnh vừa chạy trong shell. Trong trường hợp này, chương trình trả về `1` vì số bí mật nhập vào sai. Theo quy ước, chương trình trả về `0` khi không có lỗi. Mục tiêu tiếp theo của chúng ta là tìm cách khiến chương trình thoát với giá trị trả về `0`, nghĩa là chúng ta thắng trò chơi.
-
----
 
 ### 8.10.4. Buffer Overflow: Lần thử đầu tiên
 
@@ -238,8 +224,6 @@ Thú vị đấy! Lần này chương trình bị crash với lỗi segmentation
 
 Chuỗi nhập quá dài này không chỉ ghi đè giá trị tại địa chỉ `0x428`, mà còn tràn xuống ghi đè cả địa chỉ trả về (return address) bên dưới stack frame của `main`. Hãy nhớ rằng khi một hàm trả về, chương trình sẽ cố tiếp tục thực thi tại địa chỉ được lưu trong return address. Trong ví dụ này, chương trình cố chạy tiếp tại địa chỉ `0xf7003433` sau khi thoát `main`, nhưng địa chỉ này không tồn tại. Do đó, chương trình crash với segmentation fault.
 
----
-
 Chạy lại chương trình trong GDB (`input.txt` chứa chuỗi nhập ở trên) sẽ cho thấy điều này rõ ràng:
 
 ```
@@ -259,8 +243,6 @@ $ gdb secret
 ```
 
 Có thể thấy chuỗi nhập đã vượt quá giới hạn của mảng `buf`, ghi đè lên tất cả các giá trị khác trên stack. Nói cách khác, chuỗi này đã tạo ra một **buffer overrun** và làm hỏng call stack, khiến chương trình crash. Quá trình này còn được gọi là **smashing the stack**.
-
----
 
 ### 8.10.5. Buffer Overflow thông minh hơn: Lần thử thứ hai
 
@@ -335,8 +317,6 @@ $ echo $?
 
 Exploit của chúng ta đã thành công! Chúng ta đã thắng trò chơi.
 
----
-
 ### 8.10.6. Bảo vệ chống lại Buffer Overflow
 
 Ví dụ trên đã thay đổi luồng điều khiển của file thực thi `secret`, buộc nó trả về giá trị 0 (thành công). Tuy nhiên, một exploit như vậy có thể gây ra thiệt hại thực sự.  
@@ -349,8 +329,6 @@ May mắn thay, các hệ thống hiện đại có nhiều chiến lược đ�
 - **Stack corruption detection**: Một biện pháp khác là phát hiện khi stack bị hỏng. Các phiên bản GCC gần đây dùng một cơ chế bảo vệ gọi là **canary** — một giá trị đóng vai trò như “chim hoàng yến” canh gác giữa buffer và các phần tử khác của stack. Canary được lưu ở vùng bộ nhớ không ghi đè được và được so sánh với giá trị đặt trên stack. Nếu canary “chết” trong quá trình chạy, chương trình biết mình đang bị tấn công và sẽ dừng với thông báo lỗi. Tuy nhiên, kẻ tấn công tinh vi có thể thay thế canary để tránh bị phát hiện.
 
 - **Giới hạn vùng có thể thực thi**: Ở biện pháp này, mã thực thi chỉ được phép nằm trong một số vùng bộ nhớ nhất định, nghĩa là call stack không còn khả năng thực thi. Tuy nhiên, biện pháp này cũng có thể bị vượt qua. Trong tấn công **return-oriented programming** (ROP), kẻ tấn công có thể “nhặt” các lệnh trong vùng thực thi và nhảy từ lệnh này sang lệnh khác để tạo thành exploit. Có nhiều ví dụ nổi tiếng về kỹ thuật này, đặc biệt trong các trò chơi điện tử⁷.
-
----
 
 Tuy nhiên, tuyến phòng thủ tốt nhất vẫn là lập trình viên.  
 Để ngăn chặn buffer overflow trong chương trình của bạn, hãy dùng các hàm C có **length specifier** bất cứ khi nào có thể và thêm code kiểm tra giới hạn mảng. Điều quan trọng là các mảng được khai báo phải khớp với length specifier đã chọn.
@@ -429,8 +407,6 @@ $ echo $?
 ```
 
 Tất nhiên, bất kỳ ai có kỹ năng **reverse engineering** (kỹ thuật đảo ngược) cơ bản vẫn có thể thắng trò chơi đoán số bằng cách phân tích mã assembly. Nếu bạn chưa thử đánh bại chương trình bằng reverse engineering, chúng tôi khuyến khích bạn thử ngay bây giờ.
-
----
 
 ### Tài liệu tham khảo
 

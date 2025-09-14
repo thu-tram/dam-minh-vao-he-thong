@@ -41,8 +41,6 @@ Dump of assembler code for function sumUp:
 
 Một lần nữa, chúng ta sẽ không vẽ stack một cách tường minh trong ví dụ này. Tuy nhiên, bạn đọc nên tự vẽ stack để luyện tập.
 
----
-
 #### Năm lệnh đầu tiên
 
 Năm lệnh đầu tiên của hàm này thiết lập stack để thực thi hàm và khởi tạo các giá trị tạm thời:
@@ -56,8 +54,6 @@ Năm lệnh đầu tiên của hàm này thiết lập stack để thực thi h�
 ```
 
 Hãy nhớ rằng các vị trí trên stack lưu trữ *các biến tạm thời* trong một hàm. Để đơn giản, ta sẽ gọi vị trí `%rbp-0x8` là `total` và `%rbp-0x4` là `i`. Tham số đầu vào `n` của `sumUp` được lưu tại `%rbp-0x14`. Mặc dù các biến tạm được đặt trên stack, lưu ý rằng stack pointer không thay đổi sau khi thực thi lệnh đầu tiên (`push %rbp`).
-
----
 
 #### Trái tim của vòng lặp
 
@@ -79,8 +75,6 @@ Bảy lệnh tiếp theo trong hàm `sumUp` là phần lõi của vòng lặp:
 
 Sau đó, lệnh `jle` được thực thi. Các lệnh tiếp theo phụ thuộc vào việc nhánh có được thực hiện hay không.
 
----
-
 **Trường hợp nhánh được thực hiện** (`i <= n` là đúng): `%rip` được đặt thành `0x40053d` và chương trình nhảy tới `<sumUp+23>`. Các lệnh sau sẽ chạy tuần tự:
 
 - `mov` tại `<sumUp+23>` sao chép `i` vào `%eax`.
@@ -89,8 +83,6 @@ Sau đó, lệnh `jle` được thực thi. Các lệnh tiếp theo phụ thuộ
 - `mov` tại `<sumUp+33>` sao chép giá trị mới của `i` vào `%eax`.
 - `cmp` so sánh `i` với `n` và thiết lập các cờ điều kiện.
 - `jle` thực thi. Nếu `i <= n`, chương trình lại nhảy về `<sumUp+23>` và vòng lặp (từ `<sumUp+23>` đến `<sumUp+39>`) lặp lại.
-
----
 
 **Trường hợp nhánh không được thực hiện** (`i` không nhỏ hơn hoặc bằng `n`): các lệnh sau sẽ chạy:
 
@@ -102,13 +94,8 @@ Sau đó, lệnh `jle` được thực thi. Các lệnh tiếp theo phụ thuộ
 
 Các lệnh này sao chép `total` vào `%eax`, khôi phục `%rbp` về giá trị ban đầu và thoát khỏi hàm. Do đó, hàm trả về `total` khi kết thúc.
 
----
-
 **Bảng 1** dưới đây sẽ trình bày dạng assembly và dạng C dùng `goto` của hàm `sumUp`.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 **Assembly:**
 
@@ -164,8 +151,6 @@ int sumUp(int n) {
     return total;
 }
 ```
-
----
 
 #### Vòng lặp for trong Assembly
 

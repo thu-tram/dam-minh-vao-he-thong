@@ -1,5 +1,4 @@
 Ok Khánh 👍  
-Dưới đây là bản dịch tiếng Việt của phần **4.8. Real Numbers in Binary** trong tệp bạn gửi, tuân thủ đầy đủ các quy ước bạn đã nêu.
 
 ## 4.8. Số thực trong hệ nhị phân (Real Numbers in Binary)
 

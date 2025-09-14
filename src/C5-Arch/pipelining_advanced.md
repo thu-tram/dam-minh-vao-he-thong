@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **5.8. Advanced Pipelined Instruction Considerations** và **5.8.1. Pipelining Consideration: Data Hazards**, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
-
----
 
 ## 5.8. Các vấn đề nâng cao trong thực thi lệnh kiểu pipeline
 
@@ -31,8 +28,6 @@ JMP L1<0x14>          # nhảy đến đoạn mã tại L1 (địa chỉ mã 0x1
 Trong phần thảo luận trước, ta giả định rằng mọi lệnh đều mất cùng số chu kỳ để thực thi; tuy nhiên, thực tế không phải vậy. Ví dụ, lệnh `MOV` đầu tiên cần cả năm giai đoạn vì nó di chuyển dữ liệu từ bộ nhớ vào thanh ghi. Ngược lại, ba lệnh tiếp theo chỉ cần bốn giai đoạn (F, D, E, W) vì chúng chỉ thao tác trên thanh ghi, không truy cập bộ nhớ. Lệnh cuối cùng (`JMP`) là một loại lệnh *nhảy* hoặc *rẽ nhánh có điều kiện*. Mục đích của nó là chuyển luồng điều khiển sang một phần khác của mã. Cụ thể, các địa chỉ trong vùng mã của bộ nhớ tham chiếu đến các *lệnh* khác trong tệp thực thi. Vì lệnh `JMP` không cập nhật thanh ghi đa dụng nào, giai đoạn WriteBack được bỏ qua, nên chỉ cần ba giai đoạn (F, D, E). Ta sẽ tìm hiểu chi tiết về lệnh điều kiện trong [các chương sau](../C7-x86_64/conditional_control_loops.html#_conditional_control_and_loops) về assembly.
 
 Một **pipeline stall** (đình trệ pipeline) xảy ra khi một lệnh buộc phải chờ lệnh khác hoàn tất trước khi có thể tiếp tục. Trình biên dịch và bộ xử lý sẽ cố gắng hết sức để tránh các pipeline stall nhằm tối đa hóa hiệu năng.
-
----
 
 ### 5.8.1. Vấn đề trong pipeline: Data Hazards
 

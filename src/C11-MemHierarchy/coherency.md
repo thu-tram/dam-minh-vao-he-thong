@@ -12,8 +12,6 @@ Mỗi core trong bộ xử lý đa nhân đồng thời thực thi một luồng
 
 Các bộ xử lý ngày nay thường có nhiều hơn hai cấp cache. Ba cấp là phổ biến trong các hệ thống desktop, với cấp cao nhất (**L1**) thường được tách thành hai **L1 cache** riêng: một cho lệnh chương trình (**instruction cache**) và một cho dữ liệu chương trình (**data cache**). Các cache ở cấp thấp hơn thường là **unified caches** (cache hợp nhất), nghĩa là lưu trữ cả dữ liệu và lệnh chương trình. Mỗi core thường duy trì một **L1 cache** riêng và chia sẻ một **L3 cache** chung với tất cả các core. Lớp **L2 cache**, nằm giữa **L1 cache** riêng của mỗi core và **L3 cache** chung, có sự khác biệt đáng kể trong các thiết kế CPU hiện đại: **L2 cache** có thể là riêng cho từng core, có thể được chia sẻ bởi tất cả các core, hoặc là dạng lai (hybrid) với nhiều **L2 cache**, mỗi cái được chia sẻ bởi một nhóm core.
 
----
-
 > **Thông tin về Processor và Cache trên hệ thống Linux**
 >
 > Nếu bạn tò mò về thiết kế CPU của mình, có nhiều cách để lấy thông tin về bộ xử lý và tổ chức cache trên hệ thống. Ví dụ, lệnh `lscpu` hiển thị thông tin về bộ xử lý, bao gồm số lượng core và các cấp, kích thước của cache:
@@ -63,17 +61,11 @@ Các bộ xử lý ngày nay thường có nhiều hơn hai cấp cache. Ba cấ
 >
 > Kết quả `type` cho thấy core 0 có cache dữ liệu và cache lệnh riêng, cùng với hai cache hợp nhất khác. Kết hợp với `level`, ta thấy cache dữ liệu và cache lệnh đều là **L1 cache**, trong khi hai cache hợp nhất là **L2** và **L3**. Thông tin `shared_cpu_list` cho thấy **L1** và **L2 cache** là riêng cho core 0 (chỉ chia sẻ giữa CPU `0` và `6` — hai luồng hyperthread của core 0), còn **L3 cache** được chia sẻ bởi tất cả 6 core (tất cả 12 CPU logic, `0-11`).
 
----
-
 ### 11.6.1. Cache Coherency (Tính nhất quán của cache)
 
 Vì các chương trình thường có **locality of reference** (tính cục bộ truy cập) cao, nên việc mỗi core có **L1 cache** riêng để lưu trữ bản sao dữ liệu và lệnh từ luồng lệnh mà nó thực thi là rất có lợi. Tuy nhiên, nhiều **L1 cache** có thể dẫn đến vấn đề **cache coherency** (tính nhất quán của cache). Vấn đề này xảy ra khi giá trị của một bản sao khối bộ nhớ trong **L1 cache** của một core khác với giá trị của bản sao cùng khối đó trong **L1 cache** của core khác. Tình huống này xuất hiện khi một core ghi dữ liệu vào một khối đang được cache trong **L1 cache** của nó, và khối đó cũng đang được cache trong **L1 cache** của core khác. Vì mỗi khối cache chỉ là bản sao của nội dung bộ nhớ, hệ thống cần duy trì một giá trị thống nhất cho nội dung bộ nhớ trên tất cả các bản sao của khối cache đó.
 
 Các bộ xử lý đa nhân triển khai **cache-coherence protocol** (giao thức duy trì tính nhất quán cache) để đảm bảo một cái nhìn nhất quán về bộ nhớ, có thể được cache và truy cập bởi nhiều core. Một **cache-coherence protocol** đảm bảo rằng bất kỳ core nào truy cập một vị trí bộ nhớ đều nhìn thấy giá trị mới nhất đã được sửa đổi của vị trí đó, thay vì nhìn thấy một bản sao cũ (stale) có thể đang được lưu trong **L1 cache** của nó.
-
-Dưới đây là bản dịch tiếng Việt của mục **11.6.2. The MSI Protocol**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
 
 ### 11.6.2. Giao thức MSI (MSI Protocol)
 
@@ -85,8 +77,6 @@ Có nhiều **cache coherency protocol** (giao thức duy trì tính nhất quá
 
 **MSI protocol** được kích hoạt khi có truy cập đọc hoặc ghi vào các mục trong cache.
 
----
-
 #### Khi truy cập đọc (read access):
 
 - Nếu cache block đang ở trạng thái **M** hoặc **S**, giá trị trong cache được dùng để đáp ứng yêu cầu đọc (bản sao này chứa giá trị mới nhất của khối dữ liệu trong bộ nhớ).
@@ -96,14 +86,10 @@ Có nhiều **cache coherency protocol** (giao thức duy trì tính nhất quá
 
     Core khởi tạo truy cập đọc trên một cache line có **I flag** được set sẽ nạp giá trị mới của khối dữ liệu vào cache line của mình. Nó **clear** I flag (khối dữ liệu giờ hợp lệ), lưu giá trị mới, **set** S flag (khối có thể chia sẻ an toàn, nhất quán với các bản sao khác), và **clear** M flag (giá trị trong L1 block khớp với bản sao trong L2 cache — đọc không làm thay đổi bản sao trong L1).
 
----
-
 #### Khi truy cập ghi (write access):
 
 - Nếu block đang ở trạng thái **M**, ghi trực tiếp vào bản sao trong cache. Không cần thay đổi flag (block vẫn ở trạng thái M).
 - Nếu block đang ở trạng thái **I** hoặc **S**, thông báo cho các core khác rằng block đang bị ghi (modified). Các **L1 cache** khác đang lưu block ở trạng thái **S** phải **clear** S bit và **set** I bit (bản sao của chúng giờ đã lỗi thời so với bản sao đang được ghi). Nếu một **L1 cache** khác có block ở trạng thái **M**, nó sẽ ghi ngược block xuống cấp thấp hơn và đặt bản sao của mình về trạng thái **I**. Core thực hiện ghi sau đó sẽ nạp giá trị mới của block vào **L1 cache** của mình, **set** M flag (bản sao sẽ bị sửa đổi bởi thao tác ghi), **clear** I flag (bản sao giờ hợp lệ), và ghi vào block trong cache.
-
----
 
 Từ **Hình 2** đến **Hình 4** minh họa từng bước của **MSI protocol** khi đảm bảo tính nhất quán cho các truy cập đọc và ghi vào một khối dữ liệu được cache trong **L1 cache** riêng của hai core. Trong **Hình 2**, ví dụ bắt đầu với khối dữ liệu dùng chung được sao chép vào **L1 cache** của cả hai core với **S flag** được set, nghĩa là các bản sao trong L1 cache giống với giá trị của block trong **L2 cache** (tất cả bản sao lưu giá trị hiện tại của block là 6). Lúc này, cả core 0 và core 1 đều có thể đọc an toàn từ bản sao trong L1 cache của mình mà không kích hoạt hành động duy trì tính nhất quán (S flag cho biết bản sao chia sẻ là mới nhất).
 
@@ -111,29 +97,19 @@ Từ **Hình 2** đến **Hình 4** minh họa từng bước của **MSI protoc
 
 **Hình 2.** Ban đầu, cả hai core đều có bản sao của block trong L1 cache riêng với **S flag** được set (trạng thái Shared)
 
----
-
 Nếu core 0 ghi vào bản sao của block trong L1 cache của mình, **L1 cache controller** của nó sẽ thông báo cho các L1 cache khác **invalidate** (vô hiệu hóa) bản sao của block. **L1 cache controller** của core 1 sẽ **clear** S flag và **set** I flag trên bản sao của mình, cho biết bản sao đã lỗi thời. Core 0 ghi vào bản sao trong L1 cache (thay đổi giá trị thành 7 trong ví dụ), **set** M flag và **clear** S flag trên cache line để cho biết bản sao đã bị sửa đổi và lưu giá trị hiện tại của block. Lúc này, bản sao trong **L2 cache** và trong **L1 cache** của core 1 đều đã lỗi thời. Trạng thái cache sau đó được thể hiện trong **Hình 3**.
 
 ![An example illustrating the steps taken by the MSI protocol on a write to a block of memory that is shared by more than one L1 cache.](_images/MSIwrite.png)
 
 **Hình 3.** Trạng thái cache sau khi core 0 ghi vào bản sao của block
 
----
-
 Lúc này, core 0 có thể đọc an toàn từ bản sao trong cache vì nó đang ở trạng thái **M**, nghĩa là lưu giá trị mới nhất của block.
 
 Nếu core 1 tiếp theo đọc từ block, **I flag** trên bản sao trong L1 cache của nó cho biết bản sao đã lỗi thời và không thể dùng để đáp ứng yêu cầu đọc. **L1 cache controller** của core 1 phải nạp giá trị mới của block vào L1 cache trước khi đọc. Để làm điều này, **L1 cache controller** của core 0 phải ghi ngược giá trị đã sửa đổi của block xuống **L2 cache**, để **L1 cache** của core 1 có thể đọc giá trị mới vào. Kết quả của các hành động này (thể hiện trong **Hình 4**) là bản sao trong **L1 cache** của cả core 0 và core 1 đều ở trạng thái **S**, cho biết mỗi bản sao đều mới nhất và có thể dùng an toàn cho các lần đọc tiếp theo.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
-
 ![An example illustrating the steps taken by the MSI protocol on a read to a block of memory that is cached in the I state.](_images/MSIread.png)
 
 **Hình 4.** Trạng thái cache sau khi Core 1 thực hiện đọc block
-
----
 
 ### 11.6.3. Triển khai các Cache Coherency Protocol (Giao thức duy trì tính nhất quán cache)
 
@@ -147,8 +123,6 @@ Snooping cũng có thể được sử dụng trong các **write-update cache co
 
 Thay vì snooping, có thể sử dụng **directory-based cache coherence mechanism** (cơ chế duy trì tính nhất quán cache dựa trên bảng chỉ mục) để kích hoạt các **cache coherency protocol**.  
 Phương pháp này mở rộng tốt hơn snooping do hạn chế về hiệu năng khi nhiều core chia sẻ một bus duy nhất. Tuy nhiên, cơ chế dựa trên bảng chỉ mục yêu cầu lưu trữ nhiều trạng thái hơn để phát hiện khi nào các block bộ nhớ được chia sẻ, và thường chậm hơn snooping.
-
----
 
 ### 11.6.4. Thêm về Multicore Caching
 

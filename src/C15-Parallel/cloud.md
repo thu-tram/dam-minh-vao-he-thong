@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **15.3. To Exascale and Beyond: Cloud Computing, Big Data, and the Future of Computing**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 15.3. Tới Exascale và hơn thế nữa: Điện toán đám mây, Dữ liệu lớn và Tương lai của tính toán  
 (*To Exascale and Beyond: Cloud Computing, Big Data, and the Future of Computing*)
@@ -8,8 +5,6 @@ Dưới đây là bản dịch tiếng Việt của mục **15.3. To Exascale an
 Những tiến bộ trong công nghệ đã giúp con người có khả năng tạo ra dữ liệu với tốc độ chưa từng có.  
 Các thiết bị khoa học như kính thiên văn, máy giải trình tự sinh học và cảm biến có thể tạo ra dữ liệu khoa học có độ chính xác cao với chi phí thấp.  
 Khi các nhà khoa học phải vật lộn để phân tích “làn sóng dữ liệu” (*data deluge*) này, họ ngày càng dựa nhiều hơn vào các siêu máy tính đa node tinh vi, vốn là nền tảng của **high-performance computing** (HPC – tính toán hiệu năng cao).
-
----
 
 Các ứng dụng HPC thường được viết bằng các ngôn ngữ như **C**, **C++** hoặc **Fortran**, với khả năng  
 [multithreading](../C14-SharedMemory/multicore.html#_programming_multicore_systems) và  
@@ -20,8 +15,6 @@ Các ứng dụng HPC thường được viết bằng các ngôn ngữ như **C
 
 Cho đến nay, phần lớn nội dung của cuốn sách này đã mô tả các đặc điểm kiến trúc, ngôn ngữ và thư viện thường được tận dụng trên các hệ thống HPC.  
 Các công ty, phòng thí nghiệm quốc gia và các tổ chức quan tâm đến việc thúc đẩy khoa học thường sử dụng hệ thống HPC và tạo thành lõi của hệ sinh thái khoa học tính toán.
-
----
 
 Trong khi đó, sự bùng nổ của các thiết bị kết nối internet và sự phổ biến của mạng xã hội đã khiến con người tạo ra một lượng lớn nội dung đa phương tiện trực tuyến một cách dễ dàng, dưới dạng trang web, hình ảnh, video, tweet và bài đăng mạng xã hội.  
 Ước tính rằng **90%** tổng dữ liệu trực tuyến được tạo ra chỉ trong **hai năm qua**, và xã hội đang tạo ra **30 terabyte dữ liệu người dùng mỗi giây** (tương đương **2,5 exabyte mỗi ngày**).  
@@ -34,8 +27,6 @@ Tuy nhiên, các trung tâm dữ liệu này sử dụng một **software stack*
 Các hệ thống máy tính được sử dụng để lưu trữ và phân tích dữ liệu internet quy mô lớn đôi khi được gọi là **high-end data analysis** (HDA – phân tích dữ liệu cao cấp).  
 Các công ty như Amazon, Google, Microsoft và Facebook có lợi ích trực tiếp trong việc phân tích dữ liệu internet và tạo thành lõi của hệ sinh thái phân tích dữ liệu.  
 Cuộc cách mạng HDA và phân tích dữ liệu bắt đầu khoảng năm 2010 và hiện là một lĩnh vực chủ đạo trong nghiên cứu **cloud computing** (điện toán đám mây).
-
----
 
 Hình 1 nêu bật những khác biệt chính trong phần mềm được sử dụng bởi cộng đồng HDA và HPC.  
 Lưu ý rằng cả hai cộng đồng đều sử dụng phần cứng cụm (cluster hardware) tương tự, tuân theo mô hình  
@@ -50,19 +41,13 @@ Phần cứng cụm thường bao gồm một **distributed filesystem** (hệ t
 
 **Hình 1.** So sánh các framework HDA và HPC. Dựa trên hình của Jack Dongarra và Daniel Reed.^8^
 
----
-
 Không giống như siêu máy tính – vốn thường được xây dựng và tối ưu hóa cho mục đích HPC – cộng đồng HDA dựa vào **data center** (trung tâm dữ liệu), bao gồm một tập hợp lớn các compute node đa dụng, thường được kết nối mạng qua Ethernet.  
 Ở cấp độ phần mềm, các trung tâm dữ liệu thường sử dụng **máy ảo** (virtual machine), **cơ sở dữ liệu phân tán lớn** và các **framework** cho phép phân tích dữ liệu internet với thông lượng cao.  
 
 Thuật ngữ **cloud** (đám mây) đề cập đến các thành phần lưu trữ dữ liệu và năng lực tính toán của các trung tâm dữ liệu HDA.
 
----
-
 Trong phần này, chúng ta sẽ điểm qua **cloud computing**, một số phần mềm thường được sử dụng để triển khai cloud computing (đặc biệt là **MapReduce**), và một số thách thức trong tương lai.  
 Lưu ý rằng phần này **không** nhằm mục đích đi sâu vào các khái niệm này; chúng tôi khuyến khích người đọc quan tâm tìm hiểu thêm từ các nguồn tham khảo được liệt kê.
-
----
 
 ### 15.3.1. Cloud Computing
 
@@ -74,11 +59,6 @@ Cloud computing có ba trụ cột chính:
 - **Infrastructure as a Service (IaaS)** – Hạ tầng như một dịch vụ  
 - **Platform as a Service (PaaS)** – Nền tảng như một dịch vụ ^1^
 
----
-
-Dưới đây là bản dịch tiếng Việt của nội dung bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 #### Software as a Service
 
@@ -94,8 +74,6 @@ Các dịch vụ thuộc trụ cột SaaS được quản lý hoàn toàn bởi 
 
 Trước khi cloud computing ra đời, các tổ chức muốn cung cấp web mail cho người dùng sẽ cần có hạ tầng riêng và đội ngũ IT chuyên trách để duy trì.  
 Ví dụ phổ biến về nhà cung cấp SaaS gồm **Google’s G Suite** và **Microsoft Office 365**.
-
----
 
 #### Infrastructure as a Service
 
@@ -114,8 +92,6 @@ Tuy nhiên, hệ điều hành host và hạ tầng phần cứng được thi�
 
 Các nhà cung cấp IaaS phổ biến gồm **Amazon AWS**, **Google Cloud Services** và **Microsoft Azure**.
 
----
-
 #### Platform as a Service
 
 **Platform as a Service** (PaaS – Nền tảng như một dịch vụ) cho phép cá nhân và tổ chức phát triển và triển khai ứng dụng web của riêng mình trên cloud, loại bỏ nhu cầu cấu hình hoặc bảo trì cục bộ.  
@@ -127,16 +103,12 @@ Ví dụ: dịch vụ của **Microsoft Azure** cho phép người dùng lập t
 
 Lưu ý rằng lập trình viên chỉ kiểm soát ứng dụng và dữ liệu của mình; nhà cung cấp cloud kiểm soát phần còn lại của hạ tầng phần mềm và toàn bộ hạ tầng phần cứng bên dưới.
 
----
-
 ### 15.3.2. MapReduce
 
 Có lẽ mô hình lập trình nổi tiếng nhất được sử dụng trên các hệ thống cloud là **MapReduce**^3^.  
 Mặc dù nguồn gốc của MapReduce bắt nguồn từ các phép toán **Map** và **Reduce** trong lập trình hàm (functional programming), **Google** là công ty đầu tiên áp dụng khái niệm này để phân tích khối lượng lớn dữ liệu web.  
 
 MapReduce đã giúp Google thực hiện các truy vấn web nhanh hơn đối thủ, và góp phần đưa Google trở thành nhà cung cấp dịch vụ web và “gã khổng lồ” internet như ngày nay.
-
----
 
 #### Hiểu về các phép toán Map và Reduce
 
@@ -190,19 +162,12 @@ print(result)
 # [2, 6, 10, 14, 18]
 ```
 
-Dưới đây là bản dịch tiếng Việt của nội dung bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Cú pháp **list comprehension** áp dụng cùng một hàm (trong trường hợp này là nhân một phần tử của mảng với giá trị vô hướng `s`) cho mọi phần tử `x` trong `array`.
-
----
 
 Một phép toán **Reduce** đơn lẻ sẽ lấy một tập hợp các phần tử và kết hợp chúng lại thành một giá trị duy nhất bằng một hàm chung nào đó.  
 Ví dụ: hàm `sum` trong Python hoạt động tương tự như một phép Reduce, vì nó nhận vào một tập hợp (thường là một danh sách Python) và cộng tất cả các phần tử lại với nhau.  
 Chẳng hạn, áp dụng phép cộng cho tất cả các phần tử trong mảng `result` được trả về từ hàm `scalarMultiply` trong **Bảng 1** sẽ cho ra tổng cộng là **50**.
-
----
 
 #### Mô hình lập trình MapReduce (The MapReduce Programming Model)
 
@@ -214,8 +179,6 @@ Một **combiner** (thường được định nghĩa bởi framework MapReduce)
 
 Hàm `reduce` sẽ nhận vào một cặp (*key*, list(*value*)) và kết hợp tất cả các giá trị lại thông qua một phép toán do lập trình viên định nghĩa, để tạo ra cặp (*key*, *value*) cuối cùng, trong đó *value* là kết quả của phép giảm (reduction).  
 Kết quả từ hàm `reduce` sẽ được ghi vào distributed filesystem và thường được trả về cho người dùng.
-
----
 
 Để minh họa cách sử dụng mô hình MapReduce nhằm song song hóa một chương trình, chúng ta xét ví dụ **Word Frequency**.  
 Mục tiêu của Word Frequency là xác định tần suất xuất hiện của mỗi từ trong một tập văn bản lớn.
@@ -242,8 +205,6 @@ Hàm `map` này nhận vào một chuỗi (`key`) tương ứng với tên tệp
 Hàm sẽ tách các từ từ chuỗi `value` và phát ra (emit) từng từ (`words[i]`) kèm theo giá trị chuỗi `"1"`.  
 Hàm `emit` được cung cấp bởi framework MapReduce và ghi các cặp (*key*, *value*) trung gian vào distributed filesystem.
 
----
-
 Để hoàn thiện chương trình Word Frequency, lập trình viên có thể hiện thực hàm `reduce` như sau:
 
 ```c
@@ -269,8 +230,6 @@ Hàm sẽ lấy số lượng phần tử từ trường `length` của struct `
 Sau đó, nó lặp qua tất cả các số đếm, cộng dồn giá trị vào biến `total`.  
 Vì hàm `emit` yêu cầu tham số kiểu `char *`, hàm sẽ chuyển đổi `total` sang chuỗi trước khi gọi `emit`.
 
----
-
 Sau khi hiện thực `map` và `reduce`, trách nhiệm của lập trình viên kết thúc.  
 Framework MapReduce sẽ tự động xử lý phần còn lại, bao gồm:
 
@@ -280,21 +239,14 @@ Framework MapReduce sẽ tự động xử lý phần còn lại, bao gồm:
 - Tạo và quản lý các tiến trình chạy hàm `reduce` (**reduce tasks**)  
 - Sinh ra tệp kết quả cuối cùng
 
----
-
 Để đơn giản, **Hình 2** minh họa cách MapReduce song song hóa các câu mở đầu của bài hát nổi tiếng *Code Monkey* của Jonathan Coulton:  
 *code monkey get up get coffee, code monkey go to job*.
 
 ![Parallelization of the opening lines of the song Code Monkey using the MapReduce framework](_images/mapreduceEx.png)
 
 
-Dưới đây là bản dịch tiếng Việt của nội dung bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 **Hình 2.** Song song hóa các câu mở đầu của bài hát *"Code Monkey"* bằng **MapReduce framework**
-
----
 
 Hình 2 cung cấp cái nhìn tổng quan về quá trình này.  
 Trước khi thực thi, **boss node** (nút điều phối) sẽ chia dữ liệu đầu vào thành *M* phần, trong đó *M* tương ứng với số lượng **map task**.  
@@ -305,14 +257,10 @@ Ví dụ: map task đầu tiên phân tích đoạn *code monkey get up* thành 
 (`code`, `1`), (`monkey`, `1`), (`get`, `1`), (`up`, `1`).  
 Mỗi map task sau đó ghi các giá trị trung gian này vào **distributed filesystem** (hệ thống tệp phân tán), chiếm một phần dung lượng lưu trữ trên mỗi node.
 
----
-
 Trước khi bắt đầu **reduce phase** (giai đoạn reduce), framework sẽ gom nhóm và kết hợp các cặp (*key*, *value*) trung gian thành các cặp (*key*, list(*value*)).  
 Trong Hình 2, ví dụ cặp (`get`, `1`) được phát ra bởi hai map task khác nhau.  
 Framework MapReduce sẽ gom các cặp này thành một cặp duy nhất: (`get`, `[1,1]`).  
 Các cặp trung gian đã được gom nhóm này sẽ được ghi xuống distributed filesystem trên đĩa.
-
----
 
 Tiếp theo, framework MapReduce yêu cầu boss node tạo ra *R* **reduce task**.  
 Trong Hình 2, *R* = 8.  
@@ -322,16 +270,12 @@ Một lần nữa, mỗi reduce task được thực thi độc lập và song s
 Trong giai đoạn reduce của ví dụ này, cặp (`get`, `[1,1]`) được giảm (reduce) thành cặp (`get`, `2`).  
 Mỗi worker node sẽ nối kết quả của các reduce task mà nó xử lý vào tệp kết quả cuối cùng, tệp này sẽ sẵn sàng cho người dùng khi quá trình hoàn tất.
 
----
-
 #### Fault Tolerance (Khả năng chịu lỗi)
 
 Các **data center** (trung tâm dữ liệu) thường chứa hàng nghìn node.  
 Do đó, tỷ lệ hỏng hóc phần cứng là cao; ví dụ, nếu một node trong data center có 2% khả năng hỏng phần cứng, thì xác suất có ít nhất một node bị hỏng trong một data center 1.000 node là hơn 99,99%.  
 
 Phần mềm viết cho data center vì vậy phải **fault tolerant** (chịu lỗi), nghĩa là có thể tiếp tục hoạt động khi xảy ra sự cố phần cứng (hoặc ít nhất là dừng một cách an toàn).
-
----
 
 MapReduce được thiết kế với khả năng chịu lỗi ngay từ đầu.  
 Trong bất kỳ lần chạy MapReduce nào, sẽ có một boss node và có thể có hàng nghìn worker node.  
@@ -344,8 +288,6 @@ Nếu boss node bị hỏng (xác suất thấp vì chỉ có một node), job M
 Lưu ý rằng đôi khi worker node không phản hồi ping của boss node không phải vì hỏng, mà vì bị quá tải.  
 MapReduce cũng áp dụng cùng chiến lược ping và phân phối lại công việc để giảm tác động của các worker node chậm (**straggler node**).
 
----
-
 #### Hadoop và Apache Spark
 
 Sự ra đời của MapReduce đã tạo nên một làn sóng lớn trong giới công nghệ.  
@@ -354,8 +296,6 @@ Do đó, các kỹ sư tại Yahoo! đã phát triển [**Hadoop**](https://hado
 
 Dự án Hadoop bao gồm một hệ sinh thái các công cụ cho Apache Hadoop, trong đó có **Hadoop Distributed File System (HDFS)** — một giải pháp mã nguồn mở thay thế **Google File System**, và **HBase** — được mô phỏng theo **Google BigTable**.
 
----
-
 Hadoop có một số hạn chế chính:  
 - Thứ nhất, khó kết nối nhiều job MapReduce thành một **workflow** (quy trình) lớn hơn.  
 - Thứ hai, việc ghi dữ liệu trung gian xuống HDFS trở thành nút thắt cổ chai, đặc biệt với các job nhỏ (dưới 1 GB).  
@@ -363,9 +303,6 @@ Hadoop có một số hạn chế chính:
 [**Apache Spark**](https://spark.apache.org/) được thiết kế để giải quyết các vấn đề này và nhiều vấn đề khác.  
 Nhờ các tối ưu hóa và khả năng xử lý phần lớn dữ liệu trung gian **trong bộ nhớ** (in-memory), Apache Spark có thể nhanh hơn Hadoop tới **100 lần** trên một số ứng dụng^4^.
 
-Dưới đây là bản dịch tiếng Việt của mục **15.3.3. Looking Toward the Future: Opportunities and Challenges**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 15.3.3. Hướng tới tương lai: Cơ hội và Thách thức  
 (*Looking Toward the Future: Opportunities and Challenges*)
@@ -376,8 +313,6 @@ Phần lớn dữ liệu mới được tạo ra trong cái gọi là **edge env
 Truyền thống trước đây, các nhà khoa học và kỹ sư sẽ thu thập dữ liệu và phân tích nó bằng **local cluster** (cụm máy cục bộ), hoặc chuyển dữ liệu tới siêu máy tính hoặc trung tâm dữ liệu để phân tích.  
 Cách tiếp cận “tập trung” này không còn khả thi nữa khi công nghệ cảm biến ngày càng phát triển, làm trầm trọng thêm “làn sóng dữ liệu” (*data deluge*).
 
----
-
 Một nguyên nhân của sự tăng trưởng bùng nổ này là sự phổ biến của các thiết bị nhỏ có kết nối internet và chứa nhiều loại cảm biến.  
 Những **Internet of Things** (IoT – Internet vạn vật) này đã tạo ra các tập dữ liệu lớn và đa dạng trong môi trường biên.  
 Việc truyền các tập dữ liệu lớn từ edge lên cloud là khó khăn, vì dữ liệu càng lớn thì càng tốn nhiều thời gian và năng lượng để di chuyển.  
@@ -387,8 +322,6 @@ Có sự quan tâm mạnh mẽ trong cộng đồng nghiên cứu máy tính v�
 
 Edge computing đảo ngược mô hình phân tích Big Data truyền thống: thay vì phân tích diễn ra tại siêu máy tính hoặc trung tâm dữ liệu (“last mile”), thì phân tích diễn ra ngay tại nguồn tạo dữ liệu (“first mile”)^2^.
 
----
-
 Ngoài vấn đề hậu cần di chuyển dữ liệu, một mối quan tâm xuyên suốt khác trong phân tích Big Data là **quản lý năng lượng**.  
 Các tài nguyên tập trung lớn như siêu máy tính và trung tâm dữ liệu tiêu thụ rất nhiều năng lượng; các siêu máy tính hiện đại cần tới hàng megawatt (triệu watt) để vận hành và làm mát.  
 
@@ -396,8 +329,6 @@ Một câu nói quen thuộc trong cộng đồng siêu máy tính là “**a me
 
 Việc xử lý dữ liệu cục bộ trong môi trường biên giúp giảm bớt vấn đề di chuyển các tập dữ liệu lớn, nhưng hạ tầng tính toán tại đây cũng phải tiêu thụ năng lượng ở mức tối thiểu^2^.  
 Đồng thời, việc tăng hiệu suất năng lượng của các siêu máy tính và trung tâm dữ liệu lớn là điều tối quan trọng^5^.
-
----
 
 Ngoài ra, còn có sự quan tâm tới việc tìm cách **hội tụ** hai hệ sinh thái HPC và cloud computing để tạo ra một bộ framework, hạ tầng và công cụ chung cho phân tích dữ liệu quy mô lớn.  
 Những năm gần đây, nhiều nhà khoa học đã sử dụng các kỹ thuật và công cụ do cộng đồng cloud computing phát triển để phân tích các tập dữ liệu HPC truyền thống, và ngược lại.  
@@ -410,8 +341,6 @@ Ngoài ra, cần có sự hội tụ về **văn hóa, đào tạo và công c�
 BDEC cũng đề xuất một mô hình trong đó các siêu máy tính và trung tâm dữ liệu là các “node” trong một mạng lưới tài nguyên tính toán rất lớn, cùng phối hợp để xử lý dữ liệu tràn về từ nhiều nguồn^2^.  
 Mỗi node sẽ tóm tắt dữ liệu chảy vào nó một cách mạnh mẽ, chỉ chuyển tiếp lên node tài nguyên tính toán lớn hơn khi cần thiết.
 
----
-
 Khi các hệ sinh thái cloud computing và HPC tìm kiếm sự thống nhất và chuẩn bị đối phó với làn sóng dữ liệu ngày càng tăng, tương lai của hệ thống máy tính hứa hẹn nhiều khả năng thú vị.  
 Các lĩnh vực mới như **trí tuệ nhân tạo** (AI) và **tính toán lượng tử** đang dẫn tới sự ra đời của các **domain-specific architecture** (DSA – kiến trúc chuyên biệt theo lĩnh vực) và **application-specific integrated circuit** (ASIC – mạch tích hợp chuyên dụng) mới, có khả năng xử lý các quy trình công việc tùy chỉnh hiệu quả năng lượng hơn trước (xem ví dụ về **TPU**^6^).  
 
@@ -419,8 +348,6 @@ Bên cạnh đó, vấn đề **bảo mật** của các kiến trúc này — v
 Các kiến trúc mới cũng sẽ dẫn tới sự xuất hiện của các ngôn ngữ lập trình mới để lập trình cho chúng, và có thể cả các hệ điều hành mới để quản lý các giao diện khác nhau.  
 
 Để tìm hiểu thêm về tương lai của kiến trúc máy tính, chúng tôi khuyến khích bạn đọc bài viết [này](https://cacm.acm.org/magazines/2019/2/234352-a-new-golden-age-for-computer-architecture/fulltext) của hai huyền thoại kiến trúc máy tính, đồng thời là chủ nhân Giải thưởng Turing ACM 2017 — **John Hennessy** và **David Patterson**^7^.
-
----
 
 ### Tài liệu tham khảo
 
@@ -432,7 +359,5 @@ Các kiến trúc mới cũng sẽ dẫn tới sự xuất hiện của các ng�
 6. Jouppi et. al. *In-datacenter performance analysis of a tensor processing unit*. 2017 ACM/IEEE 44th Annual International Symposium on Computer Architecture (ISCA), pp. 1–12. 2017.  
 7. J. Hennessy and D. Patterson. *A New Golden Age for Computer Architecture*. CACM 62(2), 48–60. 2019.  
 8. D. A. Reed and J. Dongarra. *Exascale computing and big data*. CACM 58(7), 56–68. 2015.  
-
----
 
 Bạn có muốn tôi tiếp tục dịch sang **Chương 16 – Operating Systems** để nối tiếp nội dung cuốn sách không?

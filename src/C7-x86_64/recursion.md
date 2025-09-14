@@ -92,8 +92,6 @@ int sumr(int n) {
 
 Mặc dù bản dịch này ban đầu có thể trông không giống hệt hàm `sumr` gốc, nhưng khi xem xét kỹ, ta thấy hai hàm này thực sự tương đương.
 
----
-
 ### 7.6.1. Hoạt hình: Quan sát sự thay đổi của Call Stack
 
 Như một bài tập, bạn nên thử vẽ lại stack và quan sát cách các giá trị thay đổi. Hình động dưới đây minh họa cách stack được cập nhật khi chúng ta chạy hàm này với giá trị 3.

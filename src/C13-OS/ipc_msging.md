@@ -12,8 +12,6 @@ Mô hình **message passing** cho **interprocess communication** (IPC – giao t
 2. Các process sử dụng message channel để gửi và nhận thông điệp với nhau.
 3. Khi không còn sử dụng, các process đóng đầu của message channel.
 
----
-
 **Pipe** là một kênh giao tiếp một chiều cho hai process chạy trên cùng một máy.  
 Một chiều nghĩa là một đầu của pipe chỉ dùng để gửi thông điệp (ghi vào), và đầu còn lại chỉ dùng để nhận thông điệp (đọc ra).  
 Pipe thường được dùng trong các lệnh shell để gửi **output** của một process làm **input** cho process khác.
@@ -33,8 +31,6 @@ Nhờ vậy, khi các child process được tạo và chạy, output của `cat
 
 **Hình 1.** Pipe là kênh giao tiếp một chiều cho các process trên cùng hệ thống. Trong ví dụ này, process `cat` gửi dữ liệu cho process `grep` bằng cách ghi vào đầu ghi của pipe. Process `grep` nhận dữ liệu này bằng cách đọc từ đầu đọc của pipe.
 
----
-
 Trong khi pipe chỉ truyền dữ liệu từ một process sang process khác theo một chiều, các abstraction message passing khác cho phép giao tiếp hai chiều.  
 **Socket** là một kênh giao tiếp hai chiều, nghĩa là mỗi đầu của socket có thể dùng để gửi và nhận thông điệp.  
 Socket có thể được dùng bởi các process giao tiếp chạy trên cùng một máy hoặc trên các máy khác nhau được kết nối qua mạng (xem **Hình 2**).  
@@ -47,8 +43,6 @@ Chỉ cần tồn tại một đường kết nối mạng giữa hai máy, các
 
 **Hình 2.** Socket là kênh giao tiếp hai chiều, có thể được dùng bởi các process trên các máy khác nhau kết nối qua mạng.
 
----
-
 Vì mỗi máy tính là một hệ thống riêng (phần cứng và OS), và OS trên một máy không biết hoặc quản lý tài nguyên của máy khác, **message passing** là cách duy nhất để các process trên các máy khác nhau giao tiếp.  
 Để hỗ trợ loại giao tiếp này, OS cần triển khai một **message passing protocol** (giao thức truyền thông điệp) chung để gửi và nhận thông điệp qua mạng.  
 
@@ -57,8 +51,6 @@ Khi một process muốn gửi thông điệp cho process khác, nó sẽ gọi 
 OS sẽ đóng gói thông điệp trong message buffer và gửi nó qua mạng tới máy kia.  
 Khi OS nhận được thông điệp từ mạng, nó sẽ giải nén thông điệp và chuyển cho process trên hệ thống của mình đã yêu cầu nhận thông điệp.  
 Process này có thể đang ở trạng thái **Blocked** chờ thông điệp đến; khi nhận được thông điệp, process sẽ chuyển sang trạng thái **Ready** để chạy lại.
-
----
 
 Có nhiều abstraction phần mềm hệ thống được xây dựng trên message passing để ẩn chi tiết truyền thông điệp khỏi lập trình viên.  
 Tuy nhiên, bất kỳ giao tiếp nào giữa các process trên các máy khác nhau đều phải sử dụng message passing ở mức thấp nhất (giao tiếp qua **shared memory** hoặc **signal** là không khả thi cho các process chạy trên các hệ thống khác nhau).  

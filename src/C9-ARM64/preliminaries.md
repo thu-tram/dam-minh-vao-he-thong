@@ -1,361 +1,197 @@
+### 9.4.1. Kiến thức cơ bản (Preliminaries)  
 
+### Lệnh so sánh có điều kiện (Conditional Comparison Instructions)  
 
- 
+Các lệnh so sánh thực hiện một phép toán số học nhằm phục vụ cho việc điều khiển thực thi có điều kiện của chương trình.  
+**[Bảng 1](#ConditionalControla64)** liệt kê các lệnh cơ bản liên quan đến điều khiển có điều kiện.
 
+| Instruction   | Translation |
+|---------------|-------------|
+| `cmp O1, O2`  | So sánh O1 với O2 (tính O1 - O2) |
+| `tst O1, O2`  | Tính O1 `&` O2 |
 
+**Bảng 1.** Các lệnh điều khiển có điều kiện  
 
+Lệnh `cmp` so sánh giá trị của hai toán hạng O1 và O2, cụ thể là trừ O2 khỏi O1.  
+Lệnh `tst` thực hiện phép **bitwise AND**. Một ví dụ thường gặp:
 
+```
+tst x0, x0
+```
 
+Trong ví dụ này, phép AND bitwise của `x0` với chính nó chỉ cho kết quả bằng 0 khi `x0` chứa giá trị 0.  
+Nói cách khác, đây là phép kiểm tra giá trị bằng 0, tương đương với:
 
+```
+cmp x0, #0
+```
 
+Không giống như các lệnh số học đã đề cập trước đó, `cmp` và `tst` **không** ghi kết quả vào một thanh ghi đích.  
+Thay vào đó, cả hai lệnh này sẽ thay đổi một tập hợp các giá trị 1-bit gọi là **condition code flags**.  
 
+Ví dụ, `cmp` sẽ thay đổi các cờ điều kiện dựa trên việc phép tính O1 - O2 cho kết quả dương (lớn hơn), âm (nhỏ hơn) hoặc bằng 0 (bằng nhau).  
+Hãy nhớ rằng [condition code](../C5-Arch/cpu.html#_the_alu) lưu trữ thông tin về một phép toán trong ALU.  
+Các cờ điều kiện là một phần của trạng thái bộ xử lý ARM (`PSTATE`), thay thế cho thanh ghi trạng thái chương trình hiện tại (`CPSR`) trong hệ ARMv7-A.
 
+| Flag | Translation |
+|------|-------------|
+| `Z`  | Bằng 0 (1: đúng, 0: sai) |
+| `N`  | Âm (1: đúng, 0: sai) |
+| `V`  | Xảy ra tràn số có dấu (1: có, 0: không) |
+| `C`  | Xảy ra carry số học / tràn số không dấu (1: có, 0: không) |
 
+**Bảng 2.** Các cờ điều kiện thường dùng  
 
+Xét lại lệnh `cmp O1, O2`:
 
+- Cờ `Z` được đặt thành 1 nếu O1 và O2 bằng nhau.  
+- Cờ `N` được đặt thành 1 nếu O1 *nhỏ hơn* O2 (tức O1 - O2 cho kết quả âm).  
+- Cờ `V` được đặt thành 1 nếu phép O1 - O2 gây tràn số (hữu ích cho so sánh có dấu).  
+- Cờ `C` được đặt thành 1 nếu phép O1 - O2 gây carry số học (hữu ích cho so sánh không dấu).  
 
+Việc tìm hiểu sâu về các cờ điều kiện nằm ngoài phạm vi của sách này, nhưng cần lưu ý rằng việc `cmp` và `tst` thiết lập các cờ này cho phép các lệnh tiếp theo (lệnh *branch*) hoạt động chính xác.
 
+### Lệnh nhánh (The Branch Instructions)  
 
+Lệnh nhánh cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh.  
+Trong các chương trình assembly mà ta đã phân tích, `pc` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình.  
+Lệnh nhánh cho phép `pc` được đặt tới một lệnh mới chưa thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
 
+#### Lệnh nhánh trực tiếp (Direct branch instructions)  
 
+| Instruction        | Description |
+|--------------------|-------------|
+| `b addr L`         | `pc` = addr |
+| `br A`             | `pc` = A |
+| `cbz R, addr L`    | Nếu R bằng 0, `pc` = addr (nhánh có điều kiện) |
+| `cbnz R, addr L`   | Nếu R khác 0, `pc` = addr (nhánh có điều kiện) |
+| `b.c addr L`       | Nếu điều kiện c đúng, `pc` = addr (nhánh có điều kiện) |
 
+**Bảng 3.** Các lệnh nhánh thường dùng  
 
+**Bảng 3** liệt kê tập hợp các lệnh nhánh thường dùng; trong đó `L` là một **symbolic label** (nhãn ký hiệu), đóng vai trò như một định danh trong tệp đối tượng (object file) của chương trình.  
+Tất cả các nhãn đều bao gồm một số chữ cái và chữ số, theo sau là dấu hai chấm.  
+Nhãn có thể là *local* (cục bộ) hoặc *global* (toàn cục) trong phạm vi của một tệp đối tượng.  
 
+- Nhãn của hàm thường là *global* và thường bao gồm tên hàm kèm dấu hai chấm. Ví dụ: `main:` (hoặc `<main>:`) được dùng để đánh dấu hàm `main` do người dùng định nghĩa.  
+- Theo quy ước, các nhãn có phạm vi *local* thường được đặt dấu chấm ở đầu. Bạn có thể bắt gặp một nhãn local như `.L1` trong ngữ cảnh của một câu lệnh `if` hoặc vòng lặp.
 
+Mỗi nhãn đều có một địa chỉ liên kết (`addr` trong Bảng 3).  
+Khi CPU thực thi lệnh `b`, nó sẽ đặt thanh ghi `pc` thành `addr`.  
+Lệnh `b` cho phép bộ đếm chương trình (program counter) thay đổi trong phạm vi 128 MB so với vị trí hiện tại.  
+Người lập trình assembly cũng có thể chỉ định một địa chỉ cụ thể để nhảy tới bằng lệnh `br`.  
+Không giống `b`, lệnh `br` không bị giới hạn về phạm vi địa chỉ.
 
+Đôi khi, các nhãn local cũng được hiển thị dưới dạng offset so với điểm bắt đầu của một hàm.  
+Ví dụ, một lệnh nằm cách điểm bắt đầu của `main` 28 byte có thể được biểu diễn bằng nhãn `<main+28>`.  
+Lệnh `b 0x7d0 <main+28>` nghĩa là nhảy tới địa chỉ `0x7d0`, nhãn `<main+28>`, tức là cách điểm bắt đầu của hàm `main` 28 byte.  
+Khi thực thi lệnh này, `pc` sẽ được đặt thành `0x7d0`.
 
+Ba lệnh cuối trong Bảng 3 là **conditional branch instructions** (lệnh nhánh có điều kiện).  
+Nói cách khác, thanh ghi `pc` chỉ được đặt thành `addr` nếu điều kiện cho trước được đánh giá là đúng.  
 
+- Với `cbz`, nếu thanh ghi R bằng 0, nhánh sẽ được thực hiện và `pc` được đặt thành `addr`.  
+- Với `cbnz`, nếu thanh ghi R khác 0, nhánh sẽ được thực hiện và `pc` được đặt thành `addr`.
 
+Mạnh mẽ nhất trong các lệnh nhánh có điều kiện là `b.c`, cho phép compiler hoặc lập trình viên assembly chọn một hậu tố (suffix) tùy chỉnh để chỉ ra điều kiện thực hiện nhánh.
 
+#### Hậu tố lệnh nhánh có điều kiện (Conditional branch instruction suffixes)  
 
+**Bảng 4** liệt kê các hậu tố nhánh có điều kiện thường gặp (ký hiệu `c`).  
+Khi dùng với lệnh nhánh, mỗi lệnh bắt đầu bằng chữ `b` và dấu chấm, biểu thị đây là lệnh nhánh.  
+Hậu tố `c` chỉ ra **điều kiện** để thực hiện nhánh.  
+Các hậu tố này cũng xác định việc so sánh số sẽ được hiểu là có dấu (signed) hay không dấu (unsigned).  
 
+Lưu ý: lệnh nhánh có điều kiện có phạm vi ngắn hơn nhiều (1 MB) so với lệnh `b`.  
+Những hậu tố này cũng được dùng cho lệnh **conditional select** (`csel`), sẽ được đề cập ở phần tiếp theo.
 
+| Signed Comparison | Unsigned Comparison | Mô tả |
+|-------------------|---------------------|-------|
+| `eq`              | `eq`                | Nhảy nếu bằng nhau (==) hoặc nếu bằng 0 |
+| `ne`              | `ne`                | Nhảy nếu khác nhau (!=) |
+| `mi`              | `mi`                | Nhảy nếu âm (negative) |
+| `pl`              | `pl`                | Nhảy nếu không âm (>= 0) |
+| `gt`              | `hi`                | Nhảy nếu lớn hơn (>) / cao hơn (higher) |
+| `ge`              | `cs` (`hs`)         | Nhảy nếu lớn hơn hoặc bằng (>=) |
+| `lt`              | `lo` (`cc`)         | Nhảy nếu nhỏ hơn (<) |
+| `le`              | `ls`                | Nhảy nếu nhỏ hơn hoặc bằng (<=) |
 
+**Bảng 4.** Hậu tố lệnh nhánh có điều kiện (các từ đồng nghĩa được ghi trong ngoặc)
 
+### Câu lệnh goto  
 
+Trong các phần tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và dịch ngược chúng về C.  
+Khi dịch ngược mã assembly của các câu lệnh điều kiện và vòng lặp về C, việc hiểu dạng `goto` tương ứng trong C là rất hữu ích.  
 
-### 9.4.1. Preliminaries 
+Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã.  
+Lệnh assembly tương ứng với `goto` là `b`.
 
-### Conditional Comparison Instructions
+Cú pháp `goto` gồm từ khóa `goto` theo sau là một **goto label** — một loại nhãn chương trình chỉ ra rằng việc thực thi sẽ tiếp tục tại vị trí được đánh dấu bởi nhãn đó.  
+Ví dụ: `goto done` nghĩa là chương trình sẽ nhảy tới dòng có nhãn `done`.  
 
-Comparison instructions perform an arithmetic operation for the purpose
-of guiding the conditional execution of a program. [Table
-1](#ConditionalControla64) lists the basic instructions associated with
-conditional control.
+Các ví dụ khác về nhãn trong C bao gồm nhãn của câu lệnh [switch](../C2-C_depth/advanced_switch.html#_c_switch_stmt_) đã được đề cập ở Chương 2.
 
+Các đoạn mã dưới đây minh họa hàm `getSmallest` được viết bằng C thông thường (bên trái) và dạng `goto` tương ứng trong C (bên phải).  
+Hàm `getSmallest` so sánh giá trị của hai số nguyên (`x` và `y`), và gán giá trị nhỏ hơn cho biến `smallest`.
 
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+===================================+===================================+
-| `cmp O1, O2`                      | Compares O1 with O2 (computes     |
-|                                   | O1 - O2)                          |
-+-----------------------------------+-----------------------------------+
-| `tst O1, O2`                      | Computes O1 `&` O2                |
-+-----------------------------------+-----------------------------------+
 
-: Table 1. Conditional Control Instructions
 
-The `cmp` instruction compares the value of two operands, O1 and O2.
-Specifically, it subtracts O2 from O1. The `tst` instruction performs
-bitwise AND. It is common to see an instruction like:
+#### Phiên bản C thông thường
 
+```c
+int getSmallest(int x, int y) {
+    int smallest;
 
+    if ( x > y ) { // if (conditional)
+        smallest = y; // then statement
+    }
+    else {
+        smallest = x; // else statement
+    }
+    return smallest;
+}
+```
 
+#### Phiên bản dùng goto
+```c
+int getSmallest(int x, int y) {
+    int smallest;
 
-    tst x0, x0
+    if (x <= y) { // if (!conditional)
+        goto else_statement;
+    }
 
+    smallest = y; // then statement
+    goto done;
 
-In this example, the bitwise AND of `x0` with itself is zero only when
-`x0` contains zero. In other words, this is a test for a zero value and
-is equivalent to:
+else_statement:
+    smallest = x; // else statement
 
+done:
+    return smallest;
+}
+```
 
+**Bảng 5.** So sánh một hàm C và dạng `goto` tương ứng.
 
+Dạng `goto` của hàm này có thể trông hơi phản trực giác, nhưng hãy phân tích xem thực chất chuyện gì đang diễn ra.  
+Câu lệnh điều kiện kiểm tra xem biến `x` có nhỏ hơn hoặc bằng `y` hay không.
 
-    cmp x0, #0
+- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa duy nhất câu lệnh `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục chạy phần mã dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
 
+- Nếu `x` lớn hơn `y`, thì `smallest` được gán bằng `y`. Sau đó chương trình thực thi câu lệnh `goto done`, chuyển quyền điều khiển tới nhãn `done`, trả về giá trị của `smallest` (`y`).
 
-Unlike the arithmetic instructions covered thus far, `cmp` and `tst` do
-not modify a destination register. Instead, both instructions modify a
-series of single-bit values known as **condition code flags**. For
-example, `cmp` will modify condition code flags based on whether the
-value O1 - O2 results in a positive (greater), negative (less), or zero
-(equal) value. Recall that [condition
-code](../C5-Arch/cpu.html#_the_alu) values encode information
-about an operation in the ALU. The condition code flags are part of the
-ARM processor state (`PSTATE`), which replaces the current program
-status register (`CPSR`) from ARMv7-A systems.
+Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng trong mã hiện đại, việc dùng `goto` được xem là một **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã nguồn.  
+Thực tế, nhà khoa học máy tính **Edsger Dijkstra** đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
 
+Nhìn chung, các chương trình C được thiết kế tốt sẽ **không** sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng nó để không tạo ra mã khó đọc, khó gỡ lỗi và khó bảo trì.  
+Tuy nhiên, việc hiểu câu lệnh `goto` trong C vẫn quan trọng, vì GCC thường chuyển đổi mã C có chứa điều kiện sang dạng `goto` trước khi dịch sang assembly — bao gồm cả mã có câu lệnh `if` và vòng lặp.
 
-+-----------------------------------+-----------------------------------+
-| Flag                              | Translation                       |
-+===================================+===================================+
-| `Z`                               | Is equal to zero (1: yes, 0: no)  |
-+-----------------------------------+-----------------------------------+
-| `N`                               | Is negative (1: yes, 0: no)       |
-+-----------------------------------+-----------------------------------+
-| `V`                               | Signed overflow has occurred (1:  |
-|                                   | yes, 0: no)                       |
-+-----------------------------------+-----------------------------------+
-| `C`                               | Arithmetic carry/unsigned         |
-|                                   | overflow has occurred (1: yes, 0: |
-|                                   | no)                               |
-+-----------------------------------+-----------------------------------+
+Các phần tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh `if` và vòng lặp trong assembly:
 
-: Table 2. Common Condition Code Flags
+- [If Statements](if_statements.html#_if_statements_in_assembly)  
+- Loops  
 
-Table 2 depicts the common flags used for
-condition code operations. Revisiting the `cmp O1, O2` instruction:
+### Tài liệu tham khảo
 
-
-
--   The `Z` flag is set to 1 if O1 and O2 are equal.
-
--   The `N` flag is set to 1 if O1 is *less* than O2 (i.e. O1 - O2
-    results in a negative value).
-
--   The `V` flag is set to 1 if the operation O1 - O2 results in
-    overflow (useful for signed comparisons).
-
--   The `C` flag is set to 1 if the operation O1 - O2 results in an
-    arithmetic carry operation (useful for unsigned comparisons).
-
-
-While an in-depth discussion of condition code flags is beyond the scope
-of this book, the setting of these registers by `cmp` and `tst` enables
-the next set of instructions we cover (the *branch* instructions) to
-operate correctly.
-
-
-### The Branch Instructions
-
-A branch instruction enables a program's execution to \"jump\" to a new
-position in the code. In the assembly programs we have traced through
-thus far, `pc` always points to the next instruction in program memory.
-The branch instructions enable `pc` to be set to either a new
-instruction not yet seen (as in the case of an `if` statement) or to a
-previously executed instruction (as in the case of a loop).
-
-
-#### Direct branch instructions
-
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Description                       |
-+===================================+===================================+
-| `b addr L`                        | `pc` = addr                       |
-+-----------------------------------+-----------------------------------+
-| `br A`                            | `pc` = A                          |
-+-----------------------------------+-----------------------------------+
-| `cbz R, addr L`                   | If R is equal to 0, `pc` = addr   |
-|                                   | (conditional branch)              |
-+-----------------------------------+-----------------------------------+
-| `cbnz R, addr L`                  | If R is not equal to 0, `pc` =    |
-|                                   | addr (conditional branch)         |
-+-----------------------------------+-----------------------------------+
-| `b.c addr L`                      | If c, `pc` = addr (conditional    |
-|                                   | branch)                           |
-+-----------------------------------+-----------------------------------+
-
-: Table 3. Common Branch Instructions
-
-Table 3 lists the set of common branch instructions; `L`
-refers to a **symbolic label**, which serves as an identifier in the
-program's object file. All labels consist of some letters and digits
-followed by a colon. Labels can be *local* or *global* to an object
-file's scope. Function labels tend to be *global* and usually consist of
-the function name and a colon. For example, `main:` (or `<main>:`) is
-used to label a user-defined `main` function. By convention, labels
-whose scope are *local* are typically preceded by a period. One may
-encounter a local label with a name like `.L1` in the context of an `if`
-statement or loop.
-
-
-All labels have an associated address (`addr` in Table 3).
-When the CPU executes a `b` instruction, it sets the `pc` register to
-`addr`. The `b` instruction enables the program counter to change within
-128 MB of its current location; a programmer writing assembly can also
-specify a particular address to branch to by using the `br` instruction.
-Unlike the `b` instruction, there are no restrictions on the address
-range of `br`.
-
-
-Sometimes, local labels also are shown as an offset from the start of a
-function. Therefore, an instruction whose address is 28 bytes away from
-the start of `main` may be represented with the label `<main+28>`. For
-example, the instruction `b 0x7d0 <main+28>` indicates a branch to
-address 0x7d0, which has the associated label `<main+28>`, meaning that
-it is 28 bytes away from the starting address of the `main` function.
-Executing this instruction sets `pc` to 0x7d0.
-
-
-The last three instructions are **conditional branch instructions**. In
-other words, the program counter register is set to `addr` only if the
-given condition evaluates to true. The `cbz` and `cbnz` instructions
-require a register in addition to an address. In the case of `cbz`, if R
-is zero, the branch is taken and `pc` is set to `addr`. In the case of
-`cbnz`, if R is nonzero, the branch is taken and `pc` is set to `addr`.
-
-
-The most powerful of the conditional branch instructions are the `b.c`
-instructions, which enable the compiler or assembly writer to pick a
-custom suffix that indicates the condition on which a branch is taken.
-
-
-#### Conditional branch instruction suffixes
-
-Table 4 lists the set of common conditional branch
-suffixes (c). When used in conjunction with a branch, each instruction
-starts with the letter `b` and a dot, denoting that it is a branch
-instruction. The suffix of each instruction (c) indicates the
-**condition** for the branch. The branch instruction suffixes also
-determine whether to interpret numerical comparisons as signed or
-unsigned. Note that conditional branch instructions have a much more
-limited range (1 MB) than the `b` instruction. These suffixes are also
-used for the conditional select instruction (`csel`), which is covered
-in the next section.
-
-
-+----------------------+----------------------+-----------------------+
-| Signed Comparison    | Unsigned Comparison  | Description           |
-+======================+======================+=======================+
-| `eq`                 | `eq`                 | branch if equal (==)  |
-|                      |                      | or branch if zero     |
-+----------------------+----------------------+-----------------------+
-| `ne`                 | `ne`                 | branch if not equal   |
-|                      |                      | (!=)                  |
-+----------------------+----------------------+-----------------------+
-| `mi`                 | `mi`                 | branch if minus       |
-|                      |                      | (negative)            |
-+----------------------+----------------------+-----------------------+
-| `pl`                 | `pl`                 | branch if             |
-|                      |                      | non-negative (\>= 0)  |
-+----------------------+----------------------+-----------------------+
-| `gt`                 | `hi`                 | branch if greater     |
-|                      |                      | than (higher) (\>)    |
-+----------------------+----------------------+-----------------------+
-| `ge`                 | `cs` (`hs`)          | branch if greater     |
-|                      |                      | than or equal (\>=)   |
-+----------------------+----------------------+-----------------------+
-| `lt`                 | `lo` (`cc`)          | branch if less than   |
-|                      |                      | (\<)                  |
-+----------------------+----------------------+-----------------------+
-| `le`                 | `ls`                 | branch if less than   |
-|                      |                      | or equal (\<=)        |
-+----------------------+----------------------+-----------------------+
-
-: Table 4. Conditional Branch Instruction Suffixes (synonyms shown in
-parentheses)
-
-### The goto Statement
-
-In the following subsections, we look at conditionals and loops in
-assembly and reverse engineer them back to C. When translating assembly
-code of conditionals and loops back into C, it is useful to understand
-their corresponding C language `goto` forms. The `goto` statement is a C
-primitive that forces program execution to switch to another line in the
-code. The assembly instruction associated with the `goto` statement is
-`b`.
-
-
-The `goto` statement consists of the `goto` keyword followed by a **goto
-label**, a type of program label that indicates that execution should
-continue at the corresponding label. So, `goto done` means that the
-program execution should branch to the line marked by label `done`.
-Other examples of program labels in C include the [switch statement
-labels](../C2-C_depth/advanced_switch.html#_c_switch_stmt_)
-previously covered in Chapter 2.
-
-
-The following code listings depict a function `getSmallest` written in
-regular C code (left) and its associated `goto` form in C (right). The
-`getSmallest` function compares the value of two integers (`x` and `y`),
-and assigns the smaller value to variable `smallest`.
-
-
-+-----------------------------------+-----------------------------------+
-| Regular C version                 | Goto version                      |
-+===================================+===================================+
-|                        |                        |
-|                   |                   |
-|                        |                        |
-| ```     | ```     |
-| int getSmallest(int x, int y) {   | int getSmallest(int x, int y) {   |
-|     int smallest;                 |     int smallest;                 |
-|                                   |                                   |
-| if ( x > y ) { //if (conditional) |     i                             |
-|                                   | f (x <= y ) { //if (!conditional) |
-|    smallest = y; //then statement |         goto else_statement;      |
-|     }                             |     }                             |
-|     else {                        |                                   |
-|                                   |    smallest = y; //then statement |
-|    smallest = x; //else statement |     goto done;                    |
-|     }                             |                                   |
-|     return smallest;              | else_statement:                   |
-| }                                 |                                   |
-| ```                               |    smallest = x; //else statement |
-| :::                               |                                   |
-| :::                               | done:                             |
-| :::                               |     return smallest;              |
-|                                   | }                                 |
-|                                   | ```                               |
-|                                   | :::                               |
-|                                   | :::                               |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-: Table 5. Comparison of a C function and its associated goto form.
-
-The `goto` form of this function may seem counterintuitive, but let's
-discuss what exactly is going on. The conditional checks to see whether
-variable `x` is less than or equal to `y`.
-
-
-
--   If `x` is less than or equal to `y`, the program transfers control
-    to the label marked by `else_statement`, which contains the single
-    statement `smallest = x`. Since the program executes linearly, the
-    program continues on to execute the code under the label `done`,
-    which returns the value of `smallest` (`x`).
-
--   If `x` is greater than `y`, then `smallest` is set to `y`. The
-    program then executes the statement `goto done`, which transfers
-    control to the `done` label, which returns the value of `smallest`
-    (`y`).
-
-
-While `goto` statements were commonly used in the early days of
-programming, their use in modern code is considered bad practice,
-because it reduces the overall readability of code. In fact, computer
-scientist Edsger Dijkstra wrote a famous paper lambasting the use of
-`goto` statements called *Go To Statement Considered Harmful*^1^.
-
-
-In general, well-designed C programs do not use `goto` statements and
-programmers are discouraged from using it to avoid writing code that is
-difficult to read, debug, and maintain. However, the C `goto` statement
-is important to understand, as GCC typically changes C code with
-conditionals into a `goto` form prior to translating it to assembly,
-including code that contains `if` statements and loops.
-
-
-The following subsections cover the assembly representation of `if`
-statements and loops in greater detail.
-
-
-
--   [If
-    Statements](if_statements.html#_if_statements_in_assembly)
-
--   Loops
-
-
-### References
-
-
-1.  Edsger Dijkstra. \"Go To Statement Considered Harmful\".
-    *Communications of the ACM* 11(3) pp. 147---​148. 1968.
-
-
-
-
-
+[^1]: Edsger Dijkstra. *Go To Statement Considered Harmful*. *Communications of the ACM* 11(3), trang 147–148, 1968.

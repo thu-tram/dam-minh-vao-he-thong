@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 7.7. Mảng (Arrays)
 
@@ -48,8 +45,6 @@ int sumArray(int *array, int length) {
 ```
 
 Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem đoạn mã assembly tương ứng của hàm `sumArray`:
-
----
 
 ```
 0x400686 <+0>:   push %rbp                   # save %rbp

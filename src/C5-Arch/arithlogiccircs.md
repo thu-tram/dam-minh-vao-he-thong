@@ -101,8 +101,6 @@ Bảng 2. Bảng chân trị cho các mạch NAND, NOR và XOR.
 
 Các phiên bản nhiều bit của các mạch này được xây dựng từ nhiều phiên bản 1-bit của mạch, tương tự như cách mạch [AND 4-bit](gates.html#_basic_logic_gates) được xây dựng từ bốn mạch AND 1-bit.
 
----
-
 #### Mạch Số học
 
 Các mạch số học được xây dựng theo đúng phương pháp mà ta đã dùng để xây dựng các mạch logic. Ví dụ, để xây dựng mạch cộng 1-bit, ta bắt đầu với bảng chân trị cho phép cộng từng bit, gồm hai đầu vào là A và B, và hai đầu ra: một cho tổng (SUM) của A và B, và một cho giá trị tràn (CARRY OUT). [Bảng 3](#Table1bitadder) hiển thị bảng chân trị kết quả cho phép cộng 1-bit.
@@ -143,9 +141,6 @@ Do đó, để triển khai mạch cộng nhiều bit, ta cần một mạch c�
 
 ![1-bit adder circuit with carry in](_images/1bitaddcin.png)
 
-Dưới đây là bản dịch tiếng Việt của phần văn bản bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
-
----
 
 **Hình 5. Mạch cộng 1-bit với ba đầu vào (A, B và CARRY IN) và hai đầu ra (SUM và CARRY OUT).**
 

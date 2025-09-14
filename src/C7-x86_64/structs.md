@@ -27,8 +27,6 @@ Các field được lưu liên tiếp nhau trong bộ nhớ theo đúng thứ t�
 Trong **Hình 1**, field `age` được cấp phát ngay sau field `name` (tại byte offset x~64~), tiếp theo là `grad_yr` (offset x~68~) và `gpa` (offset x~72~).  
 Cách tổ chức này cho phép truy cập field hiệu quả về mặt bộ nhớ.
 
----
-
 Để hiểu cách compiler sinh mã assembly làm việc với một `struct`, hãy xét hàm `initStudent`:
 
 ```c
@@ -124,8 +122,6 @@ Một số điểm cần lưu ý:
 
 - Lệnh `leaveq` tại `<initStudent+86>` chuẩn bị stack để thoát khỏi hàm, và `retq` tại `<initStudent+87>` trả quyền điều khiển về cho hàm gọi. Vì đây là hàm `void`, giá trị trong `%rax` sẽ bị bỏ qua.
 
----
-
 Như vậy, bằng cách quan sát các **byte offset** và cách compiler sử dụng chúng trong các lệnh `mov`, ta có thể thấy rõ cách các field của struct được truy cập và gán giá trị trong assembly.  
 Điều này cũng cho thấy lợi ích của việc khai báo các field liên tiếp trong bộ nhớ: compiler chỉ cần cộng thêm offset cố định vào địa chỉ cơ sở của struct để truy cập từng field, giúp việc truy cập dữ liệu nhanh và hiệu quả hơn.
 
@@ -145,8 +141,6 @@ Như vậy, bằng cách quan sát các **byte offset** và cách compiler sử 
 0x4006f5 <+75>: movss -0x1c(%rbp),%xmm0      # copy g vào %xmm0
 0x4006fa <+80>: movss %xmm0,0x48(%rax)       # copy g vào %rax+0x48
 ```
-
----
 
 ### 7.9.1. Data Alignment và structs
 
@@ -173,8 +167,6 @@ Trong hình minh họa này, field `age` xuất hiện ngay ở byte liền kề
 ![struct2right](_images/struct2right.png)  
 **Hình 3.** Cách bố trí bộ nhớ **đúng** cho struct `studentTM` đã chỉnh sửa. Byte x~63~ được compiler thêm vào để đáp ứng yêu cầu căn chỉnh bộ nhớ (memory alignment), nhưng nó không thuộc về bất kỳ field nào.
 
----
-
 Chính sách căn chỉnh (alignment policy) của kiến trúc x64 yêu cầu:
 
 - Các kiểu dữ liệu 2 byte (ví dụ `short`) phải nằm ở địa chỉ chia hết cho 2.
@@ -184,8 +176,6 @@ Chính sách căn chỉnh (alignment policy) của kiến trúc x64 yêu cầu:
 Đối với một `struct`, compiler sẽ thêm các byte trống (**padding**) giữa các field để đảm bảo mỗi field thỏa mãn yêu cầu căn chỉnh của nó.  
 Ví dụ, trong `struct` được khai báo ở **Hình 3**, compiler thêm 1 byte padding tại byte x~63~ để đảm bảo field `age` bắt đầu ở một địa chỉ là bội số của 4.  
 Các giá trị được căn chỉnh đúng trong bộ nhớ có thể được đọc hoặc ghi chỉ với một thao tác, giúp tăng hiệu suất.
-
----
 
 Xét trường hợp khi một `struct` được định nghĩa như sau:
 

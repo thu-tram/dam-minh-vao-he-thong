@@ -47,5 +47,3 @@ Ví dụ, việc truy cập một ổ đĩa chậm chỉ một lần khi chươn
 
 Chương này mô tả đặc điểm của nhiều loại thiết bị bộ nhớ khác nhau và cách chúng được tổ chức trong một máy tính cá nhân hiện đại.  
 Với bối cảnh đó, chúng ta sẽ thấy cách kết hợp nhiều loại thiết bị bộ nhớ để khai thác **locality** (tính cục bộ) trong các mẫu truy cập bộ nhớ điển hình của chương trình.
-
----

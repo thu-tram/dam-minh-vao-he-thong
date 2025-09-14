@@ -37,9 +37,6 @@ Hình 3 minh họa đường đi qua multiplexer khi đầu vào S có giá tr�
 
 ![when S is 0, the mux chooses B for its output](_images/muxB.png)
 
-Dưới đây là bản dịch tiếng Việt của phần nội dung bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
-
----
 
 **Hình 3. Mạch multiplexer 1-bit hai ngõ vào chọn (xuất ra) B khi S là 0.**
 

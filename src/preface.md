@@ -1,240 +1,91 @@
-# Preface
-
-In today's world, much emphasis is placed on learning to code, and
-programming is touted as a golden ticket to a successful life. Despite
-all the code boot camps and programming being taught in elementary
-schools, the computer itself is often treated as an
-afterthought --- it's increasingly becoming invisible in the discussions
-of raising the next generations of computer scientists.
-
-
-The purpose of this book is to give readers a gentle yet accessible
-introduction to computer systems. To write effective programs,
-programmers must understand a computer's underlying subsystems and
-architecture. However, the expense of modern textbooks often limits
-their availability to the set of students that can afford them. This
-free online textbook seeks to make computer systems concepts accessible
-to everyone. It is targeted toward students with an introductory
-knowledge of computer science who have some familiarity with Python. If
-you're looking for a free book to introduce you to basic computing
-principles in Python, we encourage you to read [*How To Think Like a
-Computer Scientist with
-Python*](https://runestone.academy/ns/books/published/thinkcspy/index.html)
-first.
-
+# Lời nói đầu
 
-If you're ready to proceed, please come in --- the water is warm!
+Trong thế giới ngày nay, người ta rất chú trọng vào việc học lập trình, và lập trình được coi như một tấm vé vàng dẫn đến cuộc sống thành công. Bất chấp sự nở rộ của các bootcamp và việc lập trình được đưa vào giảng dạy ngay từ bậc tiểu học, bản thân chiếc máy tính lại thường bị xem như một yếu tố thứ yếu --- nó ngày càng trở nên vô hình trong các cuộc thảo luận về việc đào tạo thế hệ các nhà khoa học máy tính tiếp theo.
 
+Mục đích của cuốn sách này là mang đến cho độc giả một phần giới thiệu *nhẹ nhàng*, *dễ tiếp cận* về hệ thống máy tính. Để viết được những chương trình hiệu quả, lập trình viên phải hiểu rõ các hệ thống con và kiến trúc nền tảng của máy tính. Tuy nhiên, chi phí của các sách giáo khoa hiện đại thường hạn chế khả năng tiếp cận của chúng đối với nhóm sinh viên có đủ điều kiện chi trả. Cuốn sách giáo khoa trực tuyến miễn phí này mong muốn giúp cho mọi người đều có thể tiếp cận các khái niệm về hệ thống máy tính. Sách nhắm đến đối tượng sinh viên có kiến thức nhập môn về khoa học máy tính và đã quen thuộc phần nào với Python. Nếu bạn đang tìm kiếm một cuốn sách miễn phí để tìm hiểu các nguyên tắc máy tính cơ bản bằng Python, chúng tôi khuyến khích bạn đọc [*How To Think Like a Computer Scientist with Python*](https://runestone.academy/ns/books/published/thinkcspy/index.html) trước.
 
-## What This Book Is About
+*Nay Lập trình mới hỏi han,*
 
-Our book is titled *Dive into Systems* and is meant to be a gentle
-introduction to topics in computer systems, including C programming,
-architecture fundamentals, assembly language, and multithreading. The
-ocean metaphor is very fitting for computer systems. As modern life is
-thought to have risen from the depths of the primordial ocean, so has
-modern programming risen from the design and construction of early
-computer architecture. The first programmers studied the hardware
-diagrams of the first computers to create the first programs.
+*Miền sâu Hệ thống có ai dám vào?*
 
+*Lập trình hỏi, Sách xin trao,*
 
-Yet as life (and computing) began to wander away from the oceans from
-which they emerged, the ocean began to be perceived as a foreboding and
-dangerous place, inhabited by monsters. Ancient navigators used to place
-pictures of sea monsters and other mythical creatures in the uncharted
-waters. *Here be dragons*, the text would warn. Likewise, as computing
-has wandered ever further away from its machine-level origins, computer
-systems topics have often emerged as personal dragons for many computing
-students.
+*"Biển sâu mời gọi, ngại nào không vô!"*
 
-
-In writing this book, we hope to encourage students to take a gentle
-dive into computer systems topics. Even though the sea may look like a
-dark and dangerous place from above, there is a beautiful and remarkable
-world to be discovered for those who choose to peer just below the
-surface. So too can a student gain a greater appreciation for computing
-by looking below the code and examining the architectural reef below.
-
-
-We are not trying to throw you into the open ocean here. Our book
-assumes only a CS1 knowledge and is designed to be a first exposure to
-many computer systems topics. We cover topics such as C programming,
-logic gates, binary, assembly, the memory hierarchy, threading, and
-parallelism. Our chapters are written to be as independent as possible,
-with the goal of being widely applicable to a broad range of courses.
-
-
-Lastly, a major goal for us writing this book is for it to be freely
-available. We want our book to be a living document, peer reviewed by
-the computing community, and evolving as our field continues to evolve.
-If you have feedback for us, please drop us a line. We would love to
-hear from you!
-
-
-## Ways to Use This Book
-
-Our textbook covers a broad range of topics related to computer systems,
-specifically targeting intermediate-level courses such as introduction
-to computer systems or computer organization. It can also be used to
-provide background reading for upper-level courses such as operating
-systems, compilers, parallel and distributed computing, and computer
-architecture.
-
-
-This textbook is not designed to provide complete coverage of all
-systems topics. It does not include advanced or full coverage of
-operating systems, computer architecture, or parallel and distributed
-computing topics, nor is it designed to be used in place of textbooks
-devoted to advanced coverage of these topics in upper-level courses.
-Instead, it focuses on introducing computer systems, common themes in
-systems in the context of understanding how a computer runs a program,
-and how to design programs to run efficiently on systems. The topic
-coverage provides a common knowledge base and skill set for more
-advanced study in systems topics.
-
-
-Our book's topics can be viewed as a vertical slice through a computer.
-At the lowest layer we discuss binary representation of programs and
-circuits designed to store and execute programs, building up a simple
-CPU from basic gates that can execute program instructions. At the next
-layer we introduce the operating system, focusing on its support for
-running programs and for managing computer hardware, particularly on the
-mechanisms of implementing multiprogramming and virtual memory support.
-At the highest layer, we present the C programming language and how it
-maps to low-level code, how to design efficient code, compiler
-optimizations, and parallel computing. A reader of the entire book will
-gain a basic understanding of how a program written in C (and Pthreads)
-executes on a computer and, based on this understanding, will know some
-ways in which they can change the structure of their program to improve
-its performance.
+## Cuốn sách này nói về cái gì
 
+Cuốn sách của chúng tôi có tựa đề *Dive into Systems* (Đắm mình vào Hệ thống) và được dùng như một phần giới thiệu nhẹ nhàng về các chủ đề trong hệ thống máy tính, bao gồm `C programming` ("lập trình C"), các nguyên tắc cơ bản về `architecture` ("kiến trúc"), `assembly language` ("hợp ngữ"), và `multithreading` ("đa luồng"). Phép ẩn dụ về đại dương rất phù hợp với hệ thống máy tính. Giống như sự sống hiện đại được cho là bắt nguồn từ sâu thẳm của đại dương nguyên thủy, lập trình hiện đại cũng bắt nguồn từ việc thiết kế và xây dựng kiến trúc máy tính thời kỳ đầu. Những lập trình viên đầu tiên đã nghiên cứu sơ đồ phần cứng của những chiếc máy tính đầu tiên để tạo ra các chương trình đầu tiên.
 
-Although as a whole the book provides a vertical slice through the
-computer, the book chapters are written as independently as possible so
-that an instructor can mix and match chapters for their particular
-needs. The chapter dependency graph is shown below, though individual
-sections within chapters may not have as deep a dependency hierarchy as
-the entire chapter.
+Tuy nhiên, khi sự sống (và ngành tính toán) bắt đầu rời xa đại dương nơi chúng xuất hiện, đại dương dần bị coi là một nơi đáng sợ và hiểm nguy, nơi cư ngụ của những loài quái vật. Các nhà hàng hải cổ đại thường vẽ hình những con thủy quái và các sinh vật thần thoại khác vào những vùng biển chưa được khám phá trên bản đồ. *Nơi đây có rồng*, dòng chữ sẽ cảnh báo. Tương tự như vậy, khi ngành tính toán ngày càng đi xa khỏi nguồn gốc cấp máy của nó, các chủ đề về hệ thống máy tính thường trở thành những "con rồng" của riêng nhiều sinh viên ngành tính toán.
 
+Khi viết cuốn sách này, chúng tôi hy vọng sẽ khuyến khích sinh viên thực hiện một cú lặn nhẹ nhàng vào các chủ đề hệ thống máy tính. Mặc dù biển cả trông có vẻ tối tăm và nguy hiểm khi nhìn từ trên cao, nhưng có cả một thế giới tươi đẹp và diệu kỳ đang chờ được khám phá bởi những ai chọn nhìn xuống ngay bên dưới bề mặt. Cũng như vậy, một sinh viên có thể có được sự trân trọng lớn hơn đối với ngành tính toán bằng cách nhìn xuống bên dưới đoạn mã và xem xét rạn san hô `architecture` bên dưới.
 
+Chúng tôi không cố gắng ném bạn ra giữa đại dương bao la. Cuốn sách của chúng tôi chỉ giả định người đọc có kiến thức nền tảng của một môn Khoa học Máy tính năm nhất và được thiết kế để trở thành lần tiếp xúc đầu tiên với nhiều chủ đề hệ thống máy tính. Chúng tôi bao quát các chủ đề như `C programming`, `logic gates` ("cổng logic"), `binary` ("hệ nhị phân"), `assembly`, `memory hierarchy` ("hệ thống phân cấp bộ nhớ"), `threading`, và `parallelism` ("tính toán song song"). Các chương của chúng tôi được viết để độc lập với nhau nhất có thể, với mục tiêu có thể áp dụng rộng rãi cho nhiều khóa học khác nhau.
 
+Cuối cùng, một mục tiêu lớn của chúng tôi khi viết cuốn sách này là nó phải được cung cấp miễn phí. Chúng tôi muốn cuốn sách của mình là một tài liệu sống, được cộng đồng ngành tính toán bình duyệt (peer reviewed), và phát triển khi lĩnh vực của chúng ta tiếp tục phát triển. Nếu bạn có phản hồi cho chúng tôi, xin vui lòng gửi cho chúng tôi một vài dòng. Chúng tôi rất mong nhận được tin từ bạn!
 
-![Chapters 1 and 4 are independent of other chapters. Chapters 2, 3, 5, and 6-10 depend on chapter 1. Chapters 5 and 13 additionally depend on chapter 4. The remaining chapters depend on a combination of the above chapters.](_images/chaptdeps.png)
+## Các cách sử dụng cuốn sách này
 
+Sách giáo khoa của chúng tôi bao quát một loạt các chủ đề liên quan đến hệ thống máy tính, đặc biệt nhắm đến các khóa học cấp độ trung cấp như giới thiệu về hệ thống máy tính hoặc tổ chức máy tính. Sách cũng có thể được sử dụng để cung cấp tài liệu tham khảo nền tảng cho các khóa học cấp cao hơn như hệ điều hành, trình biên dịch, tính toán song song và phân tán, và kiến trúc máy tính.
 
-### Summary of Chapter Topics
+Sách giáo khoa này không được thiết kế để bao quát toàn bộ tất cả các chủ đề hệ thống. Sách không bao gồm các chủ đề nâng cao hoặc đầy đủ về hệ điều hành, kiến trúc máy tính, hoặc tính toán song song và phân tán, cũng không được thiết kế để thay thế cho các sách giáo khoa chuyên sâu về các chủ đề này trong các khóa học cấp cao hơn. Thay vào đó, sách tập trung vào việc giới thiệu về hệ thống máy tính, các chủ đề chung trong hệ thống trong bối cảnh tìm hiểu cách một máy tính chạy một chương trình, và cách thiết kế chương trình để chạy hiệu quả trên các hệ thống. Phạm vi chủ đề cung cấp một nền tảng kiến thức và bộ kỹ năng chung cho việc nghiên cứu nâng cao hơn về các chủ đề hệ thống.
 
+Các chủ đề trong sách của chúng tôi có thể được xem như một lát cắt dọc qua một chiếc máy tính. Ở lớp thấp nhất, chúng tôi thảo luận về biểu diễn `binary` của chương trình và các mạch được thiết kế để lưu trữ và thực thi chương trình, xây dựng một `CPU` ("đơn vị xử lý trung tâm") đơn giản từ các `logic gates` cơ bản có thể thực thi các chỉ thị chương trình. Ở lớp tiếp theo, chúng tôi giới thiệu về `operating system` ("hệ điều hành"), tập trung vào sự hỗ trợ của nó cho việc chạy chương trình và quản lý phần cứng máy tính, đặc biệt là các cơ chế thực hiện `multiprogramming` ("đa chương") và hỗ trợ `virtual memory` ("bộ nhớ ảo"). Ở lớp cao nhất, chúng tôi trình bày ngôn ngữ `C programming` và cách nó ánh xạ tới mã cấp thấp, cách thiết kế mã hiệu quả, các tối ưu hóa của `compiler` ("trình biên dịch"), và tính toán song song. Một người đọc toàn bộ cuốn sách sẽ có được sự hiểu biết cơ bản về cách một chương trình viết bằng C (và `Pthreads`) thực thi trên máy tính và, dựa trên sự hiểu biết này, sẽ biết một số cách để thay đổi cấu trúc chương trình của mình nhằm cải thiện hiệu suất của nó.
 
--   Chapter 0, *Introduction*: Introduction to computer systems and some
-    tips for reading this book.
+Mặc dù toàn bộ cuốn sách cung cấp một lát cắt dọc qua máy tính, các chương sách được viết độc lập nhất có thể để giảng viên có thể kết hợp và lựa chọn các chương cho nhu cầu cụ thể của họ. Sơ đồ phụ thuộc giữa các chương được hiển thị bên dưới, mặc dù các phần riêng lẻ trong các chương có thể không có hệ thống phụ thuộc sâu như toàn bộ chương.
 
--   Chapter 1, *Introduction to C Programming*: Covers C programming
-    basics, including compiling and running C programs. We assume
-    readers of this book have had an introduction to programming in some
-    programming language. We compare example C syntax to Python syntax
-    so that readers familiar with Python can see how they may translate.
-    However, Python programming experience is not necessary for reading
-    or understanding this chapter.
+![Chương 1 và 4 độc lập với các chương khác. Các chương 2, 3, 5 và 6-10 phụ thuộc vào chương 1. Chương 5 và 13 còn phụ thuộc thêm vào chương 4. Các chương còn lại phụ thuộc vào sự kết hợp của các chương trên.](_images/chaptdeps.png)
 
--   Chapter 2, *A Deeper Dive into C*: Covers most of the C language,
-    notably pointers and dynamic memory. We also elaborate on topics
-    from Chapter 1 in more detail and discuss some advanced C features.
+### Tóm tắt nội dung các chương
 
--   Chapter 3, *C Debugging Tools*: Covers common C debugging tools (GDB
-    and Valgrind) and illustrates how they can be used to debug a
-    variety of applications.
+-   Chương 0, *Giới thiệu*: Giới thiệu về hệ thống máy tính và một số mẹo để đọc cuốn sách này.
 
--   Chapter 4, *Binary and Data Representation*: Covers encoding data
-    into binary, binary representation of C types, arithmetic operations
-    on binary data, and arithmetic overflow.
+-   Chương 1, *Giới thiệu về Lập trình C*: Bao quát các kiến thức cơ bản về `C programming`, bao gồm cả việc biên dịch và chạy các chương trình C. Chúng tôi giả định người đọc cuốn sách này đã có kiến thức nhập môn về lập trình bằng một ngôn ngữ lập trình nào đó. Chúng tôi so sánh cú pháp C với cú pháp Python để những độc giả quen thuộc với Python có thể thấy cách chuyển đổi. Tuy nhiên, kinh nghiệm lập trình Python không phải là điều kiện cần thiết để đọc hay hiểu chương này.
 
--   Chapter 5, *Gates, Circuits, and Computer Architecture*: Covers the
-    von Neumann architecture from logic gates to the construction of a
-    basic CPU. We characterize clock-driven execution and the stages of
-    instruction execution though arithmetic, storage, and control
-    circuits. We also briefly introduce pipelining, some modern
-    architecture features, and a short history of computer architecture.
+-   Chương 2, *Tìm hiểu sâu hơn về C*: Bao quát hầu hết ngôn ngữ C, đặc biệt là `pointers` ("con trỏ") và `dynamic memory` ("bộ nhớ động"). Chúng tôi cũng trình bày chi tiết hơn về các chủ đề từ Chương 1 và thảo luận về một số tính năng C nâng cao.
 
--   Chapters 6-10, *Assembly Programming*: Covers translating C into
-    assembly code from basic arithmetic expressions to functions, the
-    stack, and array and `struct` access. In three separate chapters we
-    cover assembly from three different instruction set architectures:
-    32-bit x86, 64-bit x86, and 64-bit ARM.
+-   Chương 3, *Các công cụ Gỡ lỗi C*: Bao quát các công cụ gỡ lỗi C phổ biến (`GDB` và `Valgrind`) và minh họa cách chúng có thể được sử dụng để gỡ lỗi nhiều loại ứng dụng khác nhau.
 
--   Chapter 11, *Storage and the Memory Hierarchy*: Covers storage
-    devices, the memory hierarchy and its effects on program
-    performance, locality, caching, and the Cachegrind profiling tool.
+-   Chương 4, *Hệ nhị phân và Biểu diễn Dữ liệu*: Bao quát việc mã hóa dữ liệu thành `binary`, biểu diễn `binary` của các kiểu dữ liệu trong C, các phép toán số học trên dữ liệu `binary`, và tràn số học (arithmetic overflow).
 
--   Chapter 12, *Code Optimization*: Covers compiler optimizations,
-    designing programs with performance in mind, tips for code
-    optimization, and quantitatively measuring a program's performance.
+-   Chương 5, *Cổng logic, Mạch và Kiến trúc Máy tính*: Bao quát `von Neumann architecture` ("kiến trúc von Neumann") từ các `logic gates` đến việc xây dựng một `CPU` cơ bản. Chúng tôi mô tả đặc điểm của việc thực thi theo xung nhịp (clock-driven execution) và các giai đoạn thực thi chỉ thị thông qua các mạch số học, lưu trữ và điều khiển. Chúng tôi cũng giới thiệu ngắn gọn về `pipelining` ("đường ống"), một số tính năng `architecture` hiện đại, và lịch sử ngắn gọn của `architecture` máy tính.
 
--   Chapter 13, *Operating Systems*: Covers core operating system
-    abstractions and the mechanisms behind them. We primarily focus on
-    processes, virtual memory, and interprocess communication (IPC).
+-   Chương 6-10, *Lập trình Assembly*: Bao quát việc dịch mã C sang `assembly` từ các biểu thức số học cơ bản đến các hàm, stack, và truy cập mảng và `struct`. Trong ba chương riêng biệt, chúng tôi bao quát `assembly` từ ba `instruction set architectures` ("kiến trúc tập lệnh") khác nhau: `x86` 32-bit, `x86` 64-bit, và `ARM` 64-bit.
 
--   Chapter 14, *Shared Memory Parallelism*: Covers multicore
-    processors, threads and Pthreads programming, synchronization, race
-    conditions, and deadlock. This chapter includes some advanced topics
-    on measuring parallel performance (speed-up, efficiency, Amdahl's
-    law), thread safety, and cache coherence.
+-   Chương 11, *Lưu trữ và Hệ thống phân cấp Bộ nhớ*: Bao quát các thiết bị lưu trữ, `memory hierarchy` và ảnh hưởng của nó đến hiệu suất chương trình, tính cục bộ (locality), `caching` ("lưu trữ đệm"), và công cụ phân tích `Cachegrind`.
 
--   Chapter 15, *Advanced Parallel Systems and Programming Models*:
-    Introduces the basics of distributed memory systems and the Message
-    Passing Interface (MPI), hardware accelerators and CUDA, and cloud
-    computing and MapReduce.
+-   Chương 12, *Tối ưu hóa Mã*: Bao quát các tối ưu hóa của `compiler`, thiết kế chương trình có tính đến hiệu suất, các mẹo để tối ưu hóa mã, và đo lường định lượng hiệu suất của một chương trình.
 
+-   Chương 13, *Hệ điều hành*: Bao quát các khái niệm trừu tượng cốt lõi của `operating system` và các cơ chế đằng sau chúng. Chúng tôi chủ yếu tập trung vào các tiến trình (processes), `virtual memory`, và `interprocess communication (IPC)` ("giao tiếp liên tiến trình").
 
-### Example Uses of This Book
+-   Chương 14, *Tính toán Song song trên Bộ nhớ chia sẻ*: Bao quát các bộ xử lý đa lõi, `threads` ("luồng") và lập trình `Pthreads`, `synchronization` ("đồng bộ hóa"), `race conditions` ("tình trạng tranh chấp"), và `deadlock` ("khóa chết"). Chương này bao gồm một số chủ đề nâng cao về đo lường hiệu suất song song (`speed-up`, `efficiency`, định luật Amdahl), `thread safety` ("an toàn luồng"), và `cache coherence` ("tính nhất quán của bộ đệm").
 
-*Dive into Systems* can be used as a primary textbook for courses that
-introduce computer systems topics, or individual chapters can be used to
-provide background information in courses that cover topics in more
-depth.
+-   Chương 15, *Các Hệ thống Song song và Mô hình Lập trình Nâng cao*: Giới thiệu những kiến thức cơ bản về `distributed memory systems` ("hệ thống bộ nhớ phân tán") và `Message Passing Interface (MPI)`, `hardware accelerators` ("bộ tăng tốc phần cứng") và `CUDA`, cùng với `cloud computing` ("điện toán đám mây") và `MapReduce`.
 
+### Ví dụ về cách sử dụng cuốn sách này
 
-As examples from the authors\' two institutions, we have been using it
-as the primary textbook for two different intermediate-level courses:
+*Dive into Systems* có thể được sử dụng như một sách giáo khoa chính cho các khóa học giới thiệu về các chủ đề hệ thống máy tính, hoặc các chương riêng lẻ có thể được sử dụng để cung cấp thông tin nền tảng trong các khóa học chuyên sâu hơn.
 
+Ví dụ từ hai trường của các tác giả, chúng tôi đã và đang sử dụng nó làm sách giáo khoa chính cho hai khóa học cấp độ trung cấp khác nhau:
 
+-   *Giới thiệu về Hệ thống Máy tính* tại Swarthmore College. Thứ tự chương: 4, 1 (một phần 3), 5, 6, 7, 10, 2 (thêm một phần 3), 11, 13, 14.
+-   *Tổ chức Máy tính* tại West Point. Thứ tự chương: 1, 4, 2 (một phần 3), 6, 7, 10, 11, 12, 13, 14, 15.
 
--   *Introduction To Computer Systems* at Swarthmore College. Chapter
-    ordering: 4, 1 (some 3), 5, 6, 7, 10, 2 (more 3), 11, 13, 14.
+Ngoài ra, chúng tôi sử dụng các chương riêng lẻ làm tài liệu đọc nền tảng trong nhiều khóa học cấp cao hơn, bao gồm:
 
--   *Computer Organization* at West Point. Chapter ordering: 1, 4, 2
-    (some 3), 6, 7, 10, 11, 12, 13, 14, 15.
 
+| Chủ đề môn học cấp cao hơn | Các chương đọc tham khảo |
+| :--- | :--- |
+| Kiến trúc (Architecture) | 5, 11 |
+| Trình biên dịch (Compilers) | 6, 7, 8, 9, 10, 11, 12 |
+| Hệ quản trị Cơ sở dữ liệu | 11, 14, 15 |
+| Mạng máy tính (Networking) | 4, 13, 14 |
+| Hệ điều hành (Operating Systems) | 11, 13, 14 |
+| Hệ thống Song song và Phân tán | 11, 13, 14, 15 |
 
-Additionally, we use individual chapters as background reading in many
-of our upper-level courses, including:
+Cuối cùng, Chương 2 và 3 được sử dụng làm tài liệu tham khảo về lập trình và gỡ lỗi C trong nhiều khóa học của chúng tôi.
 
+### Đọc online bản gốc luôn nha
 
-+-----------------------------------+-----------------------------------+
-| Upper-level Course Topic          | Chapters for Background Readings  |
-+===================================+===================================+
-| Architecture                      | 5, 11                             |
-+-----------------------------------+-----------------------------------+
-| Compilers                         | 6, 7, 8, 9, 10, 11, 12            |
-+-----------------------------------+-----------------------------------+
-| Database Systems                  | 11, 14, 15                        |
-+-----------------------------------+-----------------------------------+
-| Networking                        | 4, 13, 14                         |
-+-----------------------------------+-----------------------------------+
-| Operating Systems                 | 11, 13, 14                        |
-+-----------------------------------+-----------------------------------+
-| Parallel and Distributed Systems  | 11, 13, 14, 15                    |
-+-----------------------------------+-----------------------------------+
-
-Finally, Chapters 2 and 3 are used as C programming and debugging
-references in many of our courses.
-
-
-### Available Online
-
-The free online version of our textbook is available at
-[https://diveintosystems.org/](https://diveintosystems.org/){.bare}.
-
-
-
-
-
+Phiên bản trực tuyến miễn phí của sách giáo khoa của chúng tôi có tại
+[https://diveintosystems.org/](https://diveintosystems.org/)

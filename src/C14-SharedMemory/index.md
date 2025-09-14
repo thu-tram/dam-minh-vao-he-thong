@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **14. Leveraging Shared Memory in the Multicore Era**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 14. Tận dụng bộ nhớ chia sẻ trong kỷ nguyên đa lõi (Leveraging Shared Memory in the Multicore Era)
 
@@ -14,13 +11,9 @@ Dưới đây là bản dịch tiếng Việt của mục **14. Leveraging Share
 
 \~ Xin lỗi Galadriel (*Chúa tể những chiếc nhẫn: Hiệp hội nhẫn thần*)  
 
----
-
 Cho đến nay, phần thảo luận về kiến trúc của chúng ta tập trung vào một thế giới thuần **single-CPU** (CPU đơn).  
 Nhưng thế giới đã thay đổi. CPU ngày nay có nhiều **core** (lõi), hay đơn vị tính toán (**compute unit**).  
 Trong chương này, chúng ta sẽ thảo luận về **kiến trúc đa lõi** (**multicore architectures**) và cách tận dụng chúng để tăng tốc độ thực thi chương trình.
-
----
 
 > **CPUs, Processors, and Cores**  
 >  
@@ -30,8 +23,6 @@ Trong chương này, chúng ta sẽ thảo luận về **kiến trúc đa lõi**
 > Một processor hoặc CPU có nhiều **compute core** được gọi là **multicore processor** hoặc **multicore CPU**.  
 > **Core** là một đơn vị tính toán chứa nhiều thành phần tạo nên CPU cổ điển: một ALU, các thanh ghi (**registers**), và một phần bộ nhớ đệm (**cache**).  
 > Mặc dù *core* khác với *processor*, nhưng không hiếm khi thấy hai thuật ngữ này được dùng thay thế cho nhau trong các tài liệu (đặc biệt là những tài liệu ra đời khi multicore processor vẫn còn được coi là mới mẻ).
-
----
 
 Năm 1965, nhà sáng lập Intel – **Gordon Moore** – dự đoán rằng số lượng transistor trong một **mạch tích hợp** sẽ tăng gấp đôi mỗi năm.  
 Dự đoán này, nay được biết đến với tên **Định luật Moore** (**Moore’s Law**), sau đó được điều chỉnh thành số lượng transistor tăng gấp đôi mỗi **hai** năm.  
@@ -45,15 +36,11 @@ Tuy nhiên, bước sang thiên niên kỷ mới, thiết kế bộ xử lý đ�
 - **Power wall**: Việc tăng số lượng transistor trên một bộ xử lý tất yếu làm tăng nhiệt độ và mức tiêu thụ điện năng, kéo theo chi phí cấp điện và làm mát hệ thống.  
   Với sự phổ biến của hệ thống đa lõi, **điện năng** giờ đây trở thành mối quan tâm hàng đầu trong thiết kế hệ thống máy tính.
 
----
-
 Hai “bức tường” về điện năng và bộ nhớ đã buộc các kiến trúc sư máy tính phải thay đổi cách thiết kế bộ xử lý.  
 Thay vì thêm nhiều transistor để tăng tốc độ thực thi một luồng lệnh duy nhất, họ bắt đầu thêm nhiều **compute core** vào một CPU.  
 
 Compute core là các đơn vị xử lý đơn giản hơn, chứa ít transistor hơn CPU truyền thống và thường dễ chế tạo hơn.  
 Kết hợp nhiều core trên một CPU cho phép CPU thực thi **nhiều** luồng lệnh độc lập cùng lúc.
-
----
 
 > **More cores != better**  
 >  
@@ -66,14 +53,8 @@ Kết hợp nhiều core trên một CPU cho phép CPU thực thi **nhiều** lu
 > Trong chương này, chúng ta tập trung vào **multicore computing**.  
 > Xem [Chương 15](../C15-Parallel/gpu.html#_GPUs) để tìm hiểu về manycore computing.
 
----
-
-Nếu bạn muốn, tôi có thể dịch tiếp sang **14.1. Shared Memory Multiprocessing** để nối tiếp nội dung.
 
 
-Dưới đây là bản dịch tiếng Việt của mục **Taking a Closer Look: How Many Cores?**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### Xem xét kỹ hơn: Có bao nhiêu lõi?
 
@@ -110,8 +91,6 @@ Lệnh `lscpu` cung cấp nhiều thông tin hữu ích, bao gồm loại bộ x
 Để tính số lượng **physical core** (lõi vật lý/thực tế) trên hệ thống, nhân số lượng **socket** với số lượng core trên mỗi socket.  
 Kết quả `lscpu` mẫu ở trên cho thấy hệ thống có **một socket** với **bốn core** trên mỗi socket, tức là tổng cộng **bốn physical core**.
 
----
-
 #### Hyperthreading
 
 Thoạt nhìn, có thể thấy hệ thống trong ví dụ trước có **tám core**.  
@@ -125,8 +104,6 @@ Tuy nhiên, nếu một tác vụ bị **idle** (nhàn rỗi, ví dụ do [contr
 
 Tóm lại, hyperthreading được giới thiệu để cải thiện **process throughput** (lượng tiến trình hoàn thành trong một đơn vị thời gian), chứ không phải **process speedup** (mức cải thiện thời gian chạy của một tiến trình đơn lẻ).  
 Phần lớn nội dung thảo luận về hiệu năng trong chương tiếp theo sẽ tập trung vào **speedup**.
-
----
 
 #### Performance Cores và Efficiency Cores
 
@@ -143,7 +120,5 @@ Trên các kiến trúc heterogeneous, kết quả mặc định của `lscpu` c
 số lượng E-core thường có thể tính bằng cách lấy tổng số core trong trường `"CPU(s)"` trừ đi số lượng P-core.  
 
 Chạy lệnh `lscpu` với tùy chọn `--all` và `--extended` sẽ hiển thị **bản đồ đầy đủ** của P-core và E-core trên hệ thống, trong đó E-core có thể nhận diện nhờ tốc độ xử lý thấp hơn.
-
----
 
 Bạn có muốn tôi dịch tiếp sang phần **14.1. Shared Memory Multiprocessing** để nối tiếp nội dung không?

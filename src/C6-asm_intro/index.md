@@ -62,8 +62,6 @@ Những loại “máy tính” phổ biến nhất lại thường là những 
 
 Tuy nhiên, các bộ xử lý trong những thiết bị này thường rất nhỏ, đến mức không thể chạy mã đã biên dịch từ các ngôn ngữ lập trình bậc cao. Trong nhiều trường hợp, các thiết bị này yêu cầu các chương trình assembly độc lập, không phụ thuộc vào các thư viện runtime mà các ngôn ngữ lập trình phổ biến cần.  
 
----
-
 Nếu bạn muốn, ở phần tiếp theo mình có thể dịch luôn các mục còn lại của chương này để bạn có bản tiếng Việt hoàn chỉnh và thống nhất về thuật ngữ. Bạn có muốn mình tiếp tục không?
 
 #### 3. Phân tích lỗ hổng bảo mật (Vulnerability Analysis)
@@ -72,15 +70,11 @@ Một nhóm nhỏ các chuyên gia bảo mật dành thời gian của họ đ�
 
 Một số chuyên gia bảo mật khác dành thời gian để **reverse engineering** (kỹ thuật đảo ngược) mã độc trong **malware** (phần mềm độc hại) và các phần mềm nguy hại khác. Kiến thức thực hành về assembly là điều thiết yếu để các kỹ sư phần mềm này có thể nhanh chóng phát triển các **countermeasures** (biện pháp đối phó) nhằm bảo vệ hệ thống trước các cuộc tấn công. Cuối cùng, các lập trình viên không hiểu cách mã họ viết được dịch sang assembly có thể vô tình viết ra mã dễ bị tấn công.  
 
----
-
 #### 4. Các đoạn mã quan trọng trong phần mềm cấp hệ thống (Critical Code Sequences in System-Level Software)
 
 Cuối cùng, có một số thành phần của hệ thống máy tính mà compiler không thể tối ưu hóa đủ tốt và cần phải viết assembly thủ công. Một số phần ở cấp hệ thống có mã assembly viết tay tại những khu vực mà tối ưu hóa chi tiết, phụ thuộc vào kiến trúc máy là rất quan trọng cho hiệu năng.  
 
 Ví dụ, **boot sequence** (trình tự khởi động) trên tất cả các máy tính đều được viết bằng assembly. **Operating system** (hệ điều hành) thường chứa mã assembly viết tay cho việc **thread** hoặc **process context-switching** (chuyển ngữ cảnh luồng hoặc tiến trình). Con người thường có thể tạo ra mã assembly được tối ưu hóa tốt hơn compiler cho những đoạn mã ngắn nhưng quan trọng về hiệu năng này.  
-
----
 
 ### Bạn sẽ học gì trong các chương tiếp theo
 

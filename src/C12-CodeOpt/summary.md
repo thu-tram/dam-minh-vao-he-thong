@@ -3,8 +3,6 @@
 Hành trình ngắn (và có lẽ hơi gây nản) của chúng ta vào thế giới **code optimization** (tối ưu hóa mã) nên truyền tải một thông điệp rất quan trọng tới người đọc: nếu bạn đang nghĩ đến việc tối ưu mã thủ công, hãy cân nhắc kỹ xem điều gì đáng để bạn bỏ thời gian và điều gì nên để cho trình biên dịch xử lý.  
 Dưới đây là một số lời khuyên quan trọng khi bạn muốn cải thiện hiệu năng mã.
 
----
-
 **Chọn cấu trúc dữ liệu và thuật toán tốt**
 
 Không có gì có thể thay thế việc sử dụng đúng **algorithm** (thuật toán) và **data structure** (cấu trúc dữ liệu); việc không làm như vậy thường là nguyên nhân hàng đầu dẫn đến hiệu năng kém.  
@@ -20,30 +18,22 @@ Found 348513 primes (0.122245 s)
 Thuật toán sieve chỉ mất 0,12 giây để tìm tất cả các số nguyên tố từ 2 đến 5 triệu, so với 1,46 giây mà `optExample2` cần để tạo cùng tập số nguyên tố với cờ tối ưu `-O3` được bật (nhanh hơn 12×).  
 Việc cài đặt thuật toán sieve được để lại như một bài tập cho bạn đọc; tuy nhiên, rõ ràng là việc chọn một thuật toán tốt hơn ngay từ đầu sẽ tiết kiệm hàng giờ tối ưu hóa thủ công. Ví dụ này cho thấy tại sao kiến thức về cấu trúc dữ liệu và thuật toán là nền tảng đối với các nhà khoa học máy tính.
 
----
-
 **Sử dụng hàm thư viện chuẩn bất cứ khi nào có thể**
 
 Đừng “phát minh lại bánh xe”. Nếu trong quá trình lập trình bạn cần một hàm thực hiện một tác vụ rất phổ biến (ví dụ: tìm giá trị tuyệt đối, hoặc tìm giá trị lớn nhất/nhỏ nhất trong một danh sách số), hãy dừng lại và kiểm tra xem hàm đó đã tồn tại trong **standard library** (thư viện chuẩn) của ngôn ngữ hay chưa.  
 Các hàm trong thư viện chuẩn thường được kiểm thử kỹ và tối ưu hóa cho hiệu năng.  
 Ví dụ, nếu bạn tự viết một phiên bản `sqrt` của riêng mình, trình biên dịch có thể sẽ không biết để tự động thay thế lời gọi hàm đó bằng lệnh `fsqrt`.
 
----
-
 **Tối ưu dựa trên dữ liệu, không dựa trên cảm giác**
 
 Nếu sau khi đã chọn cấu trúc dữ liệu và thuật toán tốt *và* sử dụng các hàm thư viện chuẩn mà vẫn cần cải thiện hiệu năng, hãy dùng một công cụ **code profiler** (phân tích hiệu năng mã) tốt như Valgrind.  
 Tối ưu hóa *không bao giờ* nên dựa trên cảm giác. Tập trung quá nhiều vào những gì bạn *nghĩ* là nên tối ưu (mà không có dữ liệu chứng minh) thường dẫn đến lãng phí thời gian.
-
----
 
 **Tách mã phức tạp thành nhiều hàm**
 
 Việc nội tuyến mã thủ công thường không mang lại cải thiện hiệu năng đáng kể so với những gì trình biên dịch hiện đại có thể làm. Thay vào đó, hãy giúp trình biên dịch dễ dàng tối ưu hơn cho bạn.  
 Trình biên dịch dễ tối ưu hơn với các đoạn mã ngắn. Việc tách các thao tác phức tạp thành nhiều hàm vừa tăng khả năng đọc mã, vừa giúp trình biên dịch tối ưu dễ hơn.  
 Hãy kiểm tra xem trình biên dịch của bạn có tự động thử nội tuyến hay có cờ riêng để thử nội tuyến mã hay không. Tốt hơn hết là để trình biên dịch thực hiện nội tuyến thay vì tự làm thủ công.
-
----
 
 **Ưu tiên khả năng đọc mã**
 
@@ -53,15 +43,11 @@ Nếu việc tối ưu mã làm giảm đáng kể khả năng đọc, bạn c�
 Ví dụ, nhiều trình biên dịch hiện nay có cờ tối ưu cho phép **loop unrolling** (trải vòng lặp). Lập trình viên nên luôn sử dụng các cờ tối ưu này thay vì tự unroll vòng lặp, vì điều đó có thể làm giảm mạnh khả năng đọc mã.  
 Giảm khả năng đọc mã thường làm tăng khả năng xuất hiện lỗi không mong muốn, từ đó có thể dẫn đến lỗ hổng bảo mật.
 
----
-
 **Chú ý đến việc sử dụng bộ nhớ**
 
 Việc sử dụng bộ nhớ của chương trình thường ảnh hưởng lớn hơn đến thời gian thực thi so với số lượng lệnh mà nó chạy.  
 [Ví dụ về loop interchange](memory_considerations.html#_loop_interchange) minh họa rõ điều này. Trong cả hai trường hợp, vòng lặp thực thi cùng số lượng lệnh, nhưng thứ tự vòng lặp lại ảnh hưởng đáng kể đến truy cập bộ nhớ và **locality** (tính cục bộ).  
 Hãy nhớ sử dụng các công cụ phân tích bộ nhớ như `massif` và `cachegrind` khi tối ưu chương trình.
-
----
 
 **Trình biên dịch luôn được cải tiến**
 

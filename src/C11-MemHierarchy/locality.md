@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **11.3. Locality**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
 
 ## 11.3. Locality (Tính cục bộ)
 
@@ -14,8 +11,6 @@ Các hệ thống chủ yếu khai thác hai dạng locality:
 
 1. **Temporal locality**: Chương trình có xu hướng truy cập cùng một dữ liệu nhiều lần theo thời gian. Nghĩa là, nếu một chương trình vừa sử dụng một biến gần đây, khả năng cao là nó sẽ sử dụng lại biến đó sớm.
 2. **Spatial locality**: Chương trình có xu hướng truy cập dữ liệu nằm gần dữ liệu đã được truy cập trước đó. “Gần” ở đây đề cập đến địa chỉ bộ nhớ của dữ liệu. Ví dụ, nếu một chương trình truy cập dữ liệu tại địa chỉ *N* và *N+4*, thì khả năng cao nó sẽ truy cập *N+8* ngay sau đó.
-
----
 
 ### 11.3.1. Ví dụ về Locality trong mã nguồn
 
@@ -85,8 +80,6 @@ Phiên bản thứ hai truy cập các giá trị của ma trận bằng cách l
 
 Ví dụ này minh họa cách lập trình viên có thể ảnh hưởng đến chi phí ở cấp hệ thống của việc thực thi chương trình. Hãy ghi nhớ các nguyên tắc này khi viết các ứng dụng hiệu năng cao, đặc biệt là những ứng dụng truy cập mảng theo một mẫu đều đặn.
 
----
-
 ### 11.3.2. Từ Locality đến Cache
 
 Để minh họa cách các khái niệm **temporal locality** và **spatial locality** hỗ trợ thiết kế cache, chúng ta sẽ sử dụng một ví dụ quen thuộc với các đối tượng đời thực: sách.  
@@ -118,8 +111,6 @@ Mặc dù cách này không hoàn hảo, nhưng sự đơn giản khiến nó h�
 2. Sách ít được dùng cuối cùng sẽ trở thành cuốn lâu nhất không được sử dụng, và khi đó việc trả nó về thư viện là hợp lý.
 
 Áp dụng chiến lược này cho các thiết bị **primary storage** (bộ nhớ chính) trông rất giống ví dụ về sách: khi dữ liệu được nạp vào **CPU register** từ **main memory**, hãy dành chỗ cho nó trong **CPU cache**. Nếu cache đã đầy, hãy tạo chỗ bằng cách **evict** (loại bỏ) dữ liệu trong cache ít được sử dụng nhất về main memory. Trong [phần tiếp theo về caching](caching.html#_cpu_caches), chúng ta sẽ tìm hiểu chi tiết cách các cơ chế như vậy được tích hợp vào các hệ thống cache hiện đại.
-
----
 
 ### 11.3.4. Spatial Locality
 

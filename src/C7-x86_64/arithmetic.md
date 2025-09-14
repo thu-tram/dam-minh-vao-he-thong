@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của phần bạn yêu cầu, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 7.3. Các lệnh số học (Arithmetic Instructions)
 
@@ -21,8 +18,6 @@ Dưới đây là bản dịch tiếng Việt của phần bạn yêu cầu, tu�
 Lệnh `add` và `sub` tương ứng với phép cộng và phép trừ, mỗi lệnh nhận hai **operand** (toán hạng). Ba lệnh tiếp theo là các lệnh thao tác trên một thanh ghi duy nhất, tương ứng với các phép **increment** (`x++`), **decrement** (`x--`) và **negation** (`-x`) trong C. Lệnh nhân (`imul`) hoạt động trên hai toán hạng và đặt kết quả vào toán hạng đích. Nếu kết quả cần nhiều hơn 64 bit để biểu diễn, giá trị sẽ bị cắt ngắn xuống 64 bit.
 
 Lệnh chia (`idiv`) hoạt động hơi khác. Trước khi thực thi `idiv`, giả định rằng thanh ghi `%rax` chứa **dividend** (số bị chia). Gọi `idiv` với toán hạng S sẽ chia nội dung của `%rax` cho S, đặt **quotient** (thương) vào `%rax` và **remainder** (phần dư) vào `%rdx`.
-
----
 
 ### 7.3.1. Các lệnh dịch bit (Bit Shifting Instructions)
 
@@ -46,8 +41,6 @@ Mỗi lệnh dịch nhận hai toán hạng: một thường là **register** (t
 > **Different Versions of Instructions Help Distinguish Types at an Assembly Level**  
 > Ở mức assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng compiler sẽ sử dụng các **component register** dựa trên kiểu dữ liệu. Tương tự, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là signed hay unsigned. Ở mức assembly, compiler sử dụng các lệnh khác nhau để phân biệt giữa dịch logic và dịch số học.
 
----
-
 ### 7.3.2. Các lệnh thao tác bit (Bitwise Instructions)
 
 Các lệnh thao tác bit cho phép compiler thực hiện các phép toán bit trên dữ liệu. Một cách compiler sử dụng các phép toán bit là để tối ưu hóa. Ví dụ, compiler có thể chọn triển khai `77 mod 4` bằng phép `77 & 3` thay vì dùng lệnh `idiv` vốn tốn kém hơn.
@@ -67,8 +60,6 @@ Hãy nhớ rằng phép bitwise `not` khác với phép **negation** (`neg`). L�
 
 > **Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong mã C của bạn!**  
 > Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong mã C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này *không* được khuyến khích. Hầu hết các **compiler** (trình biên dịch) hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi điều đó hợp lý, khiến lập trình viên không cần phải tự làm điều này. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của mã nguồn bất cứ khi nào có thể và tránh tối ưu hóa sớm một cách không cần thiết.
-
----
 
 ### 7.3.3. Lệnh Load Effective Address
 

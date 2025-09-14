@@ -1,29 +1,11 @@
-# License: CC BY-NC-ND 4.0
+# Giấy phép: CC BY-NC-ND 4.0
 
-This work is licensed under the [Creative Commons
-Attribution-NonCommercial-NoDerivatives 4.0
-International](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+Tác phẩm này được phát hành theo [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
+[![Giấy phép Creative Commons BY-NC-ND](_images/copyright.png)](http://creativecommons.org/licenses/by-nc-nd/4.0/)
 
-[![Creative Commons BY-NC-ND License](_images/copyright.png)](http://creativecommons.org/licenses/by-nc-nd/4.0/){.image}
+## Miễn trừ trách nhiệm (Disclaimer)
 
+Các tác giả đã nỗ lực hết sức để đảm bảo rằng thông tin trong cuốn sách này là chính xác. Các chương trình trong sách chỉ được đưa vào với mục đích giảng dạy. Các tác giả không đưa ra bất kỳ bảo đảm nào liên quan đến các chương trình hoặc nội dung của cuốn sách này. Các tác giả không chịu và theo đây từ chối mọi trách nhiệm đối với bất kỳ bên nào về mọi tổn thất, thiệt hại hoặc gián đoạn gây ra bởi lỗi hoặc thiếu sót, dù những lỗi hoặc thiếu sót đó xuất phát từ sơ suất, tai nạn hay bất kỳ nguyên nhân nào khác.
 
-# Disclaimer
-
-The authors made every effort to ensure that the information in this
-book was correct. The programs in this book have been included for
-instructional purposes only. The authors do not offer any warranties
-with respect to the programs or contents of this book. The authors do
-not assume and hereby disclaim any liability to any party for any loss,
-damage, or disruption caused by errors or omissions, whether such errors
-or omissions result from negligence, accident, or any other cause.
-
-
-The views expressed in this book are those of the authors and do not
-reflect the official policy or position of the Department of the Army,
-Department of Defense, or the U.S. Government.
-
-
-
-
-
+Những quan điểm được trình bày trong cuốn sách này là của riêng các tác giả và không phản ánh chính sách hoặc lập trường chính thức của Bộ Lục quân Hoa Kỳ, Bộ Quốc phòng Hoa Kỳ, hay Chính phủ Hoa Kỳ.

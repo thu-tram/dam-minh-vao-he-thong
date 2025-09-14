@@ -8,13 +8,9 @@ Mục đích chính của nó là **quản lý** các thành phần phần cứn
 
 **Hình 1.** OS là phần mềm hệ thống đặc biệt nằm giữa người dùng và phần cứng. Nó quản lý phần cứng máy tính và triển khai các **abstraction** (trừu tượng hóa) để giúp phần cứng dễ sử dụng hơn.
 
----
-
 Một trong những cách OS giúp phần cứng máy tính dễ sử dụng là hỗ trợ khởi chạy các chương trình trên máy tính.  
 Hãy xem điều gì xảy ra khi người dùng nhấp đúp vào một biểu tượng hoặc gõ tên tệp thực thi của chương trình tại **shell prompt** (ví dụ: `./a.out`) để khởi chạy chương trình trên hệ thống.  
 OS sẽ xử lý toàn bộ chi tiết của thao tác này, chẳng hạn như nạp chương trình từ đĩa vào RAM và khởi tạo CPU để bắt đầu chạy các lệnh của chương trình; OS ẩn khỏi người dùng những hành động mức thấp này, vốn là cần thiết để chạy chương trình trên máy tính.
-
----
 
 Một ví dụ về cách OS sử dụng hiệu quả tài nguyên hệ thống là triển khai **multiprogramming** (đa chương trình), nghĩa là cho phép nhiều hơn một chương trình chạy trên máy tính tại cùng một thời điểm.  
 Multiprogramming không nhất thiết có nghĩa là tất cả các chương trình đều chạy đồng thời trên phần cứng.  
@@ -26,13 +22,9 @@ Nếu không có multiprogramming, CPU sẽ rảnh rỗi bất cứ khi nào ch�
 Để hỗ trợ multiprogramming, OS cần triển khai một abstraction của chương trình đang chạy, gọi là **process** (tiến trình).  
 Abstraction process cho phép OS quản lý tập hợp nhiều chương trình đang chạy trong hệ thống tại bất kỳ thời điểm nào.
 
----
-
 Một số ví dụ về hệ điều hành bao gồm: **Microsoft Windows**, **Apple macOS** và **iOS**, **Oracle Solaris**, và các biến thể **Unix** mã nguồn mở như **OpenBSD** và **Linux**.  
 Trong cuốn sách này, chúng ta sử dụng các ví dụ trên Linux.  
 Tuy nhiên, tất cả các hệ điều hành đa dụng khác đều triển khai các chức năng tương tự, dù đôi khi theo những cách khác nhau.
-
----
 
 ### Kernel
 
@@ -52,8 +44,6 @@ Kernel cũng triển khai các **policy** (chính sách) để quản lý hiệu
 **Policy** quyết định phần “cái gì”, “khi nào” và “cho ai” của chức năng OS.  
 Ví dụ: một mechanism triển khai việc khởi tạo CPU để chạy lệnh từ một process cụ thể, còn policy sẽ quyết định process nào được chạy tiếp theo trên CPU.
 
----
-
 Kernel triển khai **system call interface** (giao diện lời gọi hệ thống) cho người dùng hệ thống.  
 Người dùng và chương trình tương tác với OS thông qua system call interface này.  
 Ví dụ: nếu một chương trình muốn biết thời gian hiện tại trong ngày, nó có thể lấy thông tin đó từ OS bằng cách gọi system call `gettimeofday`.
@@ -69,8 +59,6 @@ Kernel trực tiếp quản lý các thiết bị phần cứng khác như CPU v
 ![OS kernel implements an interface to applications and to hardware devices](_images/osinterfaces.png)
 
 **Hình 2.** OS kernel: chức năng cốt lõi của OS cần thiết để sử dụng hệ thống và hỗ trợ sự phối hợp giữa thiết bị I/O và người dùng hệ thống.
-
----
 
 Trong phần còn lại của chương này, chúng ta sẽ xem xét vai trò của OS trong việc chạy chương trình và quản lý hiệu quả tài nguyên hệ thống.  
 Phần thảo luận chủ yếu tập trung vào **mechanism** (cách thức) của chức năng OS và việc triển khai hai abstraction chính của OS:

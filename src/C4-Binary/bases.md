@@ -43,7 +43,6 @@ Mặc dù bạn có thể chưa từng nghĩ đến công thức cụ thể mô 
 
 Điểm thứ nhất cho thấy việc đếm trong nhị phân tuân theo cùng một mẫu như thập phân: chỉ cần liệt kê các giá trị và thêm chữ số (bit) khi cần. Vì phần này tập trung vào _unsigned_ numbers (chỉ gồm 0 và các số dương), nên việc bắt đầu đếm từ 0 là tự nhiên. [Bảng 1](#TabBinaryCounting) cho thấy cách đếm một vài số tự nhiên đầu tiên trong nhị phân. Như bạn có thể thấy từ bảng, việc đếm trong nhị phân nhanh chóng làm tăng số lượng chữ số. Điều này là hợp lý, vì mỗi chữ số nhị phân (chỉ có hai giá trị khả dĩ) chứa ít thông tin hơn một chữ số thập phân (10 giá trị khả dĩ).
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước bạn đặt ra: giữ nguyên thuật ngữ chuyên ngành bằng tiếng Anh, giải thích tiếng Việt khi xuất hiện lần đầu, đảm bảo câu văn tự nhiên, rõ ràng và chính xác về mặt kỹ thuật.
 
 | **Binary value** (giá trị nhị phân) | **Decimal value** (giá trị thập phân) |
 |-------------------------------------|----------------------------------------|

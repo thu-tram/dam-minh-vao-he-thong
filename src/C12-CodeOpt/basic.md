@@ -179,8 +179,6 @@ Cuối cùng, kiểm tra `isPrime` cho thấy 13 triệu lệnh (20,5%) đến t
 
 Các kết quả này xác nhận giả thuyết ban đầu rằng chương trình dành phần lớn thời gian trong hàm `isPrime`, và hàm `sqrt` là hàm được gọi nhiều nhất. Giảm tổng số lệnh thực thi sẽ giúp chương trình chạy nhanh hơn; phân tích trên gợi ý rằng nỗ lực ban đầu nên tập trung vào việc cải thiện hàm `isPrime`, và có thể giảm số lần gọi `sqrt`.
 
----
-
 ### 12.1.2. Loop-Invariant Code Motion (Di chuyển mã bất biến ra khỏi vòng lặp)
 
 **Loop-invariant code motion** là một kỹ thuật tối ưu hóa di chuyển các phép tính tĩnh (không thay đổi) bên trong vòng lặp ra ngoài vòng lặp mà không ảnh hưởng đến hành vi của vòng lặp. Các **optimizing compiler** (trình biên dịch tối ưu) có thể tự động thực hiện hầu hết các tối ưu hóa dạng này.  

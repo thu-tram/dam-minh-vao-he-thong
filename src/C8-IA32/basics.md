@@ -26,8 +26,6 @@ $ gcc -m32 -o modified modified.c
 
 Cờ `-m32` yêu cầu GCC biên dịch code thành một file thực thi 32-bit. Nếu quên thêm cờ này, kết quả assembly có thể sẽ khác rất nhiều so với các ví dụ trong chương này; mặc định, GCC biên dịch sang assembly x86-64, biến thể 64-bit của x86. Tuy nhiên, hầu như tất cả các kiến trúc 64-bit đều có chế độ chạy 32-bit để tương thích ngược. Chương này đề cập đến IA32; các chương khác sẽ nói về x86-64 và ARM. Dù đã cũ, IA32 vẫn cực kỳ hữu ích để hiểu cách chương trình hoạt động và cách tối ưu hóa code.
 
----
-
 Tiếp theo, hãy xem mã assembly tương ứng của đoạn code này bằng cách gõ:
 
 ```
@@ -49,8 +47,6 @@ Tìm đoạn code liên quan đến `adder2` bằng cách gõ `/adder2` khi đan
  8048415:       c3                      ret
 ```
 
----
-
 Đừng lo nếu bạn chưa hiểu chuyện gì đang diễn ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly ở các phần sau. Hiện tại, chúng ta sẽ nghiên cứu cấu trúc của từng lệnh riêng lẻ.
 
 Mỗi dòng trong ví dụ trên chứa:
@@ -64,8 +60,6 @@ Ví dụ: `55` là mã máy (machine code) của lệnh `push %ebp`, và lệnh 
 Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành **nhiều** lệnh assembly.  
 Ví dụ, phép toán `a + 2` được biểu diễn bằng hai lệnh:  
 `mov 0x8(%ebp), %eax` và `add $0x2, %eax`.
-
----
 
 >> **Assembly của bạn có thể trông khác!**
 >>
@@ -82,8 +76,6 @@ Hãy nhớ rằng **register** (thanh ghi) là một đơn vị lưu trữ có k
 Chương trình có thể đọc hoặc ghi vào cả tám thanh ghi này. Sáu thanh ghi đầu tiên đều lưu dữ liệu **general-purpose** (đa dụng), trong khi hai thanh ghi cuối thường được compiler dành riêng để lưu dữ liệu địa chỉ. Mặc dù một chương trình có thể diễn giải nội dung của thanh ghi đa dụng là số nguyên hoặc địa chỉ, bản thân thanh ghi không phân biệt điều đó. Hai thanh ghi cuối (`%esp` và `%ebp`) lần lượt được gọi là **stack pointer** (con trỏ stack) và **frame pointer** (con trỏ khung stack). Compiler dành riêng các thanh ghi này cho các thao tác duy trì cấu trúc của **program stack**. Thông thường, `%esp` trỏ tới đỉnh của stack chương trình, trong khi `%ebp` trỏ tới đáy của stack frame hiện tại. Chúng ta sẽ bàn chi tiết hơn về stack frame và hai thanh ghi này trong phần nói về [functions](functions.html#_functions_in_assembly).
 
 Thanh ghi cuối cùng đáng nhắc đến là `%eip` hay **instruction pointer** (đôi khi gọi là **program counter** – PC). Nó trỏ tới lệnh tiếp theo sẽ được CPU thực thi. Không giống tám thanh ghi kể trên, chương trình không thể ghi trực tiếp vào `%eip`.
-
----
 
 ### 8.1.2. Cú pháp nâng cao của thanh ghi (Advanced Register Notation) 
 
@@ -104,8 +96,6 @@ Với sáu thanh ghi đầu tiên vừa nêu, ISA cung cấp cơ chế truy cậ
 
 - Byte *cao* và *thấp* trong 16 bit thấp của bốn thanh ghi đầu tiên có thể được truy cập bằng cách lấy hai ký tự cuối của tên thanh ghi và thay ký tự cuối bằng `h` (high – cao) hoặc `l` (low – thấp) tùy byte cần truy cập. Ví dụ: `%al` tham chiếu 8 bit thấp của `%ax`, còn `%ah` tham chiếu 8 bit cao của `%ax`. Các thanh ghi 8 bit này thường được compiler dùng để lưu giá trị 1 byte cho một số thao tác nhất định, như dịch bit (bitwise shift) – vì một thanh ghi 32-bit không thể dịch quá 31 vị trí và số 32 chỉ cần 1 byte để lưu. Nói chung, compiler sẽ dùng thành phần thanh ghi nhỏ nhất cần thiết để hoàn thành một phép toán.
 
----
-
 ### 8.1.3. Cấu trúc lệnh (Instruction Structure) 
 
 Mỗi lệnh gồm một **opcode** (mã thao tác) chỉ định nó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện. Ví dụ: lệnh `add $0x2, %eax` có opcode là `add` và các toán hạng là `$0x2` và `%eax`.
@@ -115,8 +105,6 @@ Mỗi toán hạng tương ứng với một vị trí nguồn hoặc đích cho
 - **Constant (literal)**: giá trị hằng, đứng trước bởi ký hiệu `$`. Ví dụ: trong `add $0x2, %eax`, `$0x2` là giá trị hằng ở hệ thập lục phân 0x2.
 - **Register**: tham chiếu trực tiếp tới một thanh ghi. Ví dụ: `add $0x2, %eax` chỉ định `%eax` là nơi lưu kết quả của phép cộng.
 - **Memory**: tham chiếu tới một giá trị trong bộ nhớ chính (RAM), thường dùng để tra cứu địa chỉ. Dạng địa chỉ bộ nhớ có thể kết hợp thanh ghi và giá trị hằng. Ví dụ: trong `mov 0x8(%ebp), %eax`, toán hạng `0x8(%ebp)` nghĩa là “cộng 0x8 vào giá trị trong `%ebp`, rồi truy xuất bộ nhớ tại địa chỉ đó”. Đây chính là thao tác dereference con trỏ.
-
----
 
 ### 8.1.4. Ví dụ với toán hạng (An Example with Operands) 
 
@@ -154,13 +142,9 @@ Khi đó, các toán hạng trong **Bảng 2** sẽ được đánh giá (evalua
 
 **Bảng 2.** Ví dụ về các toán hạng (operands)
 
----
-
 Trong **Bảng 2**, ký hiệu `%ecx` biểu thị giá trị được lưu trong thanh ghi `%ecx`.  
 Ngược lại, M[`%eax`] cho biết giá trị bên trong `%eax` sẽ được coi là một địa chỉ, và cần **dereference** (truy xuất) giá trị tại địa chỉ đó.  
 Do đó, toán hạng `(%eax)` tương ứng với M[0x804], và giá trị tại địa chỉ này là 0xCA.
-
----
 
 Một vài lưu ý quan trọng trước khi tiếp tục:  
 Mặc dù **Bảng 2** cho thấy nhiều dạng toán hạng hợp lệ, nhưng không phải tất cả đều có thể dùng thay thế cho nhau trong mọi trường hợp.
@@ -172,8 +156,6 @@ Cụ thể:
 - Trong các phép toán có **scaling** (xem hai toán hạng cuối trong [Bảng 2](#Operands32)), hệ số nhân (scaling factor) phải là một trong các giá trị 1, 2, 4 hoặc 8.
 
 **Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc nắm vững các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn khi phân tích mã assembly.
-
----
 
 ### 8.1.5. Hậu tố của lệnh (Instruction Suffixes)
 
@@ -188,8 +170,6 @@ Compiler sẽ tự động dịch code sang các lệnh có hậu tố phù hợ
 | l      | `int`, `long`, `unsigned` | 4          |
 
 **Bảng 3.** Ví dụ về hậu tố của lệnh.
-
----
 
 Lưu ý: các lệnh liên quan đến **thực thi có điều kiện** sẽ có hậu tố khác nhau tùy thuộc vào điều kiện được đánh giá.  
 Chúng ta sẽ tìm hiểu các lệnh liên quan đến điều kiện trong [phần sau](conditional_control_loops.html#_conditional_control_and_loops).

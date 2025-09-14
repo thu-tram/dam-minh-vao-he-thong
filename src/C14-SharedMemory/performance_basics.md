@@ -1,10 +1,5 @@
-Dưới đây là bản dịch tiếng Việt của mục **14.4.1. Parallel Performance Basics**, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ### 14.4.1. Kiến thức cơ bản về hiệu năng song song (Parallel Performance Basics)
-
----
 
 #### Speedup (Tăng tốc)
 
@@ -23,8 +18,6 @@ Nếu speedup của chương trình **lớn hơn 1**, điều đó cho thấy vi
 Nếu speedup **nhỏ hơn 1**, thì giải pháp song song thực tế còn chậm hơn giải pháp tuần tự.  
 Cũng có thể xảy ra trường hợp speedup **lớn hơn *n*** (ví dụ: do hiệu ứng phụ của việc có thêm cache giúp giảm số lần truy cập bộ nhớ).  
 Những trường hợp này được gọi là **superlinear speedup** (tăng tốc siêu tuyến tính).
-
----
 
 #### Efficiency (Hiệu suất)
 
@@ -46,8 +39,6 @@ Xét lại ví dụ trước:
 - Nếu phiên bản song song mất 30 giây trên **2 core**, efficiency = 1 (100%).  
 - Nếu mất 30 giây trên **4 core**, efficiency giảm xuống 0.5 (50%).
 
----
-
 #### Hiệu năng song song trong thực tế
 
 Trong thế giới lý tưởng, speedup là **tuyến tính**: mỗi đơn vị tính toán bổ sung sẽ mang lại mức tăng tốc tương ứng.  
@@ -59,14 +50,10 @@ Giảm độ dài của critical path là bước quan trọng đầu tiên tron
 
 Ngoài ra, các **điểm đồng bộ hóa thread** và (đối với các chương trình chạy trên nhiều nút tính toán) **chi phí giao tiếp giữa các process** cũng là những yếu tố có thể giới hạn hiệu năng song song.
 
----
-
 > **Không phải mọi chương trình đều là ứng viên tốt cho song song hóa!**  
 > Độ dài của critical path có thể khiến một số chương trình **rất khó** để song song hóa.  
 > Ví dụ: bài toán tính số Fibonacci thứ *n*.  
 > Vì mỗi số Fibonacci phụ thuộc vào **hai số trước đó**, nên việc song song hóa hiệu quả chương trình này là **rất khó**.
-
----
 
 Xét việc song song hóa hàm `countElems` trong thuật toán **CountSort** đã đề cập trước đó trong chương này.  
 Trong thế giới lý tưởng, ta kỳ vọng speedup của chương trình sẽ **tuyến tính** theo số lượng core.  
@@ -88,9 +75,6 @@ Time for Step 1 is 0.107649 s
 
 
 
-Dưới đây là bản dịch tiếng Việt của nội dung bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Bảng 1 cho thấy **speedup** và **efficiency** cho các lần thực thi đa luồng này:
 
@@ -101,14 +85,10 @@ Bảng 1 cho thấy **speedup** và **efficiency** cho các lần thực thi đa
 
 **Bảng 1.** Kết quả benchmark hiệu năng
 
----
-
 Mặc dù chúng ta đạt **84% efficiency** với 2 core, nhưng efficiency giảm xuống **39%** khi dùng 8 core.  
 Hãy lưu ý rằng **speedup lý tưởng** bằng 8 đã **không đạt được**.  
 Một lý do là **overhead** của việc phân công công việc cho các thread và việc cập nhật tuần tự mảng `counts` bắt đầu chiếm ưu thế khi số lượng thread tăng cao.  
 Thứ hai, **resource contention** (tranh chấp tài nguyên) giữa 8 thread (hãy nhớ đây là bộ xử lý **quad-core**) làm giảm efficiency của core.
-
----
 
 #### Amdahl's Law
 
@@ -121,8 +101,6 @@ Nói chung, Amdahl’s Law phát biểu rằng:
 Ngay cả khi thời gian thực thi của phần *P* được giảm xuống **0**, thì phần *S* vẫn tồn tại và cuối cùng sẽ **chi phối hiệu năng**.  
 Vì *S* và *P* là các tỷ lệ, nên *S* + *P* = 1.
 
----
-
 Xét một chương trình chạy trên 1 core mất thời gian T~1~.  
 - Phần tuần tự chiếm *S* × T~1~ thời gian.  
 - Phần song song hóa (*P* = 1 − *S*) chiếm *P* × T~1~ thời gian.
@@ -133,8 +111,6 @@ Do đó, mức cải thiện tối đa cho bộ xử lý song song với *c* cor
 ![amdahl](_images/amdahl.png)
 
 Khi *c* tăng, thời gian thực thi trên bộ xử lý song song sẽ bị **chi phối** bởi phần tuần tự của chương trình.
-
----
 
 Để hiểu tác động của Amdahl’s Law, xét một chương trình **90% song song hóa** và chạy trong 10 giây trên 1 core.  
 Theo công thức:  
@@ -152,11 +128,7 @@ Bảng 2 cho thấy **tổng thời gian** trên *c* core (T~*c*~) theo Amdahl�
 
 **Bảng 2.** Ảnh hưởng của Amdahl’s Law lên một chương trình 10 giây với 90% khả năng song song hóa
 
----
-
 Có thể thấy rằng, theo thời gian, **phần tuần tự** của chương trình bắt đầu chiếm ưu thế, và việc thêm nhiều core hơn gần như **không còn tác dụng**.
-
----
 
 Một cách nhìn chính xác hơn là đưa công thức tính T~*c*~ của Amdahl vào công thức tính speedup:
 
@@ -165,26 +137,18 @@ Một cách nhìn chính xác hơn là đưa công thức tính T~*c*~ của Amd
 Khi lấy giới hạn của công thức này, ta thấy rằng khi *c* tiến tới vô hạn, **speedup tiến tới 1/*S***.  
 Trong ví dụ ở Bảng 2, speedup tiến tới 1/0.1 = **10**.
 
----
-
 Ví dụ khác: xét một chương trình với *P* = 0.99 (tức 99% chương trình có thể song song hóa).  
 Khi *c* tiến tới vô hạn, thời gian tuần tự (*S* = 0.01) bắt đầu chi phối hiệu năng.  
 Do đó, speedup tiến tới 1/0.01 = **100**.  
 Nói cách khác, ngay cả với **một triệu core**, tốc độ tối đa mà chương trình này đạt được cũng chỉ là 100.
-
----
 
 > **Không phải đã hết hy vọng: Giới hạn của Amdahl’s Law**  
 > Khi tìm hiểu về Amdahl’s Law, cần xem xét **mục đích** ban đầu của Gene Amdahl.  
 > Theo lời ông, định luật này được đề xuất để chứng minh "*tính đúng đắn liên tục của cách tiếp cận bộ xử lý đơn, và sự yếu kém của cách tiếp cận đa bộ xử lý khi áp dụng vào các bài toán thực tế với những bất thường đi kèm*”[^1].  
 > Trong bài báo năm 1967, Amdahl viết: "*Trong hơn một thập kỷ, nhiều người đã cho rằng cấu trúc của một máy tính đơn đã đạt tới giới hạn, và những bước tiến thực sự quan trọng chỉ có thể đạt được bằng cách kết nối nhiều máy tính lại với nhau để cho phép giải quyết hợp tác*”[^1].
 
----
-
 Những nghiên cứu sau này đã thách thức một số giả định chính của Amdahl.  
 Xem [Gustafson–Barsis Law](performance_advanced.html#_gustafson_barsis_law) để tìm hiểu về giới hạn của Amdahl’s Law và một cách tiếp cận khác khi đánh giá lợi ích của song song hóa.
-
----
 
 #### References 
 

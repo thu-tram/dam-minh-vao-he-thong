@@ -8,8 +8,6 @@ Cụ thể, chúng ta sẽ tìm hiểu:
 - **Distributed memory systems** (hệ thống bộ nhớ phân tán) và **message passing** (truyền thông điệp), sử dụng **MPI** làm ví dụ.
 - **Cloud computing** (điện toán đám mây), sử dụng **MapReduce** và **Apache Spark** làm ví dụ.
 
----
-
 ### Một thế giới hoàn toàn mới: Flynn's Taxonomy of Architecture
 
 **Flynn's taxonomy** thường được sử dụng để mô tả hệ sinh thái của kiến trúc máy tính hiện đại (Hình 1).
@@ -17,8 +15,6 @@ Cụ thể, chúng ta sẽ tìm hiểu:
 ![Flynn's Taxonomy consists of two independent axes](_images/flynn.png)
 
 **Hình 1.** Flynn's taxonomy phân loại các cách mà bộ xử lý áp dụng lệnh.
-
----
 
 Trục ngang đề cập đến **data stream** (luồng dữ liệu), trong khi trục dọc đề cập đến **instruction stream** (luồng lệnh).  
 **Stream** trong ngữ cảnh này là một dòng dữ liệu hoặc lệnh.  
@@ -31,8 +27,6 @@ Do đó:
 - **Multiple instruction stream (MI)** phát ra nhiều lệnh mỗi đơn vị thời gian.
 - **Single data stream (SD)** phát ra một phần tử dữ liệu mỗi đơn vị thời gian.
 - **Multiple data stream (MD)** phát ra nhiều phần tử dữ liệu mỗi đơn vị thời gian.
-
----
 
 Một bộ xử lý có thể được phân loại vào một trong bốn loại dựa trên kiểu luồng mà nó sử dụng:
 
@@ -55,7 +49,5 @@ Một bộ xử lý có thể được phân loại vào một trong bốn loạ
   Chúng cực kỳ linh hoạt và có khả năng xử lý nhiều lệnh hoặc nhiều luồng dữ liệu cùng lúc.  
   Vì hầu hết các máy tính hiện đại đều sử dụng CPU đa lõi, nên đa số được phân loại là máy MIMD.  
   Chúng ta sẽ thảo luận về một loại hệ thống MIMD khác — **distributed memory systems** — trong [Mục 15.2](distrmem.html#_distributed_memory_systems_message_passing_and_mpi).
-
----
 
 Bạn có muốn tôi dịch tiếp sang phần **15.1. Heterogeneous Computing: Hardware Accelerators, GPGPU Computing, and CUDA** ngay sau đây không?

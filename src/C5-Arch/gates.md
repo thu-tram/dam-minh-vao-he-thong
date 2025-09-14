@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **5.3. Logic Gates** từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
-
----
 
 ## 5.3. Cổng Logic
 
@@ -9,8 +6,6 @@ Dưới đây là bản dịch tiếng Việt của mục **5.3. Logic Gates** t
 > Transistors
 
 Các cổng logic được tạo ra từ các transistor được khắc lên vật liệu bán dẫn (ví dụ: chip silicon). Transistor hoạt động như công tắc điều khiển dòng điện chạy qua chip. Một transistor có thể chuyển trạng thái giữa bật và tắt (tương ứng với đầu ra điện áp cao hoặc thấp). Trạng thái đầu ra của nó phụ thuộc vào trạng thái hiện tại và trạng thái đầu vào (điện áp cao hoặc thấp). Các giá trị nhị phân được mã hóa bằng điện áp cao (1) và thấp (0), và các cổng logic được triển khai bằng cách sắp xếp một số transistor để thực hiện hành động chuyển mạch trên các đầu vào nhằm tạo ra đầu ra của cổng logic. Số lượng transistor có thể đặt trên một mạch tích hợp (chip) là một chỉ số sơ bộ về sức mạnh của nó; càng nhiều transistor trên mỗi chip thì càng có nhiều khối xây dựng để triển khai nhiều chức năng hoặc lưu trữ hơn.
-
----
 
 ### 5.3.1. Cổng Logic Cơ Bản
 
@@ -29,9 +24,6 @@ Hình 1 minh họa cách các kiến trúc sư máy tính biểu diễn các c�
 
 ![AND, OR, and NOT logic gates.](_images/gates.png)
 
-Dưới đây là bản dịch tiếng Việt của phần nội dung bạn cung cấp từ sách *Dive into Systems*, tuân thủ đầy đủ các quy tắc dịch thuật kỹ thuật đã đề ra:
-
----
 
 **Hình 1. Các cổng logic AND, OR và NOT với đầu vào 1-bit tạo ra đầu ra 1-bit.**
 
@@ -42,8 +34,6 @@ Phiên bản nhiều bit của một cổng logic (với đầu vào và đầu 
 **Hình 2. Mạch AND 4-bit được xây dựng từ bốn cổng AND 1-bit.**
 
 Loại mạch đơn giản này – chỉ mở rộng độ rộng bit của đầu vào và đầu ra cho một cổng logic – thường được gọi là cổng *M*-bit, với *M* là số bit đầu vào và đầu ra.
-
----
 
 ### 5.3.2. Các Cổng Logic Khác
 

@@ -21,13 +21,9 @@ Các đơn vị được kết nối với nhau thông qua các bus, dùng để
 **Hình 1. Kiến trúc von Neumann bao gồm các đơn vị xử lý, điều khiển, bộ nhớ, vào và ra.**  
 Đơn vị điều khiển và đơn vị xử lý tạo thành CPU, bao gồm ALU, các thanh ghi đa dụng của CPU, và một số thanh ghi chuyên dụng (IR và PC). Các đơn vị được kết nối với nhau bằng các bus dùng để truyền dữ liệu và giao tiếp giữa các đơn vị.
 
----
-
 ### 5.2.1. CPU
 
 Đơn vị điều khiển và đơn vị xử lý cùng nhau triển khai CPU — phần của máy tính thực thi các lệnh chương trình trên dữ liệu chương trình.
-
----
 
 ### 5.2.2. Đơn vị xử lý (Processing Unit)
 
@@ -35,16 +31,12 @@ Các đơn vị được kết nối với nhau thông qua các bus, dùng để
 
 Điểm quan trọng là trong kiến trúc von Neumann, không có sự phân biệt giữa lệnh và dữ liệu. Về mặt bản chất, lệnh *chính là* dữ liệu. Do đó, mỗi thanh ghi có thể lưu một từ dữ liệu (data word).
 
----
-
 ### 5.2.3. Đơn vị điều khiển (Control Unit)
 
 **Control unit** điều phối việc thực thi các lệnh chương trình bằng cách nạp chúng từ bộ nhớ và truyền toán hạng cùng phép toán đến đơn vị xử lý. Đơn vị điều khiển cũng bao gồm một số phần lưu trữ để theo dõi trạng thái thực thi và xác định hành động tiếp theo cần thực hiện:
 
 - **Program counter** (PC – "bộ đếm chương trình"): lưu địa chỉ bộ nhớ của lệnh tiếp theo cần thực thi.
 - **Instruction register** (IR – "thanh ghi lệnh"): lưu lệnh được nạp từ bộ nhớ, đang được thực thi.
-
----
 
 ### 5.2.4. Đơn vị bộ nhớ (Memory Unit)
 
@@ -54,14 +46,9 @@ Dung lượng bộ nhớ thay đổi tùy theo hệ thống. Tuy nhiên, ISA c�
 
 Thuật ngữ **memory** đôi khi được dùng để chỉ toàn bộ hệ phân cấp lưu trữ trong hệ thống. Nó có thể bao gồm các thanh ghi trong đơn vị xử lý cũng như các thiết bị lưu trữ thứ cấp như ổ cứng HDD hoặc ổ SSD. Trong [Chương Bộ nhớ và Hệ phân cấp lưu trữ](../C11-MemHierarchy/index.html#_storage_and_the_memory_hierarchy), ta sẽ thảo luận chi tiết về hệ phân cấp bộ nhớ. Hiện tại, ta sử dụng thuật ngữ "memory" để chỉ bộ nhớ trong **random access memory** (RAM – "bộ nhớ truy cập ngẫu nhiên") — loại bộ nhớ có thể được truy cập trực tiếp bởi CPU. RAM được gọi là truy cập ngẫu nhiên vì mọi vị trí lưu trữ trong RAM (địa chỉ) đều có thể được truy cập trực tiếp. Có thể hình dung RAM như một mảng tuyến tính các địa chỉ, trong đó mỗi địa chỉ tương ứng với một byte bộ nhớ.
 
-Dưới đây là bản dịch tiếng Việt của phần mở rộng mục **5.2. The von Neumann Architecture**, bao gồm các phần về kích thước từ, đơn vị vào/ra, và chu trình thực thi chương trình, tuân thủ đầy đủ các quy tắc bạn đã đề ra:
-
----
 
 > Kích thước từ qua các thời kỳ  
 > **Word size** (kích thước từ), được định nghĩa bởi ISA, là số bit của kích thước dữ liệu chuẩn mà bộ xử lý xử lý như một đơn vị duy nhất. Kích thước từ chuẩn đã thay đổi theo thời gian. Với EDVAC, kích thước từ được đề xuất là 30 bit. Trong thập niên 1950, kích thước từ 36 bit khá phổ biến. Với sự ra đời của IBM 360 vào thập niên 1960, kích thước từ bắt đầu được chuẩn hóa, và dần mở rộng từ 16 bit, đến 32 bit, và đến 64 bit như ngày nay. Nếu bạn xem xét kiến trúc Intel kỹ hơn, bạn có thể nhận thấy dấu vết của một số quyết định cũ, vì kiến trúc 32-bit và 64-bit được thêm vào như phần mở rộng của kiến trúc gốc 16-bit.
-
----
 
 ### 5.2.5. Đơn vị vào/ra (Input and Output – I/O Units)
 
@@ -74,8 +61,6 @@ Trong khi các đơn vị điều khiển, xử lý và bộ nhớ tạo thành 
 Một số thiết bị hiện đại, như màn hình cảm ứng, hoạt động như cả thiết bị vào và ra, cho phép người dùng vừa nhập dữ liệu vừa nhận phản hồi từ cùng một thiết bị tích hợp.
 
 Ổ cứng thể rắn (SSD) và ổ cứng cơ học (HDD) cũng là ví dụ về thiết bị vừa vào vừa ra. Các thiết bị lưu trữ này hoạt động như thiết bị vào khi lưu trữ các tệp thực thi chương trình mà hệ điều hành nạp vào bộ nhớ để chạy, và hoạt động như thiết bị ra khi lưu trữ các tệp chứa kết quả chương trình.
-
----
 
 ### 5.2.6. Máy von Neumann hoạt động: Thực thi một chương trình
 

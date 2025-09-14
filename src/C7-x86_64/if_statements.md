@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 ### 7.4.2. Câu lệnh if trong Assembly
 
@@ -195,9 +192,6 @@ int getSmallest(int x, int y) {
 
 Phiên bản này giống hệt với hàm `getSmallest` ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 #### Các lệnh cmov
 

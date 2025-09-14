@@ -39,8 +39,6 @@ Ba lệnh trong **Bảng 1** cũng tạo thành nền tảng cho các lệnh duy
 
 Lưu ý rằng trong khi ba lệnh ở **Bảng 1** yêu cầu hai toán hạng, thì `push` và `pop` trong **Bảng 2** chỉ yêu cầu một toán hạng.
 
----
-
 ### 7.2.1. Kết hợp tất cả: Một ví dụ cụ thể hơn
 
 Hãy xem kỹ hơn hàm `adder2`:
@@ -65,9 +63,6 @@ và mã assembly tương ứng của nó:
     400534:       c3                      retq
 ```
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu và giữ nguyên toàn bộ phần code:
-
----
 
 Mã assembly bao gồm một lệnh `push`, tiếp theo là ba lệnh `mov`, một lệnh `add`, một lệnh `pop` và cuối cùng là một lệnh `retq`.  
 Để hiểu CPU thực thi tập lệnh này như thế nào, chúng ta cần xem lại cấu trúc của [program memory](../C2-C_depth/scope_memory.html#_parts_of_program_memory_and_scope).  

@@ -12,12 +12,8 @@ Semaphore khác với **mutex** ở một số điểm sau:
 
 - Semaphore có thể **mặc định ở trạng thái khóa**.
 
----
-
 Mặc dù mutex và **condition variable** có thể mô phỏng chức năng của semaphore, nhưng trong một số trường hợp, sử dụng semaphore có thể **đơn giản** và **hiệu quả** hơn.  
 Semaphore cũng có ưu điểm là **bất kỳ thread nào** cũng có thể mở khóa semaphore (khác với mutex, nơi thread gọi khóa phải là thread mở khóa).
-
----
 
 Semaphore **không** phải là một phần của thư viện **Pthreads**, nhưng điều đó không có nghĩa là bạn không thể sử dụng chúng.  
 Trên hệ thống Linux và macOS, các primitive semaphore có thể được truy cập từ `semaphore.h` (thường nằm trong `/usr/include`).  

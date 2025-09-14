@@ -46,8 +46,6 @@ Xét lại lệnh `cmp R1, R2`:
 `SF` và `OF` được dùng cho so sánh số nguyên có dấu, trong khi `CF` được dùng cho so sánh số nguyên không dấu.  
 Mặc dù việc tìm hiểu sâu về condition code flags vượt ra ngoài phạm vi cuốn sách này, nhưng việc `cmp` và `test` thiết lập các cờ này là điều kiện cần để nhóm lệnh tiếp theo (*jump instructions*) hoạt động chính xác.
 
----
-
 ### Các lệnh nhảy (Jump Instructions)
 
 **Jump instruction** cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh. Trong các chương trình assembly mà ta đã phân tích, `%rip` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép `%rip` được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
@@ -69,8 +67,6 @@ Mỗi nhãn đều có một địa chỉ gắn liền. Khi CPU thực thi lện
 
 Ví dụ:  
 `jmp 0x8048427 <main+28>` nghĩa là nhảy tới địa chỉ `0x8048427`, nhãn `<main+28>` cho biết nó cách địa chỉ bắt đầu của hàm `main` 28 byte. Thực thi lệnh này sẽ đặt `%rip` thành `0x8048427`.
-
----
 
 #### Lệnh nhảy có điều kiện (Conditional jump instructions)
 
@@ -110,8 +106,6 @@ Thay vì ghi nhớ tất cả các lệnh nhảy có điều kiện khác nhau n
 Khi đọc thành tiếng, ta có thể thấy `jg` tương ứng với *jump greater* và từ đồng nghĩa trong so sánh có dấu của nó là `jnl`, nghĩa là *jump not less*. Tương tự, phiên bản so sánh không dấu `ja` nghĩa là *jump above*, trong khi từ đồng nghĩa `jnbe` nghĩa là *jump not below or equal*.
 
 Nếu bạn đọc thành tiếng các lệnh này, điều đó sẽ giúp giải thích tại sao một số từ đồng nghĩa lại tương ứng với những lệnh cụ thể. Một điều khác cần nhớ là các thuật ngữ *greater* và *less* yêu cầu CPU diễn giải phép so sánh số dưới dạng **có dấu**, trong khi *above* và *below* cho biết phép so sánh số là **không dấu**.
-
----
 
 ### Câu lệnh `goto`
 
@@ -179,8 +173,6 @@ Dạng `goto` của hàm này có thể trông hơi phản trực giác, nhưng 
 
 - Nếu `x` lớn hơn `y`, `smallest` được gán giá trị `y`. Sau đó, chương trình thực thi câu lệnh `goto done`, chuyển quyền điều khiển tới nhãn `done`, trả về giá trị của `smallest` (`y`).
 
----
-
 Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng `goto` trong mã hiện đại được coi là **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
 
 Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng để không viết ra mã khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh `goto` trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi mã C có điều kiện sang dạng `goto` trước khi dịch sang assembly, bao gồm cả mã chứa câu lệnh `if` và vòng lặp.
@@ -189,8 +181,6 @@ Các tiểu mục tiếp theo sẽ trình bày chi tiết hơn về cách biểu
 
 - [If Statements](if_statements.html#_if_statements_in_assembly)  
 - Loops
-
----
 
 ### Tài liệu tham khảo
 

@@ -1,64 +1,39 @@
-## 8. 32-bit x86 Assembly (IA32) 
+## 8. Assembly x86 32-bit (IA32)
 
-In this chapter, we cover the Intel Architecture 32-bit (IA32)
-instruction set architecture. Recall that an [instruction set
-architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture)
-(or ISA) defines the set of instructions and binary encodings of a
-machine-level program. To run the examples in this chapter, you will
-need access to a machine with an x86 processor or a compiler that can
-create 32-bit executables. The term \"x86\" is often used synonymously
-with the IA32 architecture. The x86, and its 64-bit variant x86-64, are
-ubiquitous in modern computers.
+Trong chương này, chúng ta sẽ tìm hiểu về **Intel Architecture 32-bit (IA32)** — kiến trúc tập lệnh (instruction set architecture) của Intel cho bộ xử lý 32-bit.  
+Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.  
 
+Để chạy các ví dụ trong chương này, bạn sẽ cần truy cập vào một máy có bộ xử lý x86 hoặc một trình biên dịch có khả năng tạo ra các tệp thực thi 32-bit.  
+Thuật ngữ **"x86"** thường được dùng đồng nghĩa với kiến trúc IA32.  
+Kiến trúc x86 và biến thể 64-bit của nó (**x86-64**) hiện diện rộng rãi trong các máy tính hiện đại.
 
-Very few modern machines have 32-bit processors; most Intel and AMD
-systems produced since 2007 have 64-bit processors. To check what type
-of processor you have, use the `uname -m` command:
+Rất ít máy tính hiện đại còn sử dụng bộ xử lý 32-bit; hầu hết các hệ thống Intel và AMD sản xuất từ năm 2007 trở đi đều dùng bộ xử lý 64-bit.  
+Để kiểm tra loại bộ xử lý bạn đang dùng, hãy sử dụng lệnh:
 
+```bash
+$ uname -m
+i686
+```
 
+Nếu gõ `uname -m` và kết quả trả về là `i686` hoặc `i386`, hệ thống của bạn đang dùng bộ xử lý 32-bit.  
+Tuy nhiên, nếu kết quả trả về là `x86_64`, hệ thống của bạn đang dùng bộ xử lý 64-bit mới hơn.  
 
+Lưu ý rằng vì **x86-64** là một *mở rộng* của ISA IA32 cũ, nên hầu như tất cả các hệ thống 64-bit đều chứa một **hệ thống con 32-bit** cho phép chạy các tệp thực thi 32-bit.
 
-    $ uname -m
-    i686
+Nếu bạn đang dùng hệ thống Linux 64-bit, đôi khi cần cài đặt thêm các gói bổ sung để có thể *tạo* tệp thực thi 32-bit, như chúng ta sẽ làm trong chương này.  
+Ví dụ, trên máy Ubuntu, bạn cần cài đặt thư viện phát triển 32-bit và các gói bổ sung để mở rộng GCC với tính năng cross-compiling:
 
+```bash
+sudo apt-get install libc6-dev-i386 gcc-multilib
+```
 
-If typing `uname -m` returns either `i686` or `i386`, your system has a
-32-bit processor. However, if the `uname -m` command returns `x86_64`,
-your system has a newer 64-bit processor. Please note that since x86-64
-is an *extension* of the older IA32 ISA, virtually all 64-bit systems
-contain a 32-bit subsystem that allows the execution of 32-bit
-executables.
+### Nhánh cú pháp của x86
 
+Kiến trúc x86 thường tuân theo một trong hai nhánh cú pháp khác nhau:
 
-If you have a 64-bit Linux system, additional packages are sometimes
-required to allow users to *create* 32-bit executables, like we will be
-doing in this chapter. For example, on an Ubuntu machine you will need
-to install 32-bit development libraries and additional packages to
-augment GCC with cross-compiling features:
+- **AT&T syntax**: thường được dùng trên các máy UNIX, vì UNIX được phát triển tại AT&T Bell Labs. Trình assembler tương ứng là **GNU Assembler (GAS)**. Vì chúng ta sử dụng GCC cho hầu hết các ví dụ trong sách này, chương này sẽ dùng cú pháp AT&T.
+- **Intel syntax**: thường được dùng trên các máy Windows, với trình assembler **Microsoft Macro Assembler (MASM)**. **Netwide Assembler (NASM)** là một ví dụ về assembler trên Linux sử dụng cú pháp Intel.
 
-
-
-
-    sudo apt-get install libc6-dev-i386 gcc-multilib
-
-
->> x86 Syntax Branches
-
-
-x86 architectures typically follow one of two different syntax branches.
-UNIX machines commonly use the AT&T syntax, given that UNIX was
-developed at AT&T Bell Labs. The corresponding assembler is GNU
-Assembler (GAS). Since we use GCC for most examples in this book, we
-cover AT&T syntax in this chapter. Windows machines commonly use Intel
-syntax, which is used by Microsoft's Macro Assembler (MASM). The Netwide
-Assembler (NASM) is an example of a Linux assembler that uses Intel
-syntax. The argument regarding the superiority of one syntax over the
-other is one of the \"holy wars\" of the discipline. However, there is
-value in being familiar with both syntaxes, as a programmer may
-encounter either in various circumstances.
-
-
-
-
-
+Cuộc tranh luận về việc cú pháp nào “tốt hơn” là một trong những “cuộc chiến kinh điển” của lĩnh vực này.  
+Tuy nhiên, việc quen thuộc với cả hai cú pháp là hữu ích, vì lập trình viên có thể gặp bất kỳ cú pháp nào trong các tình huống khác nhau.
 

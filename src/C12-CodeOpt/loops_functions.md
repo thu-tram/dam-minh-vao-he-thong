@@ -6,8 +6,6 @@ Ngày nay, mã nguồn thường được **đọc** nhiều hơn là **viết**
 
 Có nhiều nguồn tài liệu trực tuyến khuyến khích việc tự tay áp dụng các kỹ thuật được mô tả trong các phần sau. Tuy nhiên, chúng tôi khuyến nghị bạn nên kiểm tra xem trình biên dịch của mình có hỗ trợ các tối ưu hóa này hay không trước khi cố gắng tự triển khai chúng trong mã. Tất cả các tối ưu hóa được mô tả trong phần này đều được GCC hỗ trợ, nhưng có thể không có trong các trình biên dịch cũ.
 
----
-
 ### 12.2.1. Function Inlining
 
 Một bước tối ưu hóa mà trình biên dịch thường cố gắng thực hiện là **function inlining** (nội tuyến hàm), tức là thay thế lời gọi hàm bằng phần thân của hàm đó.  
@@ -37,8 +35,6 @@ Cờ `-finline-functions` gợi ý cho GCC rằng các hàm nên được nội 
 Cần lưu ý rằng trình biên dịch sẽ không nội tuyến tất cả các hàm, và việc nội tuyến không đảm bảo sẽ làm mã chạy nhanh hơn.
 
 Lập trình viên nhìn chung nên tránh nội tuyến hàm thủ công. Việc này tiềm ẩn nguy cơ cao làm giảm đáng kể khả năng đọc mã, tăng khả năng xuất hiện lỗi, và khiến việc cập nhật, bảo trì hàm trở nên khó khăn hơn. Ví dụ, cố gắng nội tuyến hàm `isPrime` vào trong `getNextPrime` sẽ làm giảm mạnh khả năng đọc của `getNextPrime`.
-
----
 
 ### 12.2.2. Loop Unrolling
 

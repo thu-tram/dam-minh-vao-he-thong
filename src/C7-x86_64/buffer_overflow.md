@@ -1,14 +1,9 @@
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 ## 7.10. Thực tế: Buffer Overflow
 
 Ngôn ngữ C không thực hiện việc kiểm tra giới hạn mảng (array bounds checking) một cách tự động. Việc truy cập bộ nhớ nằm ngoài phạm vi của một mảng là vấn đề nghiêm trọng và thường dẫn đến các lỗi như **segmentation fault**. Tuy nhiên, một kẻ tấn công tinh vi có thể chèn mã độc nhằm cố ý vượt quá giới hạn của mảng (còn gọi là **buffer**) để buộc chương trình thực thi theo cách không mong muốn. Trong trường hợp tồi tệ nhất, kẻ tấn công có thể chạy mã cho phép chúng giành được **root privilege** (đặc quyền root), tức quyền truy cập cấp hệ điều hành vào hệ thống máy tính. Một phần mềm lợi dụng sự tồn tại của một lỗi **buffer overrun** đã biết trong chương trình được gọi là **buffer overflow exploit**.
 
 Trong phần này, chúng ta sẽ sử dụng **GDB** và ngôn ngữ assembly để phân tích đầy đủ cơ chế của một buffer overflow exploit. Trước khi đọc chương này, chúng tôi khuyến khích bạn xem chương nói về [GDB để kiểm tra mã assembly](../C3-C_debug/gdb_assembly.html#_debugging_assembly_code).
-
----
 
 ### 7.10.1. Các ví dụ nổi tiếng về Buffer Overflow
 
@@ -21,8 +16,6 @@ Morris Worm⁴ được phát tán vào năm 1998 trên ARPANet từ MIT (nhằm
 
 **AOL Chat Wars**  
 David Auerbach⁵, một cựu kỹ sư của Microsoft, đã kể lại trải nghiệm của mình với một buffer overflow trong quá trình tích hợp **Microsoft Messenger Service** (MMS) với **AOL Instant Messenger** vào cuối những năm 1990. Khi đó, AOL Instant Messenger (AIM) là dịch vụ nhắn tin nhanh phổ biến nhất. Microsoft tìm cách tham gia thị trường này bằng cách thiết kế một tính năng trong MMS cho phép người dùng MMS trò chuyện với các “buddies” trên AIM. Không hài lòng, AOL đã vá máy chủ của họ để MMS không thể kết nối nữa. Các kỹ sư Microsoft tìm ra cách để các client MMS bắt chước thông điệp mà client AIM gửi tới máy chủ AOL, khiến AOL khó phân biệt giữa tin nhắn từ MMS và AIM. AOL đáp trả bằng cách thay đổi cách AIM gửi tin nhắn, và các kỹ sư MMS lại điều chỉnh để phù hợp. “Cuộc chiến chat” này tiếp diễn cho đến khi AOL bắt đầu sử dụng một lỗi buffer overflow *ngay trong client của họ* để xác minh rằng tin nhắn được gửi từ client AIM. Vì client MMS không có cùng lỗ hổng này, cuộc chiến chat kết thúc với phần thắng thuộc về AOL.
-
----
 
 ### 7.10.2. Cái nhìn đầu tiên: Trò chơi đoán số
 
@@ -89,8 +82,6 @@ Trò chơi này yêu cầu người dùng nhập trước một số bí mật, 
 
 Tuy nhiên, vẫn còn một cách khác, tinh vi hơn để chiến thắng.
 
----
-
 ### 7.10.3. Xem xét kỹ hơn (Under the C)
 
 Chương trình chứa một lỗ hổng buffer overrun tiềm ẩn tại lần gọi `scanf` đầu tiên. Để hiểu chuyện gì đang xảy ra, hãy kiểm tra mã assembly của hàm `main` bằng GDB. Chúng ta cũng sẽ đặt một **breakpoint** tại địa chỉ `0x0000000000400717`, đây là địa chỉ của lệnh ngay trước khi gọi `scanf` (lưu ý rằng nếu đặt breakpoint tại địa chỉ của `scanf` thì chương trình sẽ dừng *bên trong* lệnh gọi `scanf`, chứ không phải trong `main`).
@@ -112,9 +103,6 @@ Chương trình chứa một lỗ hổng buffer overrun tiềm ẩn tại lần 
 ```
 
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Hình 1 mô tả stack ngay trước khi gọi `scanf`.
 
@@ -175,8 +163,6 @@ $ echo $?
 
 Lệnh `echo $?` in ra giá trị trả về của lệnh cuối cùng được thực thi trong shell. Trong trường hợp này, chương trình trả về `1` vì số bí mật nhập vào sai. Theo quy ước, chương trình trả về `0` khi không có lỗi. Mục tiêu của chúng ta là tìm cách khiến chương trình thoát với giá trị trả về `0`, nghĩa là chúng ta thắng trò chơi.
 
----
-
 ### 7.10.4. Buffer Overflow: Lần thử đầu tiên
 
 Tiếp theo, hãy thử nhập chuỗi  
@@ -222,8 +208,6 @@ You are so wrong!
 ```
 
 Tất nhiên rồi, mình sẽ tiếp tục phần dịch còn lại ngay đây nhé — nối tiếp từ chỗ chúng ta đang nói về chuỗi nhập đã vượt quá giới hạn mảng `buf` và gây ra lỗi **smashing the stack**.
-
----
 
 …Hãy chú ý rằng chuỗi nhập vào đã vượt quá giới hạn khai báo của mảng `buf`, ghi đè toàn bộ các giá trị khác được lưu trên stack. Nói cách khác, chuỗi này đã tạo ra một **buffer overrun** và làm hỏng **call stack**, khiến chương trình bị crash. Quá trình này còn được gọi là **smashing the stack**.
 
@@ -311,8 +295,6 @@ $ echo $?
 ```
 
 Exploit của chúng ta đã thành công! Chúng ta đã thắng trò chơi.
-
----
 
 ### 7.10.6. Bảo vệ chống lại Buffer Overflow
 

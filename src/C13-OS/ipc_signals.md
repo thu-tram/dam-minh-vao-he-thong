@@ -15,15 +15,11 @@ OS sẽ xử lý việc gửi signal tới process đích và thiết lập tr�
 > Tên của system call `kill` có thể gây hiểu nhầm và nghe có phần “bạo lực”.  
 > Mặc dù nó có thể (và thường) được dùng để gửi signal kết thúc (termination signal), nhưng nó cũng được dùng để gửi **bất kỳ loại signal nào khác** tới một process.
 
----
-
 OS cũng tự sử dụng signal để thông báo cho process về một số sự kiện nhất định.  
 Ví dụ: OS sẽ gửi signal `SIGCHLD` tới một process khi một trong các **child process** (tiến trình con) của nó kết thúc.
 
 Mỗi hệ thống định nghĩa một số lượng signal cố định (ví dụ: Linux định nghĩa 32 loại signal khác nhau).  
 Do đó, signal cung cấp một cách thức giao tiếp hạn chế giữa các process, so với các phương pháp **interprocess communication** (IPC) khác như **message passing** hoặc **shared memory**.
-
----
 
 **Bảng 1** liệt kê một số signal đã được định nghĩa.  
 Xem thêm trong **man page** (`man 7 signal`) để biết thêm ví dụ.
@@ -41,8 +37,6 @@ Xem thêm trong **man page** (`man 7 signal`) để biết thêm ví dụ.
 
 **Bảng 1.** Ví dụ về các signal dùng cho giao tiếp liên tiến trình.
 
----
-
 Khi một process nhận được signal, một trong số các hành động mặc định sau có thể xảy ra:
 
 - Process có thể bị kết thúc (**terminate**).
@@ -50,9 +44,6 @@ Khi một process nhận được signal, một trong số các hành động m�
 - Process có thể bị chặn (**blocked**).
 - Process có thể được bỏ chặn (**unblocked**).
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 OS định nghĩa một **hành động mặc định** và cung cấp mã **default signal handler** (trình xử lý tín hiệu mặc định) cho mỗi số hiệu signal.  
 Tuy nhiên, lập trình viên ứng dụng có thể thay đổi hành động mặc định của hầu hết các signal và có thể viết mã signal handler của riêng mình.  
@@ -60,8 +51,6 @@ Nếu một chương trình ứng dụng không đăng ký hàm signal handler r
 
 Với một số signal, hành động mặc định do OS định nghĩa **không thể** bị ghi đè bởi mã signal handler của ứng dụng.  
 Ví dụ: nếu một process nhận signal `SIGKILL`, OS **luôn** buộc process phải thoát; và khi nhận signal `SIGSTOP`, process sẽ **luôn** bị chặn cho đến khi nhận signal để tiếp tục (`SIGCONT`) hoặc để thoát (`SIGKILL`).
-
----
 
 Linux hỗ trợ hai system call khác nhau có thể được dùng để thay đổi hành vi mặc định của một signal hoặc để đăng ký signal handler cho một signal cụ thể: `sigaction` và `signal`.  
 Vì `sigaction` tuân thủ chuẩn POSIX và có nhiều tính năng hơn, nó nên được dùng trong phần mềm triển khai thực tế.  
@@ -149,8 +138,6 @@ pkill -CONT a.out
 kill  -CONT 1234
 ```
 
----
-
 #### Viết signal handler cho SIGCHLD
 
 Hãy nhớ rằng khi một process kết thúc, OS sẽ gửi signal `SIGCHLD` tới **parent process** của nó.  
@@ -210,8 +197,6 @@ int main(void) {
 }
 ```
 
----
-
 Trong ví dụ trên, `waitpid` được gọi với PID là `-1`, nghĩa là “thu hồi **bất kỳ** zombie child process nào”.  
 Nó cũng truyền cờ `WNOHANG`, nghĩa là lời gọi `waitpid` sẽ **không bị chặn** nếu không có zombie child process nào để thu hồi.  
 
@@ -220,8 +205,6 @@ Ngoài ra, `waitpid` được gọi bên trong vòng lặp `while` và tiếp t�
 
 OS **không** theo dõi số lượng signal `SIGCHLD` mà một process nhận được; nó chỉ ghi nhận rằng process đã nhận một `SIGCHLD` và ngắt thực thi của nó để chạy mã handler.  
 Do đó, nếu không có vòng lặp, signal handler có thể bỏ sót một số zombie process chưa được thu hồi.
-
----
 
 Signal handler sẽ được thực thi bất cứ khi nào parent nhận signal `SIGCHLD`, bất kể parent đang bị chặn bởi lời gọi `wait` hay `waitpid`.  
 

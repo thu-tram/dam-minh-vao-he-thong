@@ -1,6 +1,3 @@
-Dưới đây là bản dịch tiếng Việt của mục **12.3. Memory Considerations**, tuân thủ đầy đủ các quy ước bạn đã nêu và áp dụng cách trình bày tách riêng code block như yêu cầu:
-
----
 
 ## 12.3. Các yếu tố cần lưu ý về bộ nhớ (Memory Considerations)
 
@@ -24,8 +21,6 @@ Time to matrix-vector multiply: 1.98402
 ```
 
 Vì vậy, phần thảo luận sẽ tập trung vào hàm `matrixVectorMultiply`.
-
----
 
 ### 12.3.1. Loop Interchange
 
@@ -65,8 +60,6 @@ void matrixVectorMultiply(int **m, int *v, int **res, int row, int col) {
 
 **Bảng 1.** Hoán đổi vòng lặp trong hàm `matrixVectorMultiply()`.
 
----
-
 Các ma trận đầu vào và đầu ra được cấp phát động (theo phương pháp thứ hai đã thảo luận trong chương C).  
 Kết quả là các hàng trong ma trận **không nằm liên tiếp nhau** trong bộ nhớ, trong khi các phần tử trong mỗi hàng thì **liên tiếp**.  
 Thứ tự vòng lặp hiện tại khiến chương trình duyệt qua từng **cột** thay vì từng **hàng**.  
@@ -87,14 +80,7 @@ Tuy nhiên, chỉ cần đổi thứ tự vòng lặp (như trong ví dụ mã �
 
 **Bảng 2.** Thời gian (giây) thực hiện phép nhân ma trận 10.000 × 10.000 phần tử.
 
----
-
 Công cụ `cachegrind` của Valgrind (được thảo luận trong [Chương 11](../C11-MemHierarchy/cachegrind.html#_cache_analysis_and_valgrind)) là một cách tuyệt vời để xác định các vấn đề về **data locality** (tính cục bộ dữ liệu), và cho thấy sự khác biệt trong truy cập cache giữa hai phiên bản của hàm `matrixVectorMultiply` ở ví dụ trên.
-
----
-Dưới đây là bản dịch tiếng Việt của mục **12.3.2. Some Other Compiler Optimizations for Improving Locality: Fission and Fusion**, tuân thủ đầy đủ các quy ước bạn đã nêu và áp dụng cách trình bày tách riêng code block như yêu cầu:
-
----
 
 ### 12.3.2. Một số tối ưu hóa khác của trình biên dịch để cải thiện locality: Fission và Fusion
 
@@ -146,8 +132,6 @@ for (i = 0; i < rows; i++) {
 
 **Bảng 3.** Ví dụ loop fission trên vòng lặp điền dữ liệu ma trận trong `main`.
 
----
-
 Quá trình kết hợp hai vòng lặp chạy trên cùng một phạm vi thành một vòng lặp duy nhất (ngược lại với loop fission) được gọi là **loop fusion**.  
 Loop fission và loop fusion là những ví dụ tối ưu hóa mà trình biên dịch có thể thực hiện để cải thiện **data locality**.  
 
@@ -190,9 +174,6 @@ for (i = 0; i < rows; i++) {
 **Bảng 4.** Loại bỏ lời gọi `fillArrayZeros` không cần thiết.
 
 
-Dưới đây là bản dịch tiếng Việt của mục **12.3.3. Memory Profiling with Massif**, tuân thủ đầy đủ các quy ước bạn đã nêu:
-
----
 
 ### 12.3.3. Phân tích bộ nhớ với Massif
 
@@ -276,9 +257,6 @@ Detailed snapshots: [3, 12, 17, 22, 49, 59, 69, 79 (peak)]
 ```
 
 
-Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
-
----
 
 Ở đầu phần kết quả là **biểu đồ sử dụng bộ nhớ**.  
 Trục *x* biểu diễn số lượng lệnh (**instructions**) đã thực thi.  
@@ -288,8 +266,6 @@ Biểu đồ trên cho thấy tổng cộng **9,778 tỷ** (Gi) lệnh đã đư
 Trong quá trình thực thi, `massif` đã chụp tổng cộng **80 snapshot** để đo mức sử dụng **heap**.  
 Mức sử dụng bộ nhớ đạt đỉnh ở snapshot cuối cùng (79).  
 Mức sử dụng bộ nhớ cực đại của chương trình là **763,3 MB**, và duy trì tương đối ổn định trong suốt quá trình chạy.
-
----
 
 Phần tóm tắt của tất cả các snapshot xuất hiện ngay sau biểu đồ.  
 Ví dụ, bảng dưới đây tương ứng với các snapshot xung quanh snapshot 79:
@@ -313,8 +289,6 @@ Ví dụ, bảng dưới đây tương ứng với các snapshot xung quanh snap
 ->99.96% (800,040,000B) 0x40089D: allocateArray (in matrixVector3)
 ```
 
----
-
 Mỗi hàng trong bảng tương ứng với một snapshot cụ thể, bao gồm:
 
 - **Thời điểm** snapshot được chụp (`time(i)`).
@@ -325,8 +299,6 @@ Mỗi hàng trong bảng tương ứng với một snapshot cụ thể, bao gồ
 
 Theo mặc định, việc **profiling stack** bị tắt (vì nó làm `massif` chạy chậm đáng kể).  
 Để bật profiling stack, hãy dùng tùy chọn `--stacks=yes` khi chạy `massif`.
-
----
 
 Công cụ `massif` cho thấy **99,96%** mức sử dụng bộ nhớ heap của chương trình xảy ra trong hàm `allocateArray`, và tổng cộng **800 triệu byte** đã được cấp phát — phù hợp với phép tính ước lượng nhanh mà chúng ta đã thực hiện trước đó.  
 

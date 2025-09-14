@@ -15,13 +15,9 @@ Một cách để OS triển khai chia sẻ một phần address space là thi�
 **Hình 1.** OS có thể hỗ trợ chia sẻ các trang trong virtual address space bằng cách thiết lập các entry trong page table của các process chia sẻ để trỏ tới cùng một số hiệu physical frame (ví dụ: frame 100).  
 Lưu ý rằng các process không cần phải sử dụng cùng một địa chỉ ảo để tham chiếu tới trang bộ nhớ vật lý được chia sẻ.
 
----
-
 Nếu OS hỗ trợ **partial shared memory** (bộ nhớ dùng chung một phần), nó sẽ triển khai một **interface** (giao diện) cho lập trình viên để tạo và gắn (attach) vào các trang bộ nhớ dùng chung (hoặc vùng/segment bộ nhớ dùng chung).  
 Trong các hệ thống Unix, **system call** `shmget` sẽ tạo hoặc gắn vào một **shared memory segment** (đoạn bộ nhớ dùng chung).  
 Mỗi shared memory segment tương ứng với một tập liên tiếp các địa chỉ ảo, có ánh xạ vật lý được chia sẻ với các process khác gắn vào cùng segment đó.
-
----
 
 Hệ điều hành cũng thường hỗ trợ chia sẻ toàn bộ virtual address space.  
 **Thread** (luồng) là abstraction của OS về một **execution control flow** (luồng điều khiển thực thi).  
@@ -30,8 +26,6 @@ Một **multithreaded process** (tiến trình đa luồng) có nhiều thread t
 
 Các thread có thể dễ dàng chia sẻ trạng thái thực thi bằng cách đọc và ghi vào các vị trí bộ nhớ dùng chung trong address space chung.  
 Ví dụ: nếu một thread thay đổi giá trị của một biến toàn cục, tất cả các thread khác sẽ thấy kết quả thay đổi đó.
-
----
 
 Trên các hệ thống **multiprocessor** (đa bộ xử lý) — **SMP** (Symmetric Multiprocessing) hoặc **multicore** (đa lõi) — các thread riêng lẻ của một multithreaded process có thể được lập lịch để chạy đồng thời (*in parallel*) trên nhiều lõi.  
 Trong [Chương Shared Memory](../C14-SharedMemory/index.html#_leveraging_shared_memory_in_the_multicore_era), chúng ta sẽ thảo luận chi tiết hơn về thread và lập trình đa luồng song song.

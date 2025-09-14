@@ -37,8 +37,6 @@ Giá trị lưu tại địa chỉ này là giá trị `%ebp` đã được “l
 > ![The parts of a program's address space.](_images/memparts.png)  
 > *Hình 2. Các phần trong không gian địa chỉ của một chương trình*
 
----
-
 **Bảng 1. Các lệnh quản lý hàm thông dụng**
 
 | Instruction | Translation |
@@ -63,8 +61,6 @@ Khi hàm caller thực thi `call`, giá trị hiện tại của `%eip` được
 Lệnh `ret` khôi phục `%eip` từ giá trị lưu trên stack, đảm bảo chương trình tiếp tục tại địa chỉ được chỉ định trong hàm caller.  
 Bất kỳ giá trị trả về nào từ callee sẽ được lưu trong `%eax`.  
 `ret` thường là lệnh cuối cùng trong mọi hàm.
-
----
 
 ### 8.5.1. Lần theo một ví dụ
 
@@ -137,8 +133,6 @@ Ví dụ, `<main>:` là nhãn ký hiệu cho hàm `main`.
 Để tiết kiệm không gian trong các hình minh họa tiếp theo, chúng ta rút gọn địa chỉ xuống 12 bit thấp.  
 Ví dụ, địa chỉ chương trình `0x804842d` sẽ được hiển thị là `0x42d`.
 
----
-
 ### 8.5.2. Lần theo hàm main
 
 **Hình 3** cho thấy execution stack ngay trước khi thực thi `main`.
@@ -154,15 +148,11 @@ Mũi tên đỏ (góc trên bên trái) chỉ ra lệnh đang được thực th
 Ban đầu, `%eip` chứa địa chỉ `0x42d`, là địa chỉ trong bộ nhớ chương trình của dòng đầu tiên trong hàm `main`.  
 Hãy cùng lần theo quá trình thực thi của chương trình.
 
----
-
 ![slide2](_images/procedures/Slide2.png)
 
 Lệnh đầu tiên **push** giá trị của `%ebp` lên stack, lưu địa chỉ `0x140`.  
 Vì stack phát triển về phía địa chỉ thấp hơn, stack pointer `%esp` được cập nhật thành `0x12c` (giảm 4 byte so với `0x130`).  
 Thanh ghi `%eip` tăng lên để trỏ tới lệnh tiếp theo.
-
----
 
 ![slide3](_images/procedures/Slide3.png)
 
@@ -170,14 +160,10 @@ Lệnh tiếp theo (`mov %esp, %ebp`) cập nhật giá trị của `%ebp` thàn
 Frame pointer (`%ebp`) giờ trỏ tới đầu stack frame của hàm `main`.  
 `%eip` tiếp tục trỏ tới lệnh kế tiếp.
 
----
-
 ![slide4](_images/procedures/Slide4.png)
 
 Lệnh `sub` trừ `0x14` khỏi địa chỉ trong stack pointer, “mở rộng” stack thêm 20 byte.  
 `%eip` trỏ tới lệnh tiếp theo, đây là lệnh `call` đầu tiên.
-
----
 
 ![slide5](_images/procedures/Slide5.png)
 
@@ -187,8 +173,6 @@ Hãy nhớ rằng return address cho biết chương trình sẽ tiếp tục th
 
 Sau đó, lệnh `call` sẽ đưa địa chỉ của hàm `assign` (`0x40d`) vào `%eip`, báo hiệu rằng chương trình sẽ tiếp tục thực thi trong hàm được gọi (`assign`) thay vì lệnh tiếp theo trong `main`.
 
----
-
 ![slide6](_images/procedures/Slide6.png)
 
 Hai lệnh đầu tiên trong hàm `assign` là các thao tác khởi tạo mà mọi hàm đều thực hiện.  
@@ -196,21 +180,15 @@ Lệnh đầu tiên **push** giá trị trong `%ebp` (địa chỉ `0x12c`) lên
 Hãy nhớ rằng địa chỉ này trỏ tới đầu stack frame của `main`.  
 `%eip` trỏ tới lệnh thứ hai trong `assign`.
 
----
-
 ![slide7](_images/procedures/Slide7.png)
 
 Lệnh tiếp theo (`mov %esp, %ebp`) cập nhật `%ebp` để trỏ tới đỉnh stack, đánh dấu bắt đầu stack frame của `assign`.  
 Instruction pointer (`%eip`) trỏ tới lệnh kế tiếp trong `assign`.
 
----
-
 ![slide8](_images/procedures/Slide8.png)
 
 Lệnh `sub` tại địa chỉ `0x410` mở rộng stack thêm 16 byte, tạo không gian lưu trữ giá trị cục bộ và cập nhật `%esp`.  
 Instruction pointer tiếp tục trỏ tới lệnh kế tiếp trong `assign`.
-
----
 
 ![slide9](_images/procedures/Slide9.png)
 
@@ -218,14 +196,10 @@ Lệnh `mov` tại địa chỉ `0x413` đưa giá trị `$0x28` (tức 40) vào
 Hãy nhớ rằng frame pointer thường được dùng để tham chiếu tới các vị trí trên stack.  
 `%eip` trỏ tới lệnh kế tiếp trong `assign`.
 
----
-
 ![slide10](_images/procedures/Slide10.png)
 
 Lệnh `mov` tại địa chỉ `0x41a` đưa giá trị `$0x28` vào thanh ghi `%eax`, là nơi lưu giá trị trả về của hàm.  
 `%eip` trỏ tới lệnh `leave` trong `assign`.
-
----
 
 ![slide11](_images/procedures/Slide11.png)
 
@@ -244,21 +218,15 @@ Tiếp theo, CPU thực thi `pop %ebp`, lấy giá trị tại địa chỉ `0x1
 Hãy nhớ rằng `0x12c` là điểm bắt đầu của stack frame dành cho `main`.  
 `%esp` trở thành `0x114` và `%eip` trỏ tới lệnh `ret` trong hàm `assign`.
 
----
-
 ![slide12](_images/procedures/Slide12.png)
 
 Lệnh cuối cùng trong `assign` là `ret`. Khi `ret` được thực thi, địa chỉ trả về sẽ được lấy ra khỏi stack và đưa vào thanh ghi `%eip`.  
 Trong ví dụ này, `%eip` được cập nhật để trỏ tới lời gọi hàm `adder`.
 
----
-
 Một số điểm quan trọng cần lưu ý tại thời điểm này:
 
 - Stack pointer và frame pointer đã được khôi phục về giá trị trước khi gọi `assign`, phản ánh rằng stack frame của `main` lại trở thành active frame.
 - Các giá trị cũ trên stack từ stack frame trước đó **không** bị xóa. Chúng vẫn tồn tại trên call stack.
-
----
 
 ![slide13](_images/procedures/Slide13.png)
 
@@ -266,20 +234,14 @@ Lời gọi hàm `adder` **ghi đè** địa chỉ trả về cũ trên stack b�
 Địa chỉ này trỏ tới lệnh sẽ được thực thi tiếp theo sau khi `adder` trả về, đó là `mov %eax, 0xc(%ebp)`.  
 `%eip` lúc này trỏ tới lệnh đầu tiên trong `adder` tại địa chỉ `0x41f`.
 
----
-
 ![slide14](_images/procedures/Slide14.png)
 
 Lệnh đầu tiên trong hàm `adder` lưu frame pointer của hàm gọi (`%ebp` của `main`) lên stack.
-
----
 
 ![slide15](_images/procedures/Slide15.png)
 
 Lệnh tiếp theo cập nhật `%ebp` bằng giá trị hiện tại của `%esp` (địa chỉ `0x110`).  
 Hai lệnh này cùng nhau thiết lập điểm bắt đầu của stack frame cho `adder`.
-
----
 
 ![slide16](_images/procedures/Slide16.png)
 
@@ -287,16 +249,12 @@ Lệnh `sub` tại địa chỉ `0x422` “mở rộng” stack thêm 16 byte.
 Lưu ý rằng việc mở rộng stack không ảnh hưởng tới các giá trị đã tồn tại trước đó trên stack.  
 Những giá trị cũ sẽ vẫn nằm trên stack cho tới khi bị ghi đè.
 
----
-
 ![slide20](_images/procedures/Slide17.png)
 
 Hãy chú ý tới lệnh tiếp theo:  
 `mov $-0x4(%ebp), %eax`.  
 Lệnh này di chuyển **một giá trị cũ** đang nằm trên stack vào thanh ghi `%eax`!  
 Điều này xảy ra trực tiếp do lập trình viên quên khởi tạo biến `a` trong hàm `adder`.
-
----
 
 ![slide18](_images/procedures/Slide18.png)
 
@@ -309,41 +267,29 @@ int a;
 return a + 2;
 ```
 
----
-
 ![slide19](_images/procedures/Slide19.png)
 
 Sau khi `leave` được thực thi, frame pointer lại trỏ tới đầu stack frame của `main` (`0x12c`).  
 Stack pointer lúc này chứa địa chỉ `0x114`.
-
----
 
 ![slide20](_images/procedures/Slide20.png)
 
 Lệnh `ret` lấy địa chỉ trả về ra khỏi stack, khôi phục `%eip` về `0x440` — địa chỉ của lệnh tiếp theo trong `main`.  
 `%esp` lúc này là `0x118`.
 
----
-
 ![slide21](_images/procedures/Slide21.png)
 
 Lệnh `mov %eax, 0xc(%esp)` đặt giá trị trong `%eax` vào vị trí cách `%esp` 12 byte (tức ba ô nhớ).
 
----
-
 ![slide23](_images/procedures/Slide23.png)
 
 Bỏ qua một vài bước, các lệnh `mov` tại địa chỉ `0x444` và `0x448` gán `%eax` bằng giá trị lưu tại `%esp+12` (`0x2A`) và đặt `0x2A` vào vị trí ngay dưới đỉnh stack (`%esp + 4`, tức `0x11c`).
-
----
 
 ![slide24](_images/procedures/Slide24.png)
 
 Lệnh tiếp theo (`mov $0x80484f4, (%esp)`) sao chép một hằng số là địa chỉ bộ nhớ lên đỉnh stack.  
 Địa chỉ này (`0x80484f4`) chứa chuỗi `"x is %d\n"`.  
 `%eip` trỏ tới lời gọi hàm `printf` (`<printf@plt>`).
-
----
 
 ![slide25](_images/procedures/Slide25.png)
 
@@ -361,8 +307,6 @@ Các lệnh từ `0x444` đến `0x45c` tương ứng với dòng code trong `ma
 printf("x is %d\n", x);
 ```
 
----
-
 Khi `printf` được gọi:
 
 - Địa chỉ trả về (lệnh sẽ thực thi sau `printf`) được đẩy lên stack.
@@ -374,11 +318,7 @@ Tham số đầu tiên nằm tại `%ebp+8` (ngay dưới địa chỉ trả v�
 
 Với một hàm có *n* tham số, GCC đặt tham số thứ nhất tại `%ebp+8`, tham số thứ hai tại `%ebp+12`, và tham số thứ *n* tại `(%ebp+8) + (4*(n-1))`.
 
----
-
 Sau khi `printf` được gọi, giá trị `0x2A` được in ra màn hình ở dạng số nguyên, tức là in ra **42**.
-
----
 
 ![slide26](_images/procedures/Slide26.png)
 
@@ -386,14 +326,10 @@ Sau khi gọi `printf`, một vài lệnh cuối sẽ dọn dẹp stack và chu�
 Đầu tiên, giá trị `0x0` được đặt vào `%eax`, báo hiệu rằng `main` trả về 0.  
 Hãy nhớ rằng chương trình trả về 0 để biểu thị kết thúc thành công.
 
----
-
 ![slide27](_images/procedures/Slide27.png)
 
 Sau khi `leave` và `ret` được thực thi, stack pointer và frame pointer trở về giá trị ban đầu trước khi `main` chạy.  
 Với `0x0` trong `%eax`, chương trình trả về 0.
-
----
 
 Nếu bạn đã đọc kỹ phần này, bạn sẽ hiểu vì sao chương trình in ra giá trị **42**.  
 Về bản chất, chương trình đã vô tình sử dụng các giá trị cũ trên stack, khiến nó hoạt động theo cách không mong đợi.  

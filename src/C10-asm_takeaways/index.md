@@ -5,8 +5,6 @@ Mặc dù ngày nay hầu hết mọi người lập trình bằng ngôn ngữ b
 Kiến thức về assembly cũng rất cần thiết cho những ai thiết kế phần mềm cho **embedded systems** (hệ thống nhúng) và các môi trường hạn chế tài nguyên, cũng như cho những người làm trong lĩnh vực phân tích lỗ hổng bảo mật.  
 Các chương trong phần assembly của sách này đã bao quát **64-bit Intel assembly (x86-64)**, **32-bit Intel Assembly (IA32)** và **64-bit ARM assembly (ARMv8-A)**.
 
----
-
 ### Các đặc điểm chung
 
 Bất kể bạn học loại assembly nào, vẫn có một số đặc điểm chung của *mọi* ngôn ngữ assembly đáng chú ý:
@@ -55,8 +53,6 @@ Khi lập trình bằng C, lập trình viên nên sử dụng **length specifie
 | `sprintf(buf, "%d", num)` | `snprintf(buf, 12, "%d", num)`       |
 
 **Bảng 1.** Các hàm C với length specifier.
-
----
 
 ### Tài liệu đọc thêm
 
