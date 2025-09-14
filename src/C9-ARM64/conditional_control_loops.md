@@ -1,0 +1,55 @@
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 9.4. Conditional Control and Loops 
+
+This section covers assembly instructions for [conditionals and
+loops](../C1-C_intro/conditionals.html#_conditionals_and_loops).
+Recall that conditional statements enable coders to modify program
+execution based on the result of a conditional expression. The compiler
+translates conditionals into assembly instructions that modify the
+instruction pointer (`pc`) to point to an address that is not the next
+one in the program sequence.
+
+
+
+-   9.4.1. Preliminaries
+
+-   [9.4.2. If Statements in
+    Assembly](if_statements.html#_if_statements_in_assembly)
+
+-   9.4.3. Loops in Assembly
+
+
+
+
+
