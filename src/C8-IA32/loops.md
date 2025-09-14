@@ -1,39 +1,3 @@
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### 8.4.3. Loops in assembly 
 
 Like `if` statements, loops in assembly are also implemented using jump

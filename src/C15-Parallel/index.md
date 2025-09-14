@@ -1,84 +1,61 @@
-## 15. Looking Ahead: Other Parallel Systems and Parallel Programming Models 
+## 15. Nhìn về phía trước: Các hệ thống song song khác và các mô hình lập trình song song (Looking Ahead: Other Parallel Systems and Parallel Programming Models)
 
-In the [previous
-chapter](../C14-SharedMemory/index.html#_leveraging_shared_memory_in_the_multicore_era),
-we discussed shared memory parallelism and multithreaded programming. In
-this chapter, we introduce other parallel programming models and
-languages for different classes of architecture. Namely, we introduce
-parallelism for hardware accelerators focusing on graphics processing
-units (GPUs) and general-purpose computing on GPUs (GPGPU computing),
-using CUDA as an example; distributed memory systems and message
-passing, using MPI as an example; and cloud computing, using MapReduce
-and Apache Spark as examples.
+Trong [chương trước](../C14-SharedMemory/index.html#_leveraging_shared_memory_in_the_multicore_era), chúng ta đã thảo luận về **shared memory parallelism** (tính song song bộ nhớ chia sẻ) và lập trình đa luồng (multithreaded programming).  
+Trong chương này, chúng ta sẽ giới thiệu các mô hình lập trình song song và ngôn ngữ khác cho các loại kiến trúc khác nhau.  
+Cụ thể, chúng ta sẽ tìm hiểu:
 
+- Tính song song cho **hardware accelerator** (bộ tăng tốc phần cứng), tập trung vào **graphics processing unit** (GPU – bộ xử lý đồ họa) và **general-purpose computing on GPUs** (GPGPU computing – tính toán đa dụng trên GPU), sử dụng **CUDA** làm ví dụ.
+- **Distributed memory systems** (hệ thống bộ nhớ phân tán) và **message passing** (truyền thông điệp), sử dụng **MPI** làm ví dụ.
+- **Cloud computing** (điện toán đám mây), sử dụng **MapReduce** và **Apache Spark** làm ví dụ.
 
-### A Whole New World: Flynn's Taxonomy of Architecture
+---
 
-**Flynn's taxonomy** is commonly used to describe the ecosystem of
-modern computing architecture (Figure 1).
+### Một thế giới hoàn toàn mới: Flynn's Taxonomy of Architecture
 
-
-
+**Flynn's taxonomy** thường được sử dụng để mô tả hệ sinh thái của kiến trúc máy tính hiện đại (Hình 1).
 
 ![Flynn's Taxonomy consists of two independent axes](_images/flynn.png)
 
+**Hình 1.** Flynn's taxonomy phân loại các cách mà bộ xử lý áp dụng lệnh.
 
-Figure 1. Flynn's taxonomy classifies the ways in which a processor
-applies instructions.
+---
 
+Trục ngang đề cập đến **data stream** (luồng dữ liệu), trong khi trục dọc đề cập đến **instruction stream** (luồng lệnh).  
+**Stream** trong ngữ cảnh này là một dòng dữ liệu hoặc lệnh.  
+**Single stream** (luồng đơn) phát ra một phần tử mỗi đơn vị thời gian, tương tự như một hàng đợi.  
+Ngược lại, **multiple streams** (nhiều luồng) thường phát ra nhiều phần tử mỗi đơn vị thời gian (tưởng tượng như nhiều hàng đợi).  
 
-The horizontal axis refers to the data stream, whereas the vertical axis
-refers to the instruction stream. A **stream** in this context is a flow
-of data or instructions. A **single stream** issues one element per time
-unit, similar to a queue. In contrast, **multiple streams** typically
-issue many elements per time unit (think of multiple queues). Thus, a
-single instruction stream (SI) issues a single instruction per time
-unit, whereas a multiple instruction stream (MI) issues many
-instructions per time unit. Likewise, a single data stream (SD) issues
-one data element per time unit, whereas a multiple data stream (MD)
-issues many data elements per time unit.
+Do đó:
 
+- **Single instruction stream (SI)** phát ra một lệnh mỗi đơn vị thời gian.
+- **Multiple instruction stream (MI)** phát ra nhiều lệnh mỗi đơn vị thời gian.
+- **Single data stream (SD)** phát ra một phần tử dữ liệu mỗi đơn vị thời gian.
+- **Multiple data stream (MD)** phát ra nhiều phần tử dữ liệu mỗi đơn vị thời gian.
 
-A processor can be classified into one of four categories based on the
-types of streams it employs:
+---
 
+Một bộ xử lý có thể được phân loại vào một trong bốn loại dựa trên kiểu luồng mà nó sử dụng:
 
+- **SISD**: *Single instruction / single data* — Hệ thống có một đơn vị điều khiển xử lý một luồng lệnh duy nhất, cho phép nó chỉ thực thi một lệnh tại một thời điểm.  
+  Tương tự, bộ xử lý chỉ có thể xử lý một luồng dữ liệu hoặc một đơn vị dữ liệu tại một thời điểm.  
+  Hầu hết các bộ xử lý thương mại trước giữa những năm 2000 là máy SISD.
 
--   **SISD**: Single instruction/single data systems have a single
-    control unit processing a single stream of instructions, allowing it
-    to execute only one instruction at a time. Likewise, the processor
-    can process only a single stream of data or process one data unit at
-    a time. Most commercially available processors prior to the
-    mid-2000s were SISD machines.
+- **MISD**: *Multiple instruction / single data* — Hệ thống có nhiều đơn vị lệnh cùng xử lý một luồng dữ liệu duy nhất.  
+  MISD thường được thiết kế để tích hợp khả năng chịu lỗi (fault tolerance) trong các hệ thống nhiệm vụ quan trọng, chẳng hạn như chương trình điều khiển bay của tàu con thoi NASA.  
+  Tuy nhiên, ngày nay máy MISD hầu như không còn được sử dụng trong thực tế.
 
--   **MISD**: Multiple instruction/single data systems have multiple
-    instruction units performing on a single data stream. MISD systems
-    were typically designed for incorporating fault tolerance in
-    mission-critical systems, such as the flight control programs for
-    NASA shuttles. That said, MISD machines are rarely used in practice
-    anymore.
+- **SIMD**: *Single instruction / multiple data* — Hệ thống thực thi **cùng một** lệnh trên nhiều dữ liệu đồng thời và theo kiểu **lockstep** (đồng bộ từng bước).  
+  Trong thực thi lockstep, tất cả các lệnh được đưa vào một hàng đợi, trong khi dữ liệu được phân phối cho các đơn vị tính toán khác nhau.  
+  Khi thực thi, mỗi đơn vị tính toán sẽ thực hiện đồng thời lệnh đầu tiên trong hàng đợi, sau đó đồng thời thực hiện lệnh tiếp theo, và cứ thế tiếp tục.  
+  Ví dụ nổi tiếng nhất của kiến trúc SIMD là **GPU**.  
+  Các siêu máy tính đời đầu cũng áp dụng kiến trúc SIMD.  
+  Chúng ta sẽ thảo luận về GPU chi tiết hơn trong [phần tiếp theo](gpu.html#_GPUs).
 
--   **SIMD**: Single instruction/multiple data systems execute the
-    *same* instruction on multiple data simultaneously and in lockstep
-    fashion. During \"lockstep\" execution, all instructions are placed
-    into a queue, while data is distributed among different compute
-    units. During execution, each compute unit executes the first
-    instruction in the queue simultaneously, before simultaneously
-    executing the next instruction in the queue, and then the next, and
-    so forth. The most well-known example of the SIMD architecture is
-    the graphics processing unit. Early supercomputers also followed the
-    SIMD architecture. We discuss GPUs more in the [next
-    section](gpu.html#_GPUs).
+- **MIMD**: *Multiple instruction / multiple data* — Hệ thống thuộc loại kiến trúc được sử dụng rộng rãi nhất.  
+  Chúng cực kỳ linh hoạt và có khả năng xử lý nhiều lệnh hoặc nhiều luồng dữ liệu cùng lúc.  
+  Vì hầu hết các máy tính hiện đại đều sử dụng CPU đa lõi, nên đa số được phân loại là máy MIMD.  
+  Chúng ta sẽ thảo luận về một loại hệ thống MIMD khác — **distributed memory systems** — trong [Mục 15.2](distrmem.html#_distributed_memory_systems_message_passing_and_mpi).
 
--   **MIMD**: Multiple instruction/multiple data systems represent the
-    most widely used architecture class. They are extremely flexible and
-    have the ability to work on multiple instructions or multiple data
-    streams. Since nearly all modern computers use multicore CPUs, most
-    are classified as MIMD machines. We discuss another class of MIMD
-    systems, distributed memory systems, in [Section
-    15.2](distrmem.html#_distributed_memory_systems_message_passing_and_mpi).
+---
 
-
-
-
-
+Bạn có muốn tôi dịch tiếp sang phần **15.1. Heterogeneous Computing: Hardware Accelerators, GPGPU Computing, and CUDA** ngay sau đây không?

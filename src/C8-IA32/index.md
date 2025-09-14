@@ -1,34 +1,3 @@
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 8. 32-bit x86 Assembly (IA32) 
 
 In this chapter, we cover the Intel Architecture 32-bit (IA32)
