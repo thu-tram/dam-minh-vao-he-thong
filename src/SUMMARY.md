@@ -1,7 +1,6 @@
 # Summary
 
-- [Dive Into Systems](index.md)
-  - [Authors](index-2.md)
+- [Home](index.md)
   - [Copyright](copyright.md)
   - [Acknowledgements](acknowledgements.md)
   - [Preface](preface.md)

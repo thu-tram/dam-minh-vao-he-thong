@@ -1,6 +1,3 @@
-Ok Khánh, mình sẽ dịch toàn bộ phần **Acknowledgements** này sang tiếng Việt, giữ nguyên cấu trúc và tên riêng, đồng thời diễn đạt tự nhiên, trang trọng như trong sách học thuật.  
-Dưới đây là bản dịch:
-
 # Lời cảm ơn
 
 Các tác giả xin trân trọng ghi nhận và cảm ơn những cá nhân sau đây đã góp phần giúp *Dive into Systems* trở thành một thành công:
