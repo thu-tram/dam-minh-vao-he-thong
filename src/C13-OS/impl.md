@@ -1,134 +1,84 @@
+## 13.1. Cách hệ điều hành hoạt động và cách nó chạy
 
+Một phần công việc của **OS** (Operating System – hệ điều hành) là hỗ trợ các chương trình chạy trên hệ thống.  
+Để bắt đầu chạy một chương trình trên máy tính, OS sẽ:
 
+1. Cấp phát một phần **RAM** cho chương trình đang chạy.
+2. Nạp **binary executable** (tệp thực thi nhị phân) của chương trình từ đĩa vào RAM.
+3. Tạo và khởi tạo trạng thái của OS cho **process** (tiến trình) tương ứng với chương trình đang chạy.
+4. Khởi tạo CPU để bắt đầu thực thi các lệnh của process (ví dụ: các **CPU register** cần được OS khởi tạo để CPU có thể nạp và thực thi các lệnh của process).
 
-
-
-
-
-
-## 13.1. How the OS Works and How It Runs 
-
-Part of the job of the OS is to support programs running on the system.
-To start a program running on a computer, the OS allocates a portion of
-RAM for the running program, loads the program's binary executable from
-disk into RAM, creates and initializes OS state for the process
-associated with this running program, and initializes the CPU to start
-executing the process's instructions (e.g., the CPU registers need to be
-initialized by the OS to fetch and execute the process's instructions).
-Figure 1 illustrates these steps.
-
-
-
+**Hình 1** minh họa các bước này.
 
 ![The OS runs programs on hardware](_images/runprog.png)
 
+**Hình 1.** Các bước OS thực hiện để khởi chạy một chương trình mới trên phần cứng bên dưới.
 
-Figure 1. Steps the OS takes to start a new program running on the
-underlying hardware
+---
 
+Giống như các chương trình của người dùng, OS cũng là phần mềm chạy trên phần cứng máy tính.  
+Tuy nhiên, OS là **system software** (phần mềm hệ thống) đặc biệt, quản lý tất cả tài nguyên hệ thống và triển khai giao diện cho người dùng; nó là thành phần bắt buộc để sử dụng máy tính.  
 
-Like user programs, the OS is also software that runs on the computer
-hardware. The OS, however, is special system software that manages all
-system resources and implements the interface for users of the computer
-system; it is necessary for using the computer system. Because the OS is
-software, its binary executable code runs on the hardware just like any
-other program: its data and instructions are stored in RAM and its
-instructions are fetched and executed by the CPU just like user's
-program instructions are. As a result, for the OS to run, its binary
-executable needs to be loaded into RAM and the CPU initialized to start
-running OS code. However, because the OS is responsible for the task of
-running code on the hardware, it needs some help to get started running.
+Vì OS là phần mềm, mã thực thi nhị phân của nó cũng chạy trên phần cứng như bất kỳ chương trình nào khác: dữ liệu và lệnh của nó được lưu trong RAM, và các lệnh được CPU nạp và thực thi giống như lệnh của chương trình người dùng.  
+Do đó, để OS chạy, mã thực thi nhị phân của nó cần được nạp vào RAM và CPU phải được khởi tạo để bắt đầu chạy mã của OS.  
+Tuy nhiên, vì OS chịu trách nhiệm chạy mã trên phần cứng, nên nó cần một bước hỗ trợ ban đầu để tự khởi động.
 
+---
 
+### 13.1.1. OS Booting
 
-### 13.1.1. OS Booting 
+Quá trình OS tự nạp và khởi tạo trên máy tính được gọi là **booting** — OS “tự kéo mình lên bằng dây giày” (*pulls itself up by its bootstraps*), hay *boot* chính nó trên máy tính.  
+OS cần một chút hỗ trợ ban đầu để được nạp vào máy tính và bắt đầu chạy mã khởi động (**boot code**).
 
-The process of the OS loading and initializing itself on the computer is
-known as **booting** --- the OS \"pulls itself up by its bootstraps\",
-or *boots* itself on the computer. The OS needs a little help to
-initially get loaded onto the computer and to begin running its boot
-code. To initiate the OS code to start running, code stored in computer
-firmware (nonvolatile memory in the hardware) runs when the computer
-first powers up; **BIOS** (Basic Input/Output System) and **UEFI**
-(Unified Extensible Firmware Interface) are two examples of this type of
-firmware. On power-up, BIOS or UEFI runs and does just enough hardware
-initialization to load the first chunk of the OS (its boot block) from
-disk into RAM and to start running boot block instructions on the CPU.
-Once the OS starts running, it loads the rest of itself from disk,
-discovers and initializes hardware resources, and initializes its data
-structures and abstractions to make the system ready for users.
+Để khởi chạy mã OS, một đoạn mã được lưu trong **firmware** (bộ nhớ không mất dữ liệu – nonvolatile memory – trong phần cứng) sẽ chạy khi máy tính vừa bật nguồn.  
+**BIOS** (Basic Input/Output System) và **UEFI** (Unified Extensible Firmware Interface) là hai ví dụ của loại firmware này.  
 
+Khi bật nguồn, BIOS hoặc UEFI sẽ chạy và thực hiện đủ các bước khởi tạo phần cứng để nạp **boot block** (khối khởi động) đầu tiên của OS từ đĩa vào RAM, rồi bắt đầu chạy các lệnh trong boot block trên CPU.  
+Khi OS bắt đầu chạy, nó sẽ nạp phần còn lại của mình từ đĩa, phát hiện và khởi tạo các tài nguyên phần cứng, đồng thời khởi tạo các cấu trúc dữ liệu và abstraction để hệ thống sẵn sàng cho người dùng.
 
+---
 
-### 13.1.2. Getting the OS to Do Something: Interrupts and Traps 
+### 13.1.2. Khiến OS thực hiện công việc: Interrupts và Traps
 
-After the OS finishes booting and initializing the system for use, it
-then just waits for something to do. Most operating systems are
-implemented as **interrupt-driven systems**, meaning that the OS doesn't
-run until some entity needs it to do something --- the OS is woken up
-(interrupted from its sleep) to handle a request.
+Sau khi OS hoàn tất quá trình boot và khởi tạo hệ thống, nó sẽ **chờ** cho đến khi có việc cần làm.  
+Hầu hết các hệ điều hành được triển khai dưới dạng **interrupt-driven system** (hệ thống điều khiển bằng ngắt), nghĩa là OS sẽ không chạy cho đến khi có một tác nhân yêu cầu nó làm việc — OS sẽ được “đánh thức” (bị ngắt khỏi trạng thái chờ) để xử lý yêu cầu.
 
+Các thiết bị ở tầng phần cứng có thể cần OS thực hiện một số tác vụ cho chúng.  
+Ví dụ: **network interface card** (NIC – card giao tiếp mạng) là giao diện phần cứng giữa máy tính và mạng.  
+Khi NIC nhận dữ liệu qua kết nối mạng, nó sẽ **interrupt** (ngắt) OS để xử lý dữ liệu nhận được (**Hình 2**).  
+Ví dụ, OS có thể xác định rằng dữ liệu nhận được từ NIC là một phần của trang web mà trình duyệt web đã yêu cầu; sau đó OS sẽ chuyển dữ liệu từ NIC đến process của trình duyệt web đang chờ.
 
-Devices in the hardware layer may need the OS to do something for them.
-For example, a **network interface card** (NIC) is a hardware interface
-between a computer and a network. When the NIC receives data over its
-network connection, it interrupts (or wakes up) the OS to handle the
-received data (see Figure 2). For example, the OS may
-determine that the data received by the NIC is part of a web page that
-was requested by a web browser; it then delivers the data from the NIC
-to the waiting web browser process.
-
-
-Requests to the OS also come from user applications when they need
-access to protected resources. For example, when an application wants to
-write to a file, it makes a **system call** to the OS, which wakes up
-the OS to perform the write on its behalf (see [Figure
-2](#FigNICinter)). The OS handles the system call by writing the data to
-a file stored on disk.
-
-
-
+Các yêu cầu đến OS cũng có thể xuất phát từ ứng dụng người dùng khi chúng cần truy cập tài nguyên được bảo vệ.  
+Ví dụ: khi một ứng dụng muốn ghi dữ liệu vào tệp, nó sẽ thực hiện một **system call** tới OS, yêu cầu OS thực hiện thao tác ghi thay cho nó (xem [Hình 2](#FigNICinter)).  
+OS sẽ xử lý system call này bằng cách ghi dữ liệu vào tệp được lưu trên đĩa.
 
 ![Interrupts to the OS are from the hardware layer and Traps are from the user/program layer](_images/intersyscall.png)
 
+**Hình 2.** Trong hệ thống điều khiển bằng ngắt, chương trình ở mức người dùng thực hiện system call, và thiết bị phần cứng phát ra interrupt để khởi tạo hành động của OS.
 
-Figure 2. In an interrupt-driven system, user-level programs make system
-calls, and hardware devices issue interrupts to initiate OS actions.
+---
 
+Các interrupt đến từ tầng phần cứng, như khi NIC nhận dữ liệu từ mạng, thường được gọi là **hardware interrupt** hoặc đơn giản là **interrupt**.  
+Các interrupt đến từ tầng phần mềm do kết quả của việc thực thi lệnh, như khi một ứng dụng thực hiện system call, thường được gọi là **trap**.  
+Nói cách khác, một system call sẽ “trap vào OS”, và OS sẽ xử lý yêu cầu thay cho chương trình ở mức người dùng.
 
-Interrupts that come from the hardware layer, such as when a NIC
-receives data from the network, are typically referred to as hardware
-interrupts, or just **interrupts**. Interrupts that come from the
-software layer as the result of instruction execution, such as when an
-application makes a system call, are typically referred to as **traps**.
-That is, a system call \"traps into the OS\", which handles the request
-on behalf of the user-level program. Exceptions from either layer may
-also interrupt the OS. For example, a hard disk drive may interrupt the
-OS if a read fails due to a bad disk block, and an application program
-may trigger a trap to the OS if it executes a divide instruction that
-divides by zero.
+Ngoài ra, **exception** từ cả hai tầng cũng có thể ngắt OS.  
+Ví dụ: ổ cứng có thể ngắt OS nếu thao tác đọc thất bại do lỗi block đĩa, và một chương trình ứng dụng có thể gây ra trap tới OS nếu nó thực hiện phép chia cho 0.
 
+---
 
-System calls are implemented using special trap instructions that are
-defined as part of the CPU's instruction set architecture (ISA). The OS
-associates each of its system calls with a unique identification number.
-When an application wants to invoke a system call, it places the desired
-call's number in a known location (the location varies according to the
-ISA) and issues a trap instruction to interrupt the OS. The trap
-instruction triggers the CPU to stop executing instructions from the
-application program and to start executing OS instructions that handle
-the trap (run the OS trap handler code). The trap handler reads the
-user-provided system call number and executes the corresponding system
-call implementation.
+System call được triển khai bằng các **trap instruction** đặc biệt, được định nghĩa như một phần của **ISA** (Instruction Set Architecture – kiến trúc tập lệnh) của CPU.  
+OS gán cho mỗi system call một số định danh duy nhất.  
+Khi một ứng dụng muốn gọi system call, nó sẽ đặt số định danh của lời gọi vào một vị trí đã biết (vị trí này phụ thuộc vào ISA) và thực hiện một trap instruction để ngắt OS.  
 
+Trap instruction sẽ khiến CPU dừng thực thi lệnh của chương trình ứng dụng và bắt đầu thực thi lệnh của OS để xử lý trap (chạy **trap handler** của OS).  
+Trap handler sẽ đọc số định danh system call do người dùng cung cấp và thực thi phần triển khai tương ứng.
 
-Here's an example of what a `write` system call might look like on an
-IA32 Linux system:
+---
 
+Ví dụ về system call `write` trên hệ thống IA32 Linux:
 
-
-
-```
+```c
 /* C code */
 ret = write(fd, buff, size);
 
@@ -141,133 +91,74 @@ int  $0x80     # trap instruction: interrupt the CPU and transition to the OS
 addl $8, %ebx  # an example instruction after the trap instruction
 ```
 
+Lệnh đầu tiên (`movl $4, %eax`) đưa số định danh system call cho `write` (4) vào thanh ghi `eax`.  
+Lệnh thứ hai (`int $0x80`) kích hoạt trap.  
+Khi mã trap handler của OS chạy, nó sẽ dùng giá trị trong thanh ghi `eax` (4) để xác định system call nào đang được gọi và chạy mã xử lý tương ứng (trong trường hợp này là mã xử lý `write`).  
+Sau khi OS xử lý xong, nó sẽ tiếp tục thực thi chương trình tại lệnh ngay sau trap instruction (`addl` trong ví dụ này).
 
-The first instruction (`movl $4, %eax`) puts the system call number for
-`write` (4) into register `eax`. The second instruction (`int $0x80`)
-triggers the trap. When the OS trap handler code runs, it uses the value
-in register `eax` (4) to determine which system call is being invoked
-and runs the appropriate trap handler code (in this case it runs the
-`write` handler code). After the OS handler runs, the OS continues the
-program's execution at the instruction right after the trap instruction
-(`addl` in this example).
+---
 
-
-Unlike system calls, which come from executing program instructions,
-hardware interrupts are delivered to the CPU on an interrupt bus. A
-device places a signal, typically a number indicating the type of
-interrupt, on the CPU's interrupt bus (see Figure 3).
-When the CPU detects the signal on its interrupt bus, it stops executing
-the current process's instructions and starts executing OS interrupt
-handler code. After the OS handler code runs, the OS continues the
-process's execution at the application instruction that was being
-executed when the interrupt occurred.
-
-
-
+Không giống như system call (xuất phát từ việc thực thi lệnh của chương trình), **hardware interrupt** được gửi tới CPU qua **interrupt bus**.  
+Một thiết bị sẽ đặt một tín hiệu (thường là một số chỉ loại interrupt) lên interrupt bus của CPU (**Hình 3**).  
+Khi CPU phát hiện tín hiệu trên interrupt bus, nó sẽ dừng thực thi lệnh của process hiện tại và bắt đầu chạy mã **interrupt handler** của OS.  
+Sau khi mã xử lý interrupt của OS chạy xong, OS sẽ tiếp tục thực thi process tại lệnh ứng dụng đang chạy khi interrupt xảy ra.
 
 ![Interrupt bus](_images/diskinter.png)
 
 
-Figure 3. A hardware device (disk) sends a signal to the CPU on the
-interrupt bus to trigger OS execution on its behalf.
+**Hình 3.** Một thiết bị phần cứng (ổ đĩa) gửi tín hiệu tới CPU qua **interrupt bus** để kích hoạt OS thực thi thay cho nó.
 
+---
 
-If a user program is running on the CPU when an interrupt (or trap)
-occurs, the CPU runs the OS's interrupt (or trap) handler code. When the
-OS is done handling an interrupt, it resumes executing the interrupted
-user program at the point it was interrupted.
+Nếu một chương trình người dùng đang chạy trên CPU khi một **interrupt** (hoặc **trap**) xảy ra, CPU sẽ chạy mã **interrupt handler** (hoặc **trap handler**) của OS.  
+Khi OS xử lý xong interrupt, nó sẽ tiếp tục thực thi chương trình người dùng bị gián đoạn tại đúng vị trí trước khi bị ngắt.
 
+Vì OS là phần mềm, và mã của nó được nạp vào RAM và chạy trên CPU giống như mã chương trình người dùng, nên OS phải bảo vệ mã và trạng thái của mình khỏi các process thông thường đang chạy trong hệ thống.  
+CPU hỗ trợ điều này bằng cách định nghĩa hai **chế độ thực thi**:
 
-Because the OS is software, and its code is loaded into RAM and run on
-the CPU just like user program code, the OS must protect its code and
-state from regular processes running in the system. The CPU helps by
-defining two execution modes:
+1. **User mode**: CPU chỉ thực thi các lệnh ở mức người dùng và chỉ truy cập các vùng bộ nhớ mà OS cho phép.  
+   OS thường ngăn CPU ở user mode truy cập vào mã lệnh và dữ liệu của OS.  
+   User mode cũng giới hạn các thành phần phần cứng mà CPU có thể truy cập trực tiếp.
 
+2. **Kernel mode**: CPU có thể thực thi bất kỳ lệnh nào và truy cập bất kỳ vùng bộ nhớ nào (bao gồm cả vùng lưu mã lệnh và dữ liệu của OS).  
+   Nó cũng có thể truy cập trực tiếp các thành phần phần cứng và thực thi các lệnh đặc biệt.
 
+Khi mã OS chạy trên CPU, hệ thống ở **kernel mode**; khi chương trình người dùng chạy trên CPU, hệ thống ở **user mode**.  
+Nếu CPU đang ở user mode và nhận một interrupt, CPU sẽ chuyển sang kernel mode, nạp **interrupt handler routine** và bắt đầu thực thi mã xử lý interrupt của OS.  
+Trong kernel mode, OS có thể truy cập phần cứng và các vùng bộ nhớ không được phép trong user mode.  
+Khi OS xử lý xong interrupt, nó sẽ khôi phục trạng thái CPU để tiếp tục thực thi mã người dùng tại đúng vị trí bị gián đoạn, rồi trả CPU về user mode (xem [Hình 4](#FigCPUInterrupts)).
 
-1.  In **user mode** a CPU executes only user-level instructions and
-    accesses only the memory locations that the operating system makes
-    available to it. The OS typically prevents a CPU in user mode from
-    accessing the OS's instructions and data. User mode also restricts
-    which hardware components the CPU can directly access.
-
-2.  In **kernel mode**, a CPU executes any instructions and accesses any
-    memory location (including those that store OS instructions and
-    data). It can also directly access hardware components and execute
-    special instructions.
-
-
-When OS code is run on the CPU, the system runs in kernel mode, and when
-user-level programs run on the CPU, the system runs in user mode. If the
-CPU is in user mode and receives an interrupt, the CPU switches to
-kernel mode, fetches the interrupt handler routine, and starts executing
-the OS handler code. In kernel mode, the OS can access hardware and
-memory locations that are not allowed in user mode. When the OS is done
-handling the interrupt, it restores the CPU state to continue executing
-user-level code at the point at which the program left off when
-interrupted and returns the CPU back to user mode (see [Figure
-4](#FigCPUInterrupts)).
-
-
-
+---
 
 ![OS runs interrupt handler code](_images/handler.png)
 
-
-Figure 4. The CPU and interrupts. User code running on the CPU is
-interrupted (at time X on the time line), and OS interrupt handler code
-runs. After the OS is done handling the interrupt, user code execution
-is resumed (at time Y on the time line).
+**Hình 4.** CPU và interrupt. Mã người dùng đang chạy trên CPU bị ngắt (tại thời điểm X trên trục thời gian), và mã xử lý interrupt của OS được thực thi. Sau khi OS xử lý xong interrupt, việc thực thi mã người dùng được tiếp tục (tại thời điểm Y trên trục thời gian).
 
 
-In an interrupt-driven system, interrupts can happen at any time,
-meaning that the OS can switch from running user code to interrupt
-handler code at any machine cycle. One way to efficiently support this
-execution context switch from user mode to kernel mode, is to allow the
-kernel to run within the execution context of every process in the
-system. At boot time, the OS loads its code at a fixed location in RAM
-that is mapped into the top of the address space of every process (see
-Figure 5), and initializes a CPU register with the starting
-address of the OS handler function. On an interrupt, the CPU switches to
-kernel mode and executes OS interrupt handler code instructions that are
-accessible at the top addresses in every process's address space.
-Because every process has the OS mapped to the same location at the top
-of its address space, the OS interrupt handler code is able to execute
-quickly in the context of any process that is running on the CPU when an
-interrupt occurs. This OS code can be accessed only in kernel mode,
-protecting the OS from user-mode accesses; during regular execution a
-process runs in user mode and cannot read or write to the OS addresses
-mapped into the top of its address space.
+Trong một hệ thống điều khiển bằng interrupt, interrupt có thể xảy ra bất kỳ lúc nào, nghĩa là OS có thể chuyển từ chạy mã người dùng sang chạy mã xử lý interrupt ở bất kỳ chu kỳ máy nào.  
+Một cách để hỗ trợ hiệu quả việc **chuyển ngữ cảnh thực thi** từ user mode sang kernel mode là cho phép kernel chạy trong **execution context** của mọi process trong hệ thống.
 
+Khi boot, OS sẽ nạp mã của mình vào một vị trí cố định trong RAM, vị trí này được **map** vào phần trên cùng của **address space** của mọi process (xem **Hình 5**), và khởi tạo một thanh ghi CPU với địa chỉ bắt đầu của hàm xử lý interrupt của OS.  
+Khi có interrupt, CPU sẽ chuyển sang kernel mode và thực thi các lệnh của mã xử lý interrupt của OS, vốn có thể truy cập ở các địa chỉ trên cùng trong address space của mọi process.  
 
+Vì mọi process đều có OS được map vào cùng một vị trí ở trên cùng của address space, mã xử lý interrupt của OS có thể chạy nhanh trong ngữ cảnh của bất kỳ process nào đang chạy trên CPU khi interrupt xảy ra.  
+Mã OS này chỉ có thể được truy cập ở kernel mode, giúp bảo vệ OS khỏi các truy cập ở user mode; trong quá trình thực thi bình thường, một process chạy ở user mode và không thể đọc hoặc ghi vào các địa chỉ của OS được map vào phần trên cùng của address space của nó.
 
+---
 
 ![The OS is mapped into every process address space](_images/osmem.png)
 
+**Hình 5.** Không gian địa chỉ của process: kernel của OS được map vào phần trên cùng của address space của mọi process.
 
-Figure 5. Process address space: the OS kernel is mapped into the top of
-every process's address space.
+---
 
+Mặc dù việc map mã OS vào address space của mọi process giúp thực thi mã kernel nhanh khi có interrupt, nhưng nhiều bộ xử lý hiện đại có các đặc điểm khiến cơ chế này bộc lộ lỗ hổng bảo mật đối với kernel.  
+Kể từ thông báo vào tháng 1 năm 2018 về lỗ hổng phần cứng **Meltdown**¹, các hệ điều hành đã tách riêng bộ nhớ kernel và bộ nhớ của chương trình người dùng để bảo vệ chống lại lỗ hổng này, nhưng điều đó cũng khiến việc chuyển sang kernel mode để xử lý interrupt kém hiệu quả hơn.
 
-Although mapping the OS code into the address space of every process
-results in fast kernel code execution on an interrupt, many modern
-processors have features that expose vulnerabilities to kernel
-protections when the OS is mapped into every process like this. As of
-the January 2018 announcement of the Meltdown hardware exploit^1^,
-operating systems are separating kernel memory and user-level program
-memory in ways that protect against this exploit, but that also result
-in less efficient switching to kernel mode to handle interrupts.
+---
 
+### 13.1.3. Tài liệu tham khảo
 
-
-### 13.1.3. References 
-
-
-1.  Meltdown and Spectre.
-    [https://meltdownattack.com/](https://meltdownattack.com/){.bare}
-
-
-
-
-
+1. Meltdown and Spectre.  
+   [https://meltdownattack.com/](https://meltdownattack.com/)
 

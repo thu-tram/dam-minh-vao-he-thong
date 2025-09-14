@@ -26,5 +26,6 @@ Một số quy ước trong bản dịch:
   - Đặt toàn bộ văn bản đó vào blockquote Markdown (`>`).
   - Nếu có xuống dòng trong đoạn văn thì giữ nguyên.
 - Định dạng lại bảng -> bảng markdown cho dễ đọc.
+- Với các bảng có code block: Tách riêng từng code block. Không nhét code trong bảng nữa mà biến thành nhiều section song song.
 
 Văn bản cần dịch đây:

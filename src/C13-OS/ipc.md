@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 ## 13.4. Interprocess Communication 
 
 Processes are one of the primary abstractions implemented by the OS.

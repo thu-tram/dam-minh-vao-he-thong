@@ -1,325 +1,165 @@
+Dưới đây là bản dịch tiếng Việt của mục **13.2. Processes**, tuân thủ đầy đủ các quy ước bạn đã nêu:
 
+---
 
+## 13.2. Processes (Tiến trình)
 
+Một trong những **abstraction** (trừu tượng hóa) chính mà **operating system** (OS – hệ điều hành) triển khai là **process** (tiến trình).  
+Một process đại diện cho một **instance** (phiên bản) của một chương trình đang chạy trong hệ thống, bao gồm:
 
+- **Binary executable code** (mã thực thi nhị phân) của chương trình.
+- **Data** (dữ liệu) của chương trình.
+- **Execution context** (ngữ cảnh thực thi).
 
+**Context** theo dõi quá trình thực thi của chương trình bằng cách lưu giữ các giá trị **register** (thanh ghi), vị trí **stack**, và lệnh mà nó đang thực thi.
 
+---
 
+Process là một abstraction cần thiết trong các hệ thống **multiprogramming** (đa chương trình), vốn hỗ trợ nhiều process tồn tại đồng thời trong hệ thống.  
+Abstraction process được OS sử dụng để theo dõi từng instance riêng biệt của các chương trình đang chạy trong hệ thống, và để quản lý việc sử dụng tài nguyên hệ thống của chúng.
 
-## 13.2. Processes 
+OS cung cấp cho mỗi process một abstraction “**lone view**” (cái nhìn riêng biệt) về hệ thống.  
+Nghĩa là, OS cô lập các process với nhau và tạo cho mỗi process ảo giác rằng nó đang kiểm soát toàn bộ máy tính.  
+Trên thực tế, OS hỗ trợ nhiều process hoạt động đồng thời và quản lý việc chia sẻ tài nguyên giữa chúng.  
+OS ẩn khỏi người dùng các chi tiết về việc chia sẻ và truy cập tài nguyên hệ thống, đồng thời bảo vệ các process khỏi tác động của các process khác đang chạy trong hệ thống.
 
-One of the main abstractions implemented by the operating system is a
-**process**. A process represents an instance of a program running in
-the system, which includes the program's binary executable code, data,
-and execution **context**. The context tracks the program's execution by
-maintaining its register values, stack location, and the instruction it
-is currently executing.
+---
 
+Ví dụ: một người dùng có thể đồng thời chạy hai instance của chương trình Unix shell cùng với một trình duyệt web trên máy tính.  
+OS sẽ tạo ra ba process tương ứng với ba chương trình đang chạy này:  
+- Một process cho mỗi lần thực thi riêng biệt của Unix shell.  
+- Một process cho trình duyệt web.
 
-Processes are necessary abstractions in **multiprogramming** systems,
-which support multiple processes existing in the system at the same
-time. The process abstraction is used by the OS to keep track of
-individual instances of programs running in the system, and to manage
-their use of system resources.
+OS xử lý việc chuyển đổi giữa ba process này khi chúng chạy trên CPU, và đảm bảo rằng khi một process chạy trên CPU, chỉ trạng thái thực thi và tài nguyên hệ thống được cấp cho process đó mới có thể được truy cập.
 
+---
 
-The OS provides each process with a \"lone view\" abstraction of the
-system. That is, the OS isolates processes from one another and gives
-each process the illusion that it's controlling the entire machine. In
-reality, the OS supports many active processes and manages resource
-sharing among them. The OS hides the details of sharing and accessing
-system resources from the user, and the OS protects processes from the
-actions of other processes running in the system.
+### 13.2.1. Multiprogramming và Context Switching
 
+**Multiprogramming** cho phép OS sử dụng hiệu quả tài nguyên phần cứng.  
+Ví dụ: khi một process đang chạy trên CPU cần truy cập dữ liệu hiện đang nằm trên đĩa, thay vì để CPU rảnh rỗi chờ dữ liệu được đọc vào bộ nhớ, OS có thể chuyển CPU cho một process khác chạy trong khi thao tác đọc dữ liệu của process ban đầu được xử lý bởi đĩa.  
 
-For example, a user may simultaneously run two instances of a Unix shell
-program along with a web browser on a computer system. The OS creates
-three processes associated with these three running programs: one
-process for each separate execution of the Unix shell program, and one
-process for the web browser. The OS handles switching between these
-three processes running on the CPU, and it ensures that as a process
-runs on the CPU, only the execution state and system resources allocated
-to the process can be accessed.
+Bằng cách sử dụng multiprogramming, OS có thể giảm bớt tác động của **memory hierarchy** (hệ thống phân cấp bộ nhớ) lên workload của chương trình, bằng cách giữ cho CPU luôn bận rộn thực thi một số process trong khi các process khác đang chờ truy cập dữ liệu ở các tầng thấp hơn của bộ nhớ.
 
+---
 
+Các hệ điều hành đa dụng thường triển khai **timesharing** (chia sẻ thời gian), là một dạng multiprogramming trong đó OS lập lịch để mỗi process lần lượt thực thi trên CPU trong một khoảng thời gian ngắn (gọi là **time slice** hoặc **quantum**).  
+Khi một process hoàn thành time slice của mình trên CPU, OS sẽ loại process đó ra khỏi CPU và cho process khác chạy.  
+Hầu hết các hệ thống định nghĩa time slice dài vài **millisecond** (10^-3 giây), đây là một khoảng thời gian dài đối với chu kỳ CPU nhưng con người không nhận thấy được.
 
-### 13.2.1. Multiprogramming and Context Switching 
+---
 
-Multiprogramming enables the OS to make efficient use of hardware
-resources. For example, when a process running on the CPU needs to
-access data that are currently on disk, rather than have the CPU sit
-idle waiting for the data to be read into memory, the OS can give the
-CPU to another process and let it run while the read operation for the
-original process is being handled by the disk. By using
-multiprogramming, the OS can mitigate some of the effects of the memory
-hierarchy on its program workload by keeping the CPU busy executing some
-processes while other processes are waiting to access data in the lower
-levels of the memory hierarchy.
+Hệ thống timesharing càng củng cố “lone view” của máy tính đối với người dùng; vì mỗi process thường xuyên được thực thi trên CPU trong những khoảng thời gian ngắn, nên việc chúng chia sẻ CPU thường không thể nhận ra đối với người dùng.  
+Chỉ khi hệ thống bị tải rất nặng, người dùng mới có thể nhận thấy tác động của các process khác trong hệ thống.  
 
+Lệnh Unix `ps -A` liệt kê tất cả các process đang chạy trong hệ thống — bạn có thể sẽ ngạc nhiên về số lượng process này.  
+Lệnh `top` cũng hữu ích để xem trạng thái hệ thống khi nó đang chạy, bằng cách hiển thị tập hợp các process hiện đang sử dụng nhiều tài nguyên hệ thống nhất (như thời gian CPU và dung lượng bộ nhớ).
 
-General-purpose operating systems often implement **timesharing**, which
-is multiprogramming wherein the OS schedules each process to take turns
-executing on the CPU for short time durations (known as a **time slice**
-or **quantum**). When a process completes its time slice on the CPU, the
-OS removes the process from the CPU and lets another run. Most systems
-define time slices to be a few milliseconds (10^-3^ seconds), which is a
-long time in terms of CPU cycles but is not noticeable to a human.
+---
 
+Trong các hệ thống multiprogramming và timesharing, các process chạy **concurrently** (đồng thời), nghĩa là quá trình thực thi của chúng **chồng lấn về thời gian**.  
+Ví dụ: OS có thể bắt đầu chạy process A trên CPU, sau đó chuyển sang chạy process B một lúc, rồi quay lại chạy tiếp process A.  
+Trong kịch bản này, process A và B chạy đồng thời vì việc thực thi của chúng trên CPU chồng lấn nhau do OS chuyển đổi qua lại giữa hai process.
 
-Timesharing systems further support the \"lone view\" of the computer
-system to the user; because each process frequently executes on the CPU
-for short bursts of time, the fact that they are all sharing the CPU is
-usually imperceptible to the user. Only when the system is very heavily
-loaded might a user notice the effects of other processes in the system.
-The Unix command `ps -A` lists all the processes running in the
-system --- you may be surprised by how many there are. The `top` command
-is also useful for seeing the state of the system as it runs by
-displaying the set of processes that currently use the most system
-resources (such as CPU time and memory space).
+---
 
+#### Context Switching
 
-In multiprogrammed and timeshared systems, processes run
-**concurrently**, meaning that their executions overlap in time. For
-example, the OS may start running process A on the CPU, and then switch
-to running process B for a while, and later switch back to running
-process A some more. In this scenario, processes A and B run
-concurrently because their execution on the CPU overlaps due to the OS
-switching between the two.
+**Mechanism** (cơ chế) đằng sau multiprogramming xác định cách OS hoán đổi một process đang chạy trên CPU với process khác.  
+**Policy** (chính sách) của multiprogramming điều khiển việc lập lịch CPU, tức là chọn process nào từ tập các process ứng viên sẽ được dùng CPU tiếp theo và trong bao lâu.  
+Ở đây, chúng ta tập trung chủ yếu vào **mechanism** của việc triển khai multiprogramming.  
+Các giáo trình hệ điều hành sẽ trình bày chi tiết hơn về các **scheduling policy** (chính sách lập lịch).
 
+---
 
+OS thực hiện **context switching** (chuyển ngữ cảnh), hay hoán đổi trạng thái process trên CPU, như là cơ chế chính đằng sau multiprogramming (và timesharing).  
+Có hai bước chính để thực hiện một CPU context switch:
 
-#### Context Switching 
+1. **OS lưu context** của process hiện đang chạy trên CPU, bao gồm tất cả giá trị register (PC, stack pointer, general-purpose register, condition code, v.v.), trạng thái bộ nhớ, và một số trạng thái khác (ví dụ: trạng thái của các tài nguyên hệ thống mà nó đang sử dụng, như file đang mở).
 
-The **mechanism** behind multiprogramming determines how the OS swaps
-one process running on the CPU with another. The **policy** aspect of
-multiprogramming governs scheduling the CPU, or picking which process
-from a set of candidate processes gets to use the CPU next and for how
-long. We focus primarily on the mechanism of implementing
-multiprogramming. Operating systems textbooks cover scheduling policies
-in more detail.
+2. **OS khôi phục context** đã lưu của một process khác lên CPU và bắt đầu cho CPU chạy process này, tiếp tục thực thi từ lệnh mà nó đã dừng trước đó.
 
+Dưới đây là bản dịch tiếng Việt của đoạn bạn cung cấp, tuân thủ đầy đủ các quy ước đã nêu:
 
-The OS performs **context switching**, or swapping process state on the
-CPU, as the primary mechanism behind multiprogramming (and timesharing).
-There are two main steps to performing a CPU context switch:
+---
 
+Một phần của **context switching** (chuyển ngữ cảnh) có thể khiến bạn nghĩ là “bất khả thi” đó là: mã của OS thực hiện context switching phải chạy trên CPU **trong khi** nó lưu (hoặc khôi phục) **execution context** (ngữ cảnh thực thi) của một process từ (hoặc lên) CPU.  
+Các lệnh của mã context switching cần sử dụng **CPU hardware register** (thanh ghi phần cứng của CPU) để thực thi, nhưng giá trị các thanh ghi của process đang bị chuyển ra khỏi CPU lại cần được chính mã context switching lưu lại.  
+Phần cứng máy tính cung cấp một số hỗ trợ để điều này khả thi.
 
+---
 
-1.  The OS saves the context of the current process running on the CPU,
-    including all of its register values (PC, stack pointers,
-    general-purpose register, condition codes, etc.), its memory state,
-    and some other state (for example the state of system resources it
-    uses, like open files).
+Khi khởi động (**boot time**), OS khởi tạo phần cứng, bao gồm cả việc khởi tạo trạng thái CPU, để khi CPU chuyển sang **kernel mode** do một **interrupt**, mã **interrupt handler** của OS sẽ bắt đầu thực thi và trạng thái thực thi của process bị ngắt được bảo vệ khỏi việc bị ghi đè.  
 
-2.  The OS restores the saved context from another process on the CPU
-    and starts the CPU running this other process, continuing its
-    execution from the instruction where it left off.
+Phần cứng máy tính và OS phối hợp thực hiện một phần việc lưu ban đầu **user-level execution context** (ngữ cảnh thực thi ở mức người dùng), đủ để mã OS có thể chạy trên CPU mà không làm mất trạng thái thực thi của process bị ngắt.  
 
+Ví dụ: các giá trị thanh ghi của process bị ngắt cần được lưu lại để khi process chạy lại trên CPU, nó có thể tiếp tục từ đúng vị trí trước đó, sử dụng các giá trị thanh ghi của mình.  
+Tùy thuộc vào hỗ trợ phần cứng, việc lưu giá trị thanh ghi của process ở mức người dùng có thể được thực hiện hoàn toàn bởi phần cứng, hoặc gần như hoàn toàn bằng phần mềm như là phần đầu tiên của mã xử lý ngắt trong kernel.  
+Tối thiểu, giá trị **program counter (PC)** của process cần được lưu lại để không bị mất khi địa chỉ của kernel interrupt handler được nạp vào PC.
 
-One part of context switching that may seem impossible to accomplish is
-that the OS's code that implements context switching must run on the CPU
-while it saves (restores) a process's execution contexts from (to) the
-CPU; the instructions of the context switching code need to use CPU
-hardware registers to execute, but the register values from the process
-being context switched off the CPU need to be saved by the context
-switching code. Computer hardware provides some help to make this
-possible.
+---
 
+Khi OS bắt đầu chạy, nó thực thi toàn bộ mã context switching của process, lưu toàn bộ trạng thái thực thi của process đang chạy trên CPU và khôi phục trạng thái thực thi đã lưu của một process khác lên CPU.  
+Vì OS chạy ở kernel mode, nó có thể truy cập bất kỳ phần nào của bộ nhớ máy tính, thực thi các lệnh đặc quyền và truy cập bất kỳ thanh ghi phần cứng nào.  
 
-At boot time, the OS initialized the hardware, including initializing
-the CPU state, so that when the CPU switches to kernel mode on an
-interrupt, the OS interrupt handler code starts executing and the
-interrupted process's execution state is protected from this execution.
-Together, the computer hardware and OS perform some of the initial
-saving of the user-level execution context, enough that the OS code can
-run on the CPU without losing the execution state of the interrupted
-process. For example, register values of the interrupted process need to
-be saved so that when the process runs again on the CPU, the process can
-continue from the point at which it left off, using its register values.
-Depending on the hardware support, saving the user-level process's
-register values may be done entirely by the hardware or may be done
-almost entirely in software as the first part of the kernel's interrupt
-handling code. At a minimum, the process's program counter (PC) value
-needs to be saved so that its value is not lost when the kernel
-interrupt handler address is loaded into the PC.
+Do đó, mã context switching của OS có thể truy cập và lưu trạng thái thực thi CPU của bất kỳ process nào vào bộ nhớ, và có thể khôi phục từ bộ nhớ trạng thái thực thi của bất kỳ process nào lên CPU.  
+Mã context switching của OS kết thúc bằng việc thiết lập CPU để thực thi trạng thái thực thi đã khôi phục của process và chuyển CPU sang user mode.  
+Khi đã chuyển sang user mode, CPU sẽ thực thi các lệnh và sử dụng trạng thái thực thi từ process mà OS vừa chuyển lên CPU.
 
+---
 
-Once the OS starts running, it executes its full process context
-switching code, saving the full execution state of the process running
-on the CPU and restoring the saved execution state of another process
-onto the CPU. Because the OS runs in kernel mode it is able to access
-any parts of computer memory and can execute privileged instructions and
-access any hardware registers. As a result, its context switching code
-is able to access and save the CPU execution state of any process to
-memory, and it is able to restore from memory the execution state of any
-process to the CPU. OS context switching code completes by setting up
-the CPU to execute the restored process's execution state and by
-switching the CPU to user mode. Once switched to user mode, the CPU
-executes instructions, and uses execution state, from the process that
-the OS context switched onto the CPU.
+### 13.2.2. Process State (Trạng thái tiến trình)
 
+Trong các hệ thống **multiprogrammed** (đa chương trình), OS phải theo dõi và quản lý nhiều process tồn tại trong hệ thống tại bất kỳ thời điểm nào.  
+OS duy trì thông tin về mỗi process, bao gồm:
 
+- **Process id (PID)**: định danh duy nhất cho một process.  
+  Lệnh `ps` liệt kê thông tin về các process trong hệ thống, bao gồm cả PID của chúng.
 
-### 13.2.2. Process State 
+- Thông tin **address space** (không gian địa chỉ) của process.
 
-In multiprogrammed systems, the OS must track and manage the multiple
-processes existing in the system at any given time. The OS maintains
-information about each process, including:
+- **Execution state** (trạng thái thực thi) của process (ví dụ: giá trị CPU register, vị trí stack).
 
+- Tập hợp tài nguyên được cấp phát cho process (ví dụ: các file đang mở).
 
+- **Process state** (trạng thái tiến trình) hiện tại, là giá trị xác định khả năng được thực thi trên CPU của process.
 
--   A **process id** (PID), which is a unique identifier for a process.
-    The `ps` command lists information about processes in the system,
-    including their PID values.
+---
 
--   The address space information for the process.
+Trong suốt vòng đời của mình, một process sẽ di chuyển qua nhiều trạng thái khác nhau, tương ứng với các mức độ khác nhau về khả năng được thực thi.  
+Một cách OS sử dụng process state là để xác định tập hợp các process ứng viên cho việc lập lịch trên CPU.
 
--   The execution state of the process (e.g., CPU register values, stack
-    location).
+Các trạng thái thực thi của process gồm:
 
--   The set of resources allocated to the process (e.g., open files).
+- **Ready**: Process có thể chạy trên CPU nhưng hiện chưa được lập lịch (là ứng viên để được context switch lên CPU).  
+  Khi một process mới được OS tạo và khởi tạo, nó sẽ vào trạng thái *ready* (sẵn sàng để CPU bắt đầu thực thi lệnh đầu tiên).  
+  Trong hệ thống timesharing, nếu một process bị context switch ra khỏi CPU vì hết time slice, nó cũng được đưa vào trạng thái *ready* (sẵn sàng để CPU thực thi lệnh tiếp theo, nhưng phải chờ đến lượt được lập lịch lại).
 
--   The current **process state**, which is a value that determines its
-    eligibility for execution on the CPU.
+- **Running**: Process đang được lập lịch trên CPU và đang thực thi lệnh.
 
+- **Blocked**: Process đang chờ một sự kiện nào đó trước khi có thể tiếp tục thực thi.  
+  Ví dụ: process đang chờ dữ liệu được đọc từ đĩa.  
+  Các process ở trạng thái *blocked* không phải là ứng viên để lập lịch trên CPU.  
+  Khi sự kiện mà process đang chờ xảy ra, process sẽ chuyển sang trạng thái *ready* (sẵn sàng chạy lại).
 
-Over the course of its lifetime, a process moves through several states,
-which correspond to different categories of process execution
-eligibility. One way that the OS uses process state is to identify the
-set of processes that are candidates for being scheduled on the CPU.
+- **Exited**: Process đã thoát nhưng vẫn cần được loại bỏ hoàn toàn khỏi hệ thống.  
+  Một process thoát khi hoàn thành việc thực thi chương trình, hoặc thoát do lỗi (ví dụ: chia cho 0), hoặc nhận yêu cầu kết thúc từ process khác.  
+  Process đã thoát sẽ không bao giờ chạy lại, nhưng vẫn tồn tại trong hệ thống cho đến khi hoàn tất việc dọn dẹp liên quan đến trạng thái thực thi của nó.
 
+---
 
-The set of process execution states are:
+**Hình 1** minh họa vòng đời của một process trong hệ thống, cho thấy cách nó di chuyển giữa các trạng thái khác nhau.  
+Lưu ý các mũi tên biểu thị sự chuyển đổi từ trạng thái này sang trạng thái khác.  
+Ví dụ: một process có thể vào trạng thái *Ready* theo ba cách:
 
-
-
--   **Ready**: The process could run on the CPU but is not currently
-    scheduled (it is a candidate for being context switched on to the
-    CPU). Once a new process is created and initialized by the OS, it
-    enters the ready state (it is ready for the CPU to start executing
-    its first instruction). In a timesharing system, if a process is
-    context switched off the CPU because its time slice is up, it is
-    also placed in the *ready* state (it is ready for the CPU to execute
-    its next instruction, but it used up its time slice and has to wait
-    its turn to get scheduled again on the CPU).
-
--   **Running**: The process is scheduled on the CPU and is actively
-    executing instructions.
-
--   **Blocked**: The process is waiting for some event before it can
-    continue being executed. For example, the process is waiting for
-    some data to be read in from disk. Blocked processes are not
-    candidates for being scheduled on the CPU. After the event on which
-    the process is blocked occurs, the process moves to the *ready*
-    state (it is ready to run again).
-
--   **Exited**: The process has exited but still needs to be completely
-    removed from the system. A process exits due to its completing the
-    execution of its program instructions, or by exiting with an error
-    (e.g., it tries to divide by zero), or by receiving a termination
-    request from another process. An exited process will never run
-    again, but it remains in the system until final clean-up associated
-    with its execution state is complete.
-
-
-Figure 1 shows the lifetime of a process in the system,
-illustrating how it moves between different states. Note the transitions
-(arrows) from one state to another. For example, a process can enter the
-*Ready* state in one of three ways: first, if it is newly created by the
-OS; second, if it was blocked waiting for some event and the event
-occurs; and third, if it was running on the CPU and its time slice is
-over and the OS context switches it off to give another *Ready* process
-its turn on the CPU.
-
+1. Được OS tạo mới.  
+2. Đang *blocked* chờ sự kiện và sự kiện xảy ra.  
+3. Đang chạy trên CPU nhưng hết time slice, OS context switch nó ra để nhường CPU cho một process *Ready* khác.
 
 
 
 ![Process State](_images/procstate.png)
 
-
-Figure 1. The states of a process during its lifetime
-
-
->> Process Runtime
-
-
-Programmers often use a process's completion time as a metric to
-evaluate its performance. For noninteractive programs, a faster runtime
-typically indicates a better, or more optimal, implementation. For
-example, in comparing two programs that compute the prime factors of a
-large number, the one that correctly completes the task faster is
-preferable.
-
-
-There are two different measures of the runtime of a process. The first
-is total **wall time** (or wall-clock time). Wall time is the duration
-between the start and completion of a process it is the elapsed time
-from the process's start to finish as measured by a clock hanging on a
-wall. Wall time includes the time that the process is in the Running
-state executing on the CPU, as well as time that the process is in the
-Blocked state waiting for an event like I/O, as well as time that the
-process spends in the Ready state waiting for its turn to be scheduled
-to run on the CPU. In multiprogrammed and timeshared systems, the wall
-time of a process can slow down due to other processes running
-concurrently on the system and sharing system resources.
-
-
-The second measure of process runtime is total **CPU time** (or process
-time). CPU time measures just the amount of time the process spends in
-the Running state executing its instructions on the CPU. CPU time does
-not include the time the process spends in the Blocked or Ready states.
-As a result, a process's total CPU time is not affected by other
-processes concurrently running on the system.
-
-
-
-
-### 13.2.3. Creating (and Destroying) Processes 
-
-An OS creates a new process when an existing process makes a system call
-requesting it to do so. In Unix, the **fork** system call creates a new
-process. The process calling `fork` is the **parent** process and the
-new process it creates is its **child** process. For example, if you run
-`a.out` in a shell, the shell process calls the `fork` system call to
-request that the OS create a new child process that will be used to run
-the `a.out` program. Another example is a web browser process that calls
-`fork` to create child processes to handle different browsing events. A
-web browser may create a child process to handle communication with a
-web server when a user loads a web page. It may create another process
-to handle user mouse input, and other processes to handle separate
-browser windows or tabs. A multiple-process web browser like this is
-able to continue handling user requests through some of its child
-browser processes, while at the same time some of its other child
-browser processes may be blocked waiting for remote web server responses
-or for user mouse clicks.
-
-
-A **process hierarchy** of parent-child relationships exists between the
-set of processes active in the system. For example, if process *A* makes
-two calls to `fork`, two new child processes are created, *B* and C\_.
-If process *C* then calls `fork`, another new process, *D*, will be
-created. Process *C* is the child of *A*, and the parent of *D*.
-Processes *B* and *C* are siblings (they share a common parent process,
-process *A*). Process *A* is the ancestor of *B*, *C*, and *D*. This
-example is illustrated in Figure 2.
-
-
-
-
-![Process Hierarchy created from the example. A is the top ancestor with two children, B and C below it. C has one child, D, below it.](_images/prochierarchy.png)
-
-
-Figure 2. An example process hierarchy created by a parent process (A)
-calling fork twice to create two child processes (B and C). C's call to
-fork creates its child process, D. To list the process hierarchy on
-Linux systems, run `pstree`, or `ps -Aef --forest`.
-
-
-Since existing processes trigger process creation, a system needs at
-least one process to create any new processes. At boot time, the OS
-creates the first user-level process in the system. This special
-process, named `init`, sits at the very top of the process hierarchy as
-the ancestor of all other processes in the system.
 
 
 

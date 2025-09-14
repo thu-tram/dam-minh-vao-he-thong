@@ -1,133 +1,79 @@
+## 13. Hệ điều hành (The Operating System)
 
-
-
-
-
-
-
-## 13. The Operating System 
-
-The **operating system** (OS) is a special system software layer that
-sits between the computer hardware and application programs running on
-the computer (see Figure 1). The OS software is persistent
-on the computer, from power-on to power-off. Its primary purpose is to
-*manage* the underlying hardware components to efficiently run program
-workloads and to make the computer *easy to use*.
-
-
-
+**Operating system** (OS – hệ điều hành) là một lớp **system software** (phần mềm hệ thống) đặc biệt, nằm giữa **computer hardware** (phần cứng máy tính) và **application programs** (chương trình ứng dụng) đang chạy trên máy tính (xem **Hình 1**).  
+Phần mềm OS tồn tại liên tục trên máy tính, từ khi bật nguồn cho đến khi tắt máy.  
+Mục đích chính của nó là **quản lý** các thành phần phần cứng bên dưới để chạy hiệu quả các **program workload** (khối lượng công việc của chương trình) và làm cho máy tính **dễ sử dụng**.
 
 ![The OS sits between the user and the HW](_images/os.png)
 
+**Hình 1.** OS là phần mềm hệ thống đặc biệt nằm giữa người dùng và phần cứng. Nó quản lý phần cứng máy tính và triển khai các **abstraction** (trừu tượng hóa) để giúp phần cứng dễ sử dụng hơn.
 
-Figure 1. The OS is special system software between the user and the
-hardware. It manages the computer's hardware and implements abstractions
-to make the hardware easier to use.
+---
 
+Một trong những cách OS giúp phần cứng máy tính dễ sử dụng là hỗ trợ khởi chạy các chương trình trên máy tính.  
+Hãy xem điều gì xảy ra khi người dùng nhấp đúp vào một biểu tượng hoặc gõ tên tệp thực thi của chương trình tại **shell prompt** (ví dụ: `./a.out`) để khởi chạy chương trình trên hệ thống.  
+OS sẽ xử lý toàn bộ chi tiết của thao tác này, chẳng hạn như nạp chương trình từ đĩa vào RAM và khởi tạo CPU để bắt đầu chạy các lệnh của chương trình; OS ẩn khỏi người dùng những hành động mức thấp này, vốn là cần thiết để chạy chương trình trên máy tính.
 
-One of the ways in which the OS makes the computer hardware easy to use
-is in its support for initiating programs to run on the computer.
-Consider what happens when a user double-clicks an icon or types the
-name of a program executable at a shell prompt (e.g., `./a.out`) to
-start a program running on the underlying system. The OS handles all the
-details of this operation, such as loading the program from disk into
-RAM and initializing the CPU to start running the program instructions;
-the OS hides from users these types of low-level actions that are
-necessary to run the user's program on the computer.
+---
 
+Một ví dụ về cách OS sử dụng hiệu quả tài nguyên hệ thống là triển khai **multiprogramming** (đa chương trình), nghĩa là cho phép nhiều hơn một chương trình chạy trên máy tính tại cùng một thời điểm.  
+Multiprogramming không nhất thiết có nghĩa là tất cả các chương trình đều chạy đồng thời trên phần cứng.  
+Trên thực tế, tập hợp các chương trình đang chạy trong hệ thống thường lớn hơn nhiều so với số lõi CPU.  
+Thay vào đó, nó có nghĩa là OS chia sẻ tài nguyên phần cứng, bao gồm CPU, giữa nhiều chương trình đang chạy.  
+Ví dụ: khi một chương trình cần dữ liệu đang nằm trên đĩa, OS có thể đưa một chương trình khác lên CPU trong khi chương trình đầu tiên chờ dữ liệu.  
+Nếu không có multiprogramming, CPU sẽ rảnh rỗi bất cứ khi nào chương trình đang chạy truy cập các thiết bị phần cứng chậm hơn.  
 
-One example of how the OS makes efficient use of system resources is by
-implementing **multiprogramming**, which means allowing more than a
-single program to run on the computer at a time. Multiprogramming does
-not necessarily mean that all the programs are running simultaneously on
-the computer hardware. In fact, the set of running programs in the
-system is typically much larger than the number of CPU cores. Instead,
-it means that the OS shares hardware resources, including the CPU, among
-several programs running on the system. For example, when one program
-needs data that are currently on disk, the OS can put another program on
-the CPU while the first program waits for the data to become available.
-Without multiprogramming, the CPU would sit idle whenever the program
-running on the computer accesses slower hardware devices. To support
-multiprogramming, the OS needs to implement an abstraction of a running
-program, called a **process**. The process abstraction enables the OS to
-manage the set of multiple programs that are running in the system at
-any given time.
+Để hỗ trợ multiprogramming, OS cần triển khai một abstraction của chương trình đang chạy, gọi là **process** (tiến trình).  
+Abstraction process cho phép OS quản lý tập hợp nhiều chương trình đang chạy trong hệ thống tại bất kỳ thời điểm nào.
 
+---
 
-Some example operating systems include Microsoft's Windows, Apple's
-macOS and iOS, Oracle's Solaris, and open-source Unix variants such as
-OpenBSD and Linux. We use Linux examples in this book. However, all of
-these other general-purpose operating systems implement similar
-functionality, albeit sometimes in different ways.
+Một số ví dụ về hệ điều hành bao gồm: **Microsoft Windows**, **Apple macOS** và **iOS**, **Oracle Solaris**, và các biến thể **Unix** mã nguồn mở như **OpenBSD** và **Linux**.  
+Trong cuốn sách này, chúng ta sử dụng các ví dụ trên Linux.  
+Tuy nhiên, tất cả các hệ điều hành đa dụng khác đều triển khai các chức năng tương tự, dù đôi khi theo những cách khác nhau.
 
+---
 
-### The Kernel
+### Kernel
 
-The term **operating system** is often used to refer to a large set of
-system-level software that performs some kind of resource management and
-that implements \"easy-to-use\" abstractions of the underlying system.
-In this chapter, we focus on the operating system **kernel**; thus, when
-we use the term OS alone, we mean the OS kernel.
+Thuật ngữ **operating system** thường được dùng để chỉ một tập hợp lớn phần mềm hệ thống thực hiện một số dạng quản lý tài nguyên và triển khai các abstraction “dễ sử dụng” của hệ thống bên dưới.  
+Trong chương này, chúng ta tập trung vào **kernel** của hệ điều hành; do đó, khi chỉ nói **OS**, ta đang đề cập đến **OS kernel**.
 
+**OS kernel** triển khai các chức năng cốt lõi của OS — những chức năng cần thiết cho bất kỳ việc sử dụng hệ thống nào.  
+Các chức năng này bao gồm:
 
-The OS kernel implements core OS functionality --- the functionality
-necessary for any use of the system. This functionality includes
-managing the computer hardware layer to run programs, implementing and
-managing OS abstractions exported to users of the system (e.g., files
-are an OS abstraction on top of stored data), and implementing
-interfaces to the user applications layer and to the hardware device
-layer. The kernel implements **mechanisms** to enable the hardware to
-run programs and to implement its abstractions such as processes.
-Mechanisms are the \"how\" part of OS functionality. The kernel also
-implements **policies** for efficiently managing the computer hardware
-and for governing its abstractions. Policies dictate the \"what,\"
-\"when,\" and \"to whom\" part of OS functionality. For example, a
-mechanism implements initializing the CPU to run instructions from a
-particular process, and a policy decides which process gets to run next
-on the CPU.
+- Quản lý tầng phần cứng máy tính để chạy chương trình.
+- Triển khai và quản lý các abstraction của OS cung cấp cho người dùng hệ thống (ví dụ: **file** là một abstraction của OS trên dữ liệu lưu trữ).
+- Triển khai các **interface** (giao diện) tới tầng ứng dụng người dùng và tới tầng thiết bị phần cứng.
 
+Kernel triển khai các **mechanism** (cơ chế) để cho phép phần cứng chạy chương trình và triển khai các abstraction như process.  
+**Mechanism** là phần “làm thế nào” của chức năng OS.  
+Kernel cũng triển khai các **policy** (chính sách) để quản lý hiệu quả phần cứng và điều khiển các abstraction của nó.  
+**Policy** quyết định phần “cái gì”, “khi nào” và “cho ai” của chức năng OS.  
+Ví dụ: một mechanism triển khai việc khởi tạo CPU để chạy lệnh từ một process cụ thể, còn policy sẽ quyết định process nào được chạy tiếp theo trên CPU.
 
-The kernel implements a programming interface for users of the system:
-the **system call interface**. Users and programs interact with the OS
-through its system call interface. For example, if a program wants to
-know the current time of day, it can obtain that information from the OS
-by invoking the `gettimeofday` system call.
+---
 
+Kernel triển khai **system call interface** (giao diện lời gọi hệ thống) cho người dùng hệ thống.  
+Người dùng và chương trình tương tác với OS thông qua system call interface này.  
+Ví dụ: nếu một chương trình muốn biết thời gian hiện tại trong ngày, nó có thể lấy thông tin đó từ OS bằng cách gọi system call `gettimeofday`.
 
-The kernel also provides an interface for interacting with hardware
-devices (the **device interface**). Typically, I/O devices such as hard
-disk drives (HDDs), keyboards, and solid-state drives (SSDs) interact
-with the kernel through this interface. These devices come with special
-device driver software that runs in the OS and handles transferring data
-to or from a specific device. The device driver software interacts with
-the OS through the OS's device interface; a new device can be added to a
-computer system by loading its device driver code, written to conform to
-the OS's device interface, into the OS. The kernel directly manages
-other hardware devices, such as the CPU and RAM. Figure 2
-shows the OS kernel layer between the user applications and the computer
-hardware, including its programming interface to users and its hardware
-device interface.
+Kernel cũng cung cấp **device interface** (giao diện thiết bị) để tương tác với phần cứng.  
+Thông thường, các thiết bị I/O như **HDD** (ổ cứng), bàn phím, và **SSD** (ổ thể rắn) tương tác với kernel thông qua giao diện này.  
+Các thiết bị này đi kèm với **device driver** (trình điều khiển thiết bị) đặc biệt, chạy trong OS và xử lý việc truyền dữ liệu tới hoặc từ thiết bị.  
+Device driver tương tác với OS thông qua device interface; một thiết bị mới có thể được thêm vào hệ thống bằng cách nạp mã device driver của nó (được viết tuân theo device interface của OS) vào OS.  
+Kernel trực tiếp quản lý các thiết bị phần cứng khác như CPU và RAM.  
 
-
-
+**Hình 2** cho thấy lớp OS kernel nằm giữa ứng dụng người dùng và phần cứng máy tính, bao gồm cả giao diện lập trình cho người dùng và giao diện thiết bị phần cứng.
 
 ![OS kernel implements an interface to applications and to hardware devices](_images/osinterfaces.png)
 
+**Hình 2.** OS kernel: chức năng cốt lõi của OS cần thiết để sử dụng hệ thống và hỗ trợ sự phối hợp giữa thiết bị I/O và người dùng hệ thống.
 
-Figure 2. The OS kernel: core OS functionality necessary to use the
-system and facilitate cooperation between I/O devices and users of the
-system
+---
 
+Trong phần còn lại của chương này, chúng ta sẽ xem xét vai trò của OS trong việc chạy chương trình và quản lý hiệu quả tài nguyên hệ thống.  
+Phần thảo luận chủ yếu tập trung vào **mechanism** (cách thức) của chức năng OS và việc triển khai hai abstraction chính của OS:
 
-In the rest of this chapter, we examine the role the operating system
-plays in running programs and in efficiently managing system resources.
-Our discussion is primarily focused on the mechanism (the \"how\") of
-the OS functionality and the implementation of two primary OS
-abstractions: a **process** (a running program) and **virtual memory**
-(a view of process memory space that is abstracted from its underlying
-physical storage in RAM or secondary storage).
-
-
-
-
-
+- **Process**: một chương trình đang chạy.
+- **Virtual memory**: một góc nhìn về không gian bộ nhớ của process, được trừu tượng hóa khỏi bộ nhớ vật lý bên dưới trong RAM hoặc bộ nhớ phụ.

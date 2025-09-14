@@ -1,278 +1,108 @@
+## 8.3. Arithmetic Instructions (Các lệnh số học)
 
+**IA32 ISA** triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi **ALU**. [Bảng 1](#OtherArithmetic32) liệt kê một số lệnh số học thường gặp khi đọc mã assembly.
 
- 
+| Instruction  | Translation |
+|--------------|-------------|
+| `add S, D`   | S + D → D |
+| `sub S, D`   | D - S → D |
+| `inc D`      | D + 1 → D |
+| `dec D`      | D - 1 → D |
+| `neg D`      | -D → D |
+| `imul S, D`  | S × D → D |
+| `idiv S`     | `%eax` / S : Q → `%eax`, R → `%edx` |
 
+**Bảng 1.** Các lệnh số học thông dụng.
 
+- Lệnh `add` và `sub` tương ứng với phép cộng và trừ, mỗi lệnh nhận hai toán hạng.  
+- Ba lệnh tiếp theo là các lệnh thao tác trên một thanh ghi duy nhất, tương ứng với các phép tăng (`x++`), giảm (`x--`) và đổi dấu (`-x`) trong C.  
+- Lệnh nhân (`imul`) hoạt động trên hai toán hạng và đặt kết quả vào toán hạng đích. Nếu kết quả cần nhiều hơn 32 bit để biểu diễn, giá trị sẽ bị cắt (truncate) xuống 32 bit.  
 
+Lệnh chia (`idiv`) hoạt động hơi khác: trước khi thực thi `idiv`, giả định rằng thanh ghi `%eax` chứa số bị chia (dividend). Gọi `idiv` với toán hạng S sẽ chia nội dung `%eax` cho S, đưa thương số (quotient) vào `%eax` và số dư (remainder) vào `%edx`.
 
+---
 
+### 8.3.1. Bit Shifting Instructions (Các lệnh dịch bit)
 
+Các lệnh dịch bit cho phép compiler thực hiện các phép dịch bit.  
+Các lệnh nhân và chia thường tốn nhiều thời gian để thực thi.  
+Dịch bit cung cấp cho compiler một cách tối ưu hơn khi nhân hoặc chia cho các số là lũy thừa của 2.  
 
--   -  
-        -  
-        -  
-        -   [8.3. Additional Arithmetic
-            Instructions]()
-        -   [8.4. Conditional Control and
-            Loops]()
-            -  
-            -  
-            -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
+Ví dụ: để tính `77 * 4`, hầu hết compiler sẽ dịch thành `77 << 2` để tránh dùng `imul`.  
+Tương tự, để tính `77 / 4`, compiler thường dịch thành `77 >> 2` để tránh dùng `idiv`.
 
+Cần lưu ý rằng dịch trái và dịch phải sẽ được dịch sang các lệnh khác nhau tùy thuộc vào mục tiêu là dịch số học (arithmetic – có dấu) hay dịch logic (logical – không dấu).
 
+| Instruction | Translation | Arithmetic or Logical? |
+|-------------|-------------|------------------------|
+| `sal v, D`  | D `<<` v → D | arithmetic |
+| `shl v, D`  | D `<<` v → D | logical |
+| `sar v, D`  | D `>>` v → D | arithmetic |
+| `shr v, D`  | D `>>` v → D | logical |
 
+**Bảng 2.** Các lệnh dịch bit.
 
+Mỗi lệnh dịch nhận hai toán hạng:  
+- Một toán hạng thường là thanh ghi (ký hiệu D).  
+- Toán hạng còn lại là giá trị dịch (*v*).  
 
+Trên hệ thống 32-bit, giá trị dịch được mã hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).  
+Giá trị dịch *v* phải là một hằng số hoặc được lưu trong thanh ghi `%cl`.
 
+---
 
+**Ghi chú:**  
+Ở cấp độ assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là số có dấu hay không dấu.  
+Compiler sử dụng các lệnh khác nhau để phân biệt giữa dịch logic và dịch số học.
 
+---
 
+### 8.3.2. Bitwise Instructions (Các lệnh thao tác bit)
 
+Các lệnh thao tác bit cho phép compiler thực hiện các phép toán bitwise trên dữ liệu.  
+Một cách compiler sử dụng các phép toán bitwise là để tối ưu hóa.  
+Ví dụ: compiler có thể chọn thực hiện `77 mod 4` bằng `77 & 3` thay vì dùng lệnh `idiv` tốn kém hơn.
 
+**Bảng 3** liệt kê các lệnh bitwise thông dụng:
 
+| Instruction | Translation |
+|-------------|-------------|
+| `and S, D`  | S `&` D → D |
+| `or S, D`   | S `|` D → D |
+| `xor S, D`  | S `^` D → D |
+| `not D`     | `~`D → D |
 
+**Bảng 3.** Các phép toán bitwise.
 
+Lưu ý: **bitwise `not`** khác với **negation (`neg`)**.  
+- `not` đảo tất cả các bit nhưng **không** cộng thêm 1.  
+- `neg` đổi dấu số (two’s complement), tức là đảo bit rồi cộng thêm 1.  
+Cần cẩn thận để không nhầm lẫn hai lệnh này.
 
+>> **Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong code C của bạn!**
+>> 
+>> Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này **không** được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để tự thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi thích hợp, vì vậy lập trình viên không cần phải làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của code bất cứ khi nào có thể và tránh tối ưu hóa quá sớm. |
 
+---
 
+### 8.3.3. Lệnh Load Effective Address
 
+*What's lea got to do (got to do) with it?*  
+*What's lea, but an effective address loading?*  
+\~ Xin lỗi Tina Turner
 
+Chúng ta cuối cùng cũng đến với **load effective address** hay lệnh `lea`, có lẽ là lệnh số học khiến sinh viên bối rối nhiều nhất. Lệnh này truyền thống được dùng như một cách nhanh để tính toán địa chỉ của một vị trí trong bộ nhớ. Lệnh `lea` hoạt động trên cùng cấu trúc toán hạng mà ta đã thấy từ trước đến giờ nhưng **không** bao gồm việc truy xuất bộ nhớ. Bất kể toán hạng chứa loại dữ liệu gì (dù là hằng số hay địa chỉ), `lea` chỉ đơn giản thực hiện phép toán số học.
 
+Ví dụ: giả sử thanh ghi `%eax` chứa giá trị hằng 0x5, thanh ghi `%edx` chứa giá trị hằng 0x4, và thanh ghi `%ecx` chứa giá trị 0x808 (thực tế là một địa chỉ). [Bảng 4](#leaEx32) đưa ra một số ví dụ về các phép `lea`, bản dịch và giá trị tương ứng.
 
-## 8.3. Arithmetic Instructions 
+| Instruction | Translation | Value |
+|-------------|-------------|-------|
+| `lea 8(%eax), %eax` | 8 + `%eax` → `%eax` | 13 → `%eax` |
+| `lea (%eax, %edx), %eax` | `%eax` + `%edx` → `%eax` | 9 → `%eax` |
+| `lea (,%eax,4), %eax` | `%eax` × 4 → `%eax` | 20 → `%eax` |
+| `lea -0x8(%ecx), %eax` | `%ecx` - 8 → `%eax` | 0x800 → `%eax` |
+| `lea -0x4(%ecx, %edx, 2), %eax` | `%ecx` + `%edx` × 2 - 4 → `%eax` | 0x80c → `%eax` |
 
-The IA32 ISA implements several instructions that correspond with
-arithmetic operations performed by the ALU. [Table
-1](#OtherArithmetic32) lists several arithmetic instructions that one
-may encounter when reading assembly.
+**Bảng 4.** Ví dụ về các phép `lea`.
 
-
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+===================================+===================================+
-| `add S, D`                        | S + D → D                         |
-+-----------------------------------+-----------------------------------+
-| `sub S, D`                        | D - S → D                         |
-+-----------------------------------+-----------------------------------+
-| `inc D`                           | D + 1 → D                         |
-+-----------------------------------+-----------------------------------+
-| `dec D`                           | D - 1 → D                         |
-+-----------------------------------+-----------------------------------+
-| `neg D`                           | -D → D                            |
-+-----------------------------------+-----------------------------------+
-| `imul S, D`                       | S × D → D                         |
-+-----------------------------------+-----------------------------------+
-| `idiv S`                          | `%eax` / S : Q → `%eax`, R →      |
-|                                   | `%edx`                            |
-+-----------------------------------+-----------------------------------+
-
-: Table 1. Common Arithmetic Instructions
-
-The `add` and `sub` instructions correspond to addition and subtraction,
-and take two operands each. The next three entries show the
-single-register instructions for the increment (`x++`), decrement
-(`x--`) and negation (`-x`) operations in C. The multiplication
-instruction operates on two operands and places the product in the
-destination. If the product requires more than 32 bits to represent, the
-value will be truncated to 32 bits.
-
-
-The division instruction works a little differently. Prior to the
-execution of the `idiv` instruction, it is assumed that register `%eax`
-contains the dividend. Calling `idiv` on operand S divides the contents
-of `%eax` by S and places the quotient in register `%eax`, and the
-remainder in register `%edx`.
-
-
-
-### 8.3.1. Bit Shifting Instructions 
-
-Bit shifting instructions enable the compiler to perform bit shifting
-operations. Multiplication and division instructions typically take a
-long time to execute. Bit shifting offers the compiler a shortcut for
-multiplicands and divisors that are powers of 2. For example, to compute
-`77 * 4`, most compilers will translate this operation to `77 << 2` to
-avoid the use of an `imul` instruction. Likewise, to compute `77 / 4`, a
-compiler typically translates this operation to `77 >> 2` to avoid using
-the `idiv` instruction.
-
-
-Keep in mind that left and right bit shift translate to different
-instructions based on whether the goal is an arithmetic (signed) or
-logical (unsigned) shift.
-
-
-+----------------------+----------------------+-----------------------+
-| Instruction          | Translation          | Arithmetic or         |
-|                      |                      | Logical?              |
-+======================+======================+=======================+
-| `sal v, D`           | D `<<` v → D         | arithmetic            |
-+----------------------+----------------------+-----------------------+
-| `shl v, D`           | D `<<` v → D         | logical               |
-+----------------------+----------------------+-----------------------+
-| `sar v, D`           | D `>>` v → D         | arithmetic            |
-+----------------------+----------------------+-----------------------+
-| `shr v, D`           | D `>>` v → D         | logical               |
-+----------------------+----------------------+-----------------------+
-
-: Table 2. Bit Shift Instructions
-
-Each shift instruction take two operands, one which is usually a
-register (denoted by D), and the other which is a shift value (*v*). On
-32-bit systems, the shift value is encoded as a single byte (because it
-doesn't make sense to shift past 31). The shift value *v* must either be
-a constant or be stored in register `%cl`.
-
-
-
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Different Versions of             |
-|                                   | Instructions help Distinguish     |
-|                                   | Types at an Assembly Level        |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | At the assembly level, there is   |
-|                                   | no notion of types. However,      |
-|                                   | recall that shift right works     |
-|                                   | differently depending on whether  |
-|                                   | or not the value is signed. At    |
-|                                   | the assembly level, the compiler  |
-|                                   | uses separate instructions to     |
-|                                   | distinguish between logical and   |
-|                                   | arithmetic shifts!                |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-
-### 8.3.2. Bitwise Instructions 
-
-Bitwise instructions enable the compiler to perform bitwise operations
-on data. One way the compiler uses bitwise operations is for certain
-optimizations. For example, a compiler may choose to implement 77 mod 4
-with the operation `77 & 3` in lieu of the more expensive `idiv`
-instruction.
-
-
-Table 3 lists common bitwise instructions.
-
-
-+-----------------------------------+-----------------------------------+
-| Instruction                       | Translation                       |
-+===================================+===================================+
-| `and S, D`                        | S `&` D → D                       |
-+-----------------------------------+-----------------------------------+
-| `or S, D`                         | S `|` D → D                       |
-+-----------------------------------+-----------------------------------+
-| `xor S, D`                        | S `^` D → D                       |
-+-----------------------------------+-----------------------------------+
-| `not D`                           | `~`D → D                          |
-+-----------------------------------+-----------------------------------+
-
-: Table 3. Bitwise Operations
-
-Remember that bitwise `not` is distinct from negation (`neg`). The `not`
-instruction flips the bits, but does not add 1. Be careful not to
-confuse these two instructions.
-
-
-
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Use bitwise operations only when  |
-|                                   | needed in your C code!            |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | After reading this section, it    |
-|                                   | may be tempting to replace common |
-|                                   | arithmetic operations in your C   |
-|                                   | code with bitwise shifts and      |
-|                                   | other operations. This is *not*   |
-|                                   | recommended. Most modern          |
-|                                   | compilers are smart enough to     |
-|                                   | replace simple arithmetic         |
-|                                   | operations with bitwise           |
-|                                   | operations when it makes sense,   |
-|                                   | making it unnecessary for the     |
-|                                   | programmer to do so. As a general |
-|                                   | rule, programmers should          |
-|                                   | prioritize code readability       |
-|                                   | whenever possible and avoid       |
-|                                   | premature optimization.           |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-
-### 8.3.3. The Load Effective Address Instruction 
-
-*What's lea got to do (got to do) with it?*
-
-
-*What's lea, but an effective address loading?*
-
-
-\~With apologies to Tina Turner
-
-
-We finally come to the **load effective address** or `lea` instruction,
-which is probably the arithmetic instruction that causes students the
-most consternation. It is traditionally used as a fast way to compute
-the address of a location in memory. The `lea` instruction operates on
-the same operand structure that we've seen thus far but does *not*
-include a memory lookup. Regardless of the type of data contained in the
-operand (whether it be a constant value or an address), `lea` simply
-performs arithmetic.
-
-
-For example, suppose that register `%eax` contains the constant value
-0x5, register `%edx` contains the constant value 0x4, and register
-`%ecx` contains the value 0x808 (which happens to be an address). [Table
-4](#leaEx32) gives some example `lea` operations, their translations,
-and corresponding values.
-
-
-+----------------------+----------------------+-----------------------+
-| Instruction          | Translation          | Value                 |
-+======================+======================+=======================+
-| `lea 8(%eax), %eax`  | 8 + `%eax` → `%eax`  | 13 → `%eax`           |
-+----------------------+----------------------+-----------------------+
-| `lea                 | `%eax` + `%edx` →    | 9 → `%eax`            |
-|  (%eax, %edx), %eax` | `%eax`               |                       |
-+----------------------+----------------------+-----------------------+
-| `                    | `%eax` × 4 → `%eax`  | 20 → `%eax`           |
-| lea (,%eax,4), %eax` |                      |                       |
-+----------------------+----------------------+-----------------------+
-| `l                   | `%ecx` - 8 → `%eax`  | 0x800 → `%eax`        |
-| ea -0x8(%ecx), %eax` |                      |                       |
-+----------------------+----------------------+-----------------------+
-| `lea -0x4(%          | `%ecx` + `%edx` ×    | 0x80c → `%eax`        |
-| ecx, %edx, 2), %eax` | 2 - 4 → `%eax`       |                       |
-+----------------------+----------------------+-----------------------+
-
-: Table 4. Example lea Operations
-
-In all cases, the `lea` instruction performs arithmetic on the operand
-specified by the source S and places the result in the destination
-operand D. The `mov` instruction is identical to the `lea` instruction
-*except* that the `mov` instruction is *required* to treat the contents
-in the source operand as a memory location if it is in a memory form. In
-contrast, `lea` performs the same (sometimes complicated) operand
-arithmetic *without* the memory lookup, enabling the compiler to
-cleverly use `lea` as a substitution for some types of arithmetic.
-
-
-
-
-
-
+Trong tất cả các trường hợp, lệnh `lea` thực hiện phép toán số học trên toán hạng nguồn S và đặt kết quả vào toán hạng đích D. Lệnh `mov` giống hệt `lea` **ngoại trừ** việc `mov` **bắt buộc** phải coi nội dung của toán hạng nguồn là một địa chỉ bộ nhớ nếu nó ở dạng địa chỉ bộ nhớ. Ngược lại, `lea` thực hiện cùng phép toán (đôi khi phức tạp) trên toán hạng **mà không** truy xuất bộ nhớ, cho phép compiler khéo léo dùng `lea` như một phép thay thế cho một số loại phép toán số học.

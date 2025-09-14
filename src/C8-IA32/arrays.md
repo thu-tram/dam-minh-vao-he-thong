@@ -1,151 +1,73 @@
+## 8.7. Mảng (Arrays)
 
+Hãy nhớ rằng [mảng](../C1-C_intro/arrays_strings.html#_introduction_to_arrays) là tập hợp có thứ tự của các phần tử dữ liệu cùng kiểu, được lưu trữ liên tiếp trong bộ nhớ.  
+Mảng một chiều được cấp phát tĩnh ([single-dimension arrays](../C2-C_depth/arrays.html#_single_dimensional_arrays)) có dạng `Type arr[N]`, trong đó:
 
- 
+- `Type` là kiểu dữ liệu,
+- `arr` là tên định danh của mảng,
+- `N` là số phần tử dữ liệu.
 
+Khai báo mảng tĩnh như `Type arr[N]` hoặc cấp phát động như `arr = malloc(N*sizeof(Type))` sẽ cấp phát tổng cộng *N* × sizeof(*Type*) byte bộ nhớ, với `arr` trỏ tới vùng nhớ đó.
 
+---
 
+Để truy cập phần tử tại chỉ số *i* trong mảng `arr`, sử dụng cú pháp `arr[i]`.  
+Compiler thường chuyển đổi các truy cập mảng thành [pointer arithmetic](../C2-C_depth/pointers.html#_pointer_variables) trước khi dịch sang assembly.  
+Do đó:
 
+- `arr + i` tương đương với `&arr[i]`
+- `*(arr + i)` tương đương với `arr[i]`
 
+Vì mỗi phần tử trong `arr` có kiểu `Type`, nên `arr + i` ngụ ý rằng phần tử *i* được lưu tại địa chỉ `arr + sizeof(Type) * i`.
 
+---
 
--   -  
-        -  
-        -  
-        -   [8.3. Additional Arithmetic
-            Instructions]()
-        -   [8.4. Conditional Control and
-            Loops]()
-            -  
-            -  
-            -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
+**Bảng 1** liệt kê một số thao tác mảng phổ biến và lệnh assembly tương ứng.  
+Giả sử:
 
+- Thanh ghi `%edx` lưu địa chỉ của `arr`
+- Thanh ghi `%ecx` lưu giá trị `i`
+- Thanh ghi `%eax` biểu diễn một biến `x`
 
+| Operation        | Type     | Assembly Representation |
+|------------------|----------|-------------------------|
+| `x = arr`        | `int *`  | `movl %edx, %eax`        |
+| `x = arr[0]`     | `int`    | `movl (%edx), %eax`      |
+| `x = arr[i]`     | `int`    | `movl (%edx, %ecx,4), %eax` |
+| `x = &arr[3]`    | `int *`  | `leal 0xc(%edx), %eax`   |
+| `x = arr+3`      | `int *`  | `leal 0xc(%edx), %eax`   |
+| `x = *(arr+3)`   | `int`    | `movl 0xc(%edx), %eax`   |
 
+**Bảng 1.** Các thao tác mảng phổ biến và lệnh assembly tương ứng.
 
+---
 
+Hãy chú ý đến **kiểu dữ liệu** của từng biểu thức trong bảng trên.  
+Thông thường, compiler dùng lệnh `movl` để dereference con trỏ và lệnh `leal` để tính toán địa chỉ.
 
+Lưu ý: để truy cập phần tử `arr[3]` (hoặc `*(arr+3)` khi dùng pointer arithmetic), compiler sẽ tìm nạp dữ liệu tại địa chỉ `arr + 3*4` thay vì `arr + 3`.  
+Nguyên nhân: bất kỳ phần tử nào tại chỉ số *i* trong mảng đều được lưu tại địa chỉ `arr + sizeof(Type) * i`.  
+Do đó, compiler phải nhân chỉ số với kích thước kiểu dữ liệu để tính đúng offset.  
+Hãy nhớ rằng bộ nhớ được đánh địa chỉ theo byte; việc dịch chuyển đúng số byte tương đương với việc tính toán địa chỉ chính xác.
 
+---
 
+Ví dụ: xét một mảng (`array`) gồm 5 phần tử kiểu `int` (**Hình 1**):
 
+![Each integer in the array requires four bytes.](_images/arrayFig.png)  
+**Hình 1.** Cách bố trí một mảng 5 số nguyên trong bộ nhớ. Mỗi ô được gắn nhãn x~i~ biểu diễn một byte, mỗi `int` chiếm 4 byte.
 
+Vì `array` là mảng số nguyên, mỗi phần tử chiếm đúng 4 byte.  
+Do đó, một mảng `int` gồm 5 phần tử sẽ tiêu tốn 20 byte bộ nhớ liên tiếp.
 
+Để tính địa chỉ của phần tử thứ 3, compiler nhân chỉ số 3 với kích thước kiểu `int` (4) để được offset 12.  
+Quả thật, phần tử thứ 3 trong **Hình 1** nằm tại byte offset x~12~.
 
+---
 
+Hãy xem một hàm C đơn giản `sumArray` tính tổng tất cả các phần tử trong mảng:
 
-
-
-
-
-
-
-
-## 8.7. Arrays 
-
-Recall that
-[arrays](../C1-C_intro/arrays_strings.html#_introduction_to_arrays)
-are ordered collections of data elements of the same type that are
-contiguously stored in memory. Statically allocated [single-dimension
-arrays](../C2-C_depth/arrays.html#_single_dimensional_arrays)
-have the form `Type arr[N]`, where `Type` is the data type, `arr` is the
-identifier associated with the array, and `N` is the number of data
-elements. Declaring an array statically as `Type arr[N]` or dynamically
-as `arr = malloc(N*sizeof(Type))` allocates *N* x sizeof(*Type*) total
-bytes of memory, with `arr` pointing to it.
-
-
-To access the element at index *i* in array `arr`, use the syntax
-`arr[i]`. Compilers commonly convert array references into [pointer
-arithmetic](../C2-C_depth/pointers.html#_pointer_variables) prior
-to translating to assembly. So, `arr+i` is equivalent to `&arr[i]`, and
-`*(arr+i)` is equivalent to `arr[i]`. Since each data element in `arr`
-is of type `Type`, `arr+i` implies that element *i* is stored at address
-`arr + sizeof(Type) * i`.
-
-
-Table 1 outlines some common array operations and their
-corresponding assembly instructions. Assume that register `%edx` stores
-the address of `arr`, register `%ecx` stores the value `i`, and register
-`%eax` represents some variable `x`.
-
-
-+----------------------+----------------------+-----------------------+
-| Operation            | Type                 | Assembly              |
-|                      |                      | Representation        |
-+======================+======================+=======================+
-| `x = arr`            | `int *`              | `movl %edx, %eax`     |
-+----------------------+----------------------+-----------------------+
-| `x = arr[0]`         | `int`                | `movl (%edx), %eax`   |
-+----------------------+----------------------+-----------------------+
-| `x = arr[i]`         | `int`                | `movl                 |
-|                      |                      | (%edx, %ecx,4), %eax` |
-+----------------------+----------------------+-----------------------+
-| `x = &arr[3]`        | `int *`              | `                     |
-|                      |                      | leal 0xc(%edx), %eax` |
-+----------------------+----------------------+-----------------------+
-| `x = arr+3`          | `int *`              | `                     |
-|                      |                      | leal 0xc(%edx), %eax` |
-+----------------------+----------------------+-----------------------+
-| `x = *(arr+3)`       | `int`                | `                     |
-|                      |                      | movl 0xc(%edx), %eax` |
-+----------------------+----------------------+-----------------------+
-
-: Table 1. Common Array Operations and Their Corresponding Assembly
-Representations
-
-Pay close attention to the *type* of each expression in
-\[ArrayOps\]. In general, the compiler uses `movl`
-instructions to dereference pointers and the `leal` instruction to
-compute addresses.
-
-
-Notice that to access element `arr[3]` (or `*(arr+3)` using pointer
-arithmetic), the compiler performs a memory lookup on address `arr+3*4`
-instead of `arr+3`. To understand why this is necessary, recall that any
-element at index *i* in an array is stored at address
-`arr + sizeof(Type) * i`. The compiler must therefore multiply the index
-by the size of the data type to compute the correct offset. Recall also
-that memory is byte-addressable; offsetting by the correct number of
-bytes is the same as computing an address.
-
-
-As an example, consider a sample array (`array`) with five integer
-elements (Figure 1):
-
-
-
-
-![Each integer in the array requires four bytes.](_images/arrayFig.png)
-
-
-Figure 1. The layout of a five-integer array in memory. Each
-x~i~-labeled box represents one byte, each int is four bytes.
-
-
-Notice that since `array` is an array of integers, each element takes up
-exactly four bytes. Thus, an integer array with five elements consumes
-20 bytes of contiguous memory.
-
-
-To compute the address of element 3, the compiler multiplies the index 3
-by the data size of the integer type (4) to yield an offset of 12. Sure
-enough, element 3 in \[FigArray6\] is located at byte
-offset x~12~.
-
-
-Let's take a look at a simple C function called `sumArray` that sums up
-all the elements in an array:
-
-
-
-
-```
+```c
 int sumArray(int *array, int length) {
     int i, total = 0;
     for (i = 0; i < length; i++) {
@@ -155,82 +77,61 @@ int sumArray(int *array, int length) {
 }
 ```
 
-
-The `sumArray` function takes the address of an array and the array's
-associated length and sums up all the elements in the array. Now take a
-look at the corresponding assembly for the `sumArray` function:
+Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng.  
+Tiếp theo, chúng ta sẽ xem mã assembly tương ứng của hàm `sumArray`.
 
 
+```
+<sumArray>:
+ <+0>:  push %ebp                    # lưu ebp
+ <+1>:  mov  %esp,%ebp               # cập nhật ebp (stack frame mới)
+ <+3>:  sub  $0x10,%esp              # thêm 16 byte vào stack frame
+ <+6>:  movl $0x0,-0x8(%ebp)         # copy 0 vào %ebp-8 (total)
+ <+13>: movl $0x0,-0x4(%ebp)         # copy 0 vào %ebp-4 (i)
+ <+20>: jmp  0x80484ab <sumArray+46> # goto <sumArray+46> (start)
+ <+22>: mov  -0x4(%ebp),%eax         # copy i vào %eax
+ <+25>: lea  0x0(,%eax,4),%edx       # copy i*4 vào %edx
+ <+32>: mov  0x8(%ebp),%eax          # copy array vào %eax
+ <+35>: add  %edx,%eax               # copy array+i*4 vào %eax
+ <+37>: mov  (%eax),%eax             # copy *(array+i*4) vào %eax
+ <+39>: add  %eax,-0x8(%ebp)         # cộng *(array+i*4) vào total
+ <+42>: addl $0x1,-0x4(%ebp)         # cộng 1 vào i
+ <+46>: mov  -0x4(%ebp),%eax         # copy i vào %eax
+ <+49>: cmp  0xc(%ebp),%eax          # so sánh i với length
+ <+52>: jl   0x8048493 <sumArray+22> # nếu i<length goto <sumArray+22> (loop)
+ <+54>: mov  -0x8(%ebp),%eax         # copy total vào %eax
+ <+57>: leave                        # chuẩn bị thoát hàm
+ <+58>: ret                          # trả về total
+```
 
+Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu được truy cập là một **địa chỉ** hay một **giá trị**.  
+Ví dụ: lệnh tại `<sumArray+13>` khiến `%ebp-4` chứa một biến kiểu `int`, ban đầu được gán giá trị 0.  
+Ngược lại, đối số được lưu tại `%ebp+8` là tham số đầu tiên của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ cơ sở của mảng.  
+Một biến khác (chúng ta gọi là `total`) được lưu tại `%ebp-8`.
 
-    <sumArray>:
-     <+0>:  push %ebp                    # save ebp
-     <+1>:  mov  %esp,%ebp               # update ebp (new stack frame)
-     <+3>:  sub  $0x10,%esp              # add 16 bytes to stack frame
-     <+6>:  movl $0x0,-0x8(%ebp)         # copy 0 to %ebp-8 (total)
-     <+13>: movl $0x0,-0x4(%ebp)         # copy 0 to %ebp-4 (i)
-     <+20>: jmp  0x80484ab <sumArray+46> # goto <sumArray+46> (start)
-     <+22>: mov  -0x4(%ebp),%eax         # copy i to %eax
-     <+25>: lea  0x0(,%eax,4),%edx       # copy i*4 to %edx
-     <+32>: mov  0x8(%ebp),%eax          # copy array to %eax
-     <+35>: add  %edx,%eax               # copy array+i*4 to %eax
-     <+37>: mov  (%eax),%eax             # copy *(array+i*4) to %eax
-     <+39>: add  %eax,-0x8(%ebp)         # add *(array+i*4) to total
-     <+42>: addl $0x1,-0x4(%ebp)         # add 1 to i
-     <+46>: mov  -0x4(%ebp),%eax         # copy i to %eax
-     <+49>: cmp  0xc(%ebp),%eax          # compare i with length
-     <+52>: jl   0x8048493 <sumArray+22> # if i<length goto <sumArray+22> (loop)
-     <+54>: mov  -0x8(%ebp),%eax         # copy total to eax
-     <+57>: leave                        # prepare to leave the function
-     <+58>: ret                          # return total
+---
 
+Hãy xem kỹ hơn 5 lệnh từ `<sumArray+22>` đến `<sumArray+39>`:
 
-When tracing this assembly code, consider whether the data being
-accessed represents an address or a value. For example, the instruction
-at `<sumArray+13>` results in `%ebp-4` containing a variable of type
-`int`, which is initially set to 0. In contrast, the argument stored at
-`%ebp+8` is the first argument to the function (`array`) which is of
-type `int *` and corresponds to the base address of the array. A
-different variable (which we call `total`) is stored at location
-`%ebp-8`.
+```
+<+22>: mov  -0x4(%ebp),%eax      # copy i vào %eax
+<+25>: lea  0x0(,%eax,4),%edx    # copy i*4 vào %edx
+<+32>: mov  0x8(%ebp),%eax       # copy array vào %eax
+<+35>: add  %edx,%eax            # copy array+i*4 vào %eax
+<+37>: mov  (%eax),%eax          # copy *(array+i*4) vào %eax
+<+39>: add  %eax,-0x8(%ebp)      # cộng *(array+i*4) vào total (total += array[i])
+```
 
+Hãy nhớ rằng compiler thường dùng `lea` để thực hiện các phép toán số học đơn giản trên toán hạng.  
+Toán hạng `0x0(,%eax,4)` tương đương với `%eax*4 + 0x0`.  
+Vì `%eax` đang giữ giá trị `i`, phép toán này sẽ copy giá trị `i*4` vào `%edx`.  
+Tại thời điểm này, `%edx` chứa số byte cần cộng thêm để tính đúng offset của `array[i]`.
 
-Let's take a closer look at the five instructions between locations
-`<sumArray+22>` and `<sumArray+39>`:
+Lệnh tiếp theo (`mov 0x8(%ebp), %eax`) copy tham số đầu tiên (địa chỉ cơ sở của `array`) vào `%eax`.  
+Cộng `%edx` vào `%eax` ở lệnh kế tiếp khiến `%eax` chứa `array + i*4`.  
+Hãy nhớ rằng phần tử tại chỉ số *i* trong `array` được lưu tại địa chỉ `array + sizeof(T) * i`.  
+Do đó, `%eax` lúc này chứa kết quả tính toán ở cấp độ assembly của địa chỉ `&array[i]`.
 
-
-
-
-    <+22>: mov  -0x4(%ebp),%eax      # copy i to %eax
-    <+25>: lea  0x0(,%eax,4),%edx    # copy i*4 to %edx
-    <+32>: mov  0x8(%ebp),%eax       # copy array to %eax
-    <+35>: add  %edx,%eax            # copy array+i*4 to %eax
-    <+37>: mov  (%eax),%eax          # copy *(array+i*4) to %eax
-    <+39>: add  %eax,-0x8(%ebp)      # add *(array+i*4) to total (total+=array[i])
-
-
-Recall that the compiler commonly uses `lea` to perform simple
-arithmetic on operands. The operand `0x0(,%eax,4)` translates to
-`%eax*4 + 0x0`. Since `%eax` holds the value `i`, this operation copies
-the value `i*4` to `%edx`. At this point, `%edx` contains the number of
-bytes that must be added to calculate the correct offset of `array[i]`.
-
-
-The next instruction (`mov 0x8(%ebp), %eax`) copies the first argument
-(the base address of `array`) into `%eax`. Adding `%edx` to `%eax` in
-the next instruction causes `%eax` to contain `array+i*4`. Recall that
-the element at index *i* in `array` is stored at address
-`array + sizeof(T) * i`. Therefore, `%eax` now contains the
-assembly-level computation of the address `&array[i]`.
-
-
-The instruction at `<sumArray+37>` *dereferences* the value located at
-`%eax`, placing the value `array[i]` into `%eax`. Lastly, `%eax` is
-added to the value in `%ebp-8`, or `total`. Therefore, the five
-instructions between locations `<sumArray+22>` and `<sumArray+39>`
-correspond to the line `total += array[i]` in the `sumArray` function.
-
-
-
-
-
+Lệnh tại `<sumArray+37>` *dereference* giá trị tại `%eax`, đưa giá trị `array[i]` vào `%eax`.  
+Cuối cùng, `%eax` được cộng vào giá trị tại `%ebp-8` (tức `total`).  
+Vì vậy, 5 lệnh từ `<sumArray+22>` đến `<sumArray+39>` tương ứng với dòng `total += array[i]` trong hàm `sumArray`.

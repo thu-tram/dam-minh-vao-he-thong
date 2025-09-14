@@ -1,881 +1,418 @@
 
+## 11.4. CPU Caches
 
+Sau khi đã [phân loại các thiết bị lưu trữ](devices.html#_storage_devices) và nhận ra các mẫu quan trọng của [temporal locality và spatial locality](locality.html#_locality), giờ chúng ta sẵn sàng tìm hiểu cách CPU cache được thiết kế và triển khai.  
+**Cache** là một thiết bị lưu trữ nhỏ, tốc độ cao nằm trên CPU, chứa một tập con giới hạn của dữ liệu từ bộ nhớ chính (main memory).  
+Cache phải đối mặt với một số câu hỏi thiết kế quan trọng:
 
+- **Nên chứa** tập con nào của bộ nhớ chương trình?
+- **Khi nào** cache nên sao chép một phần dữ liệu từ bộ nhớ chính vào cache, hoặc ngược lại?
+- **Làm thế nào** hệ thống xác định được dữ liệu của chương trình có đang nằm trong cache hay không?
 
+---
 
+Trước khi đi sâu vào các câu hỏi này, chúng ta cần giới thiệu một số hành vi và thuật ngữ liên quan đến cache.  
+Hãy nhớ rằng khi truy cập dữ liệu trong bộ nhớ, chương trình trước tiên sẽ [tính toán địa chỉ bộ nhớ của dữ liệu](../C8-IA32/basics.html#_instruction_structure).  
+Lý tưởng nhất là dữ liệu tại địa chỉ mong muốn đã có sẵn trong cache, cho phép chương trình bỏ qua việc truy cập bộ nhớ chính.  
+Để tối đa hóa hiệu năng, phần cứng sẽ đồng thời gửi địa chỉ cần truy cập tới **cả cache và bộ nhớ chính**.  
+Vì cache nhanh hơn và gần ALU hơn, nó sẽ phản hồi nhanh hơn nhiều so với bộ nhớ chính.  
+Nếu dữ liệu có trong cache (**cache hit**), phần cứng cache sẽ hủy yêu cầu truy cập bộ nhớ đang chờ, vì cache có thể cung cấp dữ liệu nhanh hơn.
 
+Ngược lại, nếu dữ liệu không có trong cache (**cache miss**), CPU buộc phải chờ bộ nhớ chính trả về dữ liệu.  
+Điểm quan trọng là khi yêu cầu tới bộ nhớ chính hoàn tất, CPU sẽ nạp dữ liệu vừa lấy được vào cache để các yêu cầu tiếp theo tới cùng địa chỉ đó (rất có khả năng xảy ra nhờ **temporal locality**) có thể được phục vụ nhanh chóng từ cache.  
+Ngay cả khi thao tác bộ nhớ gây ra miss là **ghi** dữ liệu, CPU vẫn nạp giá trị đó vào cache, vì nhiều khả năng chương trình sẽ truy cập lại vị trí này trong tương lai.
 
+Khi nạp dữ liệu vào cache sau một lần miss, CPU thường thấy cache không còn đủ chỗ trống.  
+Trong trường hợp này, cache phải **evict** (loại bỏ) một số dữ liệu đang có để nhường chỗ cho dữ liệu mới.  
+Vì cache lưu các bản sao dữ liệu từ bộ nhớ chính, nếu dữ liệu bị loại bỏ đã bị sửa đổi, cache phải ghi lại nội dung đó về bộ nhớ chính trước khi xóa nó khỏi cache.
 
+Để cung cấp đầy đủ các chức năng trên, các nhà thiết kế cache thường áp dụng một trong ba kiến trúc.  
+Phần này bắt đầu với *direct-mapped cache*, loại đơn giản hơn so với các thiết kế khác.
 
+---
 
+### 11.4.1. Direct-Mapped Caches
 
+Một **direct-mapped cache** chia không gian lưu trữ của nó thành các đơn vị gọi là **cache line**.  
+Tùy vào kích thước, cache có thể chứa hàng chục, hàng trăm hoặc thậm chí hàng nghìn cache line.  
+Trong direct-mapped cache, mỗi cache line độc lập với các line khác và chứa hai loại thông tin quan trọng: **cache data block** và **metadata**.
 
+1. **Cache data block** (thường gọi tắt là **cache block**) lưu một tập con dữ liệu chương trình từ bộ nhớ chính.  
+   Cache block lưu các khối dữ liệu nhiều byte để tận dụng [spatial locality](locality.html#_spatial_locality).  
+   Kích thước cache block quyết định đơn vị dữ liệu được truyền giữa cache và bộ nhớ chính.  
+   Nghĩa là, khi nạp dữ liệu từ bộ nhớ vào cache, cache luôn nhận một khối dữ liệu có kích thước bằng cache block.
 
+   Các nhà thiết kế cache phải cân bằng giữa hai yếu tố khi chọn kích thước block.  
+   Với dung lượng lưu trữ cố định, cache có thể chứa nhiều block nhỏ hơn hoặc ít block lớn hơn.  
+   Block lớn giúp cải thiện hiệu năng cho các chương trình có spatial locality tốt, trong khi nhiều block hơn cho phép cache lưu trữ đa dạng hơn các vùng bộ nhớ.  
+   Chiến lược nào tốt hơn phụ thuộc vào đặc thù tải công việc của ứng dụng.  
+   Vì CPU đa dụng không thể giả định trước về ứng dụng, cache của CPU hiện đại thường chọn kích thước block trung bình, khoảng 16–64 byte.
 
+2. **Metadata** lưu thông tin về nội dung của cache block.  
+   Metadata **không** chứa dữ liệu chương trình, mà lưu thông tin quản lý cho cache line (ví dụ: giúp xác định cache block này chứa phần nào của bộ nhớ).
 
+---
 
+Khi chương trình cố truy cập một địa chỉ bộ nhớ, cache cần biết phải tìm ở đâu để lấy dữ liệu tương ứng, kiểm tra xem dữ liệu có sẵn ở vị trí đó trong cache hay không, và nếu có thì trả về phần dữ liệu cần thiết cho ứng dụng.  
+Quy trình này gồm các bước sau.
 
+#### Xác định vị trí dữ liệu trong cache
 
-## 11.4. CPU Caches 
+Cache phải nhanh chóng xác định xem tập con bộ nhớ tương ứng với địa chỉ yêu cầu có đang nằm trong cache hay không.  
+Để làm điều này, cache trước tiên phải xác định cache line cần kiểm tra.  
+Trong direct-mapped cache, **mỗi địa chỉ bộ nhớ ánh xạ tới đúng một cache line duy nhất**.  
+Điều này giải thích tên gọi *direct-mapped* — ánh xạ trực tiếp mỗi địa chỉ bộ nhớ tới một cache line.
 
-Having [characterized storage
-devices](devices.html#_storage_devices) and recognized the
-important patterns of [temporal and spatial
-locality](locality.html#_locality), we're ready to explore how
-CPU caches are designed and implemented. A **cache** is a small, fast
-storage device on a CPU that holds limited subsets of main memory.
-Caches face several important design questions:
+---
 
+**Hình 1** minh họa cách các địa chỉ bộ nhớ ánh xạ tới cache line trong một direct-mapped cache nhỏ có 4 cache line và kích thước cache block là 32 byte.  
+Hãy nhớ rằng kích thước block của cache là đơn vị truyền dữ liệu nhỏ nhất giữa cache và bộ nhớ chính.  
+Do đó, mỗi địa chỉ bộ nhớ thuộc về một khoảng 32 byte, và mỗi khoảng này ánh xạ tới một cache line.
 
+![Each 32-byte region of memory maps to one cache line in a repeating striped pattern. That is, memory regions 0, 4, 8, ...​ map to line 0, regions 1, 5, 9, ...​ map to line 1, regions 2, 6, 10, ...​ map to line 2, and regions 3, 7, 11, ...​ map to line 3.](_images/DirectMapping.png)  
 
--   *Which* subsets of a program's memory should the cache hold?
+**Hình 1.** Ví dụ ánh xạ địa chỉ bộ nhớ tới cache line trong direct-mapped cache 4 line với cache block 32 byte.
 
--   *When* should the cache copy a subset of a program's data from main
-    memory to the cache, or vice versa?
+---
 
--   *How* can a system determine whether a program's data is present in
-    the cache?
+Lưu ý rằng mặc dù mỗi vùng bộ nhớ chỉ ánh xạ tới một cache line, nhưng nhiều vùng bộ nhớ khác nhau có thể ánh xạ tới **cùng một** cache line.  
+Tất cả các vùng bộ nhớ ánh xạ tới cùng một cache line (tức các khối cùng màu trong Hình 1) sẽ cạnh tranh không gian trong line đó, nên tại một thời điểm chỉ một vùng của mỗi màu có thể nằm trong cache.
 
-
-Before exploring these challenging questions, we need to introduce some
-cache behavior and terminology. Recall that when accessing data in
-memory, a program first [computes the data's memory
-address](../C8-IA32/basics.html#_instruction_structure). Ideally,
-the data at the desired address already resides in the cache, allowing
-the program to skip accessing main memory altogether. To maximize
-performance, the hardware simultaneously sends the desired address to
-*both* the cache and main memory. Because the cache is faster and closer
-to the ALU, the cache responds much more quickly than memory. If the
-data is present in the cache (a **cache hit**), the cache hardware
-cancels the pending memory access because the cache can serve the data
-faster than memory.
-
-
-Otherwise, if the data isn't in the cache (a **cache miss**), the CPU
-has no choice but to wait for memory to retrieve it. Critically though,
-when the request to main memory completes, the CPU loads the retrieved
-data into the cache so that subsequent requests for the same address
-(which are likely thanks to temporal locality) can be serviced quickly
-from the cache. Even if the memory access that misses is *writing* to
-memory, the CPU still loads the value into the cache on a miss because
-it's likely that the program will attempt to access the same location
-again in the future.
-
-
-When loading data into a cache after a miss, a CPU often finds that the
-cache doesn't have enough free space available. In such cases, the cache
-must first **evict** some resident data to make room for the new data
-that it's loading in. Because a cache stores subsets of data copied from
-main memory, evicting cached data that has been modified requires the
-cache to update the contents of main memory prior to evicting data from
-the cache.
-
-
-To provide all the aforementioned functionality, cache designers employ
-one of three designs. This section begins by examining *direct-mapped
-caches*, which are less complex than the other designs.
-
-
-
-### 11.4.1. Direct-Mapped Caches 
-
-A direct-mapped cache divides its storage space into units called
-**cache lines**. Depending on the size of a cache, it might hold dozens,
-hundreds, or even thousands of cache lines. In a direct-mapped cache,
-each cache line is independent of all the others and contains two
-important types of information: a *cache data block* and *metadata*.
-
-
-
-1.  A **cache data block** (often shortened to **cache block**) stores a
-    subset of program data from main memory. Cache blocks store
-    multibyte chunks of program data to take advantage of [spatial
-    locality](locality.html#_spatial_locality). The size of a
-    cache block determines the unit of data transfer between the cache
-    and main memory. That is, when loading a cache with data from
-    memory, the cache always receives a chunk of data the size of a
-    cache block.
-
-        Cache designers balance a trade-off in choosing a cache's block
-    size. Given a fixed storage budget, a cache can store more smaller
-    blocks or fewer larger blocks. Using larger blocks improves
-    performance for programs that exhibit good spatial locality, whereas
-    having more blocks gives a cache the opportunity to store a more
-    diverse subset of memory. Ultimately, which strategy provides the
-    best performance depends on the workload of applications. Because
-    general-purpose CPUs can't assume much about a system's
-    applications, a typical CPU cache today uses middle-of-the-road
-    block sizes ranging from 16 to 64 bytes.
-    
-
-2.  **Metadata** stores information about the contents of the cache
-    line's data block. A cache line's metadata does *not* contain
-    program data. Instead, it maintains bookkeeping information for the
-    cache line (for example, to help identify which subset of memory the
-    cache line's data block holds).
-
-
-When a program attempts to access a memory address, a cache must know
-where to look to find the corresponding data, check whether the desired
-data is available at that cache location, and if so, retrieve a portion
-of the stored cache block to the requesting application. The following
-steps walk through the details of this process for finding data in a
-cache and retrieving it.
-
-
-
-#### Locating Cached Data 
-
-A cache must be able to quickly determine whether the subset of memory
-corresponding to a requested address currently resides in the cache. To
-answer that question, a cache must first determine which cache line(s)
-to check. In a direct-mapped cache, each address in memory corresponds
-to *exactly* one cache line. This restriction explains the
-*direct-mapped* name --- it maps every memory address directly to one
-cache line.
-
-
-Figure 1 shows how memory addresses map to cache
-lines in a small direct-mapped cache with four cache lines and a 32-byte
-cache block size. Recall that a cache's block size represents the
-smallest unit of data transfer between a cache and main memory. Thus,
-every memory address falls within one 32-byte range, and each range maps
-to one cache line.
-
-
-
-
-![Each 32-byte region of memory maps to one cache line in a repeating striped pattern. That is, memory regions 0, 4, 8, ...​ map to line 0, regions 1, 5, 9, ...​ map to line 1, regions 2, 6, 10, ...​ map to line 2, and regions 3, 7, 11, ...​ map to line 3.](_images/DirectMapping.png)
-
-
-Figure 1. An example mapping of memory addresses to cache lines in a
-four-line direct-mapped cache with 32-byte cache blocks
-
-
-Note that although each region of memory maps to only one cache line,
-many memory ranges map to the *same* cache line. All of the memory
-regions that map the same cache line (that is, chunks of the same color
-in Figure 1) compete for space in the same cache
-line, so only one region of each color can reside in the cache at a
-time.
-
-
-A cache maps a memory address to a cache line using a portion of the
-bits in the memory address. To spread data more evenly among cache
-lines, caches use bits taken from the *middle* of the memory address,
-known as the **index** portion of the address, to determine which line
-the address maps to. The number of bits used as the index (which varies)
-determines how many lines a cache will hold. [Figure
-2](#FigAddressIndex) shows the index portion of a memory address
-referring to a cache line.
-
-
-
+Cache ánh xạ một địa chỉ bộ nhớ tới cache line bằng cách sử dụng một phần bit trong địa chỉ bộ nhớ.  
+Để phân bố dữ liệu đồng đều hơn giữa các cache line, cache sử dụng các bit ở **giữa** địa chỉ bộ nhớ, gọi là **index** của địa chỉ, để xác định line mà địa chỉ đó ánh xạ tới.  
+Số bit dùng làm index (thay đổi tùy thiết kế) quyết định số lượng line mà cache có thể chứa.  
+[Hình 2](#FigAddressIndex) minh họa phần index của một địa chỉ bộ nhớ trỏ tới một cache line.
 
 ![An address is divided into three regions, and the middle region points to one row (cache line) of a table (direct-mapped cache).](_images/AddressIndex.png)
 
+**Hình 2.** Phần *index* ở giữa của một địa chỉ bộ nhớ xác định một cache line.
 
-Figure 2. The middle *index* portion of a memory address identifies a
-cache line.
+---
 
+Việc sử dụng các bit ở giữa địa chỉ giúp giảm cạnh tranh cho cùng một cache line khi dữ liệu chương trình được lưu trữ gần nhau — điều này thường xảy ra với các chương trình có **locality** tốt.  
+Nói cách khác, các chương trình thường lưu các biến gần nhau trong một vài vùng bộ nhớ nhất định (ví dụ: trên stack hoặc heap).  
+Những biến được lưu gần nhau này sẽ có cùng các bit bậc cao (high-order bits) trong địa chỉ.  
+Nếu dùng các bit bậc cao để làm index, tất cả các biến này sẽ ánh xạ tới cùng một nhóm cache line, khiến phần còn lại của cache không được sử dụng.  
+Bằng cách dùng các bit ở giữa địa chỉ, cache có thể phân bổ dữ liệu đồng đều hơn giữa các cache line hiện có.
 
-Using the middle of the address reduces competition for the same cache
-line when program data is clustered together, which is often the case
-for programs that exhibit good locality. That is, programs tend to store
-variables nearby one another in one of a few locations (for example, on
-the stack or heap). Such clustered variables share the same high-order
-address bits. Thus, indexing with the high-order bits would cause the
-clustered variables to all map to the same cache lines, leaving the rest
-of the cache unused. By using bits from the middle of the address,
-caches spread data more evenly among the available cache lines.
+---
 
+### Xác định nội dung của Cache
 
+Sau khi đã xác định được cache line phù hợp, cache cần biết liệu line đó có chứa địa chỉ được yêu cầu hay không.  
+Vì nhiều vùng bộ nhớ khác nhau có thể ánh xạ tới cùng một cache line, cache sẽ kiểm tra **metadata** của line để trả lời hai câu hỏi quan trọng:  
+- *Cache line này có chứa một tập con hợp lệ của bộ nhớ không?*  
+- *Nếu có, trong số nhiều tập con ánh xạ tới cache line này, nó hiện đang chứa tập con nào?*
 
-#### Identifying Cache Contents 
+Để trả lời, metadata của mỗi cache line sẽ bao gồm **valid bit** và **tag**:
 
-Next, having located the appropriate cache line, the cache must
-determine whether that line holds the requested address. Because
-multiple memory ranges map to the same cache line, the cache examines
-the line's metadata to answer two important questions: *Does this cache
-line hold a valid subset of memory?* *If so, which of the many subsets
-of memory that map to this cache line does it currently hold?*
+- **Valid bit**: là một bit cho biết line hiện có đang lưu một tập con hợp lệ của bộ nhớ hay không (valid = 1 nghĩa là hợp lệ).  
+  Một line không hợp lệ (valid = 0) sẽ không bao giờ tạo ra cache hit vì chưa có dữ liệu nào được nạp vào.  
+  Các line không hợp lệ thực chất là vùng trống trong cache.
 
+- **Tag**: xác định duy nhất tập con bộ nhớ mà cache block trong line đang lưu.  
+  Tag lưu các bit bậc cao của dải địa chỉ được lưu trong cache line, cho phép cache biết dữ liệu này đến từ đâu trong bộ nhớ.  
+  Vì nhiều tập con bộ nhớ có thể ánh xạ tới cùng một cache line (có cùng index bits), tag sẽ ghi lại tập con nào hiện đang có mặt.
 
-To answer these questions, each cache line's metadata includes a valid
-bit and a tag. The **valid bit** is a single bit that indicates whether
-a line is currently storing a valid subset of memory (if valid is set to
-1). An invalid line (if valid is set to 0) never produces a cache hit
-because no data has been loaded into it. Invalid lines effectively
-represent free space in the cache.
+Để một lần tra cứu cache tạo ra **hit**, tag lưu trong cache line phải **khớp chính xác** với phần tag (các bit bậc cao) của địa chỉ bộ nhớ được yêu cầu.  
+Nếu tag không khớp, nghĩa là cache block trong line đó không chứa dữ liệu cần tìm, ngay cả khi line đang hợp lệ.
 
+**Hình 3** minh họa cách cache chia một địa chỉ bộ nhớ thành **tag** và **index**, dùng index bits để chọn cache line, kiểm tra valid bit, và so sánh tag.
 
-In addition to a valid bit, each cache line's metadata stores a **tag**
-that uniquely identifies which subset of memory the line's cache block
-holds. The tag field stores the high-order bits of the address range
-stored in the cache line and allows a cache line to track where in
-memory its data block came from. In other words, because many memory
-subsets map to the same cache line (those with the same index bits), the
-tag records which of those subsets is currently present in the cache
-line.
+![The cache sends the address's tag to a comparator circuit to check whether it matches the tag stored in the cache line.](_images/AddressTag.png)  
+**Hình 3.** Sau khi dùng index bits của địa chỉ để tìm cache line, cache đồng thời kiểm tra valid bit và so sánh tag của line với tag của địa chỉ yêu cầu. Nếu line hợp lệ và tag khớp, đây là một cache hit.
 
+---
 
-For a cache lookup to produce a hit, the tag field stored in the cache
-line must exactly match the tag portion (upper bits) of the program's
-requested memory address. A tag mismatch indicates that a cache line's
-data block does not contain the requested memory, even if the line
-stores valid data. Figure 3 illustrates how a cache
-divides a memory address into a tag and an index, uses the index bits to
-select a target cache line, verifies a line's valid bit, and checks the
-line's tag for a match.
+### Truy xuất dữ liệu từ Cache
 
+Cuối cùng, sau khi tìm được cache line phù hợp và xác nhận line đó chứa một tập con hợp lệ của bộ nhớ bao gồm địa chỉ yêu cầu, cache sẽ gửi dữ liệu tới các thành phần CPU cần nó.  
+Vì kích thước cache block (ví dụ: 64 byte) thường lớn hơn nhiều so với lượng dữ liệu chương trình yêu cầu (ví dụ: 4 byte), cache sẽ dùng các bit bậc thấp của địa chỉ làm **offset** để xác định vị trí byte cần lấy trong cache block.
 
+**Hình 4** minh họa cách phần offset của địa chỉ xác định byte nào trong cache block sẽ được truy xuất.
 
+![A subset of the cache data block's cells are highlighted to match the color of an address's offset portion.](_images/AddressOffset.png)  
+**Hình 4.** Với một cache block, phần offset của địa chỉ xác định byte mà chương trình muốn lấy.
 
-![The cache sends the address's tag to a comparator circuit to check whether it matches the tag stored in the cache line.](_images/AddressTag.png)
+---
 
+### Chia nhỏ địa chỉ bộ nhớ
 
-Figure 3. After using the requested memory address's index bits to
-locate the proper cache line, the cache simultaneously verifies the
-line's valid bit and checks its tag against the requested address's tag.
-If the line is valid with a matching tag, the lookup succeeds as a hit.
+**Kích thước** (dimensions) của cache quyết định số bit được dùng cho **offset**, **index** và **tag** trong một địa chỉ bộ nhớ.  
+Ngược lại, số bit của mỗi phần trong địa chỉ cũng cho biết kích thước cache phải như thế nào.  
+Khi xác định bit nào thuộc phần nào, ta thường xét địa chỉ từ phải sang trái (từ bit ít quan trọng nhất đến bit quan trọng nhất).
 
+- **Offset**: phần ngoài cùng bên phải của địa chỉ, độ dài phụ thuộc vào kích thước cache block.  
+  Offset phải đủ bit để tham chiếu tới mọi byte trong một cache block.  
+  Ví dụ: nếu cache block là 32 byte, cần 5 bit offset (vì log₂32 = 5) để xác định chính xác byte nào trong block.  
+  Ngược lại, nếu offset là 4 bit, cache block sẽ có kích thước 16 byte (2⁴ = 16).
 
+- **Index**: nằm ngay bên trái offset.  
+  Số bit index phụ thuộc vào số lượng cache line, vì index phải đủ để xác định duy nhất từng line.  
+  Ví dụ: cache có 1.024 line cần 10 bit index (log₂1024 = 10).  
+  Nếu index là 12 bit, cache sẽ có 4.096 line (2¹² = 4.096).
 
-#### Retrieving Cached Data 
+![With i index bits, an address can refer to 2^i^ lines. With f offset bits, an address can refer to 2^f^ bytes in a cache data block.](_images/AddressBits.png)  
+**Hình 5.** Index xác định duy nhất một cache line, offset xác định vị trí byte trong cache block.
 
-Finally, after using the program's requested memory address to find the
-appropriate cache line and verifying that the line holds a valid subset
-of memory containing that address, the cache sends the requested data to
-the CPU's components that need it. Because a cache line's data block
-size (for example, 64 bytes) is typically much larger than the amount of
-data that programs request (for example, 4 bytes), caches use the
-low-order bits of the requested address as an **offset** into the cached
-data block. Figure 4 depicts how the offset portion
-of an address identifies which bytes of a cache block the program
-expects to retrieve.
+- **Tag**: phần còn lại của địa chỉ.  
+  Tag phải đủ để xác định duy nhất tập con bộ nhớ trong cache line.  
+  Ví dụ: với địa chỉ 32-bit, cache có 5 bit offset và 10 bit index thì tag sẽ chiếm 17 bit còn lại (32 - 15 = 17).
 
+---
 
+### Ví dụ đọc trong Direct-Mapped Cache
 
+Xét một CPU có các đặc điểm:
 
-![A subset of the cache data block's cells are highlighted to match the color of an address's offset portion.](_images/AddressOffset.png)
+- Địa chỉ bộ nhớ 16-bit  
+- Direct-mapped cache với 128 cache line  
+- Cache block 32 byte
 
+Cache ban đầu trống (tất cả line đều invalid), như **Hình 6**.
 
-Figure 4. Given a cache data block, the offset portion of an address
-identifies which bytes the program wants to retrieve.
+![A cache with lines marked from 0 to 127. Each line is currently invalid.](_images/DirectExample0.png)  
+**Hình 6.** Ví dụ cache direct-mapped trống
 
+Giả sử chương trình truy cập các địa chỉ:
 
+1. Đọc từ `1010000001100100`  
+2. Đọc từ `1010000001100111`  
+3. Đọc từ `1001000000100000`  
+4. Đọc từ `1111000001100101`
 
-#### Memory Address Division 
+---
 
-The *dimensions* of a cache dictate how many bits to interpret as the
-offset, index, and tag portions of a memory address. Equivalently, the
-number of bits in each portion of an address imply what the dimensions
-of a cache must be. In determining which bits belong to each portion of
-an address, it's helpful to consider the address from right to left
-(that is, from least to most significant bit).
+Để lần theo toàn bộ chuỗi truy cập, thực hiện các bước:
 
+1. Chia địa chỉ thành 3 phần từ phải sang trái: **offset** trong cache block, **index** của cache line, và **tag** để xác định tập con bộ nhớ.  
+2. Dùng phần index để tìm cache line mà địa chỉ ánh xạ tới.  
+3. Kiểm tra valid bit của line. Nếu invalid → cache miss, bất kể tag là gì.  
+4. Kiểm tra tag. Nếu tag khớp và line hợp lệ → cache hit. Nếu không → cache miss và phải nạp dữ liệu từ bộ nhớ chính vào line đó.  
+5. Nếu hit, dùng offset để lấy đúng byte dữ liệu từ cache block (bước này không minh họa trong ví dụ).
 
-The rightmost portion of the address is the *offset*, and its length
-depends on a cache's block size dimension. The offset portion of an
-address must contain enough bits to refer to every possible byte within
-a cache data block. For example, suppose that a cache stores 32-byte
-data blocks. Because a program might come along asking for any of those
-32 bytes, the cache needs enough offset bits to describe exactly which
-of the 32 possible positions the program might want. In this case, it
-would need five bits for the offset because five bits are necessary to
-represent 32 unique values (log~2~32 = 5). In the reverse direction, a
-cache that uses four bits for the offset must store 16-byte data blocks
-(2^4^ = 16).
 
+##### Chia nhỏ địa chỉ (Address Division)
 
-The *index* portion of the address begins immediately to the left of the
-offset. To determine the number of index bits, consider the number of
-lines in the cache, given that the index needs enough bits to uniquely
-identify every cache line. Using similar logic to the offset, a cache
-with 1,024 lines needs 10 bits for the index (log~2~ 1,024 = 10).
-Likewise, a cache that uses 12 bits for the index must have 4,096 lines
-(2^12^ = 4,096).
+Bắt đầu bằng việc xác định cách chia địa chỉ bộ nhớ thành ba phần: *offset*, *index* và *tag*.  
+Xét các phần của địa chỉ từ bit bậc thấp đến bit bậc cao (từ phải sang trái):
 
+- **Offset**: Kích thước block là 32 byte nghĩa là 5 bit ngoài cùng bên phải của địa chỉ (log₂ 32 = 5) tạo thành phần offset. Với 5 bit, offset có thể xác định duy nhất bất kỳ byte nào trong 32 byte của block.
 
+- **Index**: Cache có 128 line nghĩa là 7 bit tiếp theo của địa chỉ (log₂ 128 = 7) tạo thành phần index. Với 7 bit, index có thể xác định duy nhất từng cache line.
 
+- **Tag**: Tag bao gồm tất cả các bit còn lại của địa chỉ không thuộc offset hoặc index. Ở đây, địa chỉ còn lại 4 bit tạo thành tag (16 - (5 + 7) = 4).
 
-![With i index bits, an address can refer to 2\^i\^ lines. With f offset bits, an address can refer to 2\^f\^ bytes in a cache data block.](_images/AddressBits.png)
+---
 
+![Result: miss, the line was invalid prior to access.](_images/DirectExample1.png)  
+**Hình 7.** Đọc từ địa chỉ `1010000001100100`. Index `0000011` (line 3) không hợp lệ, nên yêu cầu bị miss và cache nạp dữ liệu từ bộ nhớ chính.
 
-Figure 5. The index portion of an address uniquely identifies a cache
-line, and the offset portion uniquely identifies a position in the
-line's data block.
+---
 
+![Result: hit, the line is valid, and the tag matches.](_images/DirectExample2.png)  
+**Hình 8.** Đọc từ địa chỉ `1010000001100111`. Index `0000011` (line 3) hợp lệ và tag (`1010`) khớp, nên yêu cầu hit. Cache trả về dữ liệu bắt đầu tại byte 7 (offset `0b00111`) của block dữ liệu.
 
-The remaining address bits form the tag. Because the tag must uniquely
-identify the subset of memory contained within a cache line, the tag
-must use *all* of the remaining, unclaimed bits of the address. For
-example, if a machine uses 32-bit addresses, a cache with 5 offset bits
-and 10 index bits uses the remaining 32 - 15 = 17 bits of the address to
-represent the tag.
+---
 
+![Result: miss, the line was invalid prior to access.](_images/DirectExample3.png)  
+**Hình 9.** Đọc từ địa chỉ `1001000000100000`. Index `0000001` (line 1) không hợp lệ, nên yêu cầu bị miss và cache nạp dữ liệu từ bộ nhớ chính.
 
+---
 
-#### Direct-Mapped Read Examples 
+![Result: miss, the line is valid, but the tag doesn't match.](_images/DirectExample4.png)  
+**Hình 10.** Đọc từ địa chỉ `1111000001100101`. Index `0000011` (line 3) hợp lệ nhưng tag không khớp, nên yêu cầu bị miss và cache nạp dữ liệu từ bộ nhớ chính.
 
-Consider a CPU with the following characteristics:
+---
 
+#### Ghi dữ liệu vào Cache (Writing to Cached Data)
 
+Cho đến giờ, phần này chủ yếu xét các thao tác đọc bộ nhớ, khi CPU tra cứu dữ liệu trong cache.  
+Cache cũng phải cho phép chương trình ghi dữ liệu, và hỗ trợ thao tác ghi theo một trong hai chiến lược:
 
--   16-bit memory addresses
+1. **Write-through cache**: Mỗi thao tác ghi sẽ cập nhật giá trị trong cache **đồng thời** ghi ngay xuống bộ nhớ chính. Nghĩa là dữ liệu trong cache và bộ nhớ chính luôn được đồng bộ ngay lập tức.
 
--   a direct-mapped cache with 128 cache lines
+2. **Write-back cache**: Mỗi thao tác ghi chỉ cập nhật giá trị trong cache block, **không** ghi ngay xuống bộ nhớ chính. Do đó, sau khi ghi, dữ liệu trong cache có thể khác với dữ liệu tương ứng trong bộ nhớ chính.
 
--   32-byte cache data blocks.
+Để xác định cache block nào có dữ liệu khác so với bộ nhớ chính, mỗi line trong write-back cache lưu thêm một bit metadata gọi là **dirty bit**.  
+Khi cần **evict** (loại bỏ) một cache block từ line có dirty bit = 1, cache phải ghi dữ liệu đó xuống bộ nhớ chính trước để đồng bộ.  
 
+**Hình 11** minh họa một direct-mapped cache có thêm dirty bit để đánh dấu các line cần ghi xuống bộ nhớ khi bị evict.
 
-The cache starts empty (all lines are invalid), as shown in [Figure
-6](#FigDirectExample0).
+![The dirty bit is a one-bit flag that indicates whether the data stored in a cache line has been written. When set, the data in the cache is out of sync with main memory and must be written back to memory before eviction.](_images/CacheDirty.png)  
+**Hình 11.** Cache mở rộng với dirty bit
 
+---
 
+Như thường lệ, sự khác biệt giữa hai thiết kế thể hiện sự đánh đổi:
 
+- Write-through cache đơn giản hơn write-back cache và không cần lưu thêm metadata (dirty bit) cho mỗi line.  
+- Write-back cache giảm chi phí khi ghi lặp lại nhiều lần vào cùng một vị trí bộ nhớ.
 
-![A cache with lines marked from 0 to 127. Each line is currently invalid.](_images/DirectExample0.png)
+Ví dụ: nếu một chương trình liên tục cập nhật cùng một biến mà biến đó không bao giờ bị loại khỏi cache, write-through cache sẽ ghi xuống bộ nhớ chính **mỗi lần** cập nhật, dù các lần sau chỉ ghi đè giá trị trước đó.  
+Ngược lại, write-back cache chỉ ghi xuống bộ nhớ khi block đó bị evict.  
+Vì việc phân bổ chi phí truy cập bộ nhớ cho nhiều lần ghi giúp cải thiện hiệu năng đáng kể, hầu hết cache hiện đại chọn thiết kế write-back.
 
+---
 
-Figure 6. An empty direct-mapped example cache
+#### Ví dụ ghi trong Direct-Mapped Cache (Write-Back)
 
+Ghi vào cache hoạt động tương tự đọc, nhưng sẽ **set dirty bit** của cache line bị sửa đổi.  
+Khi evict một cache line có dirty bit = 1, cache phải ghi block dữ liệu đó xuống bộ nhớ trước khi loại bỏ.
 
-Suppose that a program running on this CPU accesses the following memory
-locations:
+Giả sử ví dụ trước tiếp tục với hai thao tác bộ nhớ:
 
+5. Ghi vào địa chỉ: `1111000001100000`  
+6. Ghi vào địa chỉ: `1010000001100100`
 
+---
 
-1.  Read from address 1010000001100100
+![Result: hit, the line is valid, and the tag matches. Set dirty bit to 1 on write.](_images/DirectExample5.png)  
+**Hình 12.** Ghi vào địa chỉ `1111000001100000`. Index `0000011` (line 3) hợp lệ và tag (`1111`) khớp, nên yêu cầu hit. Vì đây là thao tác ghi, cache set dirty bit của line này thành 1.
 
-2.  Read from address 1010000001100111
+---
 
-3.  Read from address 1001000000100000
+![Result: miss, the line is valid, but the tag doesn't match. Save cache data block to memory before evicting it. Set dirty bit to 1 on write (again).](_images/DirectExample6.png)  
+**Hình 13.** Ghi vào địa chỉ `1010000001100100`. Index `0000011` (line 3) hợp lệ nhưng tag không khớp, nên yêu cầu miss. Vì line này vừa hợp lệ vừa dirty, cache phải ghi block dữ liệu hiện tại xuống bộ nhớ chính trước khi nạp block mới. Đây là thao tác ghi, nên cache set dirty bit của line mới thành 1.
 
-4.  Read from address 1111000001100101
+---
 
+Trong lần truy cập bộ nhớ thứ tư và thứ sáu của ví dụ, cache phải evict dữ liệu vì hai vùng bộ nhớ cạnh tranh cùng một cache line.  
+Tiếp theo, chúng ta sẽ tìm hiểu một thiết kế cache khác nhằm giảm loại cạnh tranh này.
 
-To put the entire sequence together, follow these steps when tracing the
-behavior of a cache:
+---------------------------
 
+### 11.4.2. Cache Misses và Các thiết kế Associative
 
+Các nhà thiết kế cache hướng tới mục tiêu tối đa hóa **hit rate** (tỉ lệ truy cập trúng) để càng nhiều yêu cầu bộ nhớ càng tránh được việc phải truy cập bộ nhớ chính.  
+Mặc dù tính **locality** mang lại hy vọng đạt được hit rate cao, nhưng trong thực tế, cache không thể mong đợi sẽ hit ở mọi lần truy cập vì nhiều lý do:
 
-1.  Divide the requested address into three portions, from right
-    (low-order bits) to left (high-order bits): an offset within the
-    cache data block, an index into the appropriate cache line, and a
-    tag to identify which subset of memory the line stores.
+- **Compulsory misses** hay **cold-start misses**: Nếu một chương trình chưa từng truy cập một vị trí bộ nhớ (hoặc bất kỳ vị trí nào gần đó), gần như chắc chắn dữ liệu tại vị trí đó sẽ không có trong cache. Do đó, chương trình thường không thể tránh được cache miss khi lần đầu truy cập các địa chỉ bộ nhớ mới.
 
-2.  Index into the cache using the middle portion of the requested
-    address to find the cache line to which the address maps.
+- **Capacity misses**: Cache chỉ lưu một tập con của bộ nhớ chính, và lý tưởng nhất là lưu **chính xác** tập con bộ nhớ mà chương trình đang sử dụng. Tuy nhiên, nếu chương trình đang sử dụng nhiều bộ nhớ hơn dung lượng cache, thì chắc chắn không thể tìm thấy **tất cả** dữ liệu cần trong cache, dẫn đến miss.
 
-3.  Check the cache line's valid bit. When invalid, the program can't
-    use a cache line's contents (cache miss), regardless of what the tag
-    might be.
+- **Conflict misses**: Để giảm độ phức tạp khi tìm dữ liệu, một số thiết kế cache giới hạn vị trí dữ liệu có thể được lưu trong cache, và các giới hạn này có thể gây ra miss. Ví dụ, ngay cả khi direct-mapped cache chưa đầy 100%, chương trình vẫn có thể gặp tình huống hai biến được sử dụng thường xuyên lại ánh xạ tới cùng một vị trí cache. Khi đó, mỗi lần truy cập một biến sẽ đẩy biến kia ra khỏi cache vì chúng cạnh tranh cùng một cache line.
 
-4.  Check the cache line's tag. If the address's tag matches the cache
-    line's tag and the line is valid, the cache line's data block holds
-    the data the program is looking for (cache hit). Otherwise, the
-    cache must load the data from main memory at the identified index
-    (cache miss).
+Tần suất tương đối của từng loại miss phụ thuộc vào **mẫu truy cập bộ nhớ** của chương trình.  
+Nhìn chung, nếu không tăng kích thước cache, thiết kế cache chủ yếu ảnh hưởng đến **tỉ lệ conflict miss**.  
+Mặc dù direct-mapped cache đơn giản hơn các thiết kế khác, nhưng nó chịu ảnh hưởng nặng nhất từ conflict miss.
 
-5.  On a hit, use the low-order offset bits of the address to extract
-    the program's desired data from the stored block. (Not shown in
-    example.)
+---
 
+Giải pháp thay thế direct-mapped cache là **associative cache**.  
+Thiết kế associative cho phép cache linh hoạt chọn nhiều hơn một vị trí để lưu một vùng bộ nhớ.  
+Trực giác cho thấy, càng có nhiều lựa chọn vị trí lưu trữ thì khả năng xảy ra conflict càng thấp, nhưng đồng thời độ phức tạp cũng tăng vì phải kiểm tra nhiều vị trí hơn ở mỗi lần truy cập.
 
+- **Fully associative cache**: Cho phép bất kỳ vùng bộ nhớ nào cũng có thể nằm ở bất kỳ vị trí nào trong cache.  
+  Loại này mang lại sự linh hoạt tối đa, nhưng cũng có độ phức tạp cao nhất khi tra cứu và khi thay thế (eviction), vì phải xem xét tất cả các vị trí cùng lúc.  
+  Mặc dù hữu ích trong một số ứng dụng nhỏ, chuyên biệt (ví dụ: [TLB](../C13-OS/vm.html#_making_page_accesses_faster)), nhưng độ phức tạp cao khiến nó không phù hợp cho cache của CPU đa dụng.
 
-##### Address Division 
+- **Set associative cache**: Nằm ở mức trung gian giữa direct-mapped và fully associative, phù hợp cho CPU đa dụng.  
+  Trong set associative cache, mỗi vùng bộ nhớ ánh xạ tới **một cache set** duy nhất, nhưng mỗi set chứa nhiều cache line.  
+  Số lượng line trong một set là cố định, thường từ 2 đến 8 line mỗi set.
 
-Begin by determining how to divide the memory addresses into their
-*offset*, *index*, and *tag* portions. Consider the address portions
-from low-order to high-order bits (right to left):
+### 11.4.3. Set Associative Caches
 
+Thiết kế set associative là sự cân bằng tốt giữa độ phức tạp và tỉ lệ conflict miss.  
+Số lượng line trong một set giới hạn số vị trí cần kiểm tra khi tra cứu, và nhiều vùng bộ nhớ ánh xạ tới cùng một set sẽ không gây conflict miss trừ khi toàn bộ set đã đầy.
 
+Trong set associative cache, phần **index** của địa chỉ bộ nhớ ánh xạ địa chỉ đó tới một set các cache line.  
+Khi tra cứu địa chỉ, cache sẽ **đồng thời** kiểm tra tất cả các line trong set.  
+[Hình 14](#FigAssocLookup) minh họa việc kiểm tra **tag** và **valid bit** trong một cache 2-way set associative.
 
--   *Offset*: A 32-byte block size implies that the rightmost five bits
-    of the address (log~2~ 32 = 5) comprise the offset portion. With
-    five bits, the offset can uniquely identify any of the 32 bytes in
-    block.
+Nếu bất kỳ line hợp lệ nào trong set có tag khớp với tag của địa chỉ, line đó sẽ hoàn tất quá trình tra cứu.  
+Khi việc tra cứu thu hẹp xuống chỉ còn một cache line, quá trình sẽ giống như direct-mapped cache: cache dùng **offset** của địa chỉ để gửi byte dữ liệu mong muốn từ cache block tới các thành phần tính toán của CPU.
 
--   *Index*: A cache with 128 lines implies that the next seven bits of
-    the address (log~2~ 128 = 7) comprise the index portion. With seven
-    bits, the index can uniquely identify each cache line.
+![The cache sends the address's tag to two comparator circuits in parallel to check whether it matches the tag stored in either cache line of the set.](_images/AssocLookup.png)  
+**Hình 14.** Kiểm tra valid bit và so khớp tag trong cache 2-way set associative
 
--   *Tag*: The tag consists of any remaining address bits that don't
-    belong to the offset or index. Here, the address has four remaining
-    bits left that form the tag (16 - (5 + 7) = 4).
+---
 
+Sự linh hoạt bổ sung khi có nhiều cache line trong một set giúp giảm conflict miss, nhưng cũng tạo ra một vấn đề mới: khi nạp dữ liệu vào cache (hoặc khi evict dữ liệu cũ), cache phải quyết định **sử dụng line nào** trong set.
 
-------------------------------------------------------------------------
+Để giải quyết, cache tận dụng ý tưởng về **locality**.  
+Cụ thể, **temporal locality** cho thấy dữ liệu được sử dụng gần đây có khả năng sẽ được dùng lại.  
+Do đó, cache áp dụng chiến lược giống như phần trước khi [quản lý ví dụ tủ sách](locality.html#_temporal_locality): khi quyết định line nào trong set sẽ bị thay thế, chọn line **ít được sử dụng gần đây nhất** (**LRU – Least Recently Used**).  
+LRU được gọi là **cache replacement policy** vì nó điều khiển cơ chế thay thế của cache.
 
+Chính sách LRU yêu cầu mỗi set lưu thêm các bit metadata để xác định line nào ít được sử dụng gần đây nhất.  
+Số bit cần thiết để mã hóa trạng thái LRU tăng theo số lượng line trong set.  
+Những bit metadata bổ sung này góp phần làm tăng độ phức tạp của thiết kế set associative so với direct-mapped cache.
 
+**Hình 15** minh họa một cache 2-way set associative, nghĩa là mỗi set chứa 2 line.  
+Với chỉ 2 line, mỗi set chỉ cần 1 bit metadata LRU để theo dõi line nào ít được sử dụng gần đây nhất.  
+Trong hình, giá trị LRU = 0 nghĩa là line bên trái ít được sử dụng gần đây nhất, còn giá trị LRU = 1 nghĩa là line bên phải ít được sử dụng gần đây nhất.
 
-![Result: miss, the line was invalid prior to access.](_images/DirectExample1.png)
+![The LRU bit is a one-bit flag that indicates whether the leftmost line of the set was least recently used (LRU = 0) or the rightmost line of the set was least recently used (LRU = 1).](_images/CacheLRU.png)  
+**Hình 15.** Cache 2-way set associative, mỗi set lưu 1 bit metadata LRU để hỗ trợ quyết định thay thế dữ liệu...
 
+> **Lưu ý:** Việc Hình 15 chọn quy ước “0 nghĩa là bên trái” và “1 nghĩa là bên phải” chỉ là tùy ý. Cách diễn giải bit LRU có thể khác nhau giữa các loại cache. Nếu bạn được yêu cầu làm việc với cache trong một bài tập, đừng mặc định rằng bài tập đó dùng cùng một sơ đồ mã hóa LRU như ở đây!
 
-Figure 7. Read from address 1010000001100100. Index 0000011 (line 3) is
-invalid, so the request misses and the cache loads data from main
-memory.
+---
 
+#### Ví dụ về Set Associative Cache
 
-------------------------------------------------------------------------
+Xét một CPU có các đặc điểm sau:
 
+- Địa chỉ bộ nhớ 16-bit.  
+- Cache **two-way set associative** với 64 set. Lưu ý: việc thiết kế cache two-way set associative sẽ nhân đôi dung lượng lưu trữ (hai line mỗi set), nên ví dụ này giảm một nửa số set để tổng số line bằng với ví dụ direct-mapped trước đó.  
+- Cache block 32 byte.  
+- Chính sách thay thế cache **LRU** cho biết line bên trái của set là ít được sử dụng gần đây nhất (LRU = 0) hoặc line bên phải là ít được sử dụng gần đây nhất (LRU = 1).
 
+Ban đầu, cache trống (tất cả line đều invalid và bit LRU = 0), như minh họa ở **Hình 16**.
 
-![Result: hit, the line is valid, and the tag matches.](_images/DirectExample2.png)
+![A cache with sets marked from 0 to 63. Each set has two lines that are both invalid. Each set's LRU bit starts at 0.](_images/AssocExample0.png)  
+**Hình 16.** Ví dụ cache two-way set associative trống
 
+Giả sử chương trình chạy trên CPU này truy cập các địa chỉ bộ nhớ sau (giống ví dụ direct-mapped):
 
-Figure 8. Read from address 1010000001100111. Index 0000011 (line 3) is
-valid, and the tag (1010) matches, so the request hits. The cache yields
-data beginning at byte 7 (offset 0b00111) of its data block.
+1. Đọc từ địa chỉ `1010000001100100`  
+2. Đọc từ địa chỉ `1010000001100111`  
+3. Đọc từ địa chỉ `1001000000100000`  
+4. Đọc từ địa chỉ `1111000001100101`  
+5. Ghi vào địa chỉ `1111000001100000`  
+6. Ghi vào địa chỉ `1010000001100100`
 
+---
 
-------------------------------------------------------------------------
+##### Chia nhỏ địa chỉ (Address Division)
 
+Bắt đầu bằng việc xác định cách chia địa chỉ bộ nhớ thành *offset*, *index* và *tag*. Xét các phần của địa chỉ từ bit bậc thấp đến bit bậc cao (từ phải sang trái):
 
+- **Offset**: Kích thước block 32 byte ⇒ 5 bit ngoài cùng bên phải của địa chỉ (log₂ 32 = 5) là phần offset. 5 bit này cho phép xác định duy nhất bất kỳ byte nào trong block.  
+- **Index**: Cache có 64 set ⇒ 6 bit tiếp theo của địa chỉ (log₂ 64 = 6) là phần index. 6 bit này cho phép xác định duy nhất từng set trong cache.  
+- **Tag**: Tag gồm tất cả các bit còn lại của địa chỉ không thuộc offset hoặc index. Ở đây, địa chỉ còn lại 5 bit cho tag (16 - (5 + 6) = 5).
 
-![Result: miss, the line was invalid prior to access.](_images/DirectExample3.png)
+---
 
+![miss, both lines in set 3 are invalid prior to the access. Update LRU bit to 1.](_images/AssocExample1.png)  
+**Hình 17.** Đọc từ địa chỉ `1010000001100100`. Cả hai line tại index `000011` (set 3) đều invalid, nên yêu cầu miss và cache nạp dữ liệu từ bộ nhớ chính. Bit LRU của set là 0, nên cache nạp dữ liệu vào line bên trái và cập nhật bit LRU thành 1.
 
-Figure 9. Read from address 1001000000100000. Index 0000001 (line 1) is
-invalid, so the request misses and the cache loads data from main
-memory.
+---
 
+![hit, one line in the set is valid and holds a matching tag.](_images/AssocExample2.png)  
+**Hình 18.** Đọc từ địa chỉ `1010000001100111`. Line bên trái tại index `000011` (set 3) có tag khớp, nên yêu cầu hit.
 
-------------------------------------------------------------------------
+---
 
+![miss, both lines in set 1 are invalid prior to the access. Update LRU bit to 1.](_images/AssocExample3.png)  
+**Hình 19.** Đọc từ địa chỉ `1001000000100000`. Cả hai line tại index `000001` (set 1) đều invalid, nên yêu cầu miss và cache nạp dữ liệu từ bộ nhớ chính. Bit LRU của set là 0, nên cache nạp dữ liệu vào line bên trái và cập nhật bit LRU thành 1.
 
+---
 
-![Result: miss, the line is valid, but the tag doesn't match.](_images/DirectExample4.png)
+![miss, one line's tag doesn't match, and the other is invalid. Update LRU bit to 0.](_images/AssocExample4.png)  
+**Hình 20.** Đọc từ địa chỉ `1111000001100101`. Tại index `000011` (set 3), một line có tag không khớp và line còn lại invalid, nên yêu cầu miss. Bit LRU của set là 1, nên cache nạp dữ liệu vào line bên phải và cập nhật bit LRU thành 0.
 
+---
 
-Figure 10. Read from address 1111000001100101. Index 0000011 (line 3) is
-valid, but the tag doesn't match, so the request misses and the cache
-loads data from main memory.
+![hit, one of the valid lines holds a matching tag. Set the line's dirty bit to 1.](_images/AssocExample5.png)  
+**Hình 21.** Ghi vào địa chỉ `1111000001100000`. Line bên phải tại index `000011` (set 3) hợp lệ và có tag khớp, nên yêu cầu hit. Vì đây là thao tác ghi, cache đặt dirty bit của line này thành 1. Bit LRU giữ nguyên giá trị 0 để chỉ ra rằng line bên trái vẫn là line ít được sử dụng gần đây nhất.
 
+---
 
+![hit, one of the valid lines holds a matching tag. Set the line's dirty bit to 1. Update LRU bit to 1.](_images/AssocExample6.png)  
+**Hình 22.** Ghi vào địa chỉ `1010000001100100`. Line bên trái tại index `000011` (set 3) hợp lệ và có tag khớp, nên yêu cầu hit. Vì đây là thao tác ghi, cache đặt dirty bit của line này thành 1. Sau khi truy cập line bên trái, cache cập nhật bit LRU thành 1.
 
+---
 
-#### Writing to Cached Data 
-
-So far, this section has primarily considered memory read operations for
-which a CPU performs lookups in the cache. Caches must also allow
-programs to store values, and they support store operations with one of
-two strategies.
-
-
-
-1.  In a **write-through cache**, a memory write operation modifies the
-    value in the cache and simultaneously updates the contents of main
-    memory. That is, a write operation *always* synchronizes the
-    contents of the cache and main memory immediately.
-
-2.  In a **write-back cache**, a memory write operation modifies the
-    value stored in the cache's data block, but it does *not* update
-    main memory. Thus, after updating the cache's data, a write-back
-    cache's contents differ from the corresponding data in main memory.
-
-
-To identify cache blocks whose contents differ from their main memory
-counterparts, each line in a write-back cache stores an additional bit
-of metadata, known as a **dirty bit**. When evicting the data block from
-a dirty cache line, the cache block's data must first be written back to
-main memory to synchronize their contents. Figure 11
-shows a direct-mapped cache that includes a dirty bit to mark lines that
-must be written to memory upon eviction.
-
-
-
-
-![The dirty bit is a one-bit flag that indicates whether the data stored in a cache line has been written. When set, the data in the cache is out of sync with main memory and must be written back to memory before eviction.](_images/CacheDirty.png)
-
-
-Figure 11. Cache extended with a dirty bit
-
-
-As usual, the difference between the designs reveals a trade-off.
-Write-through caches are less complex than write-back caches, and they
-avoid storing extra metadata in the form of a dirty bit for each line.
-On the other hand, write-back caches reduce the cost of repeated writes
-to the same location in memory.
-
-
-For example, suppose that a program frequently updates the same variable
-without that variable's memory ever being evicted from the cache. A
-write-through cache writes to main memory on every update, even though
-each subsequent update is just going to overwrite the previous one,
-whereas a write-back cache writes to memory only when eventually
-evicting the cache block. Because amortizing the cost of a memory access
-across many writes significantly improves performance, most modern
-caches opt for a write-back design.
-
-
-
-#### Direct-Mapped Write Examples (Write-Back) 
-
-Writes to the cache behave like reads, except they also set the modified
-cache line's dirty bit. When evicting a dirty cache line, the cache must
-write the modified data block to memory before discarding it.
-
-
-Suppose that the example scenario described above continues with two
-additional memory accesses:
-
-
-
-5.  Write to address: 1111000001100000
-
-6.  Write to address: 1010000001100100
-
-
-------------------------------------------------------------------------
-
-
-
-![Result: hit, the line is valid, and the tag matches. Set dirty bit to 1 on write.](_images/DirectExample5.png)
-
-
-Figure 12. Write to address 1111000001100000. Index 0000011 (line 3) is
-valid, and the tag (1111) matches, so the request hits. Because this
-access is a write, the cache sets the line's dirty bit to 1.
-
-
-------------------------------------------------------------------------
-
-
-
-![Result: miss, the line is valid, but the tag doesn't match. Save cache data block to memory before evicting it. Set dirty bit to 1 on write (again).](_images/DirectExample6.png)
-
-
-Figure 13. Write to address 1010000001100100. Index 0000011 (line 3) is
-valid, but the tag doesn't match, so the request misses. Because the
-target line is both valid and dirty, the cache must save the existing
-data block to main memory before loading the new one. This access is a
-write, so the cache sets the newly loaded line's dirty bit to 1.
-
-
-In the fourth and sixth memory accesses of the example, the cache evicts
-data because two memory regions are competing for the same cache line.
-Next, we'll explore a different cache design that aims to reduce this
-type of competition.
-
-
-
-### 11.4.2. Cache Misses and Associative Designs 
-
-Cache designers aim to maximize a cache's hit rate to ensure that as
-many memory requests as possible can avoid going to main memory. Even
-though locality provides hope for achieving a good hit rate, real caches
-can't expect to hit on every access for a variety of reasons:
-
-
-
--   **Compulsory misses** or **cold-start misses**: If a program has
-    never accessed a memory location (or any location near it), it has
-    little hope of finding that location's data in the cache. Thus,
-    programs often cannot avoid cache misses when first accessing new
-    memory addresses.
-
--   **Capacity misses**: A cache stores a subset of main memory, and
-    ideally, it stores *exactly* the subset of memory that a program is
-    actively using. However, if a program is actively using more memory
-    than fits in the cache, it can't possibly find *all* of the data it
-    wants in the cache, leading to misses.
-
--   **Conflict misses**: To reduce the complexity of finding data, some
-    cache designs limit where in the cache data can reside, and those
-    restrictions can lead to misses. For example, even if a
-    direct-mapped cache is not 100% full, a program might end up with
-    the addresses of two frequently used variables mapping to the same
-    cache location. In such cases, each access to one of those variables
-    evicts the other from the cache as they compete for the same cache
-    line.
-
-
-The relative frequency of each miss type depends on a program's memory
-access pattern. In general though, without increasing the cache size, a
-cache's design mainly affects its conflict miss rate. Although
-direct-mapped caches are less complex than other designs, they suffer
-the most from conflicts.
-
-
-The alternative to a direct-mapped cache is an *associative* cache. An
-associative design gives a cache the flexibility to choose among more
-than one location to store a region of memory. Intuitively, having more
-storage location options reduces the likelihood of conflicts but also
-increases complexity due to more locations needing to be checked on
-every access.
-
-
-A **fully associative** cache allows any memory region to occupy any
-cache location. Fully associative caches offer the most flexibility, but
-they also have the highest lookup and eviction complexity because every
-location needs to be simultaneously considered during any operation.
-Although fully associative caches are valuable in some small,
-specialized applications (for example,
-[TLBs](../C13-OS/vm.html#_making_page_accesses_faster)), their
-high complexity makes them generally unfit for a general-purpose CPU
-cache.
-
-
-**Set associative** caches occupy the middle ground between
-direct-mapped and fully associative designs, which makes them well
-suited for general-purpose CPUs. In a set associative cache, every
-memory region maps to exactly one **cache set**, but each set stores
-multiple cache lines. The number of lines allowed in a set is a fixed
-dimension of a cache, and set associative caches typically store two to
-eight lines per set.
-
-
-
-### 11.4.3. Set Associative Caches 
-
-A set associative design offers a good compromise between complexity and
-conflicts. The number of lines in a set limits how many places a cache
-needs to check during a lookup, and multiple memory regions that map to
-the same set don't trigger conflict misses unless the entire set fills.
-
-
-In a set associative cache, the *index* portion of a memory address maps
-the address to one set of cache lines. When performing an address
-lookup, the cache simultaneously checks every line in the set. [Figure
-14](#FigAssocLookup) illustrates the tag and valid bit checks in a
-two-way set associative cache.
-
-
-If any of a set's valid lines contains a tag that matches the address's
-tag portion, the matching line completes the lookup. When the lookup
-narrows the search to just one cache line, it proceeds like a
-direct-mapped cache: the cache uses the address's *offset* to send the
-desired bytes from the line's cache block to the CPU's arithmetic
-components.
-
-
-
-
-![The cache sends the address's tag to two comparator circuits in parallel to check whether it matches the tag stored in either cache line of the set.](_images/AssocLookup.png)
-
-
-Figure 14. Valid bit verification and tag matching in a two-way set
-associative cache
-
-
-The additional flexibility of multiple cache lines in a set reduces
-conflicts, but it also introduces a new wrinkle: when loading a value
-into a cache (and when evicting data already resident in the cache), the
-cache must decide *which* of the line options to use.
-
-
-To help solve this selection problem, caches turn to the idea of
-locality. Specifically, temporal locality suggests that recently used
-data is likely to be used again. Therefore, caches adopt the same
-strategy that the previous section used to [manage our example
-bookcase](locality.html#_temporal_locality): when deciding which
-line in a set to evict, choose the least recently used (LRU) line. LRU
-is known as a **cache replacement policy** because it governs the
-cache's eviction mechanism.
-
-
-The LRU policy requires each set to store additional bits of metadata to
-identify which line of the set was used least recently. As the number of
-lines in a set increases, so does the number of bits required to encode
-the LRU status of the set. These extra metadata bits contribute to the
-\"higher complexity\" of set associative designs compared to simpler
-direct-mapped variants.
-
-
-Figure 15 illustrates a two-way set associative cache,
-meaning each set contains two lines. With just two lines, each set
-requires one LRU metadata bit to keep track of which line was least
-recently used. In the figure, an LRU value of zero indicates the
-leftmost line was least recently used, and a value of one means the
-rightmost line was least recently used.
-
-
-
-
-![The LRU bit is a one-bit flag that indicates whether the leftmost line of the set was least recently used (LRU = 0) or the rightmost line of the set was least recently used (LRU = 1).](_images/CacheLRU.png)
-
-
-Figure 15. A two-way set associative cache in which each set stores one
-bit of LRU metadata to inform eviction decisions
-
-
-
-+-----------------------------------+-----------------------------------+
-|                                   | ::: paragraph                     |
-|                                   | Figure 15\'s      |
-|                                   | choice that zero means \"left\"   |
-|                                   | and one means \"right\" is        |
-|                                   | arbitrary. The interpretation of  |
-|                                   | LRU bits varies across caches. If |
-|                                   | you're asked to work with caches  |
-|                                   | on an assignment, don't assume    |
-|                                   | the assignment is using the same  |
-|                                   | LRU encoding scheme!              |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
-
-
-
-#### Set Associative Cache Examples 
-
-Consider a CPU with the following characteristics:
-
-
-
--   16-bit memory addresses.
-
--   A two-way set associative cache with 64 sets. Note that making a
-    cache two-way set associative doubles its storage capacity (two
-    lines per set), so this example halves the number of sets so that it
-    stores the same number of lines as the earlier direct-mapped
-    example.
-
--   32-byte cache blocks.
-
--   An LRU cache replacement policy that indicates whether the leftmost
-    line of the set was least recently used (LRU = 0) or the rightmost
-    line of the set was least recently used (LRU = 1).
-
-
-Initially, the cache is empty (all lines invalid and LRU bits 0), as
-shown in Figure 16.
-
-
-
-
-![A cache with sets marked from 0 to 63. Each set has two lines that are both invalid. Each set's LRU bit starts at 0.](_images/AssocExample0.png)
-
-
-Figure 16. An empty two-way set associative example cache
-
-
-Suppose that a program running on this CPU accesses the following memory
-locations (same as the direct-mapped example):
-
-
-
-1.  Read from address 1010000001100100
-
-2.  Read from address 1010000001100111
-
-3.  Read from address 1001000000100000
-
-4.  Read from address 1111000001100101
-
-5.  Write to address 1111000001100000
-
-6.  Write to address 1010000001100100
-
-
-
-##### Address Division 
-
-Begin by determining how to divide the memory addresses into their
-*offset*, *index*, and *tag* portions. Consider the address portions
-from low-order to high-order bits (right to left):
-
-
-
--   *Offset*: A 32-byte block size implies that the rightmost five bits
-    of the address (log~2~ 32 = 5) comprise the offset portion. Five
-    bits allows the offset to uniquely identify any of the bytes in a
-    block.
-
--   *Index*: A 64-set cache implies that the next six bits of the
-    address (log~2~ 64 = 6) comprise the index portion. Six bits allows
-    the index to uniquely identify each set in the cache.
-
--   *Tag*: The tag consists of any remaining bits of the address that
-    don't belong to the offset or index. Here, the address has five
-    remaining bits left over for the tag (16 - (5 + 6) = 5).
-
-
-------------------------------------------------------------------------
-
-
-
-![miss, both lines in set 3 are invalid prior to the access. Update LRU bit to 1.](_images/AssocExample1.png)
-
-
-Figure 17. Read from address 1010000001100100. Both lines at index
-000011 (set 3) are invalid, so the request misses, and the cache loads
-data from main memory. The set's LRU bit is 0, so the cache loads data
-into the left line and updates the LRU bit to 1.
-
-
-------------------------------------------------------------------------
-
-
-
-![hit, one line in the set is valid and holds a matching tag.](_images/AssocExample2.png)
-
-
-Figure 18. Read from address 1010000001100111. The left line at index
-000011 (set 3) holds a matching tag, so the request hits.
-
-
-------------------------------------------------------------------------
-
-
-
-![miss, both lines in set 1 are invalid prior to the access. Update LRU bit to 1.](_images/AssocExample3.png)
-
-
-Figure 19. Read from address 1001000000100000. Both lines at index
-000001 (set 1) are invalid, so the request misses, and the cache loads
-data from main memory. The set's LRU bit is 0, so the cache loads data
-into the left line and updates the LRU bit to 1.
-
-
-------------------------------------------------------------------------
-
-
-
-![miss, one line's tag doesn't match, and the other is invalid. Update LRU bit to 0.](_images/AssocExample4.png)
-
-
-Figure 20. Read from address 1111000001100101. At index 000011 (set 3),
-one line's tag doesn't match, and the other line is invalid, so the
-request misses. The set's LRU bit is 1, so the cache loads data into the
-right line and updates the LRU bit to 0.
-
-
-------------------------------------------------------------------------
-
-
-
-![hit, one of the valid lines holds a matching tag. Set the line's dirty bit to 1.](_images/AssocExample5.png)
-
-
-Figure 21. Write to address 1111000001100000. The right line at index
-000011 (set 3) is valid and holds a matching tag, so the request hits.
-Because this access is a write, the cache sets the line's dirty bit
-to 1. The LRU bit remains 0 to indicate that the left line remains least
-recently used.
-
-
-------------------------------------------------------------------------
-
-
-
-![hit, one of the valid lines holds a matching tag. Set the line's dirty bit to 1. Update LRU bit to 1.](_images/AssocExample6.png)
-
-
-Figure 22. Write to address 1010000001100100. The left line at index
-000011 (set 3) is valid and holds a matching tag, so the request hits.
-Because this access is a write, the cache sets the line's dirty bit
-to 1. After accessing the left line, the cache sets the line's LRU bit
-to 1.
-
-
-In this example, the same memory access sequence that produced two
-conflict misses with a direct-mapped cache suffers from no conflicts
-with a two-way set associative cache.
-
-
-
-
-
-
+Trong ví dụ này, cùng một chuỗi truy cập bộ nhớ vốn gây ra **hai conflict miss** ở direct-mapped cache thì lại **không gặp conflict** nào khi dùng cache two-way set associative.

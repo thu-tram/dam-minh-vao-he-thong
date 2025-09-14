@@ -1,128 +1,48 @@
+## 12.2. Các tối ưu hóa khác của trình biên dịch: Loop Unrolling và Function Inlining
 
+Kỹ thuật tối ưu **loop-invariant code motion** (di chuyển mã bất biến ra khỏi vòng lặp) được mô tả ở phần trước là một thay đổi đơn giản nhưng mang lại sự giảm đáng kể thời gian thực thi. Tuy nhiên, các tối ưu hóa như vậy phụ thuộc vào từng tình huống cụ thể và không phải lúc nào cũng cải thiện hiệu năng. Trong hầu hết các trường hợp, việc di chuyển mã bất biến ra khỏi vòng lặp đã được trình biên dịch tự động xử lý.
 
+Ngày nay, mã nguồn thường được **đọc** nhiều hơn là **viết**. Trong đa số trường hợp, những cải thiện hiệu năng nhỏ lẻ không đáng để đánh đổi khả năng dễ đọc của mã. Nói chung, lập trình viên nên để trình biên dịch tự tối ưu bất cứ khi nào có thể. Trong phần này, chúng ta sẽ tìm hiểu một số kỹ thuật tối ưu hóa mà trước đây lập trình viên thường tự thực hiện thủ công, nhưng hiện nay thường được trình biên dịch tự động áp dụng.
 
+Có nhiều nguồn tài liệu trực tuyến khuyến khích việc tự tay áp dụng các kỹ thuật được mô tả trong các phần sau. Tuy nhiên, chúng tôi khuyến nghị bạn nên kiểm tra xem trình biên dịch của mình có hỗ trợ các tối ưu hóa này hay không trước khi cố gắng tự triển khai chúng trong mã. Tất cả các tối ưu hóa được mô tả trong phần này đều được GCC hỗ trợ, nhưng có thể không có trong các trình biên dịch cũ.
 
+---
 
+### 12.2.1. Function Inlining
 
+Một bước tối ưu hóa mà trình biên dịch thường cố gắng thực hiện là **function inlining** (nội tuyến hàm), tức là thay thế lời gọi hàm bằng phần thân của hàm đó.  
+Ví dụ, trong hàm `main`, nếu trình biên dịch nội tuyến hàm `allocateArray`, nó sẽ thay lời gọi `allocateArray` bằng lời gọi trực tiếp tới `malloc`:
 
-
-
-
-
-
-
-
-
-
-
-## 12.2. Other Compiler Optimizations: Loop Unrolling and Function Inlining 
-
-The loop-invariant code motion optimization described in the previous
-section was a simple change that resulted in a massive reduction in
-execution time. However, such optimizations are situationally dependent,
-and may not always result in improvements to performance. In most cases,
-loop-invariant code motion is taken care of by the compiler.
-
-
-Code today is more often read than it is written. In most cases,
-fractional performance gains are not worth the hit to code readability.
-In general, a programmer should let the compiler optimize whenever
-possible. In this section, we cover some optimization techniques that
-were previously manually implemented by programmers but are today
-commonly implemented by compilers.
-
-
-There are several sources online that advocate for the manual
-implementation of the techniques we describe in the following sections.
-However, we encourage readers to check whether their compilers support
-the following optimizations before attempting to manually implement them
-in their code. All the optimizations described in this section are
-implemented in GCC, but may not be available in older compilers.
-
-
-
-### 12.2.1. Function Inlining 
-
-One optimization step that compilers attempt to perform is **function
-inlining**, which replaces calls to a function with the body of the
-function. For example, in the `main` function, a compiler inlining the
-`allocateArray` function will replace the call to `allocateArray` with a
-direct call to `malloc`:
-
-
-+-----------------------------------+-----------------------------------+
-| Original Version                  | Version with `allocateArray`      |
-|                                   | in-lined                          |
-+===================================+===================================+
-|                        |                        |
-|                   |                   |
-|                        |                        |
-| ```     | ```     |
+| Phiên bản gốc | Phiên bản với `allocateArray` được inline |
+|---------------|-------------------------------------------|
+| ```c | ```c |
 | int main(int argc, char **argv) { | int main(int argc, char **argv) { |
-|     // omitted for brevity        |     // omitted for brevity        |
-|     // some variables s           |     // some variables s           |
-| hortened for space considerations | hortened for space considerations |
-|     int                           |     int                           |
-|  lim = strtol(argv[1], NULL, 10); |  lim = strtol(argv[1], NULL, 10); |
-|                                   |                                   |
-|     // allocation of array        |                                   |
-|     int *a = allocateArray(lim);  | // allocation of array (in-lined) |
-|                                   |     in                            |
-|                                   | t *a = malloc(lim * sizeof(int)); |
-|   // generates sequence of primes |                                   |
-|     in                            |                                   |
-| t len = genPrimeSequence(a, lim); |   // generates sequence of primes |
-|                                   |     in                            |
-|     return 0;                     | t len = genPrimeSequence(a, lim); |
-| }                                 |                                   |
-| ```                               |     return 0;                     |
-| :::                               | }                                 |
-| :::                               | ```                               |
-| :::                               | :::                               |
-|                                   | :::                               |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
+|     // omitted for brevity |     // omitted for brevity |
+|     // some variables shortened for space considerations |     // some variables shortened for space considerations |
+|     int lim = strtol(argv[1], NULL, 10); |     int lim = strtol(argv[1], NULL, 10); |
+|     // allocation of array | // allocation of array (in-lined) |
+|     int *a = allocateArray(lim); |     int *a = malloc(lim * sizeof(int)); |
+|     // generates sequence of primes |     // generates sequence of primes |
+|     int len = genPrimeSequence(a, lim); |     int len = genPrimeSequence(a, lim); |
+|     return 0; |     return 0; |
+| } | } |
+| ``` | ``` |
 
-: Table 1. Example of compiler inlining the `allocateArray` function.
+**Bảng 1.** Ví dụ trình biên dịch nội tuyến hàm `allocateArray`.
 
-Inlining functions can result in some runtime savings for a program.
-Recall that every time a program calls a function, many instructions
-associated with function creation and destruction are necessarily
-generated. Inlining functions enables the compiler to eliminate these
-excessive calls, and makes it easier for the compiler to identify other
-potential improvements, including constant propagation, constant
-folding, and dead code elimination. In the case of the `optExample`
-program, inlining likely allows the compiler to replace the call to
-`sqrt` with the `fsqrt` instruction, and subsequently move it outside
-the loop.
+Việc nội tuyến hàm có thể giúp chương trình tiết kiệm thời gian chạy. Hãy nhớ rằng mỗi lần chương trình gọi một hàm, sẽ có nhiều lệnh liên quan đến việc **tạo** và **hủy** ngữ cảnh hàm được sinh ra. Nội tuyến hàm cho phép trình biên dịch loại bỏ các lời gọi dư thừa này, đồng thời giúp nó dễ dàng phát hiện các cơ hội tối ưu khác như **constant propagation** (truyền hằng), **constant folding** (gộp hằng), và **dead code elimination** (loại bỏ mã chết).  
+Trong trường hợp của chương trình `optExample`, việc nội tuyến có thể cho phép trình biên dịch thay lời gọi `sqrt` bằng lệnh `fsqrt`, và sau đó di chuyển nó ra ngoài vòng lặp.
 
+Cờ `-finline-functions` gợi ý cho GCC rằng các hàm nên được nội tuyến. Tối ưu hóa này được bật ở mức `-O3`. Mặc dù `-finline-functions` có thể được sử dụng độc lập với `-O3`, nhưng đây chỉ là *gợi ý* để trình biên dịch tìm các hàm có thể nội tuyến. Tương tự, từ khóa `static inline` có thể được dùng để gợi ý rằng một hàm cụ thể nên được nội tuyến.  
+Cần lưu ý rằng trình biên dịch sẽ không nội tuyến tất cả các hàm, và việc nội tuyến không đảm bảo sẽ làm mã chạy nhanh hơn.
 
-The `-finline-functions` flag suggests to GCC that functions should be
-inlined. This optimization is turned on at level 3. Even though
-`-finline-functions` can be used independently of the `-O3` flag, it is
-a *suggestion* to the compiler to look for functions to inline.
-Likewise, the `static inline` keyword can be used to suggest to the
-compiler that a particular function should be inlined. Keep in mind that
-the compiler will not inline all functions, and that function inlining
-is not guaranteed to make code faster.
+Lập trình viên nhìn chung nên tránh nội tuyến hàm thủ công. Việc này tiềm ẩn nguy cơ cao làm giảm đáng kể khả năng đọc mã, tăng khả năng xuất hiện lỗi, và khiến việc cập nhật, bảo trì hàm trở nên khó khăn hơn. Ví dụ, cố gắng nội tuyến hàm `isPrime` vào trong `getNextPrime` sẽ làm giảm mạnh khả năng đọc của `getNextPrime`.
 
+---
 
-Programmers should generally avoid inlining functions manually. Inlining
-functions carries a high risk of significantly reducing the readability
-of code, increasing the likelihood of errors, and making it harder to
-update and maintain functions. For example, trying to inline the
-`isPrime` function in the `getNextPrime` function will greatly reduce
-the readability of `getNextPrime`.
+### 12.2.2. Loop Unrolling
 
-
-
-### 12.2.2. Loop Unrolling 
-
-The last compiler optimization strategy we discuss in this section is
-loop unrolling. Let's revisit the `isPrime` function:
-
-
-
+Chiến lược tối ưu hóa cuối cùng của trình biên dịch mà chúng ta thảo luận trong phần này là **loop unrolling** (trải vòng lặp). Hãy cùng xem lại hàm `isPrime`:
 
 ```
 // helper function: checks to see if a number is prime
@@ -141,34 +61,16 @@ int isPrime(int x) {
 }
 ```
 
+Vòng lặp `for` thực thi tổng cộng `max` lần, trong đó `max` bằng căn bậc hai của số nguyên `x` cộng thêm một.  
+Ở cấp độ **assembly**, mỗi lần thực thi vòng lặp sẽ kiểm tra xem `i` có nhỏ hơn `max` hay không. Nếu có, **instruction pointer** (con trỏ lệnh) sẽ nhảy vào phần thân vòng lặp, nơi thực hiện phép toán modulo. Nếu phép modulo cho kết quả bằng 0, chương trình lập tức thoát khỏi vòng lặp và trả về 0. Ngược lại, vòng lặp tiếp tục chạy.  
+Mặc dù **branch predictor** (bộ dự đoán nhánh) thường dự đoán khá chính xác giá trị của biểu thức điều kiện (đặc biệt là bên trong vòng lặp), nhưng các dự đoán sai có thể làm giảm hiệu năng do gây gián đoạn **instruction pipeline** (đường ống lệnh).
 
-The `for` loop executes a total of `max` times, where `max` is one more
-than the square root of integer `x`. At the assembly level, every
-execution of the loop checks to see whether `i` is less than `max`. If
-so, the instruction pointer jumps to the body of the loop, which
-computes the modulo operation. If the modulo operation results in 0, the
-program immediately exits the loop and returns 0. Otherwise, the loop
-continues execution. While branch predictors are fairly good at
-predicting what a conditional expression evaluates to (especially inside
-loops), wrong guesses can result in a hit to performance, due to
-disruptions in the instruction pipeline.
+**Loop unrolling** (trải vòng lặp) là một kỹ thuật tối ưu hóa mà trình biên dịch thực hiện để giảm tác động của các dự đoán sai. Trong loop unrolling, mục tiêu là giảm số vòng lặp đi một hệ số *n* bằng cách tăng khối lượng công việc mà mỗi vòng lặp thực hiện lên *n* lần.  
+Khi một vòng lặp được unroll với hệ số 2, số vòng lặp sẽ giảm **một nửa**, trong khi lượng công việc mỗi vòng tăng **gấp đôi**.
 
+Hãy áp dụng thủ công kỹ thuật loop unrolling hệ số 2 vào hàm `isPrime` của chúng ta (có trong [optExample3.c](_attachments/optExample3.c)):
 
-**Loop unrolling** is an optimization that compilers perform to reduce
-the impact of wrong guesses. In loop unrolling, the goal is to reduce
-the number of iterations of a loop by a factor of *n* by increasing the
-workload that each iteration performs by a factor of *n*. When a loop is
-unrolled by a factor of 2, the number of iterations in the loop is cut
-by *half*, whereas the amount work performed per iteration is *doubled*.
-
-
-Let's manually apply 2-factor loop unrolling to our `isPrime` function
-(available in [optExample3.c](_attachments/optExample3.c)):
-
-
-
-
-```
+```c
 // helper function: checks to see if a number is prime
 int isPrime(int x) {
     int i;
@@ -185,82 +87,21 @@ int isPrime(int x) {
 }
 ```
 
+Lưu ý rằng mặc dù chúng ta đã giảm một nửa số vòng lặp `for`, nhưng mỗi vòng lặp giờ thực hiện hai phép kiểm tra modulo, tức là khối lượng công việc mỗi vòng tăng gấp đôi.  
+Khi biên dịch và chạy lại chương trình, thời gian chạy chỉ cải thiện một chút (xem [Bảng 2](#NextTimes)). Đồng thời, khả năng đọc của mã cũng giảm.  
+Một cách tốt hơn để tận dụng loop unrolling là sử dụng cờ tối ưu hóa `-funroll-loops` của trình biên dịch, cờ này yêu cầu trình biên dịch unroll các vòng lặp có thể xác định số lần lặp ngay tại thời điểm biên dịch.  
+Cờ `-funroll-all-loops` là một tùy chọn mạnh mẽ hơn, unroll tất cả các vòng lặp bất kể trình biên dịch có chắc chắn về số lần lặp hay không.  
+[Bảng 2](#NextTimes) cho thấy thời gian chạy của kỹ thuật loop unrolling thủ công hệ số 2 (trong `optExample3.c`) so với việc thêm các cờ tối ưu `-funroll-loops` và `-funroll-all-loops` vào chương trình trước đó ([optExample2.c](_attachments/optExample2.c)).
 
-Notice that even though we have halved the number of iterations that the
-`for` loop takes, each iteration of the loop now performs two modulo
-checks, doubling the amount of work per iteration. Recompiling and
-rerunning the program results in marginally improved times (see [Table
-2](#NextTimes)). The readability of the code is also reduced. A better
-way to utilize loop unrolling is to invoke the `-funroll-loops` compiler
-optimization flag, which tells the compiler to unroll loops whose
-iterations can be determined at compile time. The `-funroll-all-loops`
-compiler flag is a more aggressive option that unrolls all loops whether
-or not the compiler is certain of the number of iterations. [Table
-2](#NextTimes) shows the runtimes of the manual 2-factor loop unrolling
-(available in `optExample3.c`) compared to adding the `-funroll-loops`
-and `-funroll-all-loops` compiler optimization flags to the previous
-program ([optExample2.c](_attachments/optExample2.c)).
+| Phiên bản | Unoptimized | `-O1` | `-O2` | `-O3` |
+|-----------|-------------|-------|-------|-------|
+| Original ([optExample.c](_attachments/optExample.c)) | 3.86 | 2.32 | 2.14 | 2.15 |
+| With loop-invariant code motion ([optExample2.c](_attachments/optExample2.c)) | 1.83 | 1.63 | 1.71 | 1.63 |
+| With manual 2-factor loop unrolling ([optExample3.c](_attachments/optExample3.c)) | 1.65 | 1.53 | 1.45 | 1.45 |
+| With `-funroll-loops` ([optExample2.c](_attachments/optExample2.c)) | 1.82 | 1.48 | 1.46 | 1.46 |
+| With `-funroll-all-loops` ([optExample2.c](_attachments/optExample2.c)) | 1.81 | 1.47 | 1.47 | 1.46 |
 
+**Bảng 2.** Thời gian (giây) để tạo 5.000.000 số nguyên tố
 
-+-------------+-------------+-------------+-------------+-------------+
-| Version     | Unoptimized | `-O1`       | `-O2`       | `-O3`       |
-+=============+=============+=============+=============+=============+
-| Original    | 3.86        | 2.32        | 2.14        | 2.15        |
-| ([optExamp  |             |             |             |             |
-| le.c](_atta |             |             |             |             |
-| chments/opt |             |             |             |             |
-| Example.c)) |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| With        | 1.83        | 1.63        | 1.71        | 1.63        |
-| loo         |             |             |             |             |
-| p-invariant |             |             |             |             |
-| code motion |             |             |             |             |
-| (           |             |             |             |             |
-| [optExample |             |             |             |             |
-| 2.c](_attac |             |             |             |             |
-| hments/optE |             |             |             |             |
-| xample2.c)) |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| With manual | 1.65        | 1.53        | 1.45        | 1.45        |
-| 2-factor    |             |             |             |             |
-| loop        |             |             |             |             |
-| unrolling   |             |             |             |             |
-| (           |             |             |             |             |
-| [optExample |             |             |             |             |
-| 3.c](_attac |             |             |             |             |
-| hments/optE |             |             |             |             |
-| xample3.c)) |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| With        | 1.82        | 1.48        | 1.46        | 1.46        |
-| `-fun       |             |             |             |             |
-| roll-loops` |             |             |             |             |
-| (           |             |             |             |             |
-| [optExample |             |             |             |             |
-| 2.c](_attac |             |             |             |             |
-| hments/optE |             |             |             |             |
-| xample2.c)) |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-| With        | 1.81        | 1.47        | 1.47        | 1.46        |
-| `-funroll   |             |             |             |             |
-| -all-loops` |             |             |             |             |
-| (           |             |             |             |             |
-| [optExample |             |             |             |             |
-| 2.c](_attac |             |             |             |             |
-| hments/optE |             |             |             |             |
-| xample2.c)) |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-
-: Table 2. Time in Seconds to Produce 5,000,000 Prime Numbers
-
-While manual loop unrolling does result in some performance improvement,
-the compiler's built-in loop unrolling flags when combined with the
-other optimization flags yield comparable performance. If a programmer
-wants to incorporate loop unrolling optimizations into their code, they
-should default to using the appropriate compiler flags, and *not*
-manually unroll loops themselves.
-
-
-
-
-
-
+Mặc dù loop unrolling thủ công mang lại một chút cải thiện hiệu năng, nhưng các cờ loop unrolling tích hợp sẵn của trình biên dịch, khi kết hợp với các cờ tối ưu hóa khác, cho hiệu năng tương đương.  
+Nếu lập trình viên muốn áp dụng tối ưu hóa loop unrolling vào mã của mình, họ nên ưu tiên sử dụng các cờ của trình biên dịch, *không* nên tự unroll vòng lặp thủ công.

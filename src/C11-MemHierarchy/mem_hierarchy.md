@@ -1,80 +1,23 @@
+## 11.1. Hệ phân cấp bộ nhớ (The Memory Hierarchy)
 
+Khi chúng ta tìm hiểu về các thiết bị lưu trữ trong máy tính hiện đại, một mô hình chung xuất hiện: các thiết bị có dung lượng lớn hơn thì lại có hiệu năng thấp hơn. Nói cách khác, hệ thống sử dụng cả những thiết bị nhanh và những thiết bị có khả năng lưu trữ lượng dữ liệu lớn, nhưng không có thiết bị nào vừa nhanh vừa lưu trữ được nhiều. Sự đánh đổi giữa hiệu năng và dung lượng này được gọi là **memory hierarchy** (hệ phân cấp bộ nhớ), và **Hình 1** minh họa trực quan hệ phân cấp này.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 11.1. The Memory Hierarchy 
-
-As we explore modern computer storage, a common pattern emerges: devices
-with higher capacities offer lower performance. Said another way,
-systems use devices that are fast and devices that store a large amount
-of data, but no single device does both. This trade-off between
-performance and capacity is known as the **memory hierarchy**, and
-Figure 1 depicts the hierarchy visually.
-
-
-Storage devices similarly trade cost and storage density: faster devices
-are more expensive, both in terms of bytes per dollar and operational
-costs (e.g., energy usage). For example, even though caches provide
-great performance, the cost (and manufacturing challenges) of building a
-CPU with a large enough cache to forego main memory makes such a design
-infeasible. Practical systems must utilize a combination of devices to
-meet the performance and capacity requirements of programs, and a
-typical system today incorporates most, if not all, of the devices
-described in Figure 1.
-
-
-
+Các thiết bị lưu trữ cũng có sự đánh đổi tương tự giữa chi phí và mật độ lưu trữ: thiết bị nhanh hơn thì đắt hơn, cả về chi phí trên mỗi byte và chi phí vận hành (ví dụ: tiêu thụ năng lượng).  
+Chẳng hạn, mặc dù **cache** mang lại hiệu năng tuyệt vời, nhưng chi phí (và thách thức sản xuất) để chế tạo một CPU có cache đủ lớn để loại bỏ nhu cầu dùng **main memory** là điều không khả thi.  
+Các hệ thống thực tế phải kết hợp nhiều loại thiết bị để đáp ứng yêu cầu về hiệu năng và dung lượng của chương trình, và một hệ thống điển hình ngày nay thường tích hợp hầu hết, nếu không muốn nói là tất cả, các thiết bị được mô tả trong **Hình 1**.
 
 ![In order, from (high performance, high cost, low capacity) to (low performance, low cost, high capacity): registers, cache, main memory, flash disk, traditional disk, and remote secondary storage.](_images/MemoryHierarchy.png)
 
+**Hình 1.** Hệ phân cấp bộ nhớ
 
-Figure 1. The memory hierarchy
+Thực tế của hệ phân cấp bộ nhớ là điều không mấy dễ chịu đối với lập trình viên, những người thường muốn không phải bận tâm đến tác động hiệu năng của vị trí dữ liệu được lưu trữ.  
+Ví dụ, khi khai báo một biến số nguyên *trong hầu hết các ứng dụng*, lập trình viên lý tưởng sẽ không phải lo lắng về sự khác biệt giữa dữ liệu được lưu trong cache hay trong main memory.  
+Việc yêu cầu lập trình viên quản lý chi tiết loại bộ nhớ mà mỗi biến chiếm dụng sẽ là một gánh nặng, mặc dù đôi khi điều này có thể đáng làm đối với một số đoạn mã nhỏ, quan trọng về hiệu năng.
 
+Lưu ý rằng **Hình 1** phân loại *cache* như một thực thể duy nhất, nhưng hầu hết các hệ thống đều có nhiều cấp cache tạo thành một hệ phân cấp nhỏ hơn bên trong.  
+Ví dụ, CPU thường tích hợp một **level one (L1) cache** rất nhỏ và nhanh, nằm khá gần **ALU** (Arithmetic Logic Unit), và một **level two (L2) cache** lớn hơn nhưng chậm hơn, nằm xa hơn.  
+Nhiều CPU đa nhân (**multicore CPU**) còn chia sẻ dữ liệu giữa các nhân thông qua một **level three (L3) cache** lớn hơn.  
+Mặc dù sự khác biệt giữa các cấp cache có thể quan trọng đối với các ứng dụng nhạy cảm về hiệu năng, cuốn sách này sẽ chỉ xem xét một cấp cache duy nhất để đơn giản hóa.
 
-The reality of the memory hierarchy is unfortunate for programmers, who
-would prefer to not worry about the performance implications of where
-their data resides. For example, when declaring an integer *in most
-applications*, a programmer ideally wouldn't need to agonize over the
-differences between data stored in a cache or main memory. Requiring a
-programmer to micromanage which type of memory each variable occupies
-would be burdensome, although it may occasionally be worth the effort
-for certain small, performance-critical sections of code.
-
-
-Note that Figure 1 categorizes *cache* as single
-entity, but most systems contain multiple levels of caches that form
-their own smaller hierarchy. For example, CPUs commonly incorporate a
-very small and fast *level one* (L1) cache, which sits relatively close
-to the ALU, and a larger and slower *level two* (L2) cache that resides
-farther away. Many multicore CPUs also share data between cores in a
-larger *level three* (L3) cache. While the differences between the cache
-levels may matter to performance-conscious applications, this book
-considers just a single level of caching for simplicity.
-
-
-Though this chapter primarily focuses on data movement between
-registers, CPU caches, and main memory, the [next
-section](devices.html#_storage_devices) characterizes common
-storage devices across the memory hierarchy. We examine disks and their
-role in the bigger picture of memory management later, in Chapter 13's
-discussion of [virtual
-memory](../C13-OS/vm.html#_virtual_memory).
-
-
-
-
-
+Mặc dù chương này chủ yếu tập trung vào việc di chuyển dữ liệu giữa **register**, **CPU cache** và **main memory**, [phần tiếp theo](devices.html#_storage_devices) sẽ mô tả các thiết bị lưu trữ phổ biến trong toàn bộ **memory hierarchy**.  
+Chúng ta sẽ tìm hiểu về ổ đĩa và vai trò của chúng trong bức tranh tổng thể của quản lý bộ nhớ ở **Chương 13**, trong phần thảo luận về [virtual memory](../C13-OS/vm.html#_virtual_memory).

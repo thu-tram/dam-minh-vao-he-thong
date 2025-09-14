@@ -1,144 +1,71 @@
+## 12.4. Những điểm chính và Tóm tắt
 
+Hành trình ngắn (và có lẽ hơi gây nản) của chúng ta vào thế giới **code optimization** (tối ưu hóa mã) nên truyền tải một thông điệp rất quan trọng tới người đọc: nếu bạn đang nghĩ đến việc tối ưu mã thủ công, hãy cân nhắc kỹ xem điều gì đáng để bạn bỏ thời gian và điều gì nên để cho trình biên dịch xử lý.  
+Dưới đây là một số lời khuyên quan trọng khi bạn muốn cải thiện hiệu năng mã.
 
+---
 
+**Chọn cấu trúc dữ liệu và thuật toán tốt**
 
+Không có gì có thể thay thế việc sử dụng đúng **algorithm** (thuật toán) và **data structure** (cấu trúc dữ liệu); việc không làm như vậy thường là nguyên nhân hàng đầu dẫn đến hiệu năng kém.  
+Ví dụ, thuật toán nổi tiếng **Sieve of Eratosthenes** là một cách hiệu quả hơn nhiều để tạo ra các số nguyên tố so với thuật toán tùy chỉnh của chúng ta trong `optExample`, và mang lại cải thiện hiệu năng đáng kể.  
+Đoạn dưới đây cho thấy thời gian cần để tạo tất cả các số nguyên tố từ 2 đến 5 triệu bằng một cài đặt của thuật toán sieve:
 
-
-
-
-
-
-
-
-
-
-
-
-
-## 12.4. Key Takeaways and Summary 
-
-Our short (and perhaps frustrating) journey into code optimization
-should convey one very important message to the reader: if you are
-thinking about manually optimizing your code, think carefully about what
-is worth spending your time on and what should be left to the compiler.
-Below are some important tips to consider when looking to improve code
-performance.
-
-
-::: dlist
-
-Choose Good Data Structures and Algorithms
-
-:   There is no substitute for using proper algorithms and data
-    structures; failure to do so is often the top reason for poor
-    performance in code. For example, the famous Sieve of Eratosthenes
-    algorithm is a much more efficient way to generate prime numbers
-    than our custom algorithm in `optExample`, and yields a significant
-    improvement in performance. The following listing shows the time
-    needed to generate all prime numbers between 2 and 5 million using
-    an implementation of the sieve:
-
-
-
-
-```
+```bash
 $ gcc -o genPrimes genPrimes.c
 $ ./genPrimes 5000000
 Found 348513 primes (0.122245 s)
 ```
 
+Thuật toán sieve chỉ mất 0,12 giây để tìm tất cả các số nguyên tố từ 2 đến 5 triệu, so với 1,46 giây mà `optExample2` cần để tạo cùng tập số nguyên tố với cờ tối ưu `-O3` được bật (nhanh hơn 12×).  
+Việc cài đặt thuật toán sieve được để lại như một bài tập cho bạn đọc; tuy nhiên, rõ ràng là việc chọn một thuật toán tốt hơn ngay từ đầu sẽ tiết kiệm hàng giờ tối ưu hóa thủ công. Ví dụ này cho thấy tại sao kiến thức về cấu trúc dữ liệu và thuật toán là nền tảng đối với các nhà khoa học máy tính.
 
-The sieve algorithm requires only 0.12 seconds to find all the prime
-numbers between 2 and 5 million, compared to the 1.46 seconds it takes
-`optExample2` to generate the same set of primes with the `-O3`
-optimization flags turned on (12× improvement). The implementation of
-the sieve algorithm is left as an exercise for the reader; however, it
-should be clear that choosing a better algorithm up front would have
-saved hours of tedious optimization effort. Our example demonstrates why
-a knowledge of data structures and algorithms is foundational for
-computer scientists.
+---
 
+**Sử dụng hàm thư viện chuẩn bất cứ khi nào có thể**
 
-::: dlist
+Đừng “phát minh lại bánh xe”. Nếu trong quá trình lập trình bạn cần một hàm thực hiện một tác vụ rất phổ biến (ví dụ: tìm giá trị tuyệt đối, hoặc tìm giá trị lớn nhất/nhỏ nhất trong một danh sách số), hãy dừng lại và kiểm tra xem hàm đó đã tồn tại trong **standard library** (thư viện chuẩn) của ngôn ngữ hay chưa.  
+Các hàm trong thư viện chuẩn thường được kiểm thử kỹ và tối ưu hóa cho hiệu năng.  
+Ví dụ, nếu bạn tự viết một phiên bản `sqrt` của riêng mình, trình biên dịch có thể sẽ không biết để tự động thay thế lời gọi hàm đó bằng lệnh `fsqrt`.
 
-Use Standard Library Functions Whenever Possible
+---
 
-:   Don't reinvent the wheel. If in the course of programming you need a
-    function that should do something very standard (e.g., find the
-    absolute value, or find the maximum or minimum of a list of
-    numbers), stop and check to see whether the function already exists
-    as part of the higher-level language's standard library. Functions
-    in the standard libraries are well tested and tend to be optimized
-    for performance. For example, if a reader manually implements their
-    own version of the `sqrt` function, the compiler may not know to
-    automatically replace the function call with the `fsqrt`
-    instruction.
+**Tối ưu dựa trên dữ liệu, không dựa trên cảm giác**
 
-Optimize Based on Data and Not on Feelings
+Nếu sau khi đã chọn cấu trúc dữ liệu và thuật toán tốt *và* sử dụng các hàm thư viện chuẩn mà vẫn cần cải thiện hiệu năng, hãy dùng một công cụ **code profiler** (phân tích hiệu năng mã) tốt như Valgrind.  
+Tối ưu hóa *không bao giờ* nên dựa trên cảm giác. Tập trung quá nhiều vào những gì bạn *nghĩ* là nên tối ưu (mà không có dữ liệu chứng minh) thường dẫn đến lãng phí thời gian.
 
-:   If after choosing the best data structures and algorithms *and*
-    employing standard library functions, additional improvements in
-    performance are required, enlist the help of a good code profiler
-    like Valgrind. Optimization should *never* be based on gut feelings.
-    Concentrating too much on what one *feels* should be optimized
-    (without the data to back up the thought) often leads to wasted
-    time.
+---
 
-Split Complex Code into Multiple Functions
+**Tách mã phức tạp thành nhiều hàm**
 
-:   Manually inlining code usually does not result in a sizable
-    performance gain over what modern compilers can achieve. Instead,
-    make it easier for your compiler to help optimize for you. Compilers
-    have an easier time optimizing shorter code segments. Splitting
-    complex operations into multiple functions simultaneously increases
-    code readability and makes it easier for a compiler to optimize.
-    Check to see whether your compiler attempts inlining by default or
-    has a separate flag to attempt inlining code. It is better to let
-    your compiler perform inlining rather than manually doing it
-    yourself.
+Việc nội tuyến mã thủ công thường không mang lại cải thiện hiệu năng đáng kể so với những gì trình biên dịch hiện đại có thể làm. Thay vào đó, hãy giúp trình biên dịch dễ dàng tối ưu hơn cho bạn.  
+Trình biên dịch dễ tối ưu hơn với các đoạn mã ngắn. Việc tách các thao tác phức tạp thành nhiều hàm vừa tăng khả năng đọc mã, vừa giúp trình biên dịch tối ưu dễ hơn.  
+Hãy kiểm tra xem trình biên dịch của bạn có tự động thử nội tuyến hay có cờ riêng để thử nội tuyến mã hay không. Tốt hơn hết là để trình biên dịch thực hiện nội tuyến thay vì tự làm thủ công.
 
-Prioritize Code Readability
+---
 
-:   In many applications today, readability is king. The truth is that
-    code is read more often than it is written. Many companies spend
-    considerable time training their software engineers to write code in
-    a very particular way to maximize readability. If optimizing your
-    code results in a noticeable hit to code readability, it is
-    important to check if the performance improvement obtained is worth
-    the hit. For example, many compilers today have optimization flags
-    that enable loop unrolling. Programmers should always use available
-    optimization flags for loop unrolling instead of trying to manually
-    unroll loops, which can lead to a significant hit in code
-    readability. Reducing code readability often increases the
-    likelihood that bugs are inadvertently introduced into code, which
-    can lead to security vulnerabilities.
+**Ưu tiên khả năng đọc mã**
 
-Pay Attention to Memory Use
+Trong nhiều ứng dụng ngày nay, khả năng đọc mã là ưu tiên hàng đầu. Thực tế là mã được đọc nhiều hơn là được viết.  
+Nhiều công ty dành nhiều thời gian đào tạo kỹ sư phần mềm viết mã theo một phong cách nhất định để tối đa hóa khả năng đọc.  
+Nếu việc tối ưu mã làm giảm đáng kể khả năng đọc, bạn cần cân nhắc xem cải thiện hiệu năng có xứng đáng với sự đánh đổi đó hay không.  
+Ví dụ, nhiều trình biên dịch hiện nay có cờ tối ưu cho phép **loop unrolling** (trải vòng lặp). Lập trình viên nên luôn sử dụng các cờ tối ưu này thay vì tự unroll vòng lặp, vì điều đó có thể làm giảm mạnh khả năng đọc mã.  
+Giảm khả năng đọc mã thường làm tăng khả năng xuất hiện lỗi không mong muốn, từ đó có thể dẫn đến lỗ hổng bảo mật.
 
-:   A program's memory usage often has a bigger impact on the program's
-    execution time than the number of instructions that it executes. The
-    [loop interchange
-    example](memory_considerations.html#_loop_interchange)
-    exemplifies this point. In both cases, the loop executes the same
-    number of instructions. However, the ordering of the loops has a
-    significant impact on memory access and locality. Remember to also
-    explore memory profiling tools like `massif` and `cachegrind` when
-    attempting to optimize a program.
+---
 
-Compilers Are Constantly Improving
+**Chú ý đến việc sử dụng bộ nhớ**
 
-:   Compiler writers continually update compilers to perform more
-    sophisticated optimizations safely. For example, GCC switched to the
-    link: [static single assignment
-    (SSA)](https://gcc.gnu.org/onlinedocs/gccint/SSA.html) form starting
-    in version 4.0, which significantly improved the effects of some of
-    its optimizations. The `GRAPHITE` branch of the GCC code base
-    implements the [polyhedral model](https://polyhedral.info/), which
-    allows the compiler to perform more complex types of loop
-    transformations. As compilers get more sophisticated, the benefits
-    of manual optimization significantly reduce.
+Việc sử dụng bộ nhớ của chương trình thường ảnh hưởng lớn hơn đến thời gian thực thi so với số lượng lệnh mà nó chạy.  
+[Ví dụ về loop interchange](memory_considerations.html#_loop_interchange) minh họa rõ điều này. Trong cả hai trường hợp, vòng lặp thực thi cùng số lượng lệnh, nhưng thứ tự vòng lặp lại ảnh hưởng đáng kể đến truy cập bộ nhớ và **locality** (tính cục bộ).  
+Hãy nhớ sử dụng các công cụ phân tích bộ nhớ như `massif` và `cachegrind` khi tối ưu chương trình.
 
+---
 
+**Trình biên dịch luôn được cải tiến**
 
-
-
+Các lập trình viên trình biên dịch liên tục cập nhật để thực hiện các tối ưu hóa phức tạp hơn một cách an toàn.  
+Ví dụ, GCC đã chuyển sang dạng [static single assignment (SSA)](https://gcc.gnu.org/onlinedocs/gccint/SSA.html) từ phiên bản 4.0, giúp cải thiện đáng kể hiệu quả của một số tối ưu hóa.  
+Nhánh `GRAPHITE` của mã nguồn GCC triển khai [polyhedral model](https://polyhedral.info/), cho phép trình biên dịch thực hiện các loại biến đổi vòng lặp phức tạp hơn.  
+Khi trình biên dịch ngày càng tinh vi, lợi ích của tối ưu hóa thủ công giảm đi đáng kể.

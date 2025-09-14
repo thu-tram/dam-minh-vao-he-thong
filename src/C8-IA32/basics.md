@@ -1,61 +1,8 @@
+## 8.1. Bắt đầu với Assembly: Những điều cơ bản
 
+Để có cái nhìn đầu tiên về assembly, chúng ta sẽ chỉnh sửa hàm `adder` từ đầu chương để đơn giản hóa hành vi của nó. Đây là phiên bản đã chỉnh sửa (`adder2`):
 
- 
-
-
-
-
-
-
-
--   -  
-        -  
-        -  
-        -   [8.3. Additional Arithmetic
-            Instructions]()
-        -   [8.4. Conditional Control and
-            Loops]()
-            -  
-            -  
-            -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
-        -  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 8.1. Diving into Assembly: Basics 
-
-For a first look at assembly, we modify the `adder` function from the
-beginning of the chapter to simplify its behavior. Here's the modified
-function (`adder2`):
-
-
-
-
-```
+```c
 #include <stdio.h>
 
 //adds two to an integer and returns the result
@@ -71,369 +18,178 @@ int main(void) {
 }
 ```
 
+Để biên dịch đoạn code này, sử dụng lệnh sau:
 
-To compile this code, use the following command:
+```
+$ gcc -m32 -o modified modified.c
+```
 
+Cờ `-m32` yêu cầu GCC biên dịch code thành một file thực thi 32-bit. Nếu quên thêm cờ này, kết quả assembly có thể sẽ khác rất nhiều so với các ví dụ trong chương này; mặc định, GCC biên dịch sang assembly x86-64, biến thể 64-bit của x86. Tuy nhiên, hầu như tất cả các kiến trúc 64-bit đều có chế độ chạy 32-bit để tương thích ngược. Chương này đề cập đến IA32; các chương khác sẽ nói về x86-64 và ARM. Dù đã cũ, IA32 vẫn cực kỳ hữu ích để hiểu cách chương trình hoạt động và cách tối ưu hóa code.
 
+---
 
+Tiếp theo, hãy xem mã assembly tương ứng của đoạn code này bằng cách gõ:
 
-    $ gcc -m32 -o modified modified.c
+```
+$ objdump -d modified > output
+$ less output
+```
 
+Tìm đoạn code liên quan đến `adder2` bằng cách gõ `/adder2` khi đang xem file `output` với `less`. Phần liên quan đến `adder2` sẽ trông tương tự như sau:
 
-The `-m32` flag tells GCC to compile the code to a 32-bit executable.
-Forgetting to include this flag may result in assembly that is wildly
-different from the examples shown in this chapter; by default, GCC
-compiles to x86-64 assembly, the 64-bit variant of x86. However,
-virtually all 64-bit architectures have a 32-bit operating mode for
-backward compatibility. This chapter covers IA32; other chapters cover
-x86-64 and ARM. Despite its age, IA32 is still extremely useful for
-understanding how programs work and how to optimize code.
+**Kết quả assembly cho hàm `adder2`**:
 
+```
+0804840b <adder2>:
+ 804840b:       55                      push   %ebp
+ 804840c:       89 e5                   mov    %esp,%ebp
+ 804840e:       8b 45 08                mov    0x8(%ebp),%eax
+ 8048411:       83 c0 02                add    $0x2,%eax
+ 8048414:       5d                      pop    %ebp
+ 8048415:       c3                      ret
+```
 
-Next, let's view the corresponding assembly of this code by typing the
-following command:
+---
 
+Đừng lo nếu bạn chưa hiểu chuyện gì đang diễn ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly ở các phần sau. Hiện tại, chúng ta sẽ nghiên cứu cấu trúc của từng lệnh riêng lẻ.
 
+Mỗi dòng trong ví dụ trên chứa:
 
+- Địa chỉ của lệnh trong bộ nhớ chương trình
+- Các byte tương ứng với lệnh
+- Dạng văn bản (plaintext) của lệnh
 
-    $ objdump -d modified > output
-    $ less output
+Ví dụ: `55` là mã máy (machine code) của lệnh `push %ebp`, và lệnh này nằm tại địa chỉ `0x804840b` trong bộ nhớ chương trình.
 
+Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành **nhiều** lệnh assembly.  
+Ví dụ, phép toán `a + 2` được biểu diễn bằng hai lệnh:  
+`mov 0x8(%ebp), %eax` và `add $0x2, %eax`.
 
-Search for the code snippet associated with `adder2` by typing `/adder2`
-while examining the file `output` using `less`. The section associated
-with `adder2` should look similar to the following:
+---
 
+>> **Assembly của bạn có thể trông khác!**
+>>
+>> Nếu bạn biên dịch code cùng với chúng tôi, bạn có thể nhận thấy một số đoạn assembly của mình trông khác so với trong sách. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành. Hầu hết các ví dụ assembly trong sách này được tạo trên hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).
+>>
+>> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (`example.c`) bằng lệnh: `gcc -m32 -o example example.c`. Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản làm theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung này sẽ được đề cập ở [chương sau](../C12-CodeOpt/index.html#_code_optimization).
 
+### 8.1.1. Thanh ghi (Registers) 
 
-Assembly output for the `adder2` function
+Hãy nhớ rằng **register** (thanh ghi) là một đơn vị lưu trữ có kích thước bằng một từ (word-sized) nằm trực tiếp trên CPU. Có thể có các thanh ghi riêng cho dữ liệu, lệnh và địa chỉ. Ví dụ, CPU Intel có tổng cộng tám thanh ghi để lưu trữ dữ liệu 32-bit:
 
+`%eax`, `%ebx`, `%ecx`, `%edx`, `%edi`, `%esi`, `%esp`, và `%ebp`.
 
+Chương trình có thể đọc hoặc ghi vào cả tám thanh ghi này. Sáu thanh ghi đầu tiên đều lưu dữ liệu **general-purpose** (đa dụng), trong khi hai thanh ghi cuối thường được compiler dành riêng để lưu dữ liệu địa chỉ. Mặc dù một chương trình có thể diễn giải nội dung của thanh ghi đa dụng là số nguyên hoặc địa chỉ, bản thân thanh ghi không phân biệt điều đó. Hai thanh ghi cuối (`%esp` và `%ebp`) lần lượt được gọi là **stack pointer** (con trỏ stack) và **frame pointer** (con trỏ khung stack). Compiler dành riêng các thanh ghi này cho các thao tác duy trì cấu trúc của **program stack**. Thông thường, `%esp` trỏ tới đỉnh của stack chương trình, trong khi `%ebp` trỏ tới đáy của stack frame hiện tại. Chúng ta sẽ bàn chi tiết hơn về stack frame và hai thanh ghi này trong phần nói về [functions](functions.html#_functions_in_assembly).
 
-    0804840b <adder2>:
-     804840b:       55                      push   %ebp
-     804840c:       89 e5                   mov    %esp,%ebp
-     804840e:       8b 45 08                mov    0x8(%ebp),%eax
-     8048411:       83 c0 02                add    $0x2,%eax
-     8048414:       5d                      pop    %ebp
-     8048415:       c3                      ret
+Thanh ghi cuối cùng đáng nhắc đến là `%eip` hay **instruction pointer** (đôi khi gọi là **program counter** – PC). Nó trỏ tới lệnh tiếp theo sẽ được CPU thực thi. Không giống tám thanh ghi kể trên, chương trình không thể ghi trực tiếp vào `%eip`.
 
+---
 
-Don't worry if you don't understand what's going on just yet. We will
-cover assembly in greater detail in later sections. For now, we will
-study the structure of these individual instructions.
+### 8.1.2. Cú pháp nâng cao của thanh ghi (Advanced Register Notation) 
 
+Với sáu thanh ghi đầu tiên vừa nêu, ISA cung cấp cơ chế truy cập 16 bit thấp của mỗi thanh ghi. ISA cũng cung cấp cơ chế riêng để truy cập các thành phần 8 bit của 16 bit thấp này đối với bốn thanh ghi đầu tiên. **Bảng 1** liệt kê từng thanh ghi và cơ chế (nếu có) để truy cập các byte thành phần.
 
-Each line in the preceding example contains an instruction's address in
-program memory, the bytes corresponding to the instruction, and the
-plaintext representation of the instruction itself. For example, `55` is
-the machine code representation of the instruction `push %ebp`, and the
-instruction occurs at address `0x804840b` in program memory.
+| 32-bit register (bits 31–0) | Lower 16 bits (bits 15–0) | Bits 15–8 | Bits 7–0 |
+|-----------------------------|---------------------------|-----------|----------|
+| `%eax`                      | `%ax`                     | `%ah`     | `%al`    |
+| `%ebx`                      | `%bx`                     | `%bh`     | `%bl`    |
+| `%ecx`                      | `%cx`                     | `%ch`     | `%cl`    |
+| `%edx`                      | `%dx`                     | `%dh`     | `%dl`    |
+| `%edi`                      | `%di`                     |           |          |
+| `%esi`                      | `%si`                     |           |          |
 
+**Bảng 1.** Các thanh ghi x86 và cơ chế truy cập byte thấp.
 
-It is important to note that a single line of C code often translates to
-multiple instructions in assembly. The operation `a + 2` is represented
-by the two instructions `mov 0x8(%ebp), %eax` and `add $0x2, %eax`.
+- 16 bit thấp của bất kỳ thanh ghi nào kể trên có thể được truy cập bằng cách dùng hai ký tự cuối trong tên thanh ghi. Ví dụ: `%ax` truy cập 16 bit thấp của `%eax`.
 
+- Byte *cao* và *thấp* trong 16 bit thấp của bốn thanh ghi đầu tiên có thể được truy cập bằng cách lấy hai ký tự cuối của tên thanh ghi và thay ký tự cuối bằng `h` (high – cao) hoặc `l` (low – thấp) tùy byte cần truy cập. Ví dụ: `%al` tham chiếu 8 bit thấp của `%ax`, còn `%ah` tham chiếu 8 bit cao của `%ax`. Các thanh ghi 8 bit này thường được compiler dùng để lưu giá trị 1 byte cho một số thao tác nhất định, như dịch bit (bitwise shift) – vì một thanh ghi 32-bit không thể dịch quá 31 vị trí và số 32 chỉ cần 1 byte để lưu. Nói chung, compiler sẽ dùng thành phần thanh ghi nhỏ nhất cần thiết để hoàn thành một phép toán.
 
+---
 
-+-----------------------------------+-----------------------------------+
-|                                   |                          |
-|                                   | Your assembly may look different! |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | If you are compiling your code    |
-|                                   | along with us, you may notice     |
-|                                   | that some of your assembly        |
-|                                   | examples look different from what |
-|                                   | is shown in this book. The        |
-|                                   | precise assembly instructions     |
-|                                   | that are output by any compiler   |
-|                                   | depend on that compiler's version |
-|                                   | and the underlying operating      |
-|                                   | system. Most of the assembly      |
-|                                   | examples in this book were        |
-|                                   | generated on systems running      |
-|                                   | Ubuntu or Red Hat Enterprise      |
-|                                   | Linux (RHEL).                     |
-|                                   | :::                               |
-|                                   |                                   |
-|                                   | ::: paragraph                     |
-|                                   | In the examples that follow, we   |
-|                                   | do not use any optimization       |
-|                                   | flags. For example, we compile    |
-|                                   | any example file (`example.c`)    |
-|                                   | using the command                 |
-|                                   | `gcc -m32 -o example example.c`.  |
-|                                   | Consequently, there are many      |
-|                                   | seemingly redundant instructions  |
-|                                   | in the examples that follow.      |
-|                                   | Remember that the compiler is not |
-|                                   | \"smart\" --- it simply follows a |
-|                                   | series of rules to translate      |
-|                                   | human-readable code into machine  |
-|                                   | language. During this translation |
-|                                   | process, it is not uncommon for   |
-|                                   | some redundancy to occur.         |
-|                                   | Optimizing compilers remove many  |
-|                                   | of these redundancies during      |
-|                                   | optimization, which is covered in |
-|                                   | a [later                          |
-|                                   | chapter](../C12-CodeOpt/index     |
-|                                   | .html#_code_optimization). |
-|                                   | :::                               |
-+-----------------------------------+-----------------------------------+
+### 8.1.3. Cấu trúc lệnh (Instruction Structure) 
 
+Mỗi lệnh gồm một **opcode** (mã thao tác) chỉ định nó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện. Ví dụ: lệnh `add $0x2, %eax` có opcode là `add` và các toán hạng là `$0x2` và `%eax`.
 
+Mỗi toán hạng tương ứng với một vị trí nguồn hoặc đích cho thao tác cụ thể. Có nhiều loại toán hạng:
 
-### 8.1.1. Registers 
+- **Constant (literal)**: giá trị hằng, đứng trước bởi ký hiệu `$`. Ví dụ: trong `add $0x2, %eax`, `$0x2` là giá trị hằng ở hệ thập lục phân 0x2.
+- **Register**: tham chiếu trực tiếp tới một thanh ghi. Ví dụ: `add $0x2, %eax` chỉ định `%eax` là nơi lưu kết quả của phép cộng.
+- **Memory**: tham chiếu tới một giá trị trong bộ nhớ chính (RAM), thường dùng để tra cứu địa chỉ. Dạng địa chỉ bộ nhớ có thể kết hợp thanh ghi và giá trị hằng. Ví dụ: trong `mov 0x8(%ebp), %eax`, toán hạng `0x8(%ebp)` nghĩa là “cộng 0x8 vào giá trị trong `%ebp`, rồi truy xuất bộ nhớ tại địa chỉ đó”. Đây chính là thao tác dereference con trỏ.
 
-Recall that a **register** is a word-sized storage unit located directly
-on the CPU. There may be separate registers for data, instructions, and
-addresses. For example, the Intel CPU has a total of eight registers for
-storing 32-bit data:
+---
 
+### 8.1.4. Ví dụ với toán hạng (An Example with Operands) 
 
-`%eax`, `%ebx`, `%ecx`, `%edx`, `%edi`, `%esi`, `%esp`, and `%ebp`.
-
+Cách tốt nhất để giải thích chi tiết về toán hạng là đưa ra một ví dụ nhanh. Giả sử bộ nhớ chứa các giá trị sau:
 
-Programs can read from or write to all eight of these registers. The
-first six registers all hold general-purpose data, whereas the last two
-are typically reserved by the compiler to hold address data. While a
-program may interpret a general-purpose register's contents as integers
-or as addresses, the register itself makes no distinction. The last two
-registers (`%esp` and `%ebp`) are known as the **stack pointer** and the
-**frame pointer**, respectively. The compiler reserves these registers
-for operations that maintain the layout of the program stack. Typically,
-`%esp` points to the top of the program stack, whereas `%ebp` points to
-the base of the current stack frame. We discuss stack frames and these
-two registers in greater detail in our discussion on
-[functions](functions.html#_functions_in_assembly).
+| Address | Value |
+|---------|-------|
+| 0x804   | 0xCA  |
+| 0x808   | 0xFD  |
+| 0x80c   | 0x12  |
+| 0x810   | 0x1E  |
 
+Giả sử các thanh ghi chứa giá trị:
 
-The last register worth mentioning is `%eip` or the **instruction
-pointer**, sometimes called the **program counter** (PC). It points to
-the next instruction to be executed by the CPU. Unlike the eight
-registers mentioned previously, programs cannot write directly to
-register `%eip`.
+| Register | Value |
+|----------|-------|
+| %eax     | 0x804 |
+| %ebx     | 0x10  |
+| %ecx     | 0x4   |
+| %edx     | 0x1   |
 
+Khi đó, các toán hạng trong **Bảng 2** sẽ được đánh giá (evaluate) thành các giá trị như hiển thị. Mỗi dòng trong bảng ghép một toán hạng với dạng của nó (ví dụ: constant, register, memory), cách nó được dịch, và giá trị của nó. Lưu ý: ký hiệu `M[x]` ở đây biểu thị giá trị tại vị trí bộ nhớ có địa chỉ x.
 
+| Operand         | Form     | Translation                  | Value   |
+|-----------------|----------|------------------------------|---------|
+| `%ecx`          | Register | `%ecx`                       | 0x4     |
+| `(%eax)`        | Memory   | M[`%eax`] hoặc M[0x804]       | 0xCA    |
+| `$0x808`        | Constant | 0x808                         | 0x808   |
+| `0x808`         | Memory   | M[0x808]                      | 0xFD    |
+| `0x8(%eax)`     | Memory   | M[`%eax` + 8] hoặc M[0x80c]   | 0x12    |
+| `(%eax, %ecx)`  | Memory   | M[`%eax` + `%ecx`] hoặc M[0x808] | 0xFD |
+| `0x4(%eax, %ecx)` | Memory | M[`%eax` + `%ecx` + 4] hoặc M[0x80c] | 0x12 |
+| `0x800(,%edx,4)` | Memory  | M[0x800 + `%edx`*4] hoặc M[0x804] | 0xCA |
+| `(%eax, %edx, 8)` | Memory | M[`%eax` + `%edx`*8] hoặc M[0x80c] | 0x12 |
 
-### 8.1.2. Advanced Register Notation 
+**Bảng 2.** Ví dụ về các toán hạng (operands)
 
-For the first six registers mentioned, the ISA provides a mechanism to
-access the lower 16 bits of each register. The ISA also provides a
-separate mechanism to access the 8-bit components of the lower 16 bits
-of the first four of these registers. Table 1 lists
-each of the six registers and the ISA mechanisms (if available) to
-access their component bytes.
+---
 
+Trong **Bảng 2**, ký hiệu `%ecx` biểu thị giá trị được lưu trong thanh ghi `%ecx`.  
+Ngược lại, M[`%eax`] cho biết giá trị bên trong `%eax` sẽ được coi là một địa chỉ, và cần **dereference** (truy xuất) giá trị tại địa chỉ đó.  
+Do đó, toán hạng `(%eax)` tương ứng với M[0x804], và giá trị tại địa chỉ này là 0xCA.
 
-+-----------------+-----------------+-----------------+-----------------+
-| 32-bit register | Lower 16 bits   | Bits 15-8       | Bits 7-0        |
-| (bits 31-0)     | (bits 15-0)     |                 |                 |
-+=================+=================+=================+=================+
-| `%eax`          | `%ax`           | `%ah`           | `%al`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%ebx`          | `%bx`           | `%bh`           | `%bl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%ecx`          | `%cx`           | `%ch`           | `%cl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%edx`          | `%dx`           | `%dh`           | `%dl`           |
-+-----------------+-----------------+-----------------+-----------------+
-| `%edi`          | `%di`           |                 |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| `%esi`          | `%si`           |                 |                 |
-+-----------------+-----------------+-----------------+-----------------+
-
-: Table 1. x86 Registers and Mechanisms for Accessing Lower Bytes.
-
-The lower 16 bits for any of the aforementioned registers can be
-accessed by referencing the last two letters in the register's name. For
-example, use `%ax` to access the lower 16 bits of `%eax`.
-
-
-The *higher* and *lower* bytes within the lower 16 bits of the first
-four listed registers can be accessed by taking the last two letters of
-the register name and replacing the last letter with either an `h` (for
-*higher*) or an `l` (for *lower*) depending on which byte is desired.
-For example, `%al` references the lower eight bits of register `%ax`,
-whereas `%ah` references the higher eight bits of register `%ax`. These
-eight bit registers are commonly used by the compiler for storing
-single-byte values for certain operations, such as bitwise shifts (a
-32-bit register cannot be shifted more than 32 places and the number 32
-requires only a single byte of storage). In general, the compiler will
-use the smallest component register needed to complete an operation.
-
-
-
-### 8.1.3. Instruction Structure 
-
-Each instruction consists of an operation code (or **opcode**) that
-specifies what it does, and one or more **operands** that tell the
-instruction how to do it. For example, the instruction `add $0x2, %eax`
-has the opcode `add` and the operands `$0x2` and `%eax`.
-
-
-Each operand corresponds to a source or destination location for a
-specific operation. There are multiple types of operands:
-
-
-
--   **Constant (literal)** values are preceded by the `$` sign. For
-    example in the instruction `add $0x2, %eax`, `$0x2` is a literal
-    value that corresponds to the hexadecimal value 0x2.
-
--   **Register** forms refer to individual registers. The instruction
-    `add  $0x2, %eax` specifies register `%eax` as the destination
-    location where the result %of the `add` operation will be stored.
-
--   **Memory** forms correspond to some value inside main memory (RAM)
-    and are commonly used for address lookups. Memory address forms can
-    contain a combination of registers and constant values. For example,
-    in the instruction `mov 0x8(%ebp),%eax`, the operand `0x8(%ebp)` is
-    an example of a memory form. It loosely translates to \"add 0x8 to
-    the value in register `%ebp`, and then perform a memory lookup.\" If
-    this sounds like a pointer dereference, that's because it is!
-
-
-
-### 8.1.4. An Example with Operands 
-
-The best way to explain operands in detail is to present a quick
-example. Suppose that memory contains the following values:
+---
 
+Một vài lưu ý quan trọng trước khi tiếp tục:  
+Mặc dù **Bảng 2** cho thấy nhiều dạng toán hạng hợp lệ, nhưng không phải tất cả đều có thể dùng thay thế cho nhau trong mọi trường hợp.
 
-+-----------------------------------+-----------------------------------+
-| Address                           | Value                             |
-+===================================+===================================+
-| 0x804                             | 0xCA                              |
-+-----------------------------------+-----------------------------------+
-| 0x808                             | 0xFD                              |
-+-----------------------------------+-----------------------------------+
-| 0x80c                             | 0x12                              |
-+-----------------------------------+-----------------------------------+
-| 0x810                             | 0x1E                              |
-+-----------------------------------+-----------------------------------+
+Cụ thể:
 
-Let's also assume that the following registers contain values:
+- Toán hạng dạng **constant** không thể đóng vai trò là toán hạng đích (destination operand).
+- Toán hạng dạng **memory** không thể đồng thời là cả nguồn (source) và đích (destination) trong cùng một lệnh.
+- Trong các phép toán có **scaling** (xem hai toán hạng cuối trong [Bảng 2](#Operands32)), hệ số nhân (scaling factor) phải là một trong các giá trị 1, 2, 4 hoặc 8.
 
+**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc nắm vững các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn khi phân tích mã assembly.
 
-+-----------------------------------+-----------------------------------+
-| Register                          | Value                             |
-+===================================+===================================+
-| %eax                              | 0x804                             |
-+-----------------------------------+-----------------------------------+
-| %ebx                              | 0x10                              |
-+-----------------------------------+-----------------------------------+
-| %ecx                              | 0x4                               |
-+-----------------------------------+-----------------------------------+
-| %edx                              | 0x1                               |
-+-----------------------------------+-----------------------------------+
-
-Then the operands in Table 2 evaluate to the values
-shown. Each row of the table matches an operand with its form (e.g.
-constant, register, memory), how it is translated, and its value. Note
-that the notation M\[x\] in this context denotes the value at the memory
-location specified by address x.
+---
 
+### 8.1.5. Hậu tố của lệnh (Instruction Suffixes)
 
-+-----------------+-----------------+-----------------+-----------------+
-| Operand         | Form            | Translation     | Value           |
-+=================+=================+=================+=================+
-| %ecx            | Register        | %ecx            | 0x4             |
-+-----------------+-----------------+-----------------+-----------------+
-| (%eax)          | Memory          | M\[%eax\] or    | 0xCA            |
-|                 |                 | M\[0x804\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| \$0x808         | Constant        | 0x808           | 0x808           |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x808           | Memory          | M\[0x808\]      | 0xFD            |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x8(%eax)       | Memory          | M\[%eax + 8\]   | 0x12            |
-|                 |                 | or M\[0x80c\]   |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| (%eax, %ecx)    | Memory          | M\[%eax +       | 0xFD            |
-|                 |                 | %ecx\] or       |                 |
-|                 |                 | M\[0x808\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x4(%eax, %ecx) | Memory          | M\[%eax +       | 0x12            |
-|                 |                 | %ecx + 4\] or   |                 |
-|                 |                 | M\[0x80c\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| 0x800(,%edx,4)  | Memory          | M\[0x800 +      | 0xCA            |
-|                 |                 | %edx\*4\] or    |                 |
-|                 |                 | M\[0x804\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
-| (%eax, %edx, 8) | Memory          | M\[%eax +       | 0x12            |
-|                 |                 | %edx\*8\] or    |                 |
-|                 |                 | M\[0x80c\]      |                 |
-+-----------------+-----------------+-----------------+-----------------+
+Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có thêm **hậu tố** (suffix) để chỉ **kích thước** (gắn với **kiểu dữ liệu**) của dữ liệu được thao tác ở cấp độ mã lệnh.  
+Compiler sẽ tự động dịch code sang các lệnh có hậu tố phù hợp.  
+**Bảng 3** cho thấy các hậu tố phổ biến của lệnh x86.
 
-: Table 2. Example operands
+| Suffix | C Type                  | Size (bytes) |
+|--------|------------------------|--------------|
+| b      | `char`                  | 1            |
+| w      | `short`                 | 2            |
+| l      | `int`, `long`, `unsigned` | 4          |
 
-In Table 2, the notation `%ecx` indicates the value
-stored in register `%ecx`. In contrast, M\[`%eax`\] indicates that the
-value inside `%eax` should be treated as an address, and to dereference
-(look up) the value at that address. Therefore, the operand `(%eax)`
-corresponds to M\[0x804\], which corresponds to the value 0xCA.
+**Bảng 3.** Ví dụ về hậu tố của lệnh.
 
+---
 
-A few important notes before continuing. While Table 2
-shows many valid operand forms, not all forms can be used
-interchangeably in all circumstances.
-
-
-Specifically:
-
-
-
--   Constant forms cannot serve as destination operands.
-
--   Memory forms cannot serve *both* as the source and destination
-    operand in a single instruction.
-
--   In cases of scaling operations (see the last two operands in [Table
-    2](#Operands32)), the scaling factor must be one of 1, 2, 4, or 8.
-
-
-Table 2 is provided as a reference; however,
-understanding key operand forms will help improve the reader's speed in
-parsing assembly language.
-
-
-
-### 8.1.5. Instruction Suffixes 
-
-In several cases in upcoming examples, common and arithmetic
-instructions have a suffix that indicates the *size* (associated with
-the *type*) of the data being operated on at the code level. The
-compiler automatically translates code to instructions with the
-appropriate suffix. Table 3 shows the common suffixes for
-x86 instructions.
-
-
-+----------------------+----------------------+-----------------------+
-| Suffix               | C Type               | Size (bytes)          |
-+======================+======================+=======================+
-| b                    | `char`               | 1                     |
-+----------------------+----------------------+-----------------------+
-| w                    | `short`              | 2                     |
-+----------------------+----------------------+-----------------------+
-| l                    | `int`, `long`,       | 4                     |
-|                      | `unsigned`           |                       |
-+----------------------+----------------------+-----------------------+
-
-: Table 3. Example Instruction Suffixes
-
-Note that instructions involved with conditional execution have
-different suffixes based on the evaluated condition. We cover
-instructions associated with conditional instructions in a [later
-section](conditional_control_loops.html#_conditional_control_and_loops).
-
-
-
-
-
-
+Lưu ý: các lệnh liên quan đến **thực thi có điều kiện** sẽ có hậu tố khác nhau tùy thuộc vào điều kiện được đánh giá.  
+Chúng ta sẽ tìm hiểu các lệnh liên quan đến điều kiện trong [phần sau](conditional_control_loops.html#_conditional_control_and_loops).

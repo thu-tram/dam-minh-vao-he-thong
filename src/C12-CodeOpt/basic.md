@@ -1,44 +1,12 @@
+## 12.1. Những bước đầu tiên trong tối ưu mã: Code Profiling (Phân tích hiệu năng mã)
 
+*“Vấn đề thực sự là các lập trình viên đã dành quá nhiều thời gian lo lắng về hiệu suất ở những nơi sai và vào những thời điểm sai; tối ưu hóa sớm là cội nguồn của mọi điều xấu (hoặc ít nhất là phần lớn) trong lập trình.”* — Don Knuth, *The Art of Computer Programming*
 
+Một trong những nguy hiểm lớn nhất trong tối ưu mã là khái niệm **premature optimization** (tối ưu hóa sớm). Tối ưu hóa sớm xảy ra khi lập trình viên cố gắng tối ưu dựa trên “cảm giác” về nơi xảy ra sự kém hiệu quả, thay vì dựa trên dữ liệu. Bất cứ khi nào có thể, điều quan trọng là phải đo thời gian chạy của các phần khác nhau trong mã với các đầu vào khác nhau *trước khi* bắt đầu tối ưu, để xác định **hot spot** (điểm nóng) — những khu vực trong chương trình mà có nhiều lệnh được thực thi nhất.
 
+Để tìm cách tối ưu [optExample.c](_attachments/optExample.c), hãy bắt đầu bằng cách xem kỹ hơn hàm `main`:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 12.1. Code Optimization First Steps: Code Profiling 
-
-*\"The real problem is that programmers have spent far too much time
-worrying about efficiency in the wrong places and at the wrong times;
-premature optimization is the root of all evil (or at least most of it)
-in programming.\"* - Don Knuth, *The Art of Computer Programming*
-
-
-One of the biggest dangers in code optimization is the concept of
-**premature optimization**. Premature optimization occurs when a
-programmer attempts to optimize based on \"gut feelings\" of where
-performance inefficiencies occur, and not on data. Whenever possible, it
-is important to measure the runtime of different portions of code on
-different inputs *prior* to starting optimization to identify **hot
-spots** or areas in the program in which the most instructions occur.
-
-
-To figure out how to optimize [optExample.c](_attachments/optExample.c),
-let's start by taking a closer look at the `main` function:
-
-
-
-
-```
+```c
 int main(int argc, char **argv) {
     // error-handling and timing code omitted for brevity
 
@@ -52,41 +20,25 @@ int main(int argc, char **argv) {
 }
 ```
 
-
-The `main` function contains calls to two functions: `allocateArray`,
-which initializes an array of a user-specified length (or limit), and
-`genPrimeSequence`, which generates a sequence of primes within the
-specified limit (note that for any sequence between 2 and *n*, there
-cannot be more than *n* primes, and frequently there are significantly
-less). The `main` function in [the C file](_attachments/optExample.c)
-contains code that times each of the two functions above. Compiling and
-running the code with `limit` set to 5,000,000 reveals the following:
-
-
-
-
-    $ gcc -o optExample optExample.c -lm
-    $ time -p ./optExample 5000000
-    Time to allocate: 5.5e-05
-    Time to generate primes: 3.85525
-    348513 primes found.
-    real 3.85
-    user 3.86
-    sys 0.00
-
-
-The `optExample` program takes approximately 3.86 seconds to complete,
-with nearly all of the time in the `genPrimeSequence` function. There is
-no point in spending time optimizing `allocateArray`, because any
-improvements will be negligible to the runtime of the overall program.
-In the examples that follow, we focus more closely on the
-`genPrimeSequence` function and its associated functions. The functions
-are reproduced here for convenience:
-
-
-
+Hàm `main` gọi hai hàm: `allocateArray`, khởi tạo một mảng với độ dài (hoặc giới hạn) do người dùng chỉ định, và `genPrimeSequence`, tạo ra một dãy số nguyên tố trong giới hạn đã cho (lưu ý rằng với bất kỳ dãy số nào từ 2 đến *n*, số lượng số nguyên tố không thể vượt quá *n*, và thường ít hơn đáng kể).  
+Hàm `main` trong [tệp C](_attachments/optExample.c) chứa mã đo thời gian thực thi của hai hàm trên. Khi biên dịch và chạy chương trình với `limit` = 5.000.000, ta thu được kết quả:
 
 ```
+$ gcc -o optExample optExample.c -lm
+$ time -p ./optExample 5000000
+Time to allocate: 5.5e-05
+Time to generate primes: 3.85525
+348513 primes found.
+real 3.85
+user 3.86
+sys 0.00
+```
+
+Chương trình `optExample` mất khoảng 3,86 giây để hoàn thành, với gần như toàn bộ thời gian nằm trong hàm `genPrimeSequence`.  
+Không có lý do gì để tốn công tối ưu `allocateArray`, vì mọi cải thiện ở đây sẽ không đáng kể đối với thời gian chạy tổng thể.  
+Trong các ví dụ tiếp theo, chúng ta sẽ tập trung hơn vào hàm `genPrimeSequence` và các hàm liên quan. Các hàm này được liệt kê lại dưới đây để tiện theo dõi:
+
+```c
 // helper function: checks to see if a number is prime
 int isPrime(int x) {
     int i;
@@ -124,218 +76,123 @@ int genPrimeSequence(int *array, int limit) {
 }
 ```
 
+Để tìm **hot spot** trong một chương trình, hãy tập trung vào các khu vực có nhiều vòng lặp nhất. Việc kiểm tra mã thủ công có thể giúp xác định các hot spot, mặc dù luôn cần xác minh lại bằng các công cụ đo hiệu năng trước khi tiến hành tối ưu.  
+Khi kiểm tra thủ công chương trình `optExample`, ta có các nhận xét sau:
 
-To find hot spots in a program, focus on the areas with the most loops.
-Manual inspection of code can assist in locating hot spots, though it
-should always be verified with benchmarking tools prior to attempting
-optimization. A manual inspection of the `optExample` program yields the
-following observations.
+- Hàm `genPrimeSequence` cố gắng tạo tất cả các số nguyên tố từ 2 đến một số nguyên *n*. Vì số lượng số nguyên tố từ 2 đến *n* không thể vượt quá *n*, vòng lặp `for` trong `genPrimeSequence` chạy tối đa *n* lần. Mỗi vòng lặp gọi hàm `getNextPrime` một lần. Do đó, `getNextPrime` chạy tối đa *n* lần.
 
+- Vòng lặp `while` trong `getNextPrime` sẽ tiếp tục chạy cho đến khi tìm được một số nguyên tố. Mặc dù khó xác định trước số lần vòng lặp `while` này chạy theo *n* (khoảng cách giữa các số nguyên tố liên tiếp có thể rất lớn), nhưng chắc chắn rằng `isPrime` được gọi ở mỗi lần lặp của `while`.
 
+- Hàm `isPrime` chứa đúng một vòng lặp `for`. Giả sử vòng lặp này chạy tổng cộng *k* lần, thì phần thân vòng lặp sẽ chạy *k* lần.  
+  Nhớ lại rằng [cấu trúc của vòng lặp for](../C1-C_intro/conditionals.html#_loops_in_c) gồm: *initialization statement* (câu lệnh khởi tạo biến lặp), *Boolean expression* (biểu thức điều kiện dừng vòng lặp), và *step expression* (biểu thức bước, cập nhật biến lặp mỗi vòng).  
+  **Bảng 1** dưới đây mô tả số lần mỗi thành phần của vòng lặp được thực thi trong một vòng lặp `for` chạy *k* lần. Trong mọi vòng lặp `for`, phần khởi tạo chỉ chạy đúng một lần. Biểu thức điều kiện chạy *k + 1* lần (vì cần một lần kiểm tra cuối để thoát vòng lặp). Phần thân vòng lặp và biểu thức bước chạy *k* lần mỗi loại.
 
--   The `genPrimeSequence` function attempts to generate all the prime
-    numbers between 2 and some integer *n*. Since the number of primes
-    between 2 and *n* cannot exceed *n*, the `for` loop in
-    `genPrimeSequence` runs no more than *n* times. Every iteration of
-    the `for` loop calls the `getNextPrime` function once. Thus,
-    `getNextPrime` runs no more than *n* times.
+| Initialization statement | Boolean expression | Step expression | Loop body |
+|--------------------------|--------------------|-----------------|-----------|
+| 1                        | *k* + 1            | *k*             | *k*       |
 
--   The `while` loop in the `getNextPrime` function will continue
-    running until a prime is discovered. Although it is difficult to
-    determine the number of times the `while` loop in the `getNextPrime`
-    function will execute ahead of time as a function of *n* (the gap
-    between consecutive prime numbers can be arbitrarily large), it is
-    certain that `isPrime` executes on every iteration of the `while`
-    loop.
+**Bảng 1.** Các thành phần thực thi của vòng lặp (giả sử chạy *k* lần)
 
--   The `isPrime` function contains exactly one `for` loop. Suppose that
-    the loop runs for a total of *k* iterations. Then, the code in the
-    loop body runs *k* times in total. Recall that [the structure of a
-    for loop](../C1-C_intro/conditionals.html#_loops_in_c)
-    consists of an *initialization statement* (which initializes the
-    loop variable to a particular value), a *Boolean expression* (that
-    determines when to terminate the loop), and a *step expression*
-    (that updates the loop variable every iteration). [Table
-    1](#LoopExecution) depicts the number of times each loop component
-    executes in a `for` loop that runs for *k* iterations. In every
-    `for` loop, initialization happens exactly once. The Boolean
-    expression executes *k + 1* times for *k* iterations, since it must
-    perform one final check to terminate the loop. The loop body and the
-    step expression execute *k* times each.
+Qua kiểm tra thủ công, ta thấy chương trình dành phần lớn thời gian trong hàm `isPrime`, và hàm `sqrt` được gọi nhiều nhất. Tiếp theo, chúng ta sẽ sử dụng **code profiling** để xác minh giả thuyết này.
 
+### 12.1.1. Sử dụng Callgrind để phân tích hiệu năng (Profile)
 
-+-----------------+-----------------+-----------------+-----------------+
-| Initialization  | Boolean         | Step expression | Loop body       |
-| statement       | expression      |                 |                 |
-+=================+=================+=================+=================+
-| 1               | *k*+1           | *k*             | *k*             |
-+-----------------+-----------------+-----------------+-----------------+
-
-: Table 1. Loop execution components (assuming k iterations)
-
-Our manual inspection of the code suggests that the program spends most
-of its time in the `isPrime` function, and that the `sqrt` function
-executes the most often. Let's next use code profiling to verify this
-hypothesis.
-
-
-
-### 12.1.1. Using Callgrind to Profile 
-
-In our small program, it was relatively straightforward to use manual
-inspection to form the hypothesis that the `sqrt` function occurs in a
-\"hot spot\" in the code. However, identifying hot spots can become more
-complex in larger programs. Regardless, it is a good idea to use
-profiling to verify our hypothesis. Code profiling tools like
-[Valgrind](http://valgrind.org/) provide a lot of information about
-program execution. In this section, we use the `callgrind` tool to
-inspect the `OptExample` program's call graph.
-
-
-To use `callgrind`, let's start by recompiling the `optExample` program
-with the `-g` flag and running `callgrind` on a smaller range (2 to
-100,000). Like other Valgrind applications, `callgrind` runs as a
-wrapper around a program, adding annotations such as the number of times
-functions execute and the total number of instructions that are executed
-as a result. Consequently, the `optExample` program will take longer to
-execute when run in conjunction with `callgrind`.
-
-
-
-
-    $ gcc -g -o optExample optExample.c -lm
-    $ valgrind --tool=callgrind ./optExample 100000
-    ==32590== Callgrind, a call-graph generating cache profiler
-    ==32590== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
-    ==32590== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
-    ==32590== Command: ./optExample 100000
-    ==32590==
-    ==32590== For interactive control, run 'callgrind_control -h'.
-    Time to allocate: 0.003869
-    Time to generate primes: 0.644743
-    9592 primes found.
-    ==32590==
-    ==32590== Events    : Ir
-    ==32590== Collected : 68338759
-    ==32590==
-    ==32590== I   refs:      68,338,759
-
-
-Typing `ls` at the terminal reveals a new file called
-`callgrind.out.xxxxx`, where `xxxxx` is a unique id. In this case, the
-file is `callgrind.out.32590` (i.e., the number shown along the
-left-hand column in the preceding output). Running `callgrind_annotate`
-on this file yields additional information on the three functions of
-interest:
-
-
-
-
-    $ callgrind_annotate --auto=yes callgrind.out.32590
-     ----------------------------------------------------------------
-    Profile data file 'callgrind.out.32393' (creator: callgrind-3.11.0)
-     ----------------------------------------------------------------
-    ...
-      .  //helper function: checks to see if a number is prime
-       400,004  int isPrime(int x) {
-             .      int i;
-    36,047,657      for (i = 2; i < sqrt(x)+1; i++) { //no prime is less than 2
-    13,826,015  => ???:sqrt (2765204x)
-    16,533,672          if (x % i == 0) { //if the number is divisible by i
-       180,818              return 0; //it is not prime
-             .          }
-             .      }
-         9,592      return 1; //otherwise it is prime
-       200,002  }
-             .
-             .  // finds the next prime
-        38,368  int getNextPrime(int prev) {
-        28,776      int next = prev + 1;
-       509,597      while (!isPrime(next)) { //while the number is not prime
-    67,198,556  => optExample.c:isPrime (100001x)
-        90,409          next++; //increment and check again
-             .      }
-         9,592      return next;
-        19,184  }
-             .
-             .  // generates a sequence of primes
-             6  int genPrimeSequence(int * array, int limit) {
-             .      int i;
-             2      int len = limit;
-             2      if (len == 0) return 0;
-             2      array[0]=2; //initialize the first number to 2
-        38,369      for (i = 1; i < len; i++) {
-       143,880          array[i] = getNextPrime(array[i-1]); //fill in the array
-    67,894,482  => optExample.c:getNextPrime (9592x)
-        76,736          if (array[i] > limit){
-             2              len = i;
-             2              return len;
-             .          }
-             .      }
-             .      return len;
-             4  }
-
-
-The numbers along the left-hand column represent the number of total
-executed instructions associated with each line. The numbers in
-parentheses indicate the number of times a particular function was run.
-Using the numbers along the left-hand column, we are able to verify the
-results of our manual inspection. In the `genPrimeSequence` function,
-the `getNextPrime` function resulted in the most number of executed
-instructions at 67.8 million instructions, corresponding to 9,592
-function calls (to generate the primes between 2 and 100,000).
-Inspecting `getNextPrime` reveals that the majority of those
-instructions (67.1 million, or 99%) result from the call to `isPrime`,
-which is called a total of 100,001 times. Lastly, inspecting `isPrime`
-reveals that 13 million of the total instructions (20.5%) result from
-the `sqrt` function, which executes a total of 2.7 million times.
-
-
-These results verify our original hypothesis that the program spends
-most of its time in the `isPrime` function, with the `sqrt` function
-executing the most frequently of all the functions. Reducing the total
-number of executed instructions results in a faster program; the above
-analysis suggests that our initial efforts should concentrate on
-improving the `isPrime` function, and potentially reducing the number of
-times `sqrt` executes.
-
-
-
-### 12.1.2. Loop-Invariant Code Motion 
-
-Loop-invariant code motion is an optimization technique that moves
-static computations that occur inside a loop to outside the loop without
-affecting the loop's behavior. Optimizing compilers are capable of
-making most loop-invariant code optimizations automatically.
-Specifically, the `-fmove-loop-invariants` compiler flag in GCC (enabled
-at level `-O1`) attempts to identify examples of loop-invariant code
-motion and move them outside their respective loop.
-
-
-However, the compiler cannot always identify cases of loop-invariant
-code motion, especially in the case of function calls. Since function
-calls can inadvertently cause **side effects** (unintended behavior),
-most compilers will avoid trying to determine whether a function call
-consistently returns the same result. Thus, even though the programmer
-knows that `sqrt(x)` always returns the square root of some input `x`,
-GCC will not always make that assumption. Consider the case where the
-`sqrt` function updates a secret global variable, `g`. In that case,
-calling `sqrt` once outside of the function (*one* update to `g`) is not
-the same as calling it every iteration of the loop (*n* updates to `g`).
-If a compiler cannot determine that a function always returns the same
-result, it will not automatically move the `sqrt` function outside the
-loop.
-
-
-However, the programmer knows that moving the computation `sqrt(x) + 1`
-outside the `for` loop does not effect the loop's behavior. The updated
-function is shown here and is available [in the following
-file](_attachments/optExample2.c):
-
-
+Trong chương trình nhỏ của chúng ta, việc kiểm tra mã thủ công để đưa ra giả thuyết rằng hàm `sqrt` xuất hiện trong một **hot spot** (điểm nóng) của mã là khá đơn giản. Tuy nhiên, việc xác định các hot spot có thể trở nên phức tạp hơn trong các chương trình lớn. Dù thế nào, việc sử dụng **profiling** (phân tích hiệu năng) để xác minh giả thuyết vẫn là một ý tưởng hay. Các công cụ phân tích hiệu năng mã như [Valgrind](http://valgrind.org/) cung cấp rất nhiều thông tin về quá trình thực thi chương trình. Trong phần này, chúng ta sẽ sử dụng công cụ `callgrind` để kiểm tra **call graph** (đồ thị lời gọi hàm) của chương trình `optExample`.
 
 
 ```
+$ gcc -g -o optExample optExample.c -lm
+$ valgrind --tool=callgrind ./optExample 100000
+==32590== Callgrind, a call-graph generating cache profiler
+==32590== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==32590== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==32590== Command: ./optExample 100000
+==32590==
+==32590== For interactive control, run 'callgrind_control -h'.
+Time to allocate: 0.003869
+Time to generate primes: 0.644743
+9592 primes found.
+==32590==
+==32590== Events    : Ir
+==32590== Collected : 68338759
+==32590==
+==32590== I   refs:      68,338,759
+```
+
+
+Để sử dụng `callgrind`, trước tiên hãy biên dịch lại chương trình `optExample` với cờ `-g` và chạy `callgrind` trên một phạm vi nhỏ hơn (từ 2 đến 100.000). Giống như các ứng dụng Valgrind khác, `callgrind` chạy như một lớp bao quanh chương trình, thêm các chú thích như số lần các hàm được thực thi và tổng số lệnh được thực thi. Do đó, chương trình `optExample` sẽ chạy lâu hơn khi kết hợp với `callgrind`.
+
+Gõ `ls` trong terminal sẽ xuất hiện một tệp mới có tên `callgrind.out.xxxxx`, trong đó `xxxxx` là một ID duy nhất. Trong trường hợp này, tệp là `callgrind.out.32590` (tức là số hiển thị ở cột bên trái trong kết quả trước đó). Chạy `callgrind_annotate` trên tệp này sẽ cho thông tin bổ sung về ba hàm mà chúng ta quan tâm:
+
+
+```
+$ callgrind_annotate --auto=yes callgrind.out.32590
+    ----------------------------------------------------------------
+Profile data file 'callgrind.out.32393' (creator: callgrind-3.11.0)
+    ----------------------------------------------------------------
+...
+    .  //helper function: checks to see if a number is prime
+    400,004  int isPrime(int x) {
+            .      int i;
+36,047,657      for (i = 2; i < sqrt(x)+1; i++) { //no prime is less than 2
+13,826,015  => ???:sqrt (2765204x)
+16,533,672          if (x % i == 0) { //if the number is divisible by i
+    180,818              return 0; //it is not prime
+            .          }
+            .      }
+        9,592      return 1; //otherwise it is prime
+    200,002  }
+            .
+            .  // finds the next prime
+    38,368  int getNextPrime(int prev) {
+    28,776      int next = prev + 1;
+    509,597      while (!isPrime(next)) { //while the number is not prime
+67,198,556  => optExample.c:isPrime (100001x)
+    90,409          next++; //increment and check again
+            .      }
+        9,592      return next;
+    19,184  }
+            .
+            .  // generates a sequence of primes
+            6  int genPrimeSequence(int * array, int limit) {
+            .      int i;
+            2      int len = limit;
+            2      if (len == 0) return 0;
+            2      array[0]=2; //initialize the first number to 2
+    38,369      for (i = 1; i < len; i++) {
+    143,880          array[i] = getNextPrime(array[i-1]); //fill in the array
+67,894,482  => optExample.c:getNextPrime (9592x)
+    76,736          if (array[i] > limit){
+            2              len = i;
+            2              return len;
+            .          }
+            .      }
+            .      return len;
+            4  }
+
+```
+
+Các con số ở cột bên trái biểu thị tổng số lệnh được thực thi liên quan đến từng dòng mã. Các con số trong ngoặc đơn cho biết số lần một hàm cụ thể được chạy. Dựa vào các con số này, chúng ta có thể xác minh kết quả của việc kiểm tra thủ công.  
+Trong hàm `genPrimeSequence`, hàm `getNextPrime` tạo ra số lượng lệnh thực thi nhiều nhất — 67,8 triệu lệnh, tương ứng với 9.592 lần gọi hàm (để tạo các số nguyên tố từ 2 đến 100.000).  
+Kiểm tra `getNextPrime` cho thấy phần lớn số lệnh này (67,1 triệu, tức 99%) đến từ lời gọi hàm `isPrime`, được gọi tổng cộng 100.001 lần.  
+Cuối cùng, kiểm tra `isPrime` cho thấy 13 triệu lệnh (20,5%) đến từ hàm `sqrt`, được thực thi tổng cộng 2,7 triệu lần.
+
+Các kết quả này xác nhận giả thuyết ban đầu rằng chương trình dành phần lớn thời gian trong hàm `isPrime`, và hàm `sqrt` là hàm được gọi nhiều nhất. Giảm tổng số lệnh thực thi sẽ giúp chương trình chạy nhanh hơn; phân tích trên gợi ý rằng nỗ lực ban đầu nên tập trung vào việc cải thiện hàm `isPrime`, và có thể giảm số lần gọi `sqrt`.
+
+---
+
+### 12.1.2. Loop-Invariant Code Motion (Di chuyển mã bất biến ra khỏi vòng lặp)
+
+**Loop-invariant code motion** là một kỹ thuật tối ưu hóa di chuyển các phép tính tĩnh (không thay đổi) bên trong vòng lặp ra ngoài vòng lặp mà không ảnh hưởng đến hành vi của vòng lặp. Các **optimizing compiler** (trình biên dịch tối ưu) có thể tự động thực hiện hầu hết các tối ưu hóa dạng này.  
+Cụ thể, cờ biên dịch `-fmove-loop-invariants` trong GCC (được bật ở mức `-O1`) sẽ cố gắng xác định các trường hợp loop-invariant code và di chuyển chúng ra ngoài vòng lặp tương ứng.
+
+Tuy nhiên, trình biên dịch không phải lúc nào cũng xác định được các trường hợp loop-invariant, đặc biệt là với **function call** (lời gọi hàm). Vì lời gọi hàm có thể vô tình gây ra **side effect** (tác dụng phụ — hành vi không mong muốn), hầu hết các trình biên dịch sẽ tránh cố gắng xác định xem một hàm có luôn trả về cùng một kết quả hay không.  
+Do đó, mặc dù lập trình viên biết rằng `sqrt(x)` luôn trả về căn bậc hai của `x`, GCC sẽ không luôn giả định điều đó.  
+Hãy xem xét trường hợp hàm `sqrt` cập nhật một biến toàn cục bí mật `g`. Khi đó, việc gọi `sqrt` một lần bên ngoài vòng lặp (*một* lần cập nhật `g`) không giống với việc gọi nó ở mỗi vòng lặp (*n* lần cập nhật `g`). Nếu trình biên dịch không thể xác định rằng một hàm luôn trả về cùng kết quả, nó sẽ không tự động di chuyển lời gọi hàm đó ra ngoài vòng lặp.
+
+Tuy nhiên, lập trình viên biết rằng việc di chuyển phép tính `sqrt(x) + 1` ra ngoài vòng lặp `for` sẽ không ảnh hưởng đến hành vi của vòng lặp. Hàm đã chỉnh sửa được hiển thị dưới đây và có sẵn [trong tệp này](_attachments/optExample2.c):
+
+```c
 //helper function: checks to see if a number is prime
 int isPrime(int x) {
     int i;
@@ -349,86 +206,51 @@ int isPrime(int x) {
 }
 ```
 
+**Bảng 2** cho thấy thay đổi đơn giản này giúp giảm hẳn 2 giây (47%) thời gian chạy của `optExample2`, ngay cả trước khi sử dụng các cờ tối ưu của trình biên dịch. Hơn nữa, trình biên dịch dường như dễ dàng tối ưu `optExample2` hơn một chút.
 
-Table 2 shows that this simple change shaves off a full
-two seconds (47%) of the runtime of `optExample2`, even before using
-compiler flags. Furthermore, the compiler seems to have a slightly
-easier time optimizing `optExample2`.
+| Phiên bản       | Unoptimized | `-O1` | `-O2` | `-O3` |
+|-----------------|-------------|-------|-------|-------|
+| Original        | 3.86        | 2.32  | 2.14  | 2.15  |
+| With loop-invariant code motion | 1.83 | 1.63  | 1.71  | 1.63  |
 
+**Bảng 2.** Thời gian (giây) để tạo các số nguyên tố từ 2 đến 5.000.000
 
-+-------------+-------------+-------------+-------------+-------------+
-| Version     | Unoptimized | `-O1`       | `-O2`       | `-O3`       |
-+=============+=============+=============+=============+=============+
-| Original    | 3.86        | 2.32        | 2.14        | 2.15        |
-+-------------+-------------+-------------+-------------+-------------+
-| With        | 1.83        | 1.63        | 1.71        | 1.63        |
-| loo         |             |             |             |             |
-| p-invariant |             |             |             |             |
-| code motion |             |             |             |             |
-+-------------+-------------+-------------+-------------+-------------+
-
-: Table 2. Time in Seconds to Produce the Prime Numbers Between 2 and
-5,000,000
-
-Rerunning `callgrind` on the `optExample2` executable reveals why such a
-large improvement in runtime was observed. The following code snippet
-assumes that the file `callgrind.out.30086` contains the annotations of
-running `callgrind` on the `optExample2` executable:
+Chạy lại `callgrind` trên file thực thi `optExample2` cho thấy lý do tại sao thời gian chạy được cải thiện nhiều như vậy. Đoạn mã dưới đây giả định rằng tệp `callgrind.out.30086` chứa các chú thích khi chạy `callgrind` trên `optExample2`:
 
 
+```
+$ gcc -g -o optExample2 optExample2.c -lm
+$ valgrind --tool=callgrind ./optExample2 100000
+$ callgrind_annotate --auto=yes callgrind.out.30086
+    ------------------------------------------------------------------
+Profile data file 'callgrind.out.30086' (creator: callgrind-3.11.0)
+    ------------------------------------------------------------------
+    ...
+    400,004  int isPrime(int x) {
+            .      int i;
+    900,013      int max = sqrt(x)+1;
+    500,000  => ???:sqrt (100001x)
+11,122,449      for (i = 2; i < max; i++) { //no prime number is less than 2
+16,476,120          if (x % i == 0) { //if the number is divisible by i
+    180,818              return 0; //it is not prime
+            .          }
+            .      }
+        9,592      return 1; //otherwise it is prime
+    200,002  }
+            .
+            .  // finds the next prime
+    38,368  int getNextPrime(int prev) {
+    28,776      int next = prev + 1;
+    509,597      while (!isPrime(next)) { //while the number is not prime
+29,789,794  => optExample2.c:isPrime (100001x)
+    90,409          next++; //increment and check again
+            .      }
+        9,592      return next;
+    19,184  }
 
+```
 
-    $ gcc -g -o optExample2 optExample2.c -lm
-    $ valgrind --tool=callgrind ./optExample2 100000
-    $ callgrind_annotate --auto=yes callgrind.out.30086
-     ------------------------------------------------------------------
-    Profile data file 'callgrind.out.30086' (creator: callgrind-3.11.0)
-     ------------------------------------------------------------------
-     ...
-       400,004  int isPrime(int x) {
-             .      int i;
-       900,013      int max = sqrt(x)+1;
-       500,000  => ???:sqrt (100001x)
-    11,122,449      for (i = 2; i < max; i++) { //no prime number is less than 2
-    16,476,120          if (x % i == 0) { //if the number is divisible by i
-       180,818              return 0; //it is not prime
-             .          }
-             .      }
-         9,592      return 1; //otherwise it is prime
-       200,002  }
-             .
-             .  // finds the next prime
-        38,368  int getNextPrime(int prev) {
-        28,776      int next = prev + 1;
-       509,597      while (!isPrime(next)) { //while the number is not prime
-    29,789,794  => optExample2.c:isPrime (100001x)
-        90,409          next++; //increment and check again
-             .      }
-         9,592      return next;
-        19,184  }
+Việc di chuyển lời gọi `sqrt` ra ngoài vòng lặp `for` đã giảm số lần gọi hàm `sqrt` trong chương trình từ 2,7 triệu xuống còn 100.000 (giảm 96%). Con số này tương ứng với số lần hàm `isPrime` được gọi, xác nhận rằng hàm `sqrt` chỉ thực thi một lần cho mỗi lần gọi `isPrime`.
 
-
-Moving the call to `sqrt` outside of the `for` loop reduces the number
-of times the `sqrt` function is called in the program from 2.7 million
-to 100,000 (96% reduction). This number corresponds to the number of
-times the `isPrime` function is called, confirming that the `sqrt`
-function executes only once with every invocation of the `isPrime`
-function.
-
-
-Note that the compiler was able to perform significant levels of
-optimization when optimization flags were specified, even if the
-programmer does not manually perform code motion. In this case, the
-reason is due to a special instruction called `fsqrt` that is specified
-by the x86 ISA. When optimization flags are turned on, the compiler
-replaces all instances of the `sqrt` function with the `fsqrt`
-instruction. This process is known as **inlining**, and we cover it
-greater detail in the following section. Because `fsqrt` is no longer a
-function, it is easier for the compiler to identify its loop-invariant
-nature, and move it outside the body of the loop.
-
-
-
-
-
-
+Lưu ý rằng trình biên dịch có thể thực hiện mức tối ưu hóa đáng kể khi bật các cờ tối ưu, ngay cả khi lập trình viên không tự tay di chuyển mã. Trong trường hợp này, lý do là nhờ một lệnh đặc biệt gọi là `fsqrt` được quy định trong **x86 ISA**. Khi bật các cờ tối ưu, trình biên dịch thay thế tất cả các lời gọi hàm `sqrt` bằng lệnh `fsqrt`.  
+Quá trình này được gọi là **inlining** (nội tuyến), và chúng ta sẽ tìm hiểu chi tiết hơn trong phần tiếp theo. Vì `fsqrt` không còn là một hàm, trình biên dịch dễ dàng nhận ra tính loop-invariant của nó và di chuyển nó ra ngoài thân vòng lặp.
