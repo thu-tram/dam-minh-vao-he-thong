@@ -1,6 +1,6 @@
 ## 4.7. Thứ tự byte của số nguyên (Integer Byte Order)
 
-Cho đến giờ, chương này đã mô tả một số cách mã hóa số bằng bit, nhưng chưa đề cập đến việc các giá trị được tổ chức như thế nào trong bộ nhớ.  
+Cho đến giờ, chương này đã mô tả một số cách code hóa số bằng bit, nhưng chưa đề cập đến việc các giá trị được tổ chức như thế nào trong bộ nhớ.  
 Trong các hệ thống hiện đại, đơn vị nhỏ nhất có thể định địa chỉ trong bộ nhớ là **byte**, gồm 8 bit.  
 Do đó, để lưu một giá trị 1 byte (ví dụ: biến kiểu `char`) bắt đầu tại địa chỉ *X*, bạn hầu như không có lựa chọn nào khác — chỉ cần lưu byte đó tại vị trí *X*.
 

@@ -122,7 +122,7 @@ void *countElems(void *args){
 
 Trong phần thảo luận trước về hàm này, chúng ta đã chỉ ra rằng **data race** có thể khiến mảng `counts` không được điền đúng tập giá trị đếm.  
 Bây giờ, hãy xem điều gì xảy ra nếu chúng ta thử **đo thời gian** chạy hàm này.  
-Ta thêm mã đo thời gian vào `main` bằng `gettimeofday` giống hệt như trong [countElems_p_v3.c](_attachments/countElems_p_v3.c).  
+Ta thêm code đo thời gian vào `main` bằng `gettimeofday` giống hệt như trong [countElems_p_v3.c](_attachments/countElems_p_v3.c).  
 
 Kết quả benchmark phiên bản ban đầu của `countElems` trên 100 triệu phần tử như sau:
 
@@ -216,7 +216,7 @@ Trong ví dụ trước, có vẻ như tất cả các core đang truy cập cù
 
 Một cách để khắc phục false sharing là **padding** (đệm) mảng (trong trường hợp này là `counts`) bằng các phần tử bổ sung để nó **không vừa** trong một cache line.  
 Tuy nhiên, padding có thể gây **lãng phí bộ nhớ** và có thể **không loại bỏ hoàn toàn vấn đề** trên mọi kiến trúc (ví dụ: hai máy khác nhau có kích thước L1 cache khác nhau).  
-Trong hầu hết các trường hợp, việc viết mã để hỗ trợ nhiều kích thước cache thường **không đáng** so với lợi ích hiệu năng thu được.
+Trong hầu hết các trường hợp, việc viết code để hỗ trợ nhiều kích thước cache thường **không đáng** so với lợi ích hiệu năng thu được.
 
 Một giải pháp tốt hơn là để các thread ghi vào **local storage** (bộ nhớ cục bộ) bất cứ khi nào có thể.  
 Trong ngữ cảnh này, local storage là vùng nhớ **cục bộ** cho một thread.  
@@ -273,7 +273,7 @@ for (i = start; i < end; i++){
 Vì **cache coherence** được thiết kế để duy trì góc nhìn nhất quán về bộ nhớ chia sẻ, nên invalidation chỉ xảy ra khi **ghi** vào **giá trị chia sẻ** trong bộ nhớ.  
 Do `local_counts` **không được chia sẻ** giữa các thread, việc ghi vào nó sẽ **không** làm invalidate cache line tương ứng.
 
-Trong phần cuối của mã, **mutex** đảm bảo tính đúng đắn bằng cách chỉ cho phép **một thread** cập nhật mảng `counts` chia sẻ tại một thời điểm:
+Trong phần cuối của code, **mutex** đảm bảo tính đúng đắn bằng cách chỉ cho phép **một thread** cập nhật mảng `counts` chia sẻ tại một thời điểm:
 
 ```c
 // cập nhật mảng counts toàn cục

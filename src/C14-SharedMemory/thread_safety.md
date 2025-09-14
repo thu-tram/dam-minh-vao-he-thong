@@ -8,12 +8,12 @@ Không phải tất cả các hàm trong thư viện C đều **thread safe** (a
 Để đảm bảo các chương trình *chúng ta* viết là thread safe, điều quan trọng là phải sử dụng [synchronization primitives](synchronization.html#_synchronizing_threads) như **mutex** và **barrier** để buộc chương trình đa luồng duy trì tính nhất quán và đúng đắn, bất kể số lượng thread thay đổi ra sao.
 
 Một khái niệm liên quan chặt chẽ đến thread safety là **re-entrancy** (tái nhập).  
-Tất cả mã thread safe đều là re-entrant; tuy nhiên, **không phải** tất cả mã re-entrant đều thread safe.  
+Tất cả code thread safe đều là re-entrant; tuy nhiên, **không phải** tất cả code re-entrant đều thread safe.  
 Một hàm được gọi là **re-entrant** nếu nó có thể được thực thi lại hoặc thực thi một phần bởi chính nó mà không gây ra vấn đề.  
-Theo định nghĩa, mã re-entrant đảm bảo rằng mọi truy cập vào trạng thái toàn cục (global state) của chương trình đều giữ cho trạng thái đó nhất quán.  
-Mặc dù re-entrancy thường (một cách sai lầm) được dùng như từ đồng nghĩa với thread safety, vẫn có những trường hợp đặc biệt mà mã re-entrant **không** thread safe.
+Theo định nghĩa, code re-entrant đảm bảo rằng mọi truy cập vào trạng thái toàn cục (global state) của chương trình đều giữ cho trạng thái đó nhất quán.  
+Mặc dù re-entrancy thường (một cách sai lầm) được dùng như từ đồng nghĩa với thread safety, vẫn có những trường hợp đặc biệt mà code re-entrant **không** thread safe.
 
-Khi viết mã đa luồng, hãy xác minh rằng các hàm thư viện C bạn sử dụng thực sự là thread safe.  
+Khi viết code đa luồng, hãy xác minh rằng các hàm thư viện C bạn sử dụng thực sự là thread safe.  
 May mắn thay, danh sách các hàm **không** thread safe trong thư viện C khá nhỏ.  
 **The Open Group** duy trì [danh sách các hàm không thread safe](http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_09.html).
 

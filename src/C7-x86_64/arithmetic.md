@@ -1,7 +1,7 @@
 
 ## 7.3. Các lệnh số học (Arithmetic Instructions)
 
-**x86 ISA** (Instruction Set Architecture — kiến trúc tập lệnh) triển khai một số **instructions** (lệnh) tương ứng với các phép toán số học được thực hiện bởi **ALU** (Arithmetic Logic Unit — đơn vị số học và logic). **Bảng 1** liệt kê một số lệnh số học thường gặp khi đọc mã assembly.
+**x86 ISA** (Instruction Set Architecture — kiến trúc tập lệnh) triển khai một số **instructions** (lệnh) tương ứng với các phép toán số học được thực hiện bởi **ALU** (Arithmetic Logic Unit — đơn vị số học và logic). **Bảng 1** liệt kê một số lệnh số học thường gặp khi đọc code assembly.
 
 | Instruction  | Translation         |
 |--------------|---------------------|
@@ -36,7 +36,7 @@ Cần lưu ý rằng dịch trái và dịch phải sẽ được dịch sang c�
 
 **Bảng 2.** Các lệnh dịch bit.
 
-Mỗi lệnh dịch nhận hai toán hạng: một thường là **register** (thanh ghi, ký hiệu D) và một là giá trị dịch (*v*). Trên hệ thống 64-bit, giá trị dịch được mã hóa trong một byte (vì không hợp lý khi dịch quá 63 bit). Giá trị dịch *v* phải là hằng số hoặc được lưu trong thanh ghi `%cl`.
+Mỗi lệnh dịch nhận hai toán hạng: một thường là **register** (thanh ghi, ký hiệu D) và một là giá trị dịch (*v*). Trên hệ thống 64-bit, giá trị dịch được code hóa trong một byte (vì không hợp lý khi dịch quá 63 bit). Giá trị dịch *v* phải là hằng số hoặc được lưu trong thanh ghi `%cl`.
 
 > **Different Versions of Instructions Help Distinguish Types at an Assembly Level**  
 > Ở mức assembly, không tồn tại khái niệm kiểu dữ liệu. Tuy nhiên, hãy nhớ rằng compiler sẽ sử dụng các **component register** dựa trên kiểu dữ liệu. Tương tự, hãy nhớ rằng dịch phải hoạt động khác nhau tùy thuộc vào việc giá trị là signed hay unsigned. Ở mức assembly, compiler sử dụng các lệnh khác nhau để phân biệt giữa dịch logic và dịch số học.
@@ -58,8 +58,8 @@ Các lệnh thao tác bit cho phép compiler thực hiện các phép toán bit 
 
 Hãy nhớ rằng phép bitwise `not` khác với phép **negation** (`neg`). Lệnh `not` đảo tất cả các bit nhưng không cộng thêm 1. Cần cẩn thận để không nhầm lẫn hai lệnh này.
 
-> **Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong mã C của bạn!**  
-> Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong mã C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này *không* được khuyến khích. Hầu hết các **compiler** (trình biên dịch) hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi điều đó hợp lý, khiến lập trình viên không cần phải tự làm điều này. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của mã nguồn bất cứ khi nào có thể và tránh tối ưu hóa sớm một cách không cần thiết.
+> **Chỉ sử dụng các phép toán bitwise khi thật sự cần thiết trong code C của bạn!**  
+> Sau khi đọc xong phần này, bạn có thể sẽ bị cám dỗ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bitwise khác. Điều này *không* được khuyến khích. Hầu hết các **compiler** (trình biên dịch) hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bitwise khi điều đó hợp lý, khiến lập trình viên không cần phải tự làm điều này. Nguyên tắc chung là lập trình viên nên ưu tiên khả năng dễ đọc của mã nguồn bất cứ khi nào có thể và tránh tối ưu hóa sớm một cách không cần thiết.
 
 ### 7.3.3. Lệnh Load Effective Address
 

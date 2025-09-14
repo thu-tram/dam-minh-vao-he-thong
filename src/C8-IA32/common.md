@@ -62,7 +62,7 @@ int adder2(int a) {
 }
 ```
 
-và mã assembly tương ứng của nó:
+và code assembly tương ứng của nó:
 
 ```
 0804840b <adder2>:

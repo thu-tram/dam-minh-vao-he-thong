@@ -1,6 +1,6 @@
 ## 7. Assembly x86 64-bit (x86-64)
 
-Trong chương này, chúng ta sẽ tìm hiểu về **Intel Architecture 64-bit** (x86-64) — **instruction set architecture** (ISA — kiến trúc tập lệnh). Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.  
+Trong chương này, chúng ta sẽ tìm hiểu về **Intel Architecture 64-bit** (x86-64) — **instruction set architecture** (ISA — kiến trúc tập lệnh). Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) định nghĩa tập hợp các lệnh và cách code hóa nhị phân của một chương trình ở cấp độ máy.  
 Để chạy các ví dụ trong chương này, bạn cần có quyền truy cập vào một máy tính với bộ xử lý x86 64-bit. Thuật ngữ “x86” thường được dùng đồng nghĩa với kiến trúc IA-32. Phần mở rộng 64-bit của kiến trúc này được gọi là **x86-64** (hoặc x64) và hiện diện phổ biến trong các máy tính hiện đại. Cả IA32 và x86-64 đều thuộc họ kiến trúc x86.
 
 Để kiểm tra xem máy Linux của bạn có bộ xử lý Intel 64-bit hay không, hãy chạy lệnh `uname -m`. Nếu hệ thống của bạn là x86-64, bạn sẽ thấy kết quả như sau:

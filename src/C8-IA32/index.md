@@ -1,7 +1,7 @@
 ## 8. Assembly x86 32-bit (IA32)
 
 Trong chương này, chúng ta sẽ tìm hiểu về **Intel Architecture 32-bit (IA32)** — kiến trúc tập lệnh (instruction set architecture) của Intel cho bộ xử lý 32-bit.  
-Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.  
+Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA) định nghĩa tập hợp các lệnh và cách code hóa nhị phân của một chương trình ở cấp độ máy.  
 
 Để chạy các ví dụ trong chương này, bạn sẽ cần truy cập vào một máy có bộ xử lý x86 hoặc một trình biên dịch có khả năng tạo ra các tệp thực thi 32-bit.  
 Thuật ngữ **"x86"** thường được dùng đồng nghĩa với kiến trúc IA32.  

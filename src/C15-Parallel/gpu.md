@@ -25,7 +25,7 @@ FPGA, **Cell processor** và GPU là ba ví dụ tiêu biểu của loại đơn
 FPGA có thể **lập trình lại** (reprogrammable), nghĩa là có thể cấu hình lại để thực hiện một chức năng cụ thể ở mức phần cứng, và thường được dùng để tạo nguyên mẫu cho **ASIC** (Application-Specific Integrated Circuit – mạch tích hợp chuyên dụng).  
 
 FPGA thường tiêu thụ ít điện năng hơn so với một CPU đầy đủ, giúp vận hành tiết kiệm năng lượng.  
-Một số cách FPGA được tích hợp vào hệ thống máy tính bao gồm: làm bộ điều khiển thiết bị (device controller), xử lý dữ liệu cảm biến, thực hiện các tác vụ mật mã (cryptography), và thử nghiệm các thiết kế phần cứng mới (do có thể lập trình lại, các thiết kế có thể được triển khai, gỡ lỗi và kiểm thử trực tiếp trên FPGA).  
+Một số cách FPGA được tích hợp vào hệ thống máy tính bao gồm: làm bộ điều khiển thiết bị (device controller), xử lý dữ liệu cảm biến, thực hiện các tác vụ mật code (cryptography), và thử nghiệm các thiết kế phần cứng mới (do có thể lập trình lại, các thiết kế có thể được triển khai, gỡ lỗi và kiểm thử trực tiếp trên FPGA).  
 
 FPGA có thể được thiết kế như một mạch với số lượng lớn các đơn vị xử lý đơn giản.  
 Chúng cũng là các thiết bị có **độ trễ thấp** (low-latency) và có thể kết nối trực tiếp với bus hệ thống.  
@@ -103,7 +103,7 @@ CUDA được thiết kế cho **heterogeneous computing** (tính toán không �
 
 Lập trình viên thường viết chương trình CUDA bằng **C** hoặc **C++** với các annotation chỉ định **CUDA kernel function** (hàm kernel CUDA), và gọi các hàm thư viện CUDA để quản lý bộ nhớ thiết bị GPU.  
 Một **kernel function** trong CUDA là một hàm được thực thi trên GPU, và một **CUDA thread** là đơn vị thực thi cơ bản trong chương trình CUDA.  
-Các CUDA thread được lập lịch thành các **warp** và thực thi đồng bộ (lockstep) trên các SM của GPU, chạy mã kernel CUDA trên phần dữ liệu của chúng được lưu trong bộ nhớ GPU.  
+Các CUDA thread được lập lịch thành các **warp** và thực thi đồng bộ (lockstep) trên các SM của GPU, chạy code kernel CUDA trên phần dữ liệu của chúng được lưu trong bộ nhớ GPU.  
 
 Các hàm kernel được đánh dấu bằng từ khóa `global` để phân biệt với các hàm chạy trên host.  
 Các hàm `device` trong CUDA là các hàm phụ trợ có thể được gọi từ một hàm kernel CUDA.
@@ -306,7 +306,7 @@ Trên thực tế, việc sử dụng số lượng thread mỗi block là một
 
 CUDA đảm bảo rằng tất cả các thread từ một lần gọi **kernel** sẽ hoàn thành trước khi bất kỳ thread nào từ lần gọi kernel tiếp theo được lập lịch.  
 Do đó, tồn tại một **điểm đồng bộ ngầm** giữa các lần gọi kernel riêng biệt.  
-Tuy nhiên, trong một lần gọi kernel duy nhất, các thread block có thể được lập lịch chạy mã kernel theo bất kỳ thứ tự nào trên các SM của GPU.  
+Tuy nhiên, trong một lần gọi kernel duy nhất, các thread block có thể được lập lịch chạy code kernel theo bất kỳ thứ tự nào trên các SM của GPU.  
 Vì vậy, lập trình viên **không nên** giả định bất kỳ thứ tự thực thi nào giữa các thread thuộc các thread block khác nhau.  
 CUDA cung cấp một số hỗ trợ đồng bộ hóa thread, nhưng **chỉ** cho các thread nằm trong cùng một thread block.
 
@@ -320,7 +320,7 @@ Ngoài CUDA, còn có các ngôn ngữ lập trình khác cho GPGPU computing.
 
 - **OpenACC** (Open Accelerator) là mô hình lập trình trừu tượng cấp cao hơn so với CUDA hoặc OpenCL.  
   Nó được thiết kế để dễ dàng di chuyển (portability) và thuận tiện cho lập trình viên.  
-  Lập trình viên chỉ cần chú thích (annotate) các phần mã cần thực thi song song, và trình biên dịch sẽ tạo ra mã song song có thể chạy trên GPU.
+  Lập trình viên chỉ cần chú thích (annotate) các phần code cần thực thi song song, và trình biên dịch sẽ tạo ra code song song có thể chạy trên GPU.
 
 - **OpenHMPP** (Open Hybrid Multicore Programming) là một ngôn ngữ khác cung cấp lớp trừu tượng lập trình cấp cao cho lập trình không đồng nhất.
 

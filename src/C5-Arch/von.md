@@ -64,13 +64,13 @@ Một số thiết bị hiện đại, như màn hình cảm ứng, hoạt độ
 
 ### 5.2.6. Máy von Neumann hoạt động: Thực thi một chương trình
 
-Năm đơn vị cấu thành kiến trúc von Neumann phối hợp với nhau để triển khai chu trình **fetch–decode–execute–store** (nạp–giải mã–thực thi–lưu trữ) nhằm thực thi các lệnh chương trình. Chu trình này bắt đầu với lệnh đầu tiên của chương trình và lặp lại cho đến khi chương trình kết thúc:
+Năm đơn vị cấu thành kiến trúc von Neumann phối hợp với nhau để triển khai chu trình **fetch–decode–execute–store** (nạp–giải code–thực thi–lưu trữ) nhằm thực thi các lệnh chương trình. Chu trình này bắt đầu với lệnh đầu tiên của chương trình và lặp lại cho đến khi chương trình kết thúc:
 
 1. **Đơn vị điều khiển *nạp* lệnh tiếp theo từ bộ nhớ**.  
    Đơn vị điều khiển có một thanh ghi đặc biệt gọi là program counter (PC – "bộ đếm chương trình"), chứa địa chỉ của lệnh tiếp theo cần nạp. Nó đặt địa chỉ này lên *address bus* và gửi lệnh *read* lên *control bus* đến đơn vị bộ nhớ. Đơn vị bộ nhớ đọc các byte tại địa chỉ được chỉ định và gửi chúng đến đơn vị điều khiển qua *data bus*. Instruction register (IR – "thanh ghi lệnh") lưu các byte của lệnh nhận được từ đơn vị bộ nhớ. Đơn vị điều khiển cũng tăng giá trị của PC để lưu địa chỉ của lệnh tiếp theo cần nạp.
 
-2. **Đơn vị điều khiển *giải mã* lệnh được lưu trong IR**.  
-   Nó giải mã các bit lệnh để xác định phép toán cần thực hiện và vị trí của các toán hạng. Các bit lệnh được giải mã dựa trên định nghĩa mã hóa của ISA. Đơn vị điều khiển cũng nạp giá trị toán hạng từ các vị trí của chúng (từ thanh ghi CPU, bộ nhớ, hoặc được mã hóa trong lệnh), làm đầu vào cho đơn vị xử lý.
+2. **Đơn vị điều khiển *giải code* lệnh được lưu trong IR**.  
+   Nó giải code các bit lệnh để xác định phép toán cần thực hiện và vị trí của các toán hạng. Các bit lệnh được giải code dựa trên định nghĩa code hóa của ISA. Đơn vị điều khiển cũng nạp giá trị toán hạng từ các vị trí của chúng (từ thanh ghi CPU, bộ nhớ, hoặc được code hóa trong lệnh), làm đầu vào cho đơn vị xử lý.
 
 3. **Đơn vị xử lý *thực thi* lệnh**.  
    ALU thực hiện phép toán của lệnh trên các toán hạng dữ liệu.
@@ -86,11 +86,11 @@ Trong pha *decode*, đơn vị điều khiển truyền các bit lệnh chỉ đ
 
 Trong pha *execute*, ALU thực hiện phép toán trên các toán hạng để tạo ra kết quả (3 + 4 = 7).
 
-Cuối cùng, trong pha *store*, đơn vị điều khiển ghi kết quả (7) từ đơn vị xử lý vào đơn vị bộ nhớ. Địa chỉ bộ nhớ (5678) được gửi lên address bus, lệnh WRITE được gửi lên control bus, và giá trị dữ liệu cần lưu (7) được gửi lên data bus. Đơn vị bộ nhớ nhận yêu cầu và lưu giá trị 7 vào địa chỉ bộ nhớ 5678. Trong ví dụ này, ta giả định rằng địa chỉ bộ nhớ để lưu kết quả được mã hóa trong các bit của lệnh.
+Cuối cùng, trong pha *store*, đơn vị điều khiển ghi kết quả (7) từ đơn vị xử lý vào đơn vị bộ nhớ. Địa chỉ bộ nhớ (5678) được gửi lên address bus, lệnh WRITE được gửi lên control bus, và giá trị dữ liệu cần lưu (7) được gửi lên data bus. Đơn vị bộ nhớ nhận yêu cầu và lưu giá trị 7 vào địa chỉ bộ nhớ 5678. Trong ví dụ này, ta giả định rằng địa chỉ bộ nhớ để lưu kết quả được code hóa trong các bit của lệnh.
 
 ![This figure of von Neumann execution shows the processing, control and memory units in each of the four stages of execution. Each unit is shown as a box, with buses shown as lines running below the boxes to which each box is connected.](_images/vonFD.png)
 
-**Hình 2. Các pha nạp và giải mã trong quá trình thực thi lệnh cộng của kiến trúc von Neumann.**  
+**Hình 2. Các pha nạp và giải code trong quá trình thực thi lệnh cộng của kiến trúc von Neumann.**  
 Toán hạng, kết quả và địa chỉ bộ nhớ được biểu diễn dưới dạng giá trị thập phân, nội dung bộ nhớ được biểu diễn dưới dạng nhị phân.
 
 ![This figure of von Neumann execution shows the processing, control and memory units in each of the four stages of execution. Each unit is shown as a box, with buses shown as lines running below the boxes to which each box is connected.](_images/vonES.png)

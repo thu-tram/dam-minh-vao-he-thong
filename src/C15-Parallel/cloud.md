@@ -118,7 +118,7 @@ Trong phần này, chúng ta sẽ thảo luận ngắn gọn cách các phép to
 Phép toán **Map** thường áp dụng cùng một hàm cho tất cả các phần tử trong một tập hợp.  
 Những độc giả quen thuộc với Python có thể nhận ra chức năng này rõ nhất qua tính năng **list comprehension** (hiểu danh sách) trong Python.  
 
-Ví dụ, hai đoạn mã dưới đây trong [Bảng 1](#ScalarMap) thực hiện phép nhân vô hướng trong Python:
+Ví dụ, hai đoạn code dưới đây trong [Bảng 1](#ScalarMap) thực hiện phép nhân vô hướng trong Python:
 
 Chắc chắn rồi. Dưới đây là hai đoạn code đã được tách riêng.
 

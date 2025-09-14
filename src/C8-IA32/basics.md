@@ -26,7 +26,7 @@ $ gcc -m32 -o modified modified.c
 
 Cờ `-m32` yêu cầu GCC biên dịch code thành một file thực thi 32-bit. Nếu quên thêm cờ này, kết quả assembly có thể sẽ khác rất nhiều so với các ví dụ trong chương này; mặc định, GCC biên dịch sang assembly x86-64, biến thể 64-bit của x86. Tuy nhiên, hầu như tất cả các kiến trúc 64-bit đều có chế độ chạy 32-bit để tương thích ngược. Chương này đề cập đến IA32; các chương khác sẽ nói về x86-64 và ARM. Dù đã cũ, IA32 vẫn cực kỳ hữu ích để hiểu cách chương trình hoạt động và cách tối ưu hóa code.
 
-Tiếp theo, hãy xem mã assembly tương ứng của đoạn code này bằng cách gõ:
+Tiếp theo, hãy xem code assembly tương ứng của đoạn code này bằng cách gõ:
 
 ```
 $ objdump -d modified > output
@@ -55,7 +55,7 @@ Mỗi dòng trong ví dụ trên chứa:
 - Các byte tương ứng với lệnh
 - Dạng văn bản (plaintext) của lệnh
 
-Ví dụ: `55` là mã máy (machine code) của lệnh `push %ebp`, và lệnh này nằm tại địa chỉ `0x804840b` trong bộ nhớ chương trình.
+Ví dụ: `55` là code máy (machine code) của lệnh `push %ebp`, và lệnh này nằm tại địa chỉ `0x804840b` trong bộ nhớ chương trình.
 
 Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành **nhiều** lệnh assembly.  
 Ví dụ, phép toán `a + 2` được biểu diễn bằng hai lệnh:  
@@ -65,7 +65,7 @@ Ví dụ, phép toán `a + 2` được biểu diễn bằng hai lệnh:
 >>
 >> Nếu bạn biên dịch code cùng với chúng tôi, bạn có thể nhận thấy một số đoạn assembly của mình trông khác so với trong sách. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành. Hầu hết các ví dụ assembly trong sách này được tạo trên hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).
 >>
->> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (`example.c`) bằng lệnh: `gcc -m32 -o example example.c`. Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản làm theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung này sẽ được đề cập ở [chương sau](../C12-CodeOpt/index.html#_code_optimization).
+>> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ optimization flag hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (`example.c`) bằng lệnh: `gcc -m32 -o example example.c`. Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản làm theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung này sẽ được đề cập ở [chương sau](../C12-CodeOpt/index.html#_code_optimization).
 
 ### 8.1.1. Thanh ghi (Registers) 
 
@@ -98,7 +98,7 @@ Với sáu thanh ghi đầu tiên vừa nêu, ISA cung cấp cơ chế truy cậ
 
 ### 8.1.3. Cấu trúc lệnh (Instruction Structure) 
 
-Mỗi lệnh gồm một **opcode** (mã thao tác) chỉ định nó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện. Ví dụ: lệnh `add $0x2, %eax` có opcode là `add` và các toán hạng là `$0x2` và `%eax`.
+Mỗi lệnh gồm một **opcode** (code thao tác) chỉ định nó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện. Ví dụ: lệnh `add $0x2, %eax` có opcode là `add` và các toán hạng là `$0x2` và `%eax`.
 
 Mỗi toán hạng tương ứng với một vị trí nguồn hoặc đích cho thao tác cụ thể. Có nhiều loại toán hạng:
 
@@ -155,11 +155,11 @@ Cụ thể:
 - Toán hạng dạng **memory** không thể đồng thời là cả nguồn (source) và đích (destination) trong cùng một lệnh.
 - Trong các phép toán có **scaling** (xem hai toán hạng cuối trong [Bảng 2](#Operands32)), hệ số nhân (scaling factor) phải là một trong các giá trị 1, 2, 4 hoặc 8.
 
-**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc nắm vững các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn khi phân tích mã assembly.
+**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc nắm vững các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn khi phân tích code assembly.
 
 ### 8.1.5. Hậu tố của lệnh (Instruction Suffixes)
 
-Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có thêm **hậu tố** (suffix) để chỉ **kích thước** (gắn với **kiểu dữ liệu**) của dữ liệu được thao tác ở cấp độ mã lệnh.  
+Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có thêm **hậu tố** (suffix) để chỉ **kích thước** (gắn với **kiểu dữ liệu**) của dữ liệu được thao tác ở cấp độ code lệnh.  
 Compiler sẽ tự động dịch code sang các lệnh có hậu tố phù hợp.  
 **Bảng 3** cho thấy các hậu tố phổ biến của lệnh x86.
 

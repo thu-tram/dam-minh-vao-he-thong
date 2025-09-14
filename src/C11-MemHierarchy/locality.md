@@ -30,7 +30,7 @@ int sum_array(int *array, int len) {
 }
 ```
 
-Trong đoạn mã này, tính lặp lại của vòng lặp `for` tạo ra **temporal locality** cho các biến `i`, `len`, `sum`, và `array` (địa chỉ gốc của mảng), vì chương trình truy cập từng biến này trong mỗi vòng lặp.  
+Trong đoạn code này, tính lặp lại của vòng lặp `for` tạo ra **temporal locality** cho các biến `i`, `len`, `sum`, và `array` (địa chỉ gốc của mảng), vì chương trình truy cập từng biến này trong mỗi vòng lặp.  
 Khai thác temporal locality cho phép hệ thống chỉ cần nạp mỗi biến từ main memory vào CPU cache một lần. Mọi lần truy cập sau đó đều có thể được phục vụ từ cache — vốn nhanh hơn rất nhiều.
 
 Các truy cập vào nội dung của mảng cũng được hưởng lợi từ **spatial locality**. Mặc dù chương trình chỉ truy cập mỗi phần tử mảng một lần, hệ thống hiện đại sẽ nạp nhiều hơn một giá trị `int` từ bộ nhớ vào CPU cache mỗi lần.  
@@ -38,7 +38,7 @@ Nói cách khác, khi truy cập phần tử đầu tiên của mảng, cache s�
 
 Ví dụ, với block size là 16 byte, hệ thống sẽ sao chép bốn số nguyên (`int`) từ bộ nhớ vào cache mỗi lần. Do đó, việc truy cập số nguyên đầu tiên phải chịu chi phí cao của việc truy cập main memory, nhưng ba lần truy cập tiếp theo sẽ được phục vụ từ cache, ngay cả khi chương trình chưa từng truy cập chúng trước đó.
 
-Trong nhiều trường hợp, lập trình viên có thể hỗ trợ hệ thống bằng cách cố ý viết mã thể hiện các mẫu locality tốt. Ví dụ, hãy xem xét vòng lặp lồng nhau truy cập mọi phần tử của một ma trận *N*×*N* (ví dụ này cũng đã xuất hiện ở phần mở đầu của chương):
+Trong nhiều trường hợp, lập trình viên có thể hỗ trợ hệ thống bằng cách cố ý viết code thể hiện các mẫu locality tốt. Ví dụ, hãy xem xét vòng lặp lồng nhau truy cập mọi phần tử của một ma trận *N*×*N* (ví dụ này cũng đã xuất hiện ở phần mở đầu của chương):
 
 #### averageMat_v1
 
@@ -72,9 +72,9 @@ float averageMat_v2(int **mat, int n) {
 
 **Bảng 1.** Hai phiên bản của một hàm truy cập mọi phần tử của ma trận *N*×*N*. Chúng chỉ khác nhau ở cách đánh chỉ số khi truy cập bộ nhớ, nhưng phiên bản 1 (bên trái) chạy nhanh hơn khoảng 5 lần.
 
-Trong cả hai phiên bản, các biến vòng lặp (`i` và `j`) và biến tích lũy (`total`) đều thể hiện **temporal locality** (tính cục bộ theo thời gian) tốt vì vòng lặp sử dụng lại chúng nhiều lần trong mỗi lần lặp. Do đó, khi thực thi đoạn mã này, hệ thống sẽ lưu các biến đó trong các vị trí lưu trữ nhanh nằm trên CPU để đạt hiệu năng tốt.
+Trong cả hai phiên bản, các biến vòng lặp (`i` và `j`) và biến tích lũy (`total`) đều thể hiện **temporal locality** (tính cục bộ theo thời gian) tốt vì vòng lặp sử dụng lại chúng nhiều lần trong mỗi lần lặp. Do đó, khi thực thi đoạn code này, hệ thống sẽ lưu các biến đó trong các vị trí lưu trữ nhanh nằm trên CPU để đạt hiệu năng tốt.
 
-Tuy nhiên, do [tổ chức ma trận trong bộ nhớ theo *row-major order*](../C2-C_depth/arrays.html#_two_dimensional_array_memory_layout), phiên bản đầu tiên của mã (bên trái) chạy nhanh hơn khoảng 5 lần so với phiên bản thứ hai (bên phải). Sự khác biệt này xuất phát từ sự khác nhau về **spatial locality** (tính cục bộ theo không gian) — phiên bản đầu tiên truy cập các giá trị của ma trận theo thứ tự tuần tự trong bộ nhớ (tức là theo các địa chỉ bộ nhớ liên tiếp). Vì vậy, nó tận dụng được lợi ích từ hệ thống khi nạp các khối dữ liệu lớn từ bộ nhớ vào cache, bởi vì nó chỉ phải trả chi phí truy cập bộ nhớ một lần cho mỗi khối giá trị.
+Tuy nhiên, do [tổ chức ma trận trong bộ nhớ theo *row-major order*](../C2-C_depth/arrays.html#_two_dimensional_array_memory_layout), phiên bản đầu tiên của code (bên trái) chạy nhanh hơn khoảng 5 lần so với phiên bản thứ hai (bên phải). Sự khác biệt này xuất phát từ sự khác nhau về **spatial locality** (tính cục bộ theo không gian) — phiên bản đầu tiên truy cập các giá trị của ma trận theo thứ tự tuần tự trong bộ nhớ (tức là theo các địa chỉ bộ nhớ liên tiếp). Vì vậy, nó tận dụng được lợi ích từ hệ thống khi nạp các khối dữ liệu lớn từ bộ nhớ vào cache, bởi vì nó chỉ phải trả chi phí truy cập bộ nhớ một lần cho mỗi khối giá trị.
 
 Phiên bản thứ hai truy cập các giá trị của ma trận bằng cách liên tục nhảy giữa các hàng qua các địa chỉ bộ nhớ không tuần tự. Nó *không bao giờ* đọc từ cùng một cache block trong các lần truy cập bộ nhớ liên tiếp, nên đối với cache, block đó trông như không cần thiết. Vì vậy, nó phải trả chi phí truy cập bộ nhớ cho từng giá trị của ma trận mà nó đọc.
 

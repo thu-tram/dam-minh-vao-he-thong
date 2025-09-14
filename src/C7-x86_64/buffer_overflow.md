@@ -1,9 +1,9 @@
 
 ## 7.10. Thực tế: Buffer Overflow
 
-Ngôn ngữ C không thực hiện việc kiểm tra giới hạn mảng (array bounds checking) một cách tự động. Việc truy cập bộ nhớ nằm ngoài phạm vi của một mảng là vấn đề nghiêm trọng và thường dẫn đến các lỗi như **segmentation fault**. Tuy nhiên, một kẻ tấn công tinh vi có thể chèn mã độc nhằm cố ý vượt quá giới hạn của mảng (còn gọi là **buffer**) để buộc chương trình thực thi theo cách không mong muốn. Trong trường hợp tồi tệ nhất, kẻ tấn công có thể chạy mã cho phép chúng giành được **root privilege** (đặc quyền root), tức quyền truy cập cấp hệ điều hành vào hệ thống máy tính. Một phần mềm lợi dụng sự tồn tại của một lỗi **buffer overrun** đã biết trong chương trình được gọi là **buffer overflow exploit**.
+Ngôn ngữ C không thực hiện việc kiểm tra giới hạn mảng (array bounds checking) một cách tự động. Việc truy cập bộ nhớ nằm ngoài phạm vi của một mảng là vấn đề nghiêm trọng và thường dẫn đến các lỗi như **segmentation fault**. Tuy nhiên, một kẻ tấn công tinh vi có thể chèn code độc nhằm cố ý vượt quá giới hạn của mảng (còn gọi là **buffer**) để buộc chương trình thực thi theo cách không mong muốn. Trong trường hợp tồi tệ nhất, kẻ tấn công có thể chạy code cho phép chúng giành được **root privilege** (đặc quyền root), tức quyền truy cập cấp hệ điều hành vào hệ thống máy tính. Một phần mềm lợi dụng sự tồn tại của một lỗi **buffer overrun** đã biết trong chương trình được gọi là **buffer overflow exploit**.
 
-Trong phần này, chúng ta sẽ sử dụng **GDB** và ngôn ngữ assembly để phân tích đầy đủ cơ chế của một buffer overflow exploit. Trước khi đọc chương này, chúng tôi khuyến khích bạn xem chương nói về [GDB để kiểm tra mã assembly](../C3-C_debug/gdb_assembly.html#_debugging_assembly_code).
+Trong phần này, chúng ta sẽ sử dụng **GDB** và ngôn ngữ assembly để phân tích đầy đủ cơ chế của một buffer overflow exploit. Trước khi đọc chương này, chúng tôi khuyến khích bạn xem chương nói về [GDB để kiểm tra code assembly](../C3-C_debug/gdb_assembly.html#_debugging_assembly_code).
 
 ### 7.10.1. Các ví dụ nổi tiếng về Buffer Overflow
 
@@ -78,13 +78,13 @@ int main(void) {
 ```
 
 
-Trò chơi này yêu cầu người dùng nhập trước một số bí mật, sau đó là một chuỗi bí mật để thắng trò chơi. Tệp header `other.h` chứa định nghĩa của các hàm `getSecretCode` và `calculateValue`, nhưng chúng ta không có tệp này. Vậy làm thế nào để người dùng thắng trò chơi? Thử brute force sẽ mất quá nhiều thời gian. Một chiến lược là phân tích tệp thực thi `secret` trong GDB và từng bước theo dõi mã assembly để tìm ra số và chuỗi bí mật. Quá trình phân tích mã assembly để tìm hiểu cách nó hoạt động thường được gọi là **reverse engineering** assembly. Những người đã quen với GDB và đọc assembly có thể tìm ra số và chuỗi bí mật bằng cách reverse engineer chúng trong GDB.
+Trò chơi này yêu cầu người dùng nhập trước một số bí mật, sau đó là một chuỗi bí mật để thắng trò chơi. Tệp header `other.h` chứa định nghĩa của các hàm `getSecretCode` và `calculateValue`, nhưng chúng ta không có tệp này. Vậy làm thế nào để người dùng thắng trò chơi? Thử brute force sẽ mất quá nhiều thời gian. Một chiến lược là phân tích tệp thực thi `secret` trong GDB và từng bước theo dõi code assembly để tìm ra số và chuỗi bí mật. Quá trình phân tích code assembly để tìm hiểu cách nó hoạt động thường được gọi là **reverse engineering** assembly. Những người đã quen với GDB và đọc assembly có thể tìm ra số và chuỗi bí mật bằng cách reverse engineer chúng trong GDB.
 
 Tuy nhiên, vẫn còn một cách khác, tinh vi hơn để chiến thắng.
 
 ### 7.10.3. Xem xét kỹ hơn (Under the C)
 
-Chương trình chứa một lỗ hổng buffer overrun tiềm ẩn tại lần gọi `scanf` đầu tiên. Để hiểu chuyện gì đang xảy ra, hãy kiểm tra mã assembly của hàm `main` bằng GDB. Chúng ta cũng sẽ đặt một **breakpoint** tại địa chỉ `0x0000000000400717`, đây là địa chỉ của lệnh ngay trước khi gọi `scanf` (lưu ý rằng nếu đặt breakpoint tại địa chỉ của `scanf` thì chương trình sẽ dừng *bên trong* lệnh gọi `scanf`, chứ không phải trong `main`).
+Chương trình chứa một lỗ hổng buffer overrun tiềm ẩn tại lần gọi `scanf` đầu tiên. Để hiểu chuyện gì đang xảy ra, hãy kiểm tra code assembly của hàm `main` bằng GDB. Chúng ta cũng sẽ đặt một **breakpoint** tại địa chỉ `0x0000000000400717`, đây là địa chỉ của lệnh ngay trước khi gọi `scanf` (lưu ý rằng nếu đặt breakpoint tại địa chỉ của `scanf` thì chương trình sẽ dừng *bên trong* lệnh gọi `scanf`, chứ không phải trong `main`).
 
 
 
@@ -118,7 +118,7 @@ Bây giờ, giả sử người dùng nhập `1234567890` tại dấu nhắc. [H
 
 **Hình 2.** Call stack ngay sau khi gọi `scanf` với đầu vào `1234567890`
 
-Hãy nhớ rằng giá trị hex của mã ASCII cho các chữ số từ 0 đến 9 là từ 0x30 đến 0x39, và mỗi ô nhớ trên stack có kích thước 8 byte. **Frame pointer** cách **stack pointer** 32 byte. Người đọc có thể xác nhận giá trị của `%rbp` bằng cách dùng GDB để in ra (`p $rbp`). Trong ví dụ này, `%rbp` có giá trị `0x7fffffffdd10`. Lệnh sau cho phép kiểm tra 48 byte (dưới dạng hex) bên dưới thanh ghi `%rsp`:
+Hãy nhớ rằng giá trị hex của code ASCII cho các chữ số từ 0 đến 9 là từ 0x30 đến 0x39, và mỗi ô nhớ trên stack có kích thước 8 byte. **Frame pointer** cách **stack pointer** 32 byte. Người đọc có thể xác nhận giá trị của `%rbp` bằng cách dùng GDB để in ra (`p $rbp`). Trong ví dụ này, `%rbp` có giá trị `0x7fffffffdd10`. Lệnh sau cho phép kiểm tra 48 byte (dưới dạng hex) bên dưới thanh ghi `%rsp`:
 
 ```
 (gdb) x /48bx $rsp
@@ -178,7 +178,7 @@ $ echo $?
 139
 ```
 
-Thú vị đấy! Lần này chương trình bị crash với lỗi segmentation fault, mã trả về 139. **Hình 3** cho thấy call stack của `main` ngay sau khi gọi `scanf` với chuỗi đầu vào mới này.
+Thú vị đấy! Lần này chương trình bị crash với lỗi segmentation fault, code trả về 139. **Hình 3** cho thấy call stack của `main` ngay sau khi gọi `scanf` với chuỗi đầu vào mới này.
 
 ![after2](_images/afterScanf2.png)
 
@@ -215,9 +215,9 @@ Khi điều này xảy ra, không chỉ dữ liệu cục bộ bị ghi đè, m�
 
 Đây chính là nguyên lý cơ bản mà các cuộc tấn công **buffer overflow exploit** khai thác:  
 - Nếu kẻ tấn công có thể kiểm soát dữ liệu ghi đè lên return address,  
-- Họ có thể khiến chương trình nhảy tới và thực thi mã tùy ý do họ chèn vào bộ nhớ.
+- Họ có thể khiến chương trình nhảy tới và thực thi code tùy ý do họ chèn vào bộ nhớ.
 
-Trong ví dụ này, chúng ta mới chỉ vô tình (hoặc cố ý) làm hỏng return address bằng một chuỗi ký tự dài, dẫn đến crash. Nhưng với kỹ thuật tinh vi hơn, kẻ tấn công có thể thay thế return address bằng địa chỉ của một đoạn mã độc đã được chuẩn bị sẵn trong bộ nhớ, từ đó chiếm quyền điều khiển chương trình.
+Trong ví dụ này, chúng ta mới chỉ vô tình (hoặc cố ý) làm hỏng return address bằng một chuỗi ký tự dài, dẫn đến crash. Nhưng với kỹ thuật tinh vi hơn, kẻ tấn công có thể thay thế return address bằng địa chỉ của một đoạn code độc đã được chuẩn bị sẵn trong bộ nhớ, từ đó chiếm quyền điều khiển chương trình.
 
 ### 7.10.5. Buffer Overflow thông minh hơn: Lần thử thứ hai
 
@@ -298,15 +298,15 @@ Exploit của chúng ta đã thành công! Chúng ta đã thắng trò chơi.
 
 ### 7.10.6. Bảo vệ chống lại Buffer Overflow
 
-Ví dụ trên đã thay đổi **control flow** (luồng điều khiển) của tệp thực thi `secret`, buộc nó trả về giá trị 0 (thành công). Tuy nhiên, một exploit như vậy có thể gây ra thiệt hại thực sự. Hơn nữa, một số hệ thống máy tính cũ *thực thi* các byte từ bộ nhớ stack. Nếu kẻ tấn công đặt các byte tương ứng với lệnh assembly lên call stack, CPU sẽ diễn giải các byte này như các lệnh *thực sự*, cho phép kẻ tấn công buộc CPU thực thi *bất kỳ mã tùy ý nào họ muốn*. May mắn thay, các hệ thống máy tính hiện đại có nhiều chiến lược để làm cho việc chạy buffer overflow exploit trở nên khó khăn hơn:
+Ví dụ trên đã thay đổi **control flow** (luồng điều khiển) của tệp thực thi `secret`, buộc nó trả về giá trị 0 (thành công). Tuy nhiên, một exploit như vậy có thể gây ra thiệt hại thực sự. Hơn nữa, một số hệ thống máy tính cũ *thực thi* các byte từ bộ nhớ stack. Nếu kẻ tấn công đặt các byte tương ứng với lệnh assembly lên call stack, CPU sẽ diễn giải các byte này như các lệnh *thực sự*, cho phép kẻ tấn công buộc CPU thực thi *bất kỳ code tùy ý nào họ muốn*. May mắn thay, các hệ thống máy tính hiện đại có nhiều chiến lược để làm cho việc chạy buffer overflow exploit trở nên khó khăn hơn:
 
-- **Stack randomization**: Hệ điều hành cấp phát địa chỉ bắt đầu của stack tại một vị trí ngẫu nhiên trong bộ nhớ stack, khiến vị trí/kích thước của call stack thay đổi giữa các lần chạy. Nhiều máy chạy cùng một chương trình sẽ có địa chỉ stack khác nhau. Các hệ thống Linux hiện đại sử dụng stack randomization như một tiêu chuẩn. Tuy nhiên, một kẻ tấn công kiên trì có thể brute force bằng cách thử nhiều địa chỉ khác nhau. Một mẹo phổ biến là dùng **NOP sled** (một dãy dài lệnh `nop`) trước mã exploit thực sự. Lệnh `nop` (`0x90`) không làm gì ngoài việc tăng program counter sang lệnh tiếp theo. Miễn là CPU bắt đầu thực thi ở đâu đó trong NOP sled, nó sẽ trượt đến đoạn mã exploit theo sau. Bài viết *Smashing the Stack for Fun and Profit* của Aleph One⁶ mô tả chi tiết cơ chế tấn công này.
+- **Stack randomization**: Hệ điều hành cấp phát địa chỉ bắt đầu của stack tại một vị trí ngẫu nhiên trong bộ nhớ stack, khiến vị trí/kích thước của call stack thay đổi giữa các lần chạy. Nhiều máy chạy cùng một chương trình sẽ có địa chỉ stack khác nhau. Các hệ thống Linux hiện đại sử dụng stack randomization như một tiêu chuẩn. Tuy nhiên, một kẻ tấn công kiên trì có thể brute force bằng cách thử nhiều địa chỉ khác nhau. Một mẹo phổ biến là dùng **NOP sled** (một dãy dài lệnh `nop`) trước code exploit thực sự. Lệnh `nop` (`0x90`) không làm gì ngoài việc tăng program counter sang lệnh tiếp theo. Miễn là CPU bắt đầu thực thi ở đâu đó trong NOP sled, nó sẽ trượt đến đoạn code exploit theo sau. Bài viết *Smashing the Stack for Fun and Profit* của Aleph One⁶ mô tả chi tiết cơ chế tấn công này.
 
 - **Stack corruption detection**: Một biện pháp khác là phát hiện khi stack bị hỏng. Các phiên bản GCC gần đây sử dụng **stack protector** gọi là **canary** đóng vai trò như một “chim báo” giữa buffer và các phần tử khác của stack. Canary là một giá trị được lưu ở vùng bộ nhớ không thể ghi, có thể so sánh với giá trị đặt trên stack. Nếu canary “chết” trong quá trình chạy, chương trình biết rằng nó đang bị tấn công và sẽ dừng với thông báo lỗi. Tuy nhiên, một kẻ tấn công tinh vi có thể thay thế canary để tránh bị phát hiện.
 
-- **Limiting executable regions**: Biện pháp này giới hạn mã thực thi chỉ ở một số vùng bộ nhớ nhất định. Nói cách khác, call stack không còn được phép thực thi. Tuy nhiên, ngay cả biện pháp này cũng có thể bị vượt qua. Trong một cuộc tấn công sử dụng **return-oriented programming** (ROP), kẻ tấn công có thể “cherry-pick” các lệnh trong vùng có thể thực thi và nhảy từ lệnh này sang lệnh khác để tạo thành exploit. Có nhiều ví dụ nổi tiếng về kỹ thuật này trên mạng, đặc biệt trong các trò chơi điện tử⁷.
+- **Limiting executable regions**: Biện pháp này giới hạn code thực thi chỉ ở một số vùng bộ nhớ nhất định. Nói cách khác, call stack không còn được phép thực thi. Tuy nhiên, ngay cả biện pháp này cũng có thể bị vượt qua. Trong một cuộc tấn công sử dụng **return-oriented programming** (ROP), kẻ tấn công có thể “cherry-pick” các lệnh trong vùng có thể thực thi và nhảy từ lệnh này sang lệnh khác để tạo thành exploit. Có nhiều ví dụ nổi tiếng về kỹ thuật này trên mạng, đặc biệt trong các trò chơi điện tử⁷.
 
-Tuy nhiên, tuyến phòng thủ tốt nhất luôn là lập trình viên. Để ngăn chặn buffer overflow trong chương trình của bạn, hãy sử dụng các hàm C có **length specifier** (chỉ định độ dài) bất cứ khi nào có thể và thêm mã kiểm tra giới hạn mảng. Điều quan trọng là mọi mảng được khai báo phải khớp với length specifier đã chọn. **Bảng 1** liệt kê một số hàm C “xấu” dễ bị buffer overflow và hàm “tốt” tương ứng nên dùng (giả sử `buf` được cấp phát 12 byte).
+Tuy nhiên, tuyến phòng thủ tốt nhất luôn là lập trình viên. Để ngăn chặn buffer overflow trong chương trình của bạn, hãy sử dụng các hàm C có **length specifier** (chỉ định độ dài) bất cứ khi nào có thể và thêm code kiểm tra giới hạn mảng. Điều quan trọng là mọi mảng được khai báo phải khớp với length specifier đã chọn. **Bảng 1** liệt kê một số hàm C “xấu” dễ bị buffer overflow và hàm “tốt” tương ứng nên dùng (giả sử `buf` được cấp phát 12 byte).
 
 | Thay vì:               | Hãy dùng:                          |
 |------------------------|-------------------------------------|
@@ -382,7 +382,7 @@ $ echo $?
 1
 ```
 
-Tất nhiên, bất kỳ độc giả nào có kỹ năng **reverse engineering** cơ bản vẫn có thể thắng trò chơi đoán số này bằng cách phân tích mã assembly. Nếu bạn chưa thử đánh bại chương trình bằng reverse engineering, chúng tôi khuyến khích bạn thử ngay bây giờ.
+Tất nhiên, bất kỳ độc giả nào có kỹ năng **reverse engineering** cơ bản vẫn có thể thắng trò chơi đoán số này bằng cách phân tích code assembly. Nếu bạn chưa thử đánh bại chương trình bằng reverse engineering, chúng tôi khuyến khích bạn thử ngay bây giờ.
 
 ### References
 

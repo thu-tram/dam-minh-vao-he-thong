@@ -44,7 +44,7 @@ Xét lại ví dụ trước:
 Trong thế giới lý tưởng, speedup là **tuyến tính**: mỗi đơn vị tính toán bổ sung sẽ mang lại mức tăng tốc tương ứng.  
 Tuy nhiên, điều này **hiếm khi** xảy ra trong thực tế.
 
-Hầu hết các chương trình đều chứa một phần **bắt buộc phải tuần tự** do các phụ thuộc nội tại trong mã.  
+Hầu hết các chương trình đều chứa một phần **bắt buộc phải tuần tự** do các phụ thuộc nội tại trong code.  
 Chuỗi phụ thuộc dài nhất trong một chương trình được gọi là **critical path** (đường tới hạn).  
 Giảm độ dài của critical path là bước quan trọng đầu tiên trong việc song song hóa chương trình.
 

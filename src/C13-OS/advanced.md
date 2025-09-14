@@ -28,7 +28,7 @@ Cuối cùng, hầu hết các OS cung cấp một mức độ **extensibility**
 Ví dụ: hầu hết các hệ thống kiểu Unix cho phép người dùng (thường yêu cầu quyền **root** hoặc **superuser**) thay đổi kích thước **OS buffer**, **cache**, **swap partition**, và lựa chọn từ nhiều **scheduling policy** khác nhau trong các **OS subsystem** và thiết bị phần cứng.  
 Thông qua các thay đổi này, người dùng có thể tinh chỉnh hệ thống cho phù hợp với loại **application workload** (khối lượng công việc ứng dụng) mà họ chạy.
 
-Các OS loại này thường hỗ trợ **loadable kernel module** (mô-đun nhân có thể nạp), là các đoạn mã thực thi có thể được nạp vào **kernel** và chạy ở **kernel mode**.  
+Các OS loại này thường hỗ trợ **loadable kernel module** (mô-đun nhân có thể nạp), là các đoạn code thực thi có thể được nạp vào **kernel** và chạy ở **kernel mode**.  
 Loadable kernel module thường được dùng để bổ sung abstraction hoặc chức năng mới vào kernel, cũng như để nạp **device driver** (trình điều khiển thiết bị) vào kernel nhằm quản lý một phần cứng cụ thể.
 
 Để tìm hiểu sâu và rộng hơn về hệ điều hành, chúng tôi khuyến nghị đọc các giáo trình hệ điều hành, chẳng hạn như *Operating Systems: Three Easy Pieces*¹.

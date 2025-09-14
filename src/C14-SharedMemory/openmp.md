@@ -10,7 +10,7 @@ Nói cách khác, ta thường phải viết lại toàn bộ chương trình đ
 
 Thư viện **Open Multiprocessing** (**OpenMP**) cung cấp một giải pháp *ngầm định* thay thế cho Pthreads.  
 OpenMP được tích hợp sẵn trong GCC và các trình biên dịch phổ biến khác như LLVM và Clang, và có thể dùng với các ngôn ngữ C, C++ và Fortran.  
-Ưu điểm chính của OpenMP là cho phép lập trình viên song song hóa các thành phần của mã C tuần tự hiện có bằng cách thêm **pragma** (chỉ thị đặc biệt cho trình biên dịch) vào các phần của mã.  
+Ưu điểm chính của OpenMP là cho phép lập trình viên song song hóa các thành phần của code C tuần tự hiện có bằng cách thêm **pragma** (chỉ thị đặc biệt cho trình biên dịch) vào các phần của code.  
 Các pragma dành riêng cho OpenMP bắt đầu bằng `#pragma omp`.
 
 Việc trình bày chi tiết OpenMP nằm ngoài phạm vi của cuốn sách này, nhưng chúng ta sẽ đề cập đến một số pragma thường gặp và minh họa cách sử dụng chúng trong bối cảnh một số ứng dụng ví dụ.
@@ -21,7 +21,7 @@ Dưới đây là một số pragma được sử dụng phổ biến trong các
 
 `#pragma omp parallel`  
 
-:   Tạo một **team** (nhóm) các thread và cho mỗi thread chạy đoạn mã trong phạm vi của pragma (thường là một lời gọi hàm).  
+:   Tạo một **team** (nhóm) các thread và cho mỗi thread chạy đoạn code trong phạm vi của pragma (thường là một lời gọi hàm).  
     Việc gọi pragma này thường tương đương với việc gọi cặp hàm `pthread_create` và `pthread_join` [đã thảo luận trong phần Pthreads](posix.html#_creating_and_joining_threads).  
     Pragma này có thể đi kèm một số **clause** (mệnh đề), bao gồm:
 
@@ -48,7 +48,7 @@ Dưới đây là một số pragma được sử dụng phổ biến trong các
 
 `#pragma omp critical`  
 
-:   Chỉ định rằng đoạn mã trong phạm vi của pragma là một **critical section** — chỉ một thread được thực thi đoạn mã này tại một thời điểm để đảm bảo tính đúng đắn.
+:   Chỉ định rằng đoạn code trong phạm vi của pragma là một **critical section** — chỉ một thread được thực thi đoạn code này tại một thời điểm để đảm bảo tính đúng đắn.
 
 Ngoài ra, OpenMP còn cung cấp một số **hàm** hữu ích cho thread khi thực thi, ví dụ:
 
@@ -137,7 +137,7 @@ Hành vi này giống với [ví dụ dùng Pthreads](posix.html#_hello_threadin
 ### 14.7.3. Ví dụ phức tạp hơn: CountSort với OpenMP
 
 Một ưu điểm mạnh mẽ của OpenMP là nó cho phép lập trình viên **song song hóa dần dần** (incrementally parallelize) mã nguồn của mình.  
-Để thấy điều này trong thực tế, hãy song song hóa thuật toán **CountSort** phức tạp hơn mà chúng ta đã thảo luận trước đó trong chương này (mã tuần tự nằm tại: [countSort.c](_attachments/countSort.c)).  
+Để thấy điều này trong thực tế, hãy song song hóa thuật toán **CountSort** phức tạp hơn mà chúng ta đã thảo luận trước đó trong chương này (code tuần tự nằm tại: [countSort.c](_attachments/countSort.c)).  
 
 Hãy nhớ rằng thuật toán này sắp xếp các mảng chứa một phạm vi giá trị nhỏ.  
 Hàm `main` của chương trình tuần tự trông như sau:
@@ -198,7 +198,7 @@ void countElems(int *counts, int *array, long length) {
 ```
 
 
-Trong phiên bản này của mã, ba pragma được sử dụng:
+Trong phiên bản này của code, ba pragma được sử dụng:
 
 - **`#pragma omp parallel`**: chỉ định rằng một **team** (nhóm) các thread sẽ được tạo.  
   Lệnh `omp_set_num_threads(nthreads)` trong `main` đặt kích thước mặc định của team thread là `nthreads`.  
@@ -213,7 +213,7 @@ Trong phiên bản này của mã, ba pragma được sử dụng:
   Như đã đề cập trước đó, chiến lược mặc định thường là phương pháp **chunking**, trong đó mỗi thread nhận xấp xỉ cùng số vòng lặp để xử lý.  
   Như vậy, mỗi thread sẽ đọc một phần của mảng `array` chia sẻ và cộng dồn kết quả vào mảng `local` cục bộ của nó.
 
-- **`#pragma omp critical`**: chỉ định rằng đoạn mã trong phạm vi critical section chỉ được thực thi bởi **một thread** tại một thời điểm.  
+- **`#pragma omp critical`**: chỉ định rằng đoạn code trong phạm vi critical section chỉ được thực thi bởi **một thread** tại một thời điểm.  
   Điều này tương đương với việc dùng **mutex** trong phiên bản Pthreads của chương trình.  
   Ở đây, mỗi thread sẽ lần lượt cập nhật mảng `counts` chia sẻ.
 
@@ -236,7 +236,7 @@ Hiệu năng thậm chí còn tốt hơn cả phiên bản Pthreads!
 #### Hàm `writeArray` trong OpenMP
 
 Song song hóa hàm `writeArray` **khó hơn nhiều**.  
-Đoạn mã sau minh họa một giải pháp khả thi:
+Đoạn code sau minh họa một giải pháp khả thi:
 
 ```c
 void writeArray(int *counts, int *array) {
@@ -273,7 +273,7 @@ Do đó, ta sử dụng mệnh đề `schedule(dynamic)`, để mỗi thread ho�
 
 Vì mỗi thread ghi vào các vị trí khác nhau trong mảng, nên **không cần** dùng mutual exclusion (loại trừ lẫn nhau) cho hàm này.
 
-Hãy chú ý xem mã OpenMP gọn gàng hơn nhiều so với phiên bản dùng POSIX threads.  
+Hãy chú ý xem code OpenMP gọn gàng hơn nhiều so với phiên bản dùng POSIX threads.  
 Mã rất dễ đọc và chỉ cần chỉnh sửa rất ít.  
 Đây là một trong những sức mạnh của **abstraction** (trừu tượng hóa), khi các chi tiết triển khai được ẩn khỏi lập trình viên.
 

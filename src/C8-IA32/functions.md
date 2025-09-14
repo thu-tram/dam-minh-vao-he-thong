@@ -88,7 +88,7 @@ int main(void) {
 }
 ```
 
-Chúng ta biên dịch code với cờ `-m32` và dùng `objdump -d` để xem mã assembly.  
+Chúng ta biên dịch code với cờ `-m32` và dùng `objdump -d` để xem code assembly.  
 Lệnh này xuất ra một file khá lớn với nhiều thông tin không cần thiết.  
 Dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
 

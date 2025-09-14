@@ -85,7 +85,7 @@ int sumMat(int *m, int rows, int cols) {
 }
 ```
 
-Dưới đây là mã assembly tương ứng, với chú thích từng dòng:
+Dưới đây là code assembly tương ứng, với chú thích từng dòng:
 
 ```
 Dump of assembler code for function sumMat:
@@ -134,7 +134,7 @@ Dump of assembler code for function sumMat:
 Các biến cục bộ `i`, `j` và `total` lần lượt được lưu tại các vị trí trên stack là `sp + 20`, `sp + 24` và `sp + 28`.  
 Các tham số đầu vào `m`, `row` và `cols` lần lượt được lưu tại `sp + 8`, `sp + 4` và `sp` (đỉnh stack).  
 
-Với thông tin này, hãy tập trung vào đoạn mã chỉ xử lý việc truy cập phần tử (*i*, *j*) trong ma trận (từ địa chỉ 0x8a8 đến 0x8d8):
+Với thông tin này, hãy tập trung vào đoạn code chỉ xử lý việc truy cập phần tử (*i*, *j*) trong ma trận (từ địa chỉ 0x8a8 đến 0x8d8):
 
 ```
 0x8a8 <+36>:   ldr   w1, [sp, #20]       // w1 = i
@@ -222,7 +222,7 @@ int sumMatrix(int **matrix, int rows, int cols) {
 Mặc dù hàm này trông gần như giống hệt với hàm `sumMat` đã trình bày trước đó, nhưng ma trận mà hàm này nhận vào lại bao gồm **một mảng liên tiếp các *con trỏ***.  
 Mỗi con trỏ chứa địa chỉ của một mảng liên tiếp riêng biệt, tương ứng với một hàng riêng trong ma trận.
 
-Dưới đây là mã assembly tương ứng của `sumMatrix`. Mỗi dòng đều được chú thích bằng tiếng Anh trong bản gốc:
+Dưới đây là code assembly tương ứng của `sumMatrix`. Mỗi dòng đều được chú thích bằng tiếng Anh trong bản gốc:
 
 ```
 Dump of assembler code for function sumMatrix:
@@ -269,7 +269,7 @@ Dump of assembler code for function sumMatrix:
 Tương tự như trước, các biến `i`, `j` và `total` lần lượt nằm tại `sp + 20`, `sp + 24` và `sp + 28`.  
 Các tham số đầu vào `matrix`, `row` và `cols` lần lượt nằm tại `sp + 8`, `sp + 4` và `sp` (đỉnh stack).  
 
-Hãy tập trung vào đoạn mã xử lý việc truy cập phần tử (*i*, *j*) — tức `matrix[i][j]` — từ địa chỉ 0x944 đến 0x970:
+Hãy tập trung vào đoạn code xử lý việc truy cập phần tử (*i*, *j*) — tức `matrix[i][j]` — từ địa chỉ 0x944 đến 0x970:
 
 ```
 0x944 <+36>:   ldrsw  x0, [sp, #20]          // x0 = signExtend(i)

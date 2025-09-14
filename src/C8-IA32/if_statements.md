@@ -30,8 +30,8 @@ Dump of assembler code for function getSmallest:
   0x8048427 <+28>:  ret
 ```
 
-Đây là một cách hiển thị khác của mã assembly so với trước đây.  
-Ở đây, ta thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** mã máy.  
+Đây là một cách hiển thị khác của code assembly so với trước đây.  
+Ở đây, ta thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** code máy.  
 Đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hơn: các lệnh thường xuất hiện khi tạo/kết thúc hàm (như `push %ebp` và `mov %esp, %ebp`) và lệnh cấp phát bộ nhớ trên stack đã được lược bỏ.  
 
 Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm tại các vị trí `%ebp+8` và `%ebp+0xc` (hoặc `%ebp+12`).  
@@ -109,11 +109,11 @@ int getSmallest(int x, int y) {
 
 
 Trong **Bảng 1**, biến `smallest` tương ứng với thanh ghi `%eax`.  
-Nếu `x` nhỏ hơn hoặc bằng `y`, mã sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong phiên bản hàm dạng `goto`.  
+Nếu `x` nhỏ hơn hoặc bằng `y`, code sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong phiên bản hàm dạng `goto`.  
 Ngược lại, câu lệnh `smallest = y` sẽ được thực thi.  
 Nhãn `goto` là `done` được dùng để chỉ ra rằng giá trị trong `smallest` sẽ được trả về.
 
-Lưu ý rằng bản dịch C từ mã assembly ở trên hơi khác so với hàm `getSmallest` gốc.  
+Lưu ý rằng bản dịch C từ code assembly ở trên hơi khác so với hàm `getSmallest` gốc.  
 Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic.  
 Tuy nhiên, trình biên dịch trước tiên sẽ chuyển bất kỳ câu lệnh `if` nào sang dạng `goto` tương đương, dẫn đến phiên bản hơi khác nhưng vẫn tương đương.  
 
@@ -179,7 +179,7 @@ Hãy nhớ rằng một hàm viết theo nhiều cách khác nhau trong C vẫn 
 Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là **conditional move** (`cmov`).  
 Các lệnh `cmp`, `test` và `jmp` thực hiện **chuyển điều khiển có điều kiện** (*conditional transfer of control*) trong chương trình.  
 Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng.  
-Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các nhánh này thường tốn kém.
+Điều này có thể gây bất lợi cho việc tối ưu hóa code, vì các nhánh này thường tốn kém.
 
 Ngược lại, lệnh `cmov` thực hiện **chuyển dữ liệu có điều kiện** (*conditional transfer of data*).  
 Nói cách khác, cả `then_statement` và `else_statement` của câu lệnh điều kiện đều được thực thi, và dữ liệu sẽ được đặt vào thanh ghi thích hợp dựa trên kết quả của điều kiện.
@@ -207,7 +207,7 @@ int getSmallest_cmov(int x, int y) {
 }
 ```
 
-Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra.  
+Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem code assembly được tạo ra.  
 Nhắc lại rằng tham số thứ nhất (`x`) và tham số thứ hai (`y`) được lưu tại các địa chỉ trên stack lần lượt là `%ebp+0x8` và `%ebp+0xc`.
 
 ```asm
@@ -220,7 +220,7 @@ Nhắc lại rằng tham số thứ nhất (`x`) và tham số thứ hai (`y`) �
 0x0804844f <+14>:  ret                      # return %eax
 ```
 
-Đoạn mã assembly này **không có lệnh nhảy**.  
+Đoạn code assembly này **không có lệnh nhảy**.  
 Sau khi so sánh `x` và `y`, giá trị `x` chỉ được chuyển vào thanh ghi trả về nếu `x <= y`.  
 Tương tự như các lệnh nhảy, hậu tố (suffix) của lệnh `cmov` cho biết điều kiện mà việc di chuyển dữ liệu có điều kiện sẽ xảy ra.  
 
@@ -272,7 +272,7 @@ Nếu `x` không phải `NULL`, hàm sẽ tăng giá trị mà `x` trỏ tới v
 Ngược lại, hàm sẽ trả về giá trị `1`.
 
 Có thể bạn sẽ nghĩ rằng `incrementX2` sử dụng lệnh `cmov` vì nó dùng biểu thức ba ngôi.  
-Tuy nhiên, cả hai hàm đều tạo ra **chính xác cùng một mã assembly**:
+Tuy nhiên, cả hai hàm đều tạo ra **chính xác cùng một code assembly**:
 
 ```asm
 0x80484cf <+0>:   push   %ebp

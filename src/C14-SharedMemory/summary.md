@@ -9,7 +9,7 @@ Các thư viện như POSIX và OpenMP sử dụng mô hình giao tiếp **share
 **Threads là đơn vị cơ bản của các chương trình concurrent**  
 
 :   Để song song hóa một chương trình tuần tự, lập trình viên sử dụng các cấu trúc nhẹ gọi là **thread**.  
-    Trong một **process đa luồng** (multithreaded process) cụ thể, mỗi thread có vùng **stack** riêng, nhưng chia sẻ dữ liệu chương trình, vùng **heap** và mã lệnh của process.  
+    Trong một **process đa luồng** (multithreaded process) cụ thể, mỗi thread có vùng **stack** riêng, nhưng chia sẻ dữ liệu chương trình, vùng **heap** và code lệnh của process.  
     Giống như process, thread chạy **nondeterministically** (không xác định trước) trên CPU (tức là thứ tự thực thi thay đổi giữa các lần chạy, và việc thread nào được gán cho core nào là do hệ điều hành quyết định).
 
 **Cấu trúc đồng bộ hóa đảm bảo chương trình hoạt động đúng**  

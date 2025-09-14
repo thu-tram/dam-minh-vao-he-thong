@@ -12,7 +12,7 @@ Các hệ thống thực tế phải kết hợp nhiều loại thiết bị đ�
 
 Thực tế của hệ phân cấp bộ nhớ là điều không mấy dễ chịu đối với lập trình viên, những người thường muốn không phải bận tâm đến tác động hiệu năng của vị trí dữ liệu được lưu trữ.  
 Ví dụ, khi khai báo một biến số nguyên *trong hầu hết các ứng dụng*, lập trình viên lý tưởng sẽ không phải lo lắng về sự khác biệt giữa dữ liệu được lưu trong cache hay trong main memory.  
-Việc yêu cầu lập trình viên quản lý chi tiết loại bộ nhớ mà mỗi biến chiếm dụng sẽ là một gánh nặng, mặc dù đôi khi điều này có thể đáng làm đối với một số đoạn mã nhỏ, quan trọng về hiệu năng.
+Việc yêu cầu lập trình viên quản lý chi tiết loại bộ nhớ mà mỗi biến chiếm dụng sẽ là một gánh nặng, mặc dù đôi khi điều này có thể đáng làm đối với một số đoạn code nhỏ, quan trọng về hiệu năng.
 
 Lưu ý rằng **Hình 1** phân loại *cache* như một thực thể duy nhất, nhưng hầu hết các hệ thống đều có nhiều cấp cache tạo thành một hệ phân cấp nhỏ hơn bên trong.  
 Ví dụ, CPU thường tích hợp một **level one (L1) cache** rất nhỏ và nhanh, nằm khá gần **ALU** (Arithmetic Logic Unit), và một **level two (L2) cache** lớn hơn nhưng chậm hơn, nằm xa hơn.  

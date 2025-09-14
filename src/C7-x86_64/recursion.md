@@ -29,7 +29,7 @@ int sumr(int n) {
 
 **Bảng 1.** Phiên bản lặp (sumDown) và phiên bản đệ quy (sumr)
 
-**Base case** (trường hợp cơ sở) trong hàm đệ quy `sumr` xử lý mọi giá trị *n* nhỏ hơn 1. **Bước đệ quy** gọi `sumr` với giá trị *n-1* và cộng kết quả với *n* trước khi trả về. Khi biên dịch `sumr` và dùng GDB để disassemble, ta thu được mã assembly sau:
+**Base case** (trường hợp cơ sở) trong hàm đệ quy `sumr` xử lý mọi giá trị *n* nhỏ hơn 1. **Bước đệ quy** gọi `sumr` với giá trị *n-1* và cộng kết quả với *n* trước khi trả về. Khi biên dịch `sumr` và dùng GDB để disassemble, ta thu được code assembly sau:
 
 ```
 Dump of assembler code for function sumr:
@@ -88,7 +88,7 @@ int sumr(int n) {
 ```
 
 
-**Bảng 2.** Dạng C dùng `goto` và bản dịch mã assembly của `sumr`
+**Bảng 2.** Dạng C dùng `goto` và bản dịch code assembly của `sumr`
 
 Mặc dù bản dịch này ban đầu có thể trông không giống hệt hàm `sumr` gốc, nhưng khi xem xét kỹ, ta thấy hai hàm này thực sự tương đương.
 

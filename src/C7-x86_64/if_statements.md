@@ -33,9 +33,9 @@ Dump of assembler code for function getSmallest:
    0x4005ba <+36>:  retq
 ```
 
-Đây là một cách hiển thị khác của mã assembly so với những gì ta đã thấy trước đây. Ở đây, ta có thể thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** mã máy. Lưu ý rằng đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hóa. Các lệnh thường xuất hiện khi tạo hàm (tức `push %rbp`, `mov %rsp, %rbp`) đã được lược bỏ. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi `%rdi` và `%rsi`. Vì các tham số của `getSmallest` có kiểu `int`, compiler đặt chúng vào các **component register** tương ứng là `%edi` và `%esi`. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là `x` và `y`.
+Đây là một cách hiển thị khác của code assembly so với những gì ta đã thấy trước đây. Ở đây, ta có thể thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** code máy. Lưu ý rằng đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hóa. Các lệnh thường xuất hiện khi tạo hàm (tức `push %rbp`, `mov %rsp, %rbp`) đã được lược bỏ. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi `%rdi` và `%rsi`. Vì các tham số của `getSmallest` có kiểu `int`, compiler đặt chúng vào các **component register** tương ứng là `%edi` và `%esi`. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là `x` và `y`.
 
-Hãy lần lượt phân tích một số dòng đầu tiên của đoạn mã assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ không vẽ stack một cách tường minh. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack.
+Hãy lần lượt phân tích một số dòng đầu tiên của đoạn code assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ không vẽ stack một cách tường minh. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack.
 
 - Lệnh `mov` đầu tiên sao chép giá trị trong thanh ghi `%edi` (tham số thứ nhất, `x`) và đặt nó vào vị trí bộ nhớ `%rbp-0x14` trên call stack. Instruction pointer (`%rip`) được đặt tới địa chỉ của lệnh tiếp theo, 0x40059d.
 
@@ -80,7 +80,7 @@ Chúng ta có thể chú thích đoạn assembly trên như sau:
 ```
 
 
-Chuyển ngược đoạn assembly này về mã C sẽ cho ra:
+Chuyển ngược đoạn assembly này về code C sẽ cho ra:
 
 <h2>Bảng 1:</h2>
 
@@ -128,7 +128,7 @@ done:
 
 **Bảng 1.** Dịch `getSmallest()` sang dạng C dùng `goto` và dạng C thông thường.
 
-Trong **Bảng 1**, biến `smallest` tương ứng với thanh ghi `%eax`. Nếu `x` nhỏ hơn hoặc bằng `y`, mã sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong dạng `goto` của hàm. Ngược lại, câu lệnh `smallest = y` sẽ được thực thi. Nhãn `goto` `done` được dùng để chỉ ra rằng giá trị trong `smallest` sẽ được trả về.
+Trong **Bảng 1**, biến `smallest` tương ứng với thanh ghi `%eax`. Nếu `x` nhỏ hơn hoặc bằng `y`, code sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong dạng `goto` của hàm. Ngược lại, câu lệnh `smallest = y` sẽ được thực thi. Nhãn `goto` `done` được dùng để chỉ ra rằng giá trị trong `smallest` sẽ được trả về.
 
 Hãy lưu ý rằng bản dịch C ở trên của đoạn assembly có một chút khác biệt so với hàm `getSmallest` ban đầu. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển bất kỳ câu lệnh `if` nào thành dạng `goto` tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. **Bảng 2** cho thấy dạng chuẩn của câu lệnh `if` và dạng `goto` tương đương:
 
@@ -166,7 +166,7 @@ done:
 
 **Bảng 2.** Dạng chuẩn của câu lệnh `if` và dạng `goto` tương đương.
 
-Khi dịch mã sang assembly, compiler sẽ tạo một lệnh nhảy (jump) khi điều kiện **đúng**. Điều này trái ngược với cấu trúc của câu lệnh `if`, nơi “nhảy” (tới `else`) xảy ra khi điều kiện **không** đúng. Dạng `goto` thể hiện rõ sự khác biệt về logic này.
+Khi dịch code sang assembly, compiler sẽ tạo một lệnh nhảy (jump) khi điều kiện **đúng**. Điều này trái ngược với cấu trúc của câu lệnh `if`, nơi “nhảy” (tới `else`) xảy ra khi điều kiện **không** đúng. Dạng `goto` thể hiện rõ sự khác biệt về logic này.
 
 Xét bản dịch `goto` ban đầu của hàm `getSmallest`, ta thấy rằng:
 
@@ -190,12 +190,12 @@ int getSmallest(int x, int y) {
 }
 ```
 
-Phiên bản này giống hệt với hàm `getSmallest` ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.
+Phiên bản này giống hệt với hàm `getSmallest` ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức code C vẫn có thể được dịch ra cùng một tập lệnh assembly.
 
 
 #### Các lệnh cmov
 
-Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là **conditional move** (`cmov`). Các lệnh `cmp`, `test` và `jmp` thực hiện *conditional transfer of control* (chuyển điều khiển có điều kiện) trong một chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng khác nhau. Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các nhánh này thường tốn kém về hiệu năng.
+Nhóm lệnh điều kiện cuối cùng mà chúng ta đề cập là **conditional move** (`cmov`). Các lệnh `cmp`, `test` và `jmp` thực hiện *conditional transfer of control* (chuyển điều khiển có điều kiện) trong một chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng khác nhau. Điều này có thể gây bất lợi cho việc tối ưu hóa code, vì các nhánh này thường tốn kém về hiệu năng.
 
 Ngược lại, lệnh `cmov` thực hiện *conditional transfer of data* (chuyển dữ liệu có điều kiện). Nói cách khác, cả `then_statement` và `else_statement` của cấu trúc điều kiện đều được thực thi, và dữ liệu sẽ được đặt vào thanh ghi thích hợp dựa trên kết quả của điều kiện.
 
@@ -213,7 +213,7 @@ int getSmallest_cmov(int x, int y) {
 }
 ```
 
-Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra. Hãy nhớ rằng tham số thứ nhất và thứ hai (`x` và `y`) lần lượt được lưu trong các thanh ghi `%edi` và `%esi`:
+Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem code assembly được tạo ra. Hãy nhớ rằng tham số thứ nhất và thứ hai (`x` và `y`) lần lượt được lưu trong các thanh ghi `%edi` và `%esi`:
 
 ```
 0x4005d7 <+0>:   push   %rbp             #save %rbp
@@ -227,7 +227,7 @@ Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly �
 0x4005ec <+21>:  retq                    #return %eax
 ```
 
-Đoạn mã assembly này **không có lệnh nhảy**. Sau khi so sánh `x` và `y`, `x` sẽ được chuyển vào thanh ghi trả về chỉ khi `x` nhỏ hơn hoặc bằng `y`. Giống như các lệnh nhảy, hậu tố của lệnh `cmov` cho biết điều kiện mà việc chuyển dữ liệu có điều kiện sẽ xảy ra. **Bảng 3** liệt kê tập hợp các lệnh conditional move.
+Đoạn code assembly này **không có lệnh nhảy**. Sau khi so sánh `x` và `y`, `x` sẽ được chuyển vào thanh ghi trả về chỉ khi `x` nhỏ hơn hoặc bằng `y`. Giống như các lệnh nhảy, hậu tố của lệnh `cmov` cho biết điều kiện mà việc chuyển dữ liệu có điều kiện sẽ xảy ra. **Bảng 3** liệt kê tập hợp các lệnh conditional move.
 
 | Signed               | Unsigned             | Mô tả                              |
 |----------------------|----------------------|-------------------------------------|
@@ -281,7 +281,7 @@ int incrementX2(int *x){
 
 Mỗi hàm nhận vào một con trỏ tới một số nguyên và kiểm tra xem nó có phải `NULL` hay không. Nếu `x` không phải `NULL`, hàm sẽ tăng giá trị được giải tham chiếu của `x` và trả về giá trị đó. Ngược lại, hàm sẽ trả về giá trị 1.
 
-Thoạt nhìn, có thể bạn sẽ nghĩ rằng `incrementX2` sử dụng lệnh `cmov` vì nó dùng **biểu thức ba ngôi** (ternary expression). Tuy nhiên, cả hai hàm đều sinh ra **chính xác cùng một mã assembly**.
+Thoạt nhìn, có thể bạn sẽ nghĩ rằng `incrementX2` sử dụng lệnh `cmov` vì nó dùng **biểu thức ba ngôi** (ternary expression). Tuy nhiên, cả hai hàm đều sinh ra **chính xác cùng một code assembly**.
 
 ```
 0x4005ed <+0>:   push   %rbp
@@ -300,5 +300,5 @@ Thoạt nhìn, có thể bạn sẽ nghĩ rằng `incrementX2` sử dụng lện
 0x400613 <+38>:  retq
 ```
 
-Hãy nhớ rằng lệnh `cmov` *thực thi cả hai nhánh của điều kiện*. Nói cách khác, `x` sẽ luôn bị giải tham chiếu (**dereference**) bất kể điều kiện là gì. Xét trường hợp `x` là một con trỏ null: việc giải tham chiếu một con trỏ null sẽ dẫn đến **null pointer exception** trong mã, gây ra lỗi **segmentation fault**. Để loại bỏ hoàn toàn khả năng này, compiler chọn cách an toàn và sử dụng các lệnh nhảy.
+Hãy nhớ rằng lệnh `cmov` *thực thi cả hai nhánh của điều kiện*. Nói cách khác, `x` sẽ luôn bị giải tham chiếu (**dereference**) bất kể điều kiện là gì. Xét trường hợp `x` là một con trỏ null: việc giải tham chiếu một con trỏ null sẽ dẫn đến **null pointer exception** trong code, gây ra lỗi **segmentation fault**. Để loại bỏ hoàn toàn khả năng này, compiler chọn cách an toàn và sử dụng các lệnh nhảy.
 

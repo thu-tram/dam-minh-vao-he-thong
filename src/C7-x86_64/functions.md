@@ -54,7 +54,7 @@ Sáu tham số đầu tiên của hàm lần lượt được nạp vào các th
 
 ### 7.5.2. Tracing Through an Example
 
-Dựa trên kiến thức về quản lý hàm, hãy lần theo ví dụ mã nguồn đã được giới thiệu ở đầu chương này. Lưu ý rằng từ khóa `void` được thêm vào danh sách tham số của mỗi định nghĩa hàm để chỉ rõ rằng các hàm này không nhận đối số nào. Thay đổi này không làm thay đổi kết quả của chương trình; tuy nhiên, nó giúp đơn giản hóa mã assembly tương ứng.
+Dựa trên kiến thức về quản lý hàm, hãy lần theo ví dụ mã nguồn đã được giới thiệu ở đầu chương này. Lưu ý rằng từ khóa `void` được thêm vào danh sách tham số của mỗi định nghĩa hàm để chỉ rõ rằng các hàm này không nhận đối số nào. Thay đổi này không làm thay đổi kết quả của chương trình; tuy nhiên, nó giúp đơn giản hóa code assembly tương ứng.
 
 
 ```c
@@ -80,7 +80,7 @@ int main(void) {
 ```
 
 
-Chúng ta biên dịch đoạn mã này với lệnh:
+Chúng ta biên dịch đoạn code này với lệnh:
 
 ```
 gcc -o prog prog.c
@@ -92,7 +92,7 @@ và sử dụng:
 objdump -d
 ```
 
-để xem mã assembly bên dưới. Lệnh thứ hai sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
+để xem code assembly bên dưới. Lệnh thứ hai sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
 
 ```assembly
 0000000000400526 <assign>:
@@ -207,7 +207,7 @@ Hãy chú ý tới lệnh tiếp theo. Hãy nhớ rằng `$0x28` đã được �
 
 ![slide16](_images/procedures/Slide16.png)
 
-Lệnh `add` tại địa chỉ `0x53d` cộng 2 vào `%eax`. Hãy nhớ rằng khi trả về một số nguyên 32-bit, x86-64 sử dụng `%eax` thay vì `%rax`. Hai lệnh cuối này tương đương với đoạn mã trong `adder`:
+Lệnh `add` tại địa chỉ `0x53d` cộng 2 vào `%eax`. Hãy nhớ rằng khi trả về một số nguyên 32-bit, x86-64 sử dụng `%eax` thay vì `%rax`. Hai lệnh cuối này tương đương với đoạn code trong `adder`:
 
 ```c
 int a;

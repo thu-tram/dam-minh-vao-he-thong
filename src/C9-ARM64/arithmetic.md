@@ -2,7 +2,7 @@
 
 ### 9.3.1. Các lệnh số học thông dụng (Common Arithmetic Instructions) 
 
-**A64 ISA** (Instruction Set Architecture — “kiến trúc tập lệnh”) triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi **ALU** (Arithmetic Logic Unit — “bộ số học và logic”). [Bảng 1](#OtherArithmetica64) liệt kê một số lệnh số học thường gặp khi đọc mã Assembly của ARM.
+**A64 ISA** (Instruction Set Architecture — “kiến trúc tập lệnh”) triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi **ALU** (Arithmetic Logic Unit — “bộ số học và logic”). [Bảng 1](#OtherArithmetica64) liệt kê một số lệnh số học thường gặp khi đọc code Assembly của ARM.
 
 | Instruction | Translation |
 | --- | --- |
@@ -63,7 +63,7 @@ Cần lưu ý rằng dịch bit sang trái và sang phải sẽ được dịch 
 
 **Bảng 5.** Các lệnh dịch bit
 
-Ngoài thanh ghi đích, mỗi lệnh dịch bit nhận hai toán hạng; một thường là thanh ghi (ký hiệu R) và một là giá trị dịch 6-bit (v). Trên hệ thống 64-bit, giá trị dịch được mã hóa thành một byte (vì không có ý nghĩa khi dịch quá 63 bit). Giá trị dịch v phải là hằng số hoặc được lưu trong một thanh ghi thành phần.
+Ngoài thanh ghi đích, mỗi lệnh dịch bit nhận hai toán hạng; một thường là thanh ghi (ký hiệu R) và một là giá trị dịch 6-bit (v). Trên hệ thống 64-bit, giá trị dịch được code hóa thành một byte (vì không có ý nghĩa khi dịch quá 63 bit). Giá trị dịch v phải là hằng số hoặc được lưu trong một thanh ghi thành phần.
 
 Lệnh dịch bit cuối cùng, `ror`, cần được thảo luận riêng. Lệnh `ror` *xoay* các bit, thay thế các bit có trọng số lớn nhất bằng các bit có trọng số nhỏ nhất. Chúng ta ký hiệu phép xoay bit này bằng ký hiệu `>>>`.
 
@@ -92,6 +92,6 @@ Bảng 6 liệt kê các lệnh bitwise thông dụng và các lệnh bitwise h�
 
 Hãy nhớ rằng **bitwise not** khác với phép **negation** (`neg`). Lệnh `mvn` đảo tất cả các bit của toán hạng nhưng **không** cộng thêm 1. Cần cẩn thận để không nhầm lẫn hai lệnh này.
 
-> **Chỉ sử dụng phép toán bitwise khi thực sự cần trong mã C của bạn!**  
+> **Chỉ sử dụng phép toán bitwise khi thực sự cần trong code C của bạn!**  
 >  
-> Sau khi đọc phần này, bạn có thể sẽ muốn thay thế các phép toán số học thông thường trong mã C của mình bằng các phép dịch bit hoặc các phép toán bit khác. Điều này **không** được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bit khi điều đó hợp lý, vì vậy lập trình viên không cần phải tự làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên **tính dễ đọc của mã** bất cứ khi nào có thể và tránh tối ưu hóa sớm (*premature optimization*).
+> Sau khi đọc phần này, bạn có thể sẽ muốn thay thế các phép toán số học thông thường trong code C của mình bằng các phép dịch bit hoặc các phép toán bit khác. Điều này **không** được khuyến khích. Hầu hết các compiler hiện đại đủ thông minh để thay thế các phép toán số học đơn giản bằng các phép toán bit khi điều đó hợp lý, vì vậy lập trình viên không cần phải tự làm điều đó. Nguyên tắc chung là lập trình viên nên ưu tiên **tính dễ đọc của code** bất cứ khi nào có thể và tránh tối ưu hóa sớm (*premature optimization*).

@@ -1,8 +1,8 @@
-## 12.1. Những bước đầu tiên trong tối ưu mã: Code Profiling (Phân tích hiệu năng mã)
+## 12.1. Những bước đầu tiên trong tối ưu code: Code Profiling (Phân tích hiệu năng code)
 
 *“Vấn đề thực sự là các lập trình viên đã dành quá nhiều thời gian lo lắng về hiệu suất ở những nơi sai và vào những thời điểm sai; tối ưu hóa sớm là cội nguồn của mọi điều xấu (hoặc ít nhất là phần lớn) trong lập trình.”* — Don Knuth, *The Art of Computer Programming*
 
-Một trong những nguy hiểm lớn nhất trong tối ưu mã là khái niệm **premature optimization** (tối ưu hóa sớm). Tối ưu hóa sớm xảy ra khi lập trình viên cố gắng tối ưu dựa trên “cảm giác” về nơi xảy ra sự kém hiệu quả, thay vì dựa trên dữ liệu. Bất cứ khi nào có thể, điều quan trọng là phải đo thời gian chạy của các phần khác nhau trong mã với các đầu vào khác nhau *trước khi* bắt đầu tối ưu, để xác định **hot spot** (điểm nóng) — những khu vực trong chương trình mà có nhiều lệnh được thực thi nhất.
+Một trong những nguy hiểm lớn nhất trong tối ưu code là khái niệm **premature optimization** (tối ưu hóa sớm). Tối ưu hóa sớm xảy ra khi lập trình viên cố gắng tối ưu dựa trên “cảm giác” về nơi xảy ra sự kém hiệu quả, thay vì dựa trên dữ liệu. Bất cứ khi nào có thể, điều quan trọng là phải đo thời gian chạy của các phần khác nhau trong code với các đầu vào khác nhau *trước khi* bắt đầu tối ưu, để xác định **hot spot** (điểm nóng) — những khu vực trong chương trình mà có nhiều lệnh được thực thi nhất.
 
 Để tìm cách tối ưu [optExample.c](_attachments/optExample.c), hãy bắt đầu bằng cách xem kỹ hơn hàm `main`:
 
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 ```
 
 Hàm `main` gọi hai hàm: `allocateArray`, khởi tạo một mảng với độ dài (hoặc giới hạn) do người dùng chỉ định, và `genPrimeSequence`, tạo ra một dãy số nguyên tố trong giới hạn đã cho (lưu ý rằng với bất kỳ dãy số nào từ 2 đến *n*, số lượng số nguyên tố không thể vượt quá *n*, và thường ít hơn đáng kể).  
-Hàm `main` trong [tệp C](_attachments/optExample.c) chứa mã đo thời gian thực thi của hai hàm trên. Khi biên dịch và chạy chương trình với `limit` = 5.000.000, ta thu được kết quả:
+Hàm `main` trong [tệp C](_attachments/optExample.c) chứa code đo thời gian thực thi của hai hàm trên. Khi biên dịch và chạy chương trình với `limit` = 5.000.000, ta thu được kết quả:
 
 ```
 $ gcc -o optExample optExample.c -lm
@@ -76,7 +76,7 @@ int genPrimeSequence(int *array, int limit) {
 }
 ```
 
-Để tìm **hot spot** trong một chương trình, hãy tập trung vào các khu vực có nhiều vòng lặp nhất. Việc kiểm tra mã thủ công có thể giúp xác định các hot spot, mặc dù luôn cần xác minh lại bằng các công cụ đo hiệu năng trước khi tiến hành tối ưu.  
+Để tìm **hot spot** trong một chương trình, hãy tập trung vào các khu vực có nhiều vòng lặp nhất. Việc kiểm tra code thủ công có thể giúp xác định các hot spot, mặc dù luôn cần xác minh lại bằng các công cụ đo hiệu năng trước khi tiến hành tối ưu.  
 Khi kiểm tra thủ công chương trình `optExample`, ta có các nhận xét sau:
 
 - Hàm `genPrimeSequence` cố gắng tạo tất cả các số nguyên tố từ 2 đến một số nguyên *n*. Vì số lượng số nguyên tố từ 2 đến *n* không thể vượt quá *n*, vòng lặp `for` trong `genPrimeSequence` chạy tối đa *n* lần. Mỗi vòng lặp gọi hàm `getNextPrime` một lần. Do đó, `getNextPrime` chạy tối đa *n* lần.
@@ -97,7 +97,7 @@ Qua kiểm tra thủ công, ta thấy chương trình dành phần lớn thời 
 
 ### 12.1.1. Sử dụng Callgrind để phân tích hiệu năng (Profile)
 
-Trong chương trình nhỏ của chúng ta, việc kiểm tra mã thủ công để đưa ra giả thuyết rằng hàm `sqrt` xuất hiện trong một **hot spot** (điểm nóng) của mã là khá đơn giản. Tuy nhiên, việc xác định các hot spot có thể trở nên phức tạp hơn trong các chương trình lớn. Dù thế nào, việc sử dụng **profiling** (phân tích hiệu năng) để xác minh giả thuyết vẫn là một ý tưởng hay. Các công cụ phân tích hiệu năng mã như [Valgrind](http://valgrind.org/) cung cấp rất nhiều thông tin về quá trình thực thi chương trình. Trong phần này, chúng ta sẽ sử dụng công cụ `callgrind` để kiểm tra **call graph** (đồ thị lời gọi hàm) của chương trình `optExample`.
+Trong chương trình nhỏ của chúng ta, việc kiểm tra code thủ công để đưa ra giả thuyết rằng hàm `sqrt` xuất hiện trong một **hot spot** (điểm nóng) của code là khá đơn giản. Tuy nhiên, việc xác định các hot spot có thể trở nên phức tạp hơn trong các chương trình lớn. Dù thế nào, việc sử dụng **profiling** (phân tích hiệu năng) để xác minh giả thuyết vẫn là một ý tưởng hay. Các công cụ phân tích hiệu năng code như [Valgrind](http://valgrind.org/) cung cấp rất nhiều thông tin về quá trình thực thi chương trình. Trong phần này, chúng ta sẽ sử dụng công cụ `callgrind` để kiểm tra **call graph** (đồ thị lời gọi hàm) của chương trình `optExample`.
 
 
 ```
@@ -172,14 +172,14 @@ Profile data file 'callgrind.out.32393' (creator: callgrind-3.11.0)
 
 ```
 
-Các con số ở cột bên trái biểu thị tổng số lệnh được thực thi liên quan đến từng dòng mã. Các con số trong ngoặc đơn cho biết số lần một hàm cụ thể được chạy. Dựa vào các con số này, chúng ta có thể xác minh kết quả của việc kiểm tra thủ công.  
+Các con số ở cột bên trái biểu thị tổng số lệnh được thực thi liên quan đến từng dòng code. Các con số trong ngoặc đơn cho biết số lần một hàm cụ thể được chạy. Dựa vào các con số này, chúng ta có thể xác minh kết quả của việc kiểm tra thủ công.  
 Trong hàm `genPrimeSequence`, hàm `getNextPrime` tạo ra số lượng lệnh thực thi nhiều nhất — 67,8 triệu lệnh, tương ứng với 9.592 lần gọi hàm (để tạo các số nguyên tố từ 2 đến 100.000).  
 Kiểm tra `getNextPrime` cho thấy phần lớn số lệnh này (67,1 triệu, tức 99%) đến từ lời gọi hàm `isPrime`, được gọi tổng cộng 100.001 lần.  
 Cuối cùng, kiểm tra `isPrime` cho thấy 13 triệu lệnh (20,5%) đến từ hàm `sqrt`, được thực thi tổng cộng 2,7 triệu lần.
 
 Các kết quả này xác nhận giả thuyết ban đầu rằng chương trình dành phần lớn thời gian trong hàm `isPrime`, và hàm `sqrt` là hàm được gọi nhiều nhất. Giảm tổng số lệnh thực thi sẽ giúp chương trình chạy nhanh hơn; phân tích trên gợi ý rằng nỗ lực ban đầu nên tập trung vào việc cải thiện hàm `isPrime`, và có thể giảm số lần gọi `sqrt`.
 
-### 12.1.2. Loop-Invariant Code Motion (Di chuyển mã bất biến ra khỏi vòng lặp)
+### 12.1.2. Loop-Invariant Code Motion (Di chuyển code bất biến ra khỏi vòng lặp)
 
 **Loop-invariant code motion** là một kỹ thuật tối ưu hóa di chuyển các phép tính tĩnh (không thay đổi) bên trong vòng lặp ra ngoài vòng lặp mà không ảnh hưởng đến hành vi của vòng lặp. Các **optimizing compiler** (trình biên dịch tối ưu) có thể tự động thực hiện hầu hết các tối ưu hóa dạng này.  
 Cụ thể, cờ biên dịch `-fmove-loop-invariants` trong GCC (được bật ở mức `-O1`) sẽ cố gắng xác định các trường hợp loop-invariant code và di chuyển chúng ra ngoài vòng lặp tương ứng.
@@ -204,7 +204,7 @@ int isPrime(int x) {
 }
 ```
 
-**Bảng 2** cho thấy thay đổi đơn giản này giúp giảm hẳn 2 giây (47%) thời gian chạy của `optExample2`, ngay cả trước khi sử dụng các cờ tối ưu của trình biên dịch. Hơn nữa, trình biên dịch dường như dễ dàng tối ưu `optExample2` hơn một chút.
+**Bảng 2** cho thấy thay đổi đơn giản này giúp giảm hẳn 2 giây (47%) thời gian chạy của `optExample2`, ngay cả trước khi sử dụng các optimization flag của trình biên dịch. Hơn nữa, trình biên dịch dường như dễ dàng tối ưu `optExample2` hơn một chút.
 
 | Phiên bản       | Unoptimized | `-O1` | `-O2` | `-O3` |
 |-----------------|-------------|-------|-------|-------|
@@ -213,7 +213,7 @@ int isPrime(int x) {
 
 **Bảng 2.** Thời gian (giây) để tạo các số nguyên tố từ 2 đến 5.000.000
 
-Chạy lại `callgrind` trên file thực thi `optExample2` cho thấy lý do tại sao thời gian chạy được cải thiện nhiều như vậy. Đoạn mã dưới đây giả định rằng tệp `callgrind.out.30086` chứa các chú thích khi chạy `callgrind` trên `optExample2`:
+Chạy lại `callgrind` trên file thực thi `optExample2` cho thấy lý do tại sao thời gian chạy được cải thiện nhiều như vậy. Đoạn code dưới đây giả định rằng tệp `callgrind.out.30086` chứa các chú thích khi chạy `callgrind` trên `optExample2`:
 
 
 ```
@@ -250,5 +250,5 @@ Profile data file 'callgrind.out.30086' (creator: callgrind-3.11.0)
 
 Việc di chuyển lời gọi `sqrt` ra ngoài vòng lặp `for` đã giảm số lần gọi hàm `sqrt` trong chương trình từ 2,7 triệu xuống còn 100.000 (giảm 96%). Con số này tương ứng với số lần hàm `isPrime` được gọi, xác nhận rằng hàm `sqrt` chỉ thực thi một lần cho mỗi lần gọi `isPrime`.
 
-Lưu ý rằng trình biên dịch có thể thực hiện mức tối ưu hóa đáng kể khi bật các cờ tối ưu, ngay cả khi lập trình viên không tự tay di chuyển mã. Trong trường hợp này, lý do là nhờ một lệnh đặc biệt gọi là `fsqrt` được quy định trong **x86 ISA**. Khi bật các cờ tối ưu, trình biên dịch thay thế tất cả các lời gọi hàm `sqrt` bằng lệnh `fsqrt`.  
+Lưu ý rằng trình biên dịch có thể thực hiện mức tối ưu hóa đáng kể khi bật các optimization flag, ngay cả khi lập trình viên không tự tay di chuyển code. Trong trường hợp này, lý do là nhờ một lệnh đặc biệt gọi là `fsqrt` được quy định trong **x86 ISA**. Khi bật các optimization flag, trình biên dịch thay thế tất cả các lời gọi hàm `sqrt` bằng lệnh `fsqrt`.  
 Quá trình này được gọi là **inlining** (nội tuyến), và chúng ta sẽ tìm hiểu chi tiết hơn trong phần tiếp theo. Vì `fsqrt` không còn là một hàm, trình biên dịch dễ dàng nhận ra tính loop-invariant của nó và di chuyển nó ra ngoài thân vòng lặp.

@@ -1,10 +1,10 @@
 ## 12.2. Các tối ưu hóa khác của trình biên dịch: Loop Unrolling và Function Inlining
 
-Kỹ thuật tối ưu **loop-invariant code motion** (di chuyển mã bất biến ra khỏi vòng lặp) được mô tả ở phần trước là một thay đổi đơn giản nhưng mang lại sự giảm đáng kể thời gian thực thi. Tuy nhiên, các tối ưu hóa như vậy phụ thuộc vào từng tình huống cụ thể và không phải lúc nào cũng cải thiện hiệu năng. Trong hầu hết các trường hợp, việc di chuyển mã bất biến ra khỏi vòng lặp đã được trình biên dịch tự động xử lý.
+Kỹ thuật tối ưu **loop-invariant code motion** (di chuyển code bất biến ra khỏi vòng lặp) được mô tả ở phần trước là một thay đổi đơn giản nhưng mang lại sự giảm đáng kể thời gian thực thi. Tuy nhiên, các tối ưu hóa như vậy phụ thuộc vào từng tình huống cụ thể và không phải lúc nào cũng cải thiện hiệu năng. Trong hầu hết các trường hợp, việc di chuyển code bất biến ra khỏi vòng lặp đã được trình biên dịch tự động xử lý.
 
-Ngày nay, mã nguồn thường được **đọc** nhiều hơn là **viết**. Trong đa số trường hợp, những cải thiện hiệu năng nhỏ lẻ không đáng để đánh đổi khả năng dễ đọc của mã. Nói chung, lập trình viên nên để trình biên dịch tự tối ưu bất cứ khi nào có thể. Trong phần này, chúng ta sẽ tìm hiểu một số kỹ thuật tối ưu hóa mà trước đây lập trình viên thường tự thực hiện thủ công, nhưng hiện nay thường được trình biên dịch tự động áp dụng.
+Ngày nay, mã nguồn thường được **đọc** nhiều hơn là **viết**. Trong đa số trường hợp, những cải thiện hiệu năng nhỏ lẻ không đáng để đánh đổi khả năng dễ đọc của code. Nói chung, lập trình viên nên để trình biên dịch tự tối ưu bất cứ khi nào có thể. Trong phần này, chúng ta sẽ tìm hiểu một số kỹ thuật tối ưu hóa mà trước đây lập trình viên thường tự thực hiện thủ công, nhưng hiện nay thường được trình biên dịch tự động áp dụng.
 
-Có nhiều nguồn tài liệu trực tuyến khuyến khích việc tự tay áp dụng các kỹ thuật được mô tả trong các phần sau. Tuy nhiên, chúng tôi khuyến nghị bạn nên kiểm tra xem trình biên dịch của mình có hỗ trợ các tối ưu hóa này hay không trước khi cố gắng tự triển khai chúng trong mã. Tất cả các tối ưu hóa được mô tả trong phần này đều được GCC hỗ trợ, nhưng có thể không có trong các trình biên dịch cũ.
+Có nhiều nguồn tài liệu trực tuyến khuyến khích việc tự tay áp dụng các kỹ thuật được mô tả trong các phần sau. Tuy nhiên, chúng tôi khuyến nghị bạn nên kiểm tra xem trình biên dịch của mình có hỗ trợ các tối ưu hóa này hay không trước khi cố gắng tự triển khai chúng trong code. Tất cả các tối ưu hóa được mô tả trong phần này đều được GCC hỗ trợ, nhưng có thể không có trong các trình biên dịch cũ.
 
 ### 12.2.1. Function Inlining
 
@@ -28,13 +28,13 @@ Ví dụ, trong hàm `main`, nếu trình biên dịch nội tuyến hàm `alloc
 
 **Bảng 1.** Ví dụ trình biên dịch nội tuyến hàm `allocateArray`.
 
-Việc nội tuyến hàm có thể giúp chương trình tiết kiệm thời gian chạy. Hãy nhớ rằng mỗi lần chương trình gọi một hàm, sẽ có nhiều lệnh liên quan đến việc **tạo** và **hủy** ngữ cảnh hàm được sinh ra. Nội tuyến hàm cho phép trình biên dịch loại bỏ các lời gọi dư thừa này, đồng thời giúp nó dễ dàng phát hiện các cơ hội tối ưu khác như **constant propagation** (truyền hằng), **constant folding** (gộp hằng), và **dead code elimination** (loại bỏ mã chết).  
+Việc nội tuyến hàm có thể giúp chương trình tiết kiệm thời gian chạy. Hãy nhớ rằng mỗi lần chương trình gọi một hàm, sẽ có nhiều lệnh liên quan đến việc **tạo** và **hủy** ngữ cảnh hàm được sinh ra. Nội tuyến hàm cho phép trình biên dịch loại bỏ các lời gọi dư thừa này, đồng thời giúp nó dễ dàng phát hiện các cơ hội tối ưu khác như **constant propagation** (truyền hằng), **constant folding** (gộp hằng), và **dead code elimination** (loại bỏ code chết).  
 Trong trường hợp của chương trình `optExample`, việc nội tuyến có thể cho phép trình biên dịch thay lời gọi `sqrt` bằng lệnh `fsqrt`, và sau đó di chuyển nó ra ngoài vòng lặp.
 
 Cờ `-finline-functions` gợi ý cho GCC rằng các hàm nên được nội tuyến. Tối ưu hóa này được bật ở mức `-O3`. Mặc dù `-finline-functions` có thể được sử dụng độc lập với `-O3`, nhưng đây chỉ là *gợi ý* để trình biên dịch tìm các hàm có thể nội tuyến. Tương tự, từ khóa `static inline` có thể được dùng để gợi ý rằng một hàm cụ thể nên được nội tuyến.  
-Cần lưu ý rằng trình biên dịch sẽ không nội tuyến tất cả các hàm, và việc nội tuyến không đảm bảo sẽ làm mã chạy nhanh hơn.
+Cần lưu ý rằng trình biên dịch sẽ không nội tuyến tất cả các hàm, và việc nội tuyến không đảm bảo sẽ làm code chạy nhanh hơn.
 
-Lập trình viên nhìn chung nên tránh nội tuyến hàm thủ công. Việc này tiềm ẩn nguy cơ cao làm giảm đáng kể khả năng đọc mã, tăng khả năng xuất hiện lỗi, và khiến việc cập nhật, bảo trì hàm trở nên khó khăn hơn. Ví dụ, cố gắng nội tuyến hàm `isPrime` vào trong `getNextPrime` sẽ làm giảm mạnh khả năng đọc của `getNextPrime`.
+Lập trình viên nhìn chung nên tránh nội tuyến hàm thủ công. Việc này tiềm ẩn nguy cơ cao làm giảm đáng kể khả năng đọc code, tăng khả năng xuất hiện lỗi, và khiến việc cập nhật, bảo trì hàm trở nên khó khăn hơn. Ví dụ, cố gắng nội tuyến hàm `isPrime` vào trong `getNextPrime` sẽ làm giảm mạnh khả năng đọc của `getNextPrime`.
 
 ### 12.2.2. Loop Unrolling
 
@@ -84,10 +84,10 @@ int isPrime(int x) {
 ```
 
 Lưu ý rằng mặc dù chúng ta đã giảm một nửa số vòng lặp `for`, nhưng mỗi vòng lặp giờ thực hiện hai phép kiểm tra modulo, tức là khối lượng công việc mỗi vòng tăng gấp đôi.  
-Khi biên dịch và chạy lại chương trình, thời gian chạy chỉ cải thiện một chút (xem [Bảng 2](#NextTimes)). Đồng thời, khả năng đọc của mã cũng giảm.  
-Một cách tốt hơn để tận dụng loop unrolling là sử dụng cờ tối ưu hóa `-funroll-loops` của trình biên dịch, cờ này yêu cầu trình biên dịch unroll các vòng lặp có thể xác định số lần lặp ngay tại thời điểm biên dịch.  
+Khi biên dịch và chạy lại chương trình, thời gian chạy chỉ cải thiện một chút (xem [Bảng 2](#NextTimes)). Đồng thời, khả năng đọc của code cũng giảm.  
+Một cách tốt hơn để tận dụng loop unrolling là sử dụng optimization flag hóa `-funroll-loops` của trình biên dịch, cờ này yêu cầu trình biên dịch unroll các vòng lặp có thể xác định số lần lặp ngay tại thời điểm biên dịch.  
 Cờ `-funroll-all-loops` là một tùy chọn mạnh mẽ hơn, unroll tất cả các vòng lặp bất kể trình biên dịch có chắc chắn về số lần lặp hay không.  
-[Bảng 2](#NextTimes) cho thấy thời gian chạy của kỹ thuật loop unrolling thủ công hệ số 2 (trong `optExample3.c`) so với việc thêm các cờ tối ưu `-funroll-loops` và `-funroll-all-loops` vào chương trình trước đó ([optExample2.c](_attachments/optExample2.c)).
+[Bảng 2](#NextTimes) cho thấy thời gian chạy của kỹ thuật loop unrolling thủ công hệ số 2 (trong `optExample3.c`) so với việc thêm các optimization flag `-funroll-loops` và `-funroll-all-loops` vào chương trình trước đó ([optExample2.c](_attachments/optExample2.c)).
 
 | Phiên bản | Unoptimized | `-O1` | `-O2` | `-O3` |
 |-----------|-------------|-------|-------|-------|
@@ -99,5 +99,5 @@ Cờ `-funroll-all-loops` là một tùy chọn mạnh mẽ hơn, unroll tất c
 
 **Bảng 2.** Thời gian (giây) để tạo 5.000.000 số nguyên tố
 
-Mặc dù loop unrolling thủ công mang lại một chút cải thiện hiệu năng, nhưng các cờ loop unrolling tích hợp sẵn của trình biên dịch, khi kết hợp với các cờ tối ưu hóa khác, cho hiệu năng tương đương.  
-Nếu lập trình viên muốn áp dụng tối ưu hóa loop unrolling vào mã của mình, họ nên ưu tiên sử dụng các cờ của trình biên dịch, *không* nên tự unroll vòng lặp thủ công.
+Mặc dù loop unrolling thủ công mang lại một chút cải thiện hiệu năng, nhưng các cờ loop unrolling tích hợp sẵn của trình biên dịch, khi kết hợp với các optimization flag hóa khác, cho hiệu năng tương đương.  
+Nếu lập trình viên muốn áp dụng tối ưu hóa loop unrolling vào code của mình, họ nên ưu tiên sử dụng các cờ của trình biên dịch, *không* nên tự unroll vòng lặp thủ công.

@@ -179,7 +179,7 @@ Cachegrind thu thập và xuất ra các thông tin sau:
 Lưu ý: Tổng số truy cập D1 được tính bằng `D1 = D1mr + D1mw` và tổng số truy cập LL được tính bằng `ILmr + DLmr + DLmw`.
 
 Hãy xem phiên bản 1 của chương trình hoạt động thế nào dưới Cachegrind.  
-Chạy Valgrind trên mã đã biên dịch với lệnh:
+Chạy Valgrind trên code đã biên dịch với lệnh:
 
 ```
 $ valgrind --tool=cachegrind --cache-sim=yes ./cachex 1000

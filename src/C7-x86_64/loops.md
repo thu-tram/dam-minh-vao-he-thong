@@ -18,7 +18,7 @@ int sumUp(int n) {
 }
 ```
 
-Biên dịch đoạn code này và dùng GDB để disassemble sẽ cho ra mã assembly sau:
+Biên dịch đoạn code này và dùng GDB để disassemble sẽ cho ra code assembly sau:
 
 ```
 Dump of assembler code for function sumUp:
@@ -167,7 +167,7 @@ int sumUp2(int n) {
 }
 ```
 
-Phiên bản này tạo ra mã assembly **giống hệt** với ví dụ vòng lặp `while`. Dưới đây là mã assembly và chú thích từng dòng:
+Phiên bản này tạo ra code assembly **giống hệt** với ví dụ vòng lặp `while`. Dưới đây là code assembly và chú thích từng dòng:
 
 ```assembly
 Dump of assembler code for function sumUp2:
@@ -188,7 +188,7 @@ Dump of assembler code for function sumUp2:
 0x400581 <+45>:  retq                          # trả về total
 ```
 
-Để hiểu vì sao phiên bản vòng lặp `for` này tạo ra mã assembly giống hệt với phiên bản vòng lặp `while`, hãy nhớ rằng vòng lặp `for` có dạng:
+Để hiểu vì sao phiên bản vòng lặp `for` này tạo ra code assembly giống hệt với phiên bản vòng lặp `while`, hãy nhớ rằng vòng lặp `for` có dạng:
 
 ```c
 for (<khởi tạo>; <biểu thức điều kiện>; <bước lặp>) {

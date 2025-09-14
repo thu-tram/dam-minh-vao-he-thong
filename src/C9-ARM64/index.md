@@ -1,7 +1,7 @@
 ## 9. ARM Assembly  
 
 Trong chương này, chúng ta sẽ tìm hiểu về kiến trúc **ARM version 8 application profile (ARMv8-A)** với **A64 ISA**, phiên bản ARM ISA mới nhất đang được sử dụng trên tất cả các máy tính ARM chạy hệ điều hành Linux.  
-Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA — “kiến trúc tập lệnh”) định nghĩa tập hợp các lệnh và cách mã hóa nhị phân của một chương trình ở cấp độ máy.  
+Hãy nhớ rằng một [instruction set architecture](../C5-Arch/index.html#_what_von_neumann_knew_computer_architecture) (ISA — “kiến trúc tập lệnh”) định nghĩa tập hợp các lệnh và cách code hóa nhị phân của một chương trình ở cấp độ máy.  
 
 Để chạy được các ví dụ trong chương này, bạn cần có một máy với bộ xử lý ARMv8-A và hệ điều hành 64-bit. Các ví dụ trong chương này được thực hiện trên **Raspberry Pi 3B+** chạy hệ điều hành **Ubuntu Mate 64-bit**. Lưu ý rằng mọi phiên bản Raspberry Pi phát hành từ năm 2016 đều có thể sử dụng A64 ISA. Tuy nhiên, **Raspberry Pi OS** (hệ điều hành mặc định của Raspberry Pi) vẫn là bản 32-bit tại thời điểm viết sách này.  
 
@@ -17,7 +17,7 @@ Nếu muốn học ARM assembly trực tiếp trên laptop, bạn có thể th�
 
 Một lựa chọn khác là sử dụng [EC2 A1 instances](https://aws.amazon.com/ec2/instance-types/a1/) mà Amazon mới phát hành. Mỗi instance cung cấp cho bạn quyền truy cập vào bộ xử lý **Graviton 64-bit**, tuân theo đặc tả ARMv8-A.  
 
-Tuy nhiên, cần lưu ý rằng các lệnh assembly cụ thể do compiler sinh ra phụ thuộc nhiều vào hệ điều hành và kiến trúc phần cứng chính xác. Do đó, mã assembly sinh ra trên AWS hoặc qua QEMU có thể hơi khác so với các ví dụ trong chương này.  
+Tuy nhiên, cần lưu ý rằng các lệnh assembly cụ thể do compiler sinh ra phụ thuộc nhiều vào hệ điều hành và kiến trúc phần cứng chính xác. Do đó, code assembly sinh ra trên AWS hoặc qua QEMU có thể hơi khác so với các ví dụ trong chương này.  
 
 > **RISC và bộ xử lý ARM**  
 >  

@@ -37,7 +37,7 @@ Dump of assembler code for function getSmallest:
 0x082c <+56>:   ret
 ```
 
-Đây là một cách hiển thị khác của mã assembly so với những gì ta đã thấy trước đây. Ở đây, ta thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** mã máy. Đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hơn. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi `x0` và `x1`. Vì các tham số của `getSmallest` có kiểu `int`, compiler sẽ đặt chúng vào *component register* tương ứng là `w0` và `w1`. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là `x` và `y`.
+Đây là một cách hiển thị khác của code assembly so với những gì ta đã thấy trước đây. Ở đây, ta thấy **địa chỉ** gắn với mỗi lệnh, nhưng không thấy **byte** code máy. Đoạn assembly này đã được chỉnh sửa nhẹ để đơn giản hơn. Theo quy ước, GCC đặt tham số thứ nhất và thứ hai của hàm vào các thanh ghi `x0` và `x1`. Vì các tham số của `getSmallest` có kiểu `int`, compiler sẽ đặt chúng vào *component register* tương ứng là `w0` và `w1`. Để dễ theo dõi, ta sẽ gọi các tham số này lần lượt là `x` và `y`.
 
 Hãy lần theo một vài dòng đầu của đoạn assembly trên. Lưu ý rằng trong ví dụ này, chúng ta sẽ **không** vẽ stack ra minh họa. Đây là một bài tập để bạn tự thực hành kỹ năng theo dõi stack bằng cách tự vẽ.
 
@@ -84,7 +84,7 @@ Ta có thể chú thích đoạn assembly trên như sau:
 0x082c <+56>:  ret                         // trả về smallest
 ```
 
-Chuyển ngược đoạn assembly này về mã C thu được:
+Chuyển ngược đoạn assembly này về code C thu được:
 
 
 #### **Dạng goto của `getSmallest()`**
@@ -121,9 +121,9 @@ int getSmallest(int x, int y) {
 }
 ```
 
-Trong các ví dụ trên, biến `smallest` tương ứng với thanh ghi `w0`. Nếu `x` nhỏ hơn hoặc bằng `y`, mã sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong dạng goto của hàm. Ngược lại, câu lệnh `smallest = y` sẽ được thực thi. Nhãn `goto` `done` được dùng để chỉ ra rằng giá trị trong `smallest` sẽ được trả về.
+Trong các ví dụ trên, biến `smallest` tương ứng với thanh ghi `w0`. Nếu `x` nhỏ hơn hoặc bằng `y`, code sẽ thực thi câu lệnh `smallest = x`, câu lệnh này gắn với nhãn `goto` là `assign_x` trong dạng goto của hàm. Ngược lại, câu lệnh `smallest = y` sẽ được thực thi. Nhãn `goto` `done` được dùng để chỉ ra rằng giá trị trong `smallest` sẽ được trả về.
 
-Lưu ý rằng bản dịch C ở trên của mã assembly có hơi khác so với hàm `getSmallest` gốc. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển mỗi câu lệnh `if` thành một dạng `goto` tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. Các ví dụ dưới đây cho thấy dạng chuẩn của câu lệnh `if` và dạng `goto` tương đương.
+Lưu ý rằng bản dịch C ở trên của code assembly có hơi khác so với hàm `getSmallest` gốc. Những khác biệt này không quan trọng; khi xem xét kỹ cả hai hàm, ta thấy chúng tương đương về mặt logic. Tuy nhiên, compiler trước tiên sẽ chuyển mỗi câu lệnh `if` thành một dạng `goto` tương đương, dẫn đến một phiên bản hơi khác nhưng vẫn tương đương. Các ví dụ dưới đây cho thấy dạng chuẩn của câu lệnh `if` và dạng `goto` tương đương.
 
 #### **Câu lệnh `if` trong C**
 
@@ -150,7 +150,7 @@ done:
 
 **Bảng 2.** Dạng chuẩn của câu lệnh if và dạng goto tương đương.
 
-Khi dịch mã sang assembly, compiler sẽ tạo một nhánh (*branch*) khi điều kiện đúng. Điều này khác với cấu trúc của câu lệnh `if`, nơi một “jump” (nhảy) tới `else` xảy ra khi điều kiện *không* đúng. Dạng `goto` thể hiện rõ sự khác biệt logic này.
+Khi dịch code sang assembly, compiler sẽ tạo một nhánh (*branch*) khi điều kiện đúng. Điều này khác với cấu trúc của câu lệnh `if`, nơi một “jump” (nhảy) tới `else` xảy ra khi điều kiện *không* đúng. Dạng `goto` thể hiện rõ sự khác biệt logic này.
 
 Xét bản dịch `goto` ban đầu của hàm `getSmallest`, ta thấy:
 
@@ -174,13 +174,13 @@ int getSmallest(int x, int y) {
 }
 ```
 
-Phiên bản này giống hệt với hàm `getSmallest` ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức mã C vẫn có thể được dịch ra cùng một tập lệnh assembly.
+Phiên bản này giống hệt với hàm `getSmallest` ban đầu. Hãy nhớ rằng một hàm được viết theo nhiều cách khác nhau ở mức code C vẫn có thể được dịch ra cùng một tập lệnh assembly.
 
 
 #### Lệnh Conditional Select  
 
 Lệnh điều kiện cuối cùng mà chúng ta tìm hiểu là **conditional select** (`csel`).  
-Các lệnh `cmp`, `tst` và `b` thực hiện **conditional transfer of control** (chuyển điều khiển có điều kiện) trong chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng. Điều này có thể gây bất lợi cho việc tối ưu hóa mã, vì các lệnh nhánh thường tốn kém để thực thi do gây gián đoạn **instruction pipeline** (chi tiết sẽ được đề cập trong [mục Kiến trúc](../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards)).  
+Các lệnh `cmp`, `tst` và `b` thực hiện **conditional transfer of control** (chuyển điều khiển có điều kiện) trong chương trình. Nói cách khác, luồng thực thi của chương trình sẽ rẽ nhánh theo nhiều hướng. Điều này có thể gây bất lợi cho việc tối ưu hóa code, vì các lệnh nhánh thường tốn kém để thực thi do gây gián đoạn **instruction pipeline** (chi tiết sẽ được đề cập trong [mục Kiến trúc](../C5-Arch/pipelining_advanced.html#_pipelining_hazards_control_hazards)).  
 
 Ngược lại, lệnh `csel` thực hiện **conditional transfer of data** (chuyển dữ liệu có điều kiện). Nói cách khác, CPU sẽ thực thi *cả* `then_statement` và `else_statement`, sau đó đặt dữ liệu vào thanh ghi thích hợp dựa trên kết quả của điều kiện.
 
@@ -198,7 +198,7 @@ int getSmallest_csel(int x, int y) {
 }
 ```
 
-Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem mã assembly được tạo ra. Nhớ rằng tham số thứ nhất và thứ hai (`x` và `y`) lần lượt được lưu trong các thanh ghi `w0` và `w1`:
+Mặc dù thay đổi này có vẻ không lớn, nhưng hãy xem code assembly được tạo ra. Nhớ rằng tham số thứ nhất và thứ hai (`x` và `y`) lần lượt được lưu trong các thanh ghi `w0` và `w1`:
 
 ```
 (gdb) disas getSmallest_csel
@@ -265,7 +265,7 @@ int incrementX2(int * x) {
 
 Mỗi hàm nhận một con trỏ tới số nguyên làm tham số và kiểm tra xem nó có phải `NULL` hay không. Nếu `x` không phải `NULL`, hàm sẽ tăng giá trị mà `x` trỏ tới và trả về giá trị đó. Ngược lại, hàm trả về 1.
 
-Có thể bạn sẽ nghĩ rằng `incrementX2` sẽ dùng lệnh `csel` vì nó dùng biểu thức ba ngôi. Tuy nhiên, cả hai hàm đều sinh ra **mã assembly giống hệt nhau**:
+Có thể bạn sẽ nghĩ rằng `incrementX2` sẽ dùng lệnh `csel` vì nó dùng biểu thức ba ngôi. Tuy nhiên, cả hai hàm đều sinh ra **code assembly giống hệt nhau**:
 
 ```
 // tham số x nằm trong thanh ghi x0

@@ -1,6 +1,6 @@
 ## 5.7. Pipelining: Làm cho CPU nhanh hơn
 
-CPU bốn giai đoạn của chúng ta cần bốn chu kỳ xung nhịp để thực thi một lệnh: chu kỳ đầu tiên dùng để nạp lệnh từ bộ nhớ; chu kỳ thứ hai để giải mã lệnh và đọc toán hạng từ register file; chu kỳ thứ ba để ALU thực hiện phép toán; và chu kỳ thứ tư để ghi kết quả từ ALU vào một thanh ghi trong register file. Để thực thi một chuỗi gồm *N* lệnh, CPU cần *4N* chu kỳ xung nhịp, vì mỗi lệnh được thực thi tuần tự, từng cái một.
+CPU bốn giai đoạn của chúng ta cần bốn chu kỳ xung nhịp để thực thi một lệnh: chu kỳ đầu tiên dùng để nạp lệnh từ bộ nhớ; chu kỳ thứ hai để giải code lệnh và đọc toán hạng từ register file; chu kỳ thứ ba để ALU thực hiện phép toán; và chu kỳ thứ tư để ghi kết quả từ ALU vào một thanh ghi trong register file. Để thực thi một chuỗi gồm *N* lệnh, CPU cần *4N* chu kỳ xung nhịp, vì mỗi lệnh được thực thi tuần tự, từng cái một.
 
 ![12 cycles to complete 3 instruction](_images/4instrcycles.png)
 

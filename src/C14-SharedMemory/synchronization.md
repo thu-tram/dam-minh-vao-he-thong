@@ -142,10 +142,10 @@ Thuật toán **CountSort** gồm hai bước chính, và cả hai đều có th
 Trong phần còn lại của chương này, chúng ta sẽ tập trung vào song song hóa **bước 1**, tức hàm `countElems`.  
 Việc song song hóa hàm `writeArray` được để lại như một bài tập cho người đọc.
 
-Đoạn mã dưới đây minh họa **lần thử đầu tiên** tạo phiên bản đa luồng của hàm `countElems`.  
-Một số phần của mã (phân tích tham số, xử lý lỗi) được lược bỏ để ngắn gọn, nhưng bạn có thể tải toàn bộ mã nguồn tại: [countElems_p.c](_attachments/countElems_p.c).
+Đoạn code dưới đây minh họa **lần thử đầu tiên** tạo phiên bản đa luồng của hàm `countElems`.  
+Một số phần của code (phân tích tham số, xử lý lỗi) được lược bỏ để ngắn gọn, nhưng bạn có thể tải toàn bộ mã nguồn tại: [countElems_p.c](_attachments/countElems_p.c).
 
-Trong đoạn mã này, mỗi thread sẽ đếm tần suất xuất hiện của các phần tử trong **phần mảng** được gán cho nó từ mảng toàn cục, và cập nhật vào mảng đếm toàn cục `counts`:
+Trong đoạn code này, mỗi thread sẽ đếm tần suất xuất hiện của các phần tử trong **phần mảng** được gán cho nó từ mảng toàn cục, và cập nhật vào mảng đếm toàn cục `counts`:
 
 
 
@@ -339,8 +339,8 @@ Xem ví dụ trình tự thực thi của Thread 0 và Thread 1 trong Bảng 2.
 Trong trình tự này, Thread 1 **không** đọc `counts[1]` cho đến **sau** khi Thread 0 đã cập nhật giá trị mới (61).  
 Kết quả là Thread 1 đọc giá trị 61 từ `counts[1]` và đưa vào thanh ghi của Core 1 tại thời điểm *i+3*, sau đó ghi giá trị 62 vào `counts[1]` tại thời điểm *i+5*.
 
-Để khắc phục **data race**, trước tiên chúng ta phải xác định **critical section** — phần mã cần được thực thi **atomic** (cô lập) để đảm bảo hành vi đúng.  
-Trong các chương trình đa luồng, các khối mã cập nhật tài nguyên chia sẻ thường được xác định là critical section.
+Để khắc phục **data race**, trước tiên chúng ta phải xác định **critical section** — phần code cần được thực thi **atomic** (cô lập) để đảm bảo hành vi đúng.  
+Trong các chương trình đa luồng, các khối code cập nhật tài nguyên chia sẻ thường được xác định là critical section.
 
 Trong hàm `countElems`, các thao tác cập nhật mảng `counts` cần được đặt trong critical section để đảm bảo giá trị không bị mất do nhiều thread cùng cập nhật một vị trí bộ nhớ:
 

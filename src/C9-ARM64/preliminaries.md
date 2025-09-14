@@ -53,7 +53,7 @@ Việc tìm hiểu sâu về các cờ điều kiện nằm ngoài phạm vi c�
 
 ### Lệnh nhánh (The Branch Instructions)  
 
-Lệnh nhánh cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh.  
+Lệnh nhánh cho phép chương trình “nhảy” tới một vị trí mới trong code lệnh.  
 Trong các chương trình assembly mà ta đã phân tích, `pc` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình.  
 Lệnh nhánh cho phép `pc` được đặt tới một lệnh mới chưa thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
 
@@ -121,9 +121,9 @@ Những hậu tố này cũng được dùng cho lệnh **conditional select** (
 ### Câu lệnh goto  
 
 Trong các phần tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và dịch ngược chúng về C.  
-Khi dịch ngược mã assembly của các câu lệnh điều kiện và vòng lặp về C, việc hiểu dạng `goto` tương ứng trong C là rất hữu ích.  
+Khi dịch ngược code assembly của các câu lệnh điều kiện và vòng lặp về C, việc hiểu dạng `goto` tương ứng trong C là rất hữu ích.  
 
-Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã.  
+Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong code.  
 Lệnh assembly tương ứng với `goto` là `b`.
 
 Cú pháp `goto` gồm từ khóa `goto` theo sau là một **goto label** — một loại nhãn chương trình chỉ ra rằng việc thực thi sẽ tiếp tục tại vị trí được đánh dấu bởi nhãn đó.  
@@ -131,7 +131,7 @@ Ví dụ: `goto done` nghĩa là chương trình sẽ nhảy tới dòng có nh�
 
 Các ví dụ khác về nhãn trong C bao gồm nhãn của câu lệnh [switch](../C2-C_depth/advanced_switch.html#_c_switch_stmt_) đã được đề cập ở Chương 2.
 
-Các đoạn mã dưới đây minh họa hàm `getSmallest` được viết bằng C thông thường (bên trái) và dạng `goto` tương ứng trong C (bên phải).  
+Các đoạn code dưới đây minh họa hàm `getSmallest` được viết bằng C thông thường (bên trái) và dạng `goto` tương ứng trong C (bên phải).  
 Hàm `getSmallest` so sánh giá trị của hai số nguyên (`x` và `y`), và gán giá trị nhỏ hơn cho biến `smallest`.
 
 
@@ -177,15 +177,15 @@ done:
 Dạng `goto` của hàm này có thể trông hơi phản trực giác, nhưng hãy phân tích xem thực chất chuyện gì đang diễn ra.  
 Câu lệnh điều kiện kiểm tra xem biến `x` có nhỏ hơn hoặc bằng `y` hay không.
 
-- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa duy nhất câu lệnh `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục chạy phần mã dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
+- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa duy nhất câu lệnh `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục chạy phần code dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
 
 - Nếu `x` lớn hơn `y`, thì `smallest` được gán bằng `y`. Sau đó chương trình thực thi câu lệnh `goto done`, chuyển quyền điều khiển tới nhãn `done`, trả về giá trị của `smallest` (`y`).
 
-Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng trong mã hiện đại, việc dùng `goto` được xem là một **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã nguồn.  
+Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng trong code hiện đại, việc dùng `goto` được xem là một **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã nguồn.  
 Thực tế, nhà khoa học máy tính **Edsger Dijkstra** đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
 
-Nhìn chung, các chương trình C được thiết kế tốt sẽ **không** sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng nó để không tạo ra mã khó đọc, khó gỡ lỗi và khó bảo trì.  
-Tuy nhiên, việc hiểu câu lệnh `goto` trong C vẫn quan trọng, vì GCC thường chuyển đổi mã C có chứa điều kiện sang dạng `goto` trước khi dịch sang assembly — bao gồm cả mã có câu lệnh `if` và vòng lặp.
+Nhìn chung, các chương trình C được thiết kế tốt sẽ **không** sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng nó để không tạo ra code khó đọc, khó gỡ lỗi và khó bảo trì.  
+Tuy nhiên, việc hiểu câu lệnh `goto` trong C vẫn quan trọng, vì GCC thường chuyển đổi code C có chứa điều kiện sang dạng `goto` trước khi dịch sang assembly — bao gồm cả code có câu lệnh `if` và vòng lặp.
 
 Các phần tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh `if` và vòng lặp trong assembly:
 

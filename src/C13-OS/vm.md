@@ -101,7 +101,7 @@ Ví dụ: nếu hai process P1 và P2 cùng chạy [chương trình ví dụ](#e
 Nói cách khác, `x` của P1 và `x` của P2 có **physical address** khác nhau.  
 Nếu OS gán cùng một physical address cho biến `x` của cả P1 và P2, thì việc P1 gán `x = 6` sẽ làm thay đổi giá trị `x` của P2, vi phạm nguyên tắc **private virtual address space** (không gian địa chỉ ảo riêng cho từng process).
 
-Tại bất kỳ thời điểm nào, OS lưu trong RAM nội dung không gian địa chỉ của nhiều process, cũng như mã OS có thể được **map** vào không gian địa chỉ ảo của mọi process (mã OS thường được nạp bắt đầu từ địa chỉ `0x0` của RAM).  
+Tại bất kỳ thời điểm nào, OS lưu trong RAM nội dung không gian địa chỉ của nhiều process, cũng như code OS có thể được **map** vào không gian địa chỉ ảo của mọi process (code OS thường được nạp bắt đầu từ địa chỉ `0x0` của RAM).  
 
 **Hình 2** minh họa ví dụ OS và ba process (P1, P2, P3) được nạp vào RAM.  
 Mỗi process có vùng lưu trữ vật lý riêng cho nội dung không gian địa chỉ của nó (ngay cả khi P1 và P2 chạy cùng một chương trình, chúng vẫn có vùng lưu trữ vật lý riêng cho biến `x`).
@@ -114,7 +114,7 @@ Mỗi process có vùng lưu trữ vật lý riêng cho nội dung không gian �
 
 **Virtual memory** là góc nhìn của từng process về không gian bộ nhớ của nó, và **virtual address** là địa chỉ trong góc nhìn đó.  
 
-Nếu hai process chạy cùng một **binary executable** (tệp thực thi nhị phân), chúng sẽ có **cùng virtual address** cho mã hàm và biến toàn cục trong không gian địa chỉ của mình (các địa chỉ ảo của vùng cấp phát động trên heap và biến cục bộ trên stack có thể khác nhau đôi chút do sự khác biệt tại runtime giữa hai lần thực thi).  
+Nếu hai process chạy cùng một **binary executable** (tệp thực thi nhị phân), chúng sẽ có **cùng virtual address** cho code hàm và biến toàn cục trong không gian địa chỉ của mình (các địa chỉ ảo của vùng cấp phát động trên heap và biến cục bộ trên stack có thể khác nhau đôi chút do sự khác biệt tại runtime giữa hai lần thực thi).  
 
 Nói cách khác, cả hai process sẽ có cùng virtual address cho vị trí hàm `main`, và cùng virtual address cho vị trí biến toàn cục `x` trong không gian địa chỉ của chúng, như minh họa trong **Hình 3**.
 
@@ -216,7 +216,7 @@ Ví dụ, hãy xét một hệ thống (rất nhỏ) với:
 - **Physical address** dài 14 bit  
 - **Page** có kích thước 8 byte  
 
-Vì kích thước page là 8 byte, nên **3 bit thấp** (low-order bits) của cả physical address và virtual address sẽ xác định **byte offset** (độ lệch byte) trong một page hoặc frame — 3 bit có thể mã hóa 8 giá trị byte offset khác nhau, từ 0–7 (vì \( 2^3 = 8 \)).  
+Vì kích thước page là 8 byte, nên **3 bit thấp** (low-order bits) của cả physical address và virtual address sẽ xác định **byte offset** (độ lệch byte) trong một page hoặc frame — 3 bit có thể code hóa 8 giá trị byte offset khác nhau, từ 0–7 (vì \( 2^3 = 8 \)).  
 
 Điều này để lại:
 
@@ -268,7 +268,7 @@ Nếu valid bit của một page bằng 0, nghĩa là page đó trong không gia
 ![page table entry](_images/pte.png)
 
 **Hình 9.** Một **page table entry** (PTE) lưu **frame number** (23) của frame RAM chứa page ảo.  
-Chúng ta liệt kê frame number (23) ở dạng thập phân, mặc dù thực tế nó được mã hóa ở dạng nhị phân trong PTE (`0...010111`).  
+Chúng ta liệt kê frame number (23) ở dạng thập phân, mặc dù thực tế nó được code hóa ở dạng nhị phân trong PTE (`0...010111`).  
 Valid bit bằng 1 cho biết entry này lưu một ánh xạ hợp lệ.
 
 
@@ -280,8 +280,8 @@ Tùy vào sự kết hợp cụ thể giữa **OS** và phần cứng, một ph�
 Trong phần mô tả này, ta giả định một **MMU** (Memory Management Unit – đơn vị quản lý bộ nhớ) đầy đủ tính năng, thực hiện càng nhiều công việc dịch địa chỉ bằng phần cứng càng tốt; tuy nhiên, trên một số hệ thống, OS có thể đảm nhận một phần các bước này.
 
 1. **MMU** chia các bit của virtual address thành hai phần:  
-   - Với kích thước page là \( 2^k \) byte, **k bit thấp** (VA bit từ \(k-1\) đến 0) mã hóa **byte offset** (*d*) trong page.  
-   - **n-k bit cao** (VA bit từ \(n-1\) đến \(k\)) mã hóa **virtual page number** (*p*).
+   - Với kích thước page là \( 2^k \) byte, **k bit thấp** (VA bit từ \(k-1\) đến 0) code hóa **byte offset** (*d*) trong page.  
+   - **n-k bit cao** (VA bit từ \(n-1\) đến \(k\)) code hóa **virtual page number** (*p*).
 
 2. **MMU** dùng giá trị page number (*p*) làm chỉ số để truy cập **PTE** (Page Table Entry – mục trong bảng trang) của page *p* trong page table.  
    Hầu hết các kiến trúc đều có **page table base register** (**PTBR**) lưu địa chỉ RAM của page table của process đang chạy.  
@@ -421,7 +421,7 @@ P1: 1011001
 ```
 
 **Bước 1:** Xác định cách chia bit trong virtual address và physical address.  
-Vì kích thước page là 8 byte, **3 bit thấp** của mỗi địa chỉ mã hóa **page offset** (*d*).  
+Vì kích thước page là 8 byte, **3 bit thấp** của mỗi địa chỉ code hóa **page offset** (*d*).  
 Virtual address dài 7 bit → 3 bit thấp cho page offset, còn lại **4 bit cao** để xác định **page number** (*p*).  
 Physical address dài 6 bit → 3 bit thấp cho page offset, **3 bit cao** xác định **frame number**.
 

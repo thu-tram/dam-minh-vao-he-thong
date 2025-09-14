@@ -58,7 +58,7 @@ int sumMat(int *m, int rows, int cols) {
 }
 ```
 
-Dưới đây là mã assembly tương ứng. Mỗi dòng đều được chú thích bằng tiếng Việt:
+Dưới đây là code assembly tương ứng. Mỗi dòng đều được chú thích bằng tiếng Việt:
 
 ```
 Dump of assembler code for function sumMat:
@@ -188,7 +188,7 @@ Dump of assembler code for function sumMatrix:
 
 
 Một lần nữa, các biến `i`, `j` và `total` lần lượt nằm tại các địa chỉ stack `%rbp-0xc`, `%rbp-0x8` và `%rbp-0x4`. Các tham số đầu vào `matrix`, `row` và `cols` lần lượt nằm tại các địa chỉ stack `%rbp-0x18`, `%rbp-0x1c` và `%rbp-0x20`.  
-Hãy phóng to vào đoạn mã xử lý riêng việc truy cập phần tử (*i*, *j*), hay `matrix[i][j]`:
+Hãy phóng to vào đoạn code xử lý riêng việc truy cập phần tử (*i*, *j*), hay `matrix[i][j]`:
 
 ```
 0x400715 <+39>: mov  -0xc(%rbp),%eax       # copy i to %eax

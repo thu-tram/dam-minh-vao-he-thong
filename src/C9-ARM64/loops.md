@@ -20,7 +20,7 @@ int sumUp(int n) {
 }
 ```
 
-Khi biên dịch và dùng GDB để disassemble, ta thu được mã assembly sau:
+Khi biên dịch và dùng GDB để disassemble, ta thu được code assembly sau:
 
 ```
 Dump of assembler code for function sumUp:
@@ -121,7 +121,7 @@ Nếu **nhánh không được thực hiện** (`i > n`), các lệnh sau chạy
 Các lệnh này sao chép `total` vào thanh ghi trả về `w0`, thu nhỏ stack (`sp`) để khôi phục call stack, và thoát hàm.  
 Kết quả là hàm trả về `total`.
 
-**Bảng 1** dưới đây so sánh mã assembly và dạng C sử dụng `goto` của hàm `sumUp`:
+**Bảng 1** dưới đây so sánh code assembly và dạng C sử dụng `goto` của hàm `sumUp`:
 
 #### Assembly
 
@@ -169,7 +169,7 @@ start:
 
 **Bảng 1.** Dịch `sumUp()` sang dạng C sử dụng `goto`.
 
-Đoạn code ở trên cũng tương đương với đoạn mã C sau đây **không** sử dụng câu lệnh `goto`:
+Đoạn code ở trên cũng tương đương với đoạn code C sau đây **không** sử dụng câu lệnh `goto`:
 
 ```c
 int sumUp(int n) {
@@ -198,8 +198,8 @@ int sumUp2(int n) {
 }
 ```
 
-Phiên bản này tạo ra **mã assembly giống hệt** với ví dụ vòng lặp `while`.  
-Dưới đây là mã assembly của `sumUp2` kèm chú thích từng dòng:
+Phiên bản này tạo ra **code assembly giống hệt** với ví dụ vòng lặp `while`.  
+Dưới đây là code assembly của `sumUp2` kèm chú thích từng dòng:
 
 ```
 Dump of assembler code for function sumUp2:
@@ -225,7 +225,7 @@ Dump of assembler code for function sumUp2:
 0x07c0 <+76>: ret                     // trả về w0 (total)
 ```
 
-Để hiểu tại sao phiên bản vòng lặp `for` này tạo ra mã assembly giống hệt với phiên bản vòng lặp `while`, hãy nhớ rằng vòng lặp `for` có dạng:
+Để hiểu tại sao phiên bản vòng lặp `for` này tạo ra code assembly giống hệt với phiên bản vòng lặp `while`, hãy nhớ rằng vòng lặp `for` có dạng:
 
 ```c
 for (<khởi tạo>; <biểu thức điều kiện>; <bước lặp>) {

@@ -16,7 +16,7 @@ Hình 1 cho thấy các *stack frame* của `main` và một hàm mà nó gọi 
 ![an illustration of stack frames](_images/stackFrame.png)  
 **Hình 1.** Quản lý stack frame
 
-Trong Hình 1, *active frame* hiện tại thuộc về hàm callee (`fname`). Vùng của call stack nằm giữa **stack pointer** và **frame pointer** được dùng cho các biến cục bộ. Stack pointer sẽ thay đổi khi các giá trị cục bộ được *push* (đẩy) lên hoặc *pop* (lấy ra) khỏi stack. Frame pointer thường không được sử dụng trong mã đã tối ưu hóa, và thường là tùy chọn. Do đó, các compiler như GCC thường tham chiếu các giá trị trên stack tương đối so với stack pointer.  
+Trong Hình 1, *active frame* hiện tại thuộc về hàm callee (`fname`). Vùng của call stack nằm giữa **stack pointer** và **frame pointer** được dùng cho các biến cục bộ. Stack pointer sẽ thay đổi khi các giá trị cục bộ được *push* (đẩy) lên hoặc *pop* (lấy ra) khỏi stack. Frame pointer thường không được sử dụng trong code đã tối ưu hóa, và thường là tùy chọn. Do đó, các compiler như GCC thường tham chiếu các giá trị trên stack tương đối so với stack pointer.  
 
 Trong Hình 1, *active frame* được giới hạn phía dưới bởi **base pointer** của `fname`, tức `x29`, chứa địa chỉ stack `0xef30`. Giá trị lưu tại địa chỉ `0xef30` là giá trị frame pointer đã “lưu” (0xef50), vốn chỉ ra đáy của *activation frame* cho hàm `main`. Ngay bên dưới frame pointer là **return address** đã lưu (lưu trong `x30`), cho biết địa chỉ mà chương trình sẽ tiếp tục thực thi khi `main` thoát.
 
@@ -71,13 +71,13 @@ int main(void) {
 }
 ```
 
-Chúng ta biên dịch mã này với lệnh:
+Chúng ta biên dịch code này với lệnh:
 
 ```
 gcc -o prog prog.c
 ```
 
-và dùng `objdump -d` để xem mã assembly tương ứng. Lệnh sau sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
+và dùng `objdump -d` để xem code assembly tương ứng. Lệnh sau sẽ xuất ra một tệp khá lớn chứa nhiều thông tin không cần thiết. Hãy dùng `less` và chức năng tìm kiếm để trích xuất các hàm `adder`, `assign` và `main`:
 
 ```assembly
 0000000000000724 <assign>:
@@ -112,7 +112,7 @@ và dùng `objdump -d` để xem mã assembly tương ứng. Lệnh sau sẽ xu�
 
 Mỗi hàm bắt đầu bằng một **symbolic label** (nhãn ký hiệu) tương ứng với tên được khai báo trong chương trình. Ví dụ, `<main>:` là nhãn ký hiệu cho hàm `main`. Địa chỉ của nhãn hàm cũng là địa chỉ của lệnh đầu tiên trong hàm đó.  
 
-Để tiết kiệm không gian trong các hình minh họa tiếp theo, chúng ta sẽ rút gọn địa chỉ mã lệnh xuống 12 bit thấp, và địa chỉ stack xuống 16 bit thấp. Ví dụ, địa chỉ stack `0xffffffffef50` sẽ được hiển thị là `0xef50`.
+Để tiết kiệm không gian trong các hình minh họa tiếp theo, chúng ta sẽ rút gọn địa chỉ code lệnh xuống 12 bit thấp, và địa chỉ stack xuống 16 bit thấp. Ví dụ, địa chỉ stack `0xffffffffef50` sẽ được hiển thị là `0xef50`.
 
 ### 9.5.3. Tracing Through main  
 

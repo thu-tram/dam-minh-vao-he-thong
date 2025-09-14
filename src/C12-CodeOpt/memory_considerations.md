@@ -26,7 +26,7 @@ Vì vậy, phần thảo luận sẽ tập trung vào hàm `matrixVectorMultiply
 
 **Loop interchange** (hoán đổi vòng lặp) là kỹ thuật tối ưu hóa thay đổi thứ tự của vòng lặp ngoài và vòng lặp trong trong các vòng lặp lồng nhau để tối đa hóa **cache locality** (tính cục bộ của cache).  
 Việc thực hiện tự động kỹ thuật này là khó đối với trình biên dịch. Trong GCC, có cờ `-floop-interchange` nhưng hiện tại không được bật mặc định.  
-Do đó, lập trình viên nên chú ý đến cách mã truy cập các cấu trúc dữ liệu phức hợp trong bộ nhớ như mảng và ma trận.
+Do đó, lập trình viên nên chú ý đến cách code truy cập các cấu trúc dữ liệu phức hợp trong bộ nhớ như mảng và ma trận.
 
 Ví dụ, hãy xem xét kỹ hơn hàm `matrixVectorMultiply` trong [matrixVector.c](_attachments/matrixVector.c):
 
@@ -68,8 +68,8 @@ Hãy nhớ rằng [dữ liệu được nạp vào cache theo *block*](../C11-Me
 Do đó, khi một phần tử *x* trong mảng `res` hoặc `m` được truy cập, **các phần tử liền kề với x** cũng được nạp vào cache.  
 Việc duyệt qua từng “cột” của ma trận gây ra nhiều **cache miss** hơn, vì cache buộc phải nạp block mới ở mỗi lần truy cập.
 
-**Bảng 2** cho thấy việc thêm cờ tối ưu hóa **không** làm giảm thời gian chạy của hàm.  
-Tuy nhiên, chỉ cần đổi thứ tự vòng lặp (như trong ví dụ mã ở trên và trong [matrixVector2.c](_attachments/matrixVector2.c)) đã giúp hàm chạy nhanh hơn gần **8 lần** và cho phép trình biên dịch thực hiện thêm các tối ưu hóa khác.
+**Bảng 2** cho thấy việc thêm optimization flag hóa **không** làm giảm thời gian chạy của hàm.  
+Tuy nhiên, chỉ cần đổi thứ tự vòng lặp (như trong ví dụ code ở trên và trong [matrixVector2.c](_attachments/matrixVector2.c)) đã giúp hàm chạy nhanh hơn gần **8 lần** và cho phép trình biên dịch thực hiện thêm các tối ưu hóa khác.
 
 #### Thời gian thực thi (giây) cho phép nhân ma trận 10.000 × 10.000
 
@@ -96,7 +96,7 @@ Time to matrix-vector multiply: 0.271369
 
 Bây giờ, việc cấp phát và điền dữ liệu cho ma trận chiếm nhiều thời gian nhất.  
 Đo đạc chi tiết hơn cho thấy phần **điền dữ liệu** cho ma trận mới là nguyên nhân chính.  
-Hãy xem kỹ đoạn mã này:
+Hãy xem kỹ đoạn code này:
 
 ```c
 // fill matrices

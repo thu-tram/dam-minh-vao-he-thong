@@ -4,7 +4,7 @@ Mạch điều khiển (control circuits – "mạch điều khiển") được 
 
 Một ví dụ về mạch điều khiển là **multiplexer** (MUX – "bộ chọn"), dùng để lựa chọn một trong nhiều giá trị. CPU có thể sử dụng mạch multiplexer để chọn thanh ghi nào trong CPU sẽ được đọc để lấy giá trị toán hạng của một lệnh.
 
-Một multiplexer *N*-ngõ vào có một tập hợp gồm *N* giá trị đầu vào và một đầu ra duy nhất được chọn từ một trong các đầu vào đó. Một đầu vào bổ sung, gọi là **Select** (S – "bit chọn"), mã hóa việc chọn đầu vào nào trong số *N* đầu vào để đưa ra đầu ra.
+Một multiplexer *N*-ngõ vào có một tập hợp gồm *N* giá trị đầu vào và một đầu ra duy nhất được chọn từ một trong các đầu vào đó. Một đầu vào bổ sung, gọi là **Select** (S – "bit chọn"), code hóa việc chọn đầu vào nào trong số *N* đầu vào để đưa ra đầu ra.
 
 Multiplexer cơ bản nhất là loại hai ngõ vào, chọn giữa hai đầu vào 1-bit, A và B. Đầu vào chọn của multiplexer hai ngõ vào là một bit duy nhất: nếu đầu vào S là 1, nó sẽ chọn A làm đầu ra; nếu S là 0, nó sẽ chọn B làm đầu ra. Bảng chân trị cho multiplexer 1-bit hai ngõ vào được hiển thị bên dưới. Giá trị của bit chọn (S) quyết định chọn giá trị của A hoặc B làm đầu ra của MUX.
 
@@ -46,11 +46,11 @@ Mạch multiplexer 1-bit hai ngõ vào là một khối xây dựng để tạo 
 
 **Hình 4. Mạch multiplexer 4-bit hai ngõ vào được xây dựng từ bốn mạch multiplexer 1-bit hai ngõ vào.** Một bit tín hiệu duy nhất, S, được dùng để chọn A hoặc B làm đầu ra.
 
-Một multiplexer *N*-ngõ vào sẽ chọn một trong *N* đầu vào làm đầu ra. Nó yêu cầu một thiết kế mạch MUX hơi khác so với loại hai ngõ vào, và cần log₂(*N*) bit cho đầu vào Select. Các bit chọn bổ sung này là cần thiết vì với log₂(*N*) bit, ta có thể mã hóa *N* giá trị khác nhau, mỗi giá trị tương ứng với một lựa chọn trong số *N* đầu vào. Mỗi tổ hợp khác biệt của các bit Select log₂(*N*) được đưa vào cùng với một trong các giá trị đầu vào *N* vào một cổng AND, kết quả là đúng một giá trị đầu vào được chọn làm đầu ra của MUX. Hình 5 minh họa một ví dụ về mạch multiplexer 1-bit bốn ngõ vào.
+Một multiplexer *N*-ngõ vào sẽ chọn một trong *N* đầu vào làm đầu ra. Nó yêu cầu một thiết kế mạch MUX hơi khác so với loại hai ngõ vào, và cần log₂(*N*) bit cho đầu vào Select. Các bit chọn bổ sung này là cần thiết vì với log₂(*N*) bit, ta có thể code hóa *N* giá trị khác nhau, mỗi giá trị tương ứng với một lựa chọn trong số *N* đầu vào. Mỗi tổ hợp khác biệt của các bit Select log₂(*N*) được đưa vào cùng với một trong các giá trị đầu vào *N* vào một cổng AND, kết quả là đúng một giá trị đầu vào được chọn làm đầu ra của MUX. Hình 5 minh họa một ví dụ về mạch multiplexer 1-bit bốn ngõ vào.
 
 ![N-way mux](_images/nwaymux.png)
 
-**Hình 5. Mạch multiplexer bốn ngõ vào có bốn đầu vào và hai bit chọn (log₂(4)) dùng để mã hóa đầu vào nào trong số bốn đầu vào sẽ được chọn làm đầu ra.**
+**Hình 5. Mạch multiplexer bốn ngõ vào có bốn đầu vào và hai bit chọn (log₂(4)) dùng để code hóa đầu vào nào trong số bốn đầu vào sẽ được chọn làm đầu ra.**
 
 Mạch multiplexer bốn ngõ vào sử dụng bốn cổng AND ba ngõ vào và một cổng OR bốn ngõ vào. Các phiên bản cổng nhiều ngõ vào có thể được xây dựng bằng cách nối chuỗi nhiều cổng AND (hoặc OR) hai ngõ vào. Ví dụ, một cổng AND ba ngõ vào được xây dựng từ hai cổng AND hai ngõ vào: cổng AND đầu tiên nhận hai giá trị đầu vào, và cổng AND thứ hai nhận giá trị đầu vào thứ ba cùng với đầu ra từ cổng AND đầu tiên. Biểu thức (x AND y AND z) tương đương với ((x AND y) AND z).
 
@@ -64,7 +64,7 @@ Mạch multiplexer bốn ngõ vào sử dụng bốn cổng AND ba ngõ vào và
 
 Một **demultiplexer** (DMUX – "bộ phân phối") là nghịch đảo của multiplexer. Trong khi multiplexer chọn một trong *N* đầu vào, thì demultiplexer chọn một trong *N* đầu ra. Một DMUX nhận một giá trị đầu vào duy nhất và một đầu vào chọn, và có *N* đầu ra. Dựa vào giá trị của S, nó gửi giá trị đầu vào đến đúng một trong số *N* đầu ra (giá trị đầu vào được định tuyến đến một trong *N* đường đầu ra). Mạch DMUX thường được dùng để chọn một trong *N* mạch để truyền giá trị.
 
-Một mạch **decoder** nhận một đầu vào đã được mã hóa và kích hoạt một trong nhiều đầu ra dựa trên giá trị đầu vào. Ví dụ, một mạch decoder có đầu vào *N*-bit sẽ sử dụng giá trị đó để kích hoạt (đặt bằng 1) đúng một trong số các đường đầu ra 2^N^ (đường tương ứng với mã hóa của giá trị *N*-bit).
+Một mạch **decoder** nhận một đầu vào đã được code hóa và kích hoạt một trong nhiều đầu ra dựa trên giá trị đầu vào. Ví dụ, một mạch decoder có đầu vào *N*-bit sẽ sử dụng giá trị đó để kích hoạt (đặt bằng 1) đúng một trong số các đường đầu ra 2^N^ (đường tương ứng với code hóa của giá trị *N*-bit).
 
 [Hình 7](#dmux) minh họa một ví dụ về mạch demultiplexer 1-bit hai ngõ ra, trong đó giá trị đầu vào chọn (s) quyết định đầu ra nào trong hai đầu ra sẽ nhận giá trị đầu vào A. Hình cũng minh họa một ví dụ về mạch decoder 2-bit, trong đó các bit đầu vào xác định đầu ra nào trong bốn đầu ra sẽ được đặt bằng 1. Bảng chân trị của cả hai mạch cũng được hiển thị.
 

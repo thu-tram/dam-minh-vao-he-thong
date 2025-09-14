@@ -68,7 +68,7 @@ int sumArray(int *array, int length) {
 ```
 
 Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng.  
-Tiếp theo, chúng ta sẽ xem mã assembly tương ứng của hàm `sumArray`.
+Tiếp theo, chúng ta sẽ xem code assembly tương ứng của hàm `sumArray`.
 
 
 ```
@@ -94,7 +94,7 @@ Tiếp theo, chúng ta sẽ xem mã assembly tương ứng của hàm `sumArray`
  <+58>: ret                          # trả về total
 ```
 
-Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu được truy cập là một **địa chỉ** hay một **giá trị**.  
+Khi lần theo đoạn code assembly này, hãy xem xét liệu dữ liệu được truy cập là một **địa chỉ** hay một **giá trị**.  
 Ví dụ: lệnh tại `<sumArray+13>` khiến `%ebp-4` chứa một biến kiểu `int`, ban đầu được gán giá trị 0.  
 Ngược lại, đối số được lưu tại `%ebp+8` là tham số đầu tiên của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ cơ sở của mảng.  
 Một biến khác (chúng ta gọi là `total`) được lưu tại `%ebp-8`.

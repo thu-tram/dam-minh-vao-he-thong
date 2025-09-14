@@ -6,7 +6,7 @@
 \~ Trinity giải thích về mutex cho Neo (Xin lỗi *The Matrix*)
 
 Để khắc phục **data race** (tranh chấp dữ liệu), chúng ta sẽ sử dụng một cấu trúc đồng bộ hóa gọi là **mutual exclusion lock** (khóa loại trừ lẫn nhau), hay **mutex**.  
-Mutex là một loại **synchronization primitive** (nguyên thủy đồng bộ hóa) đảm bảo rằng tại bất kỳ thời điểm nào, chỉ **một** thread được phép vào và thực thi đoạn mã bên trong **critical section** (vùng tới hạn).
+Mutex là một loại **synchronization primitive** (nguyên thủy đồng bộ hóa) đảm bảo rằng tại bất kỳ thời điểm nào, chỉ **một** thread được phép vào và thực thi đoạn code bên trong **critical section** (vùng tới hạn).
 
 Trước khi sử dụng mutex, chương trình cần:
 
@@ -127,7 +127,7 @@ Hãy nhớ rằng một mục tiêu quan trọng khác của multithreading là 
 Hãy benchmark hiệu năng của hàm `countElems`.  
 
 Mặc dù có thể bạn muốn dùng lệnh `time -p`, nhưng hãy nhớ rằng `time -p` đo **wall-clock time** của **toàn bộ** chương trình (bao gồm cả phần sinh dữ liệu ngẫu nhiên), chứ **không chỉ** thời gian chạy của `countElems`.  
-Trong trường hợp này, tốt hơn là dùng system call `gettimeofday`, cho phép đo chính xác wall-clock time của một đoạn mã cụ thể.
+Trong trường hợp này, tốt hơn là dùng system call `gettimeofday`, cho phép đo chính xác wall-clock time của một đoạn code cụ thể.
 
 Benchmark `countElems` trên 100 triệu phần tử cho kết quả:
 
@@ -391,7 +391,7 @@ Vì cả hai thread đều **chặn** nhau, chúng rơi vào trạng thái **dea
 
 **Hình 1.** Ví dụ về deadlock  
 
-Mặc dù **OS** (hệ điều hành) cung cấp một số cơ chế bảo vệ chống lại deadlock, lập trình viên vẫn cần cẩn trọng khi viết mã có thể làm tăng khả năng xảy ra deadlock.  
+Mặc dù **OS** (hệ điều hành) cung cấp một số cơ chế bảo vệ chống lại deadlock, lập trình viên vẫn cần cẩn trọng khi viết code có thể làm tăng khả năng xảy ra deadlock.  
 Ví dụ, kịch bản ở trên có thể tránh được bằng cách **sắp xếp lại** các thao tác khóa sao cho mỗi cặp **lock/unlock** chỉ bao quanh câu lệnh cập nhật số dư tương ứng:
 
 ```c

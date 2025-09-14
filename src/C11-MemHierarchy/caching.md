@@ -290,7 +290,7 @@ Do đó, cache áp dụng chiến lược giống như phần trước khi [qu�
 LRU được gọi là **cache replacement policy** vì nó điều khiển cơ chế thay thế của cache.
 
 Chính sách LRU yêu cầu mỗi set lưu thêm các bit metadata để xác định line nào ít được sử dụng gần đây nhất.  
-Số bit cần thiết để mã hóa trạng thái LRU tăng theo số lượng line trong set.  
+Số bit cần thiết để code hóa trạng thái LRU tăng theo số lượng line trong set.  
 Những bit metadata bổ sung này góp phần làm tăng độ phức tạp của thiết kế set associative so với direct-mapped cache.
 
 **Hình 15** minh họa một cache 2-way set associative, nghĩa là mỗi set chứa 2 line.  
@@ -300,7 +300,7 @@ Trong hình, giá trị LRU = 0 nghĩa là line bên trái ít được sử d�
 ![The LRU bit is a one-bit flag that indicates whether the leftmost line of the set was least recently used (LRU = 0) or the rightmost line of the set was least recently used (LRU = 1).](_images/CacheLRU.png)  
 **Hình 15.** Cache 2-way set associative, mỗi set lưu 1 bit metadata LRU để hỗ trợ quyết định thay thế dữ liệu...
 
-> **Lưu ý:** Việc Hình 15 chọn quy ước “0 nghĩa là bên trái” và “1 nghĩa là bên phải” chỉ là tùy ý. Cách diễn giải bit LRU có thể khác nhau giữa các loại cache. Nếu bạn được yêu cầu làm việc với cache trong một bài tập, đừng mặc định rằng bài tập đó dùng cùng một sơ đồ mã hóa LRU như ở đây!
+> **Lưu ý:** Việc Hình 15 chọn quy ước “0 nghĩa là bên trái” và “1 nghĩa là bên phải” chỉ là tùy ý. Cách diễn giải bit LRU có thể khác nhau giữa các loại cache. Nếu bạn được yêu cầu làm việc với cache trong một bài tập, đừng mặc định rằng bài tập đó dùng cùng một sơ đồ code hóa LRU như ở đây!
 
 #### Ví dụ về Set Associative Cache
 

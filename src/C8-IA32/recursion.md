@@ -31,7 +31,7 @@ int sumr(int n) {
 
 **Bảng 1.** Phiên bản lặp (`sumDown`) và phiên bản đệ quy (`sumr`)
 
-Trường hợp cơ sở (*base case*) trong **recursive function** `sumr` xử lý mọi giá trị *n* nhỏ hơn 1, và bước đệ quy (*recursive step*) sẽ cộng giá trị hiện tại của *n* với kết quả của lời gọi hàm `sumr` với giá trị *n-1*. Khi biên dịch `sumr` với cờ `-m32` và dịch ngược (disassemble) bằng GDB, ta thu được đoạn mã Assembly sau:
+Trường hợp cơ sở (*base case*) trong **recursive function** `sumr` xử lý mọi giá trị *n* nhỏ hơn 1, và bước đệ quy (*recursive step*) sẽ cộng giá trị hiện tại của *n* với kết quả của lời gọi hàm `sumr` với giá trị *n-1*. Khi biên dịch `sumr` với cờ `-m32` và dịch ngược (disassemble) bằng GDB, ta thu được đoạn code Assembly sau:
 
 ```
 0x0804841d <+0>:  push  %ebp                  # lưu ebp
@@ -51,7 +51,7 @@ Trường hợp cơ sở (*base case*) trong **recursive function** `sumr` xử 
 0x08048444 <+39>: ret                         # trả về kết quả
 ```
 
-Mỗi dòng trong đoạn mã Assembly trên đều được chú thích bằng tiếng Anh. Bảng 2 dưới đây cho thấy dạng tương ứng sử dụng `goto` và chương trình C không dùng `goto`:
+Mỗi dòng trong đoạn code Assembly trên đều được chú thích bằng tiếng Anh. Bảng 2 dưới đây cho thấy dạng tương ứng sử dụng `goto` và chương trình C không dùng `goto`:
 
 #### C dạng goto
 ```c
@@ -85,7 +85,7 @@ int sumr(int n) {
 }
 ```
 
-**Bảng 2.** Dạng C dùng `goto` và bản dịch từ mã Assembly của `sumr`
+**Bảng 2.** Dạng C dùng `goto` và bản dịch từ code Assembly của `sumr`
 
 Mặc dù bản dịch này ban đầu có thể trông không hoàn toàn giống với hàm `sumr` gốc, nhưng khi xem xét kỹ, ta thấy hai hàm này thực sự tương đương nhau.
 

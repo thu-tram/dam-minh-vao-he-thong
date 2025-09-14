@@ -3,14 +3,14 @@ Ok Khánh 👍
 ## 4.8. Số thực trong hệ nhị phân (Real Numbers in Binary)
 
 Mặc dù chương này chủ yếu tập trung vào cách biểu diễn số nguyên trong hệ nhị phân, lập trình viên cũng thường cần lưu trữ **số thực**.  
-Việc lưu trữ số thực vốn dĩ đã khó, và **không** có cách mã hóa nhị phân nào có thể biểu diễn số thực với **độ chính xác tuyệt đối**.  
-Điều này có nghĩa là, với bất kỳ cách mã hóa nhị phân nào cho số thực, sẽ luôn tồn tại những giá trị **không thể** biểu diễn chính xác.  
+Việc lưu trữ số thực vốn dĩ đã khó, và **không** có cách code hóa nhị phân nào có thể biểu diễn số thực với **độ chính xác tuyệt đối**.  
+Điều này có nghĩa là, với bất kỳ cách code hóa nhị phân nào cho số thực, sẽ luôn tồn tại những giá trị **không thể** biểu diễn chính xác.  
 Các giá trị vô tỉ như *π* rõ ràng không thể biểu diễn chính xác vì biểu diễn của chúng không bao giờ kết thúc.  
 Ngay cả với số hữu tỉ, nếu số bit cố định, vẫn sẽ có những giá trị trong phạm vi biểu diễn mà không thể lưu chính xác.
 
 Không giống số nguyên — vốn là tập **đếm được** ([countably infinite](https://en.wikipedia.org/wiki/Countable_set)) — tập số thực là **không đếm được** ([uncountable](https://en.wikipedia.org/wiki/Uncountable_set)).  
 Nói cách khác, ngay cả trong một khoảng hẹp (ví dụ: từ 0 đến 1), số lượng giá trị có thể có là vô hạn đến mức không thể liệt kê.  
-Do đó, các cách mã hóa số thực thường chỉ lưu **xấp xỉ** giá trị, được **cắt ngắn** (truncate) để vừa với số bit định trước.  
+Do đó, các cách code hóa số thực thường chỉ lưu **xấp xỉ** giá trị, được **cắt ngắn** (truncate) để vừa với số bit định trước.  
 Nếu số bit đủ lớn, độ chính xác thường là chấp nhận được cho hầu hết mục đích, nhưng cần cẩn trọng khi viết ứng dụng **không thể chấp nhận sai số làm tròn**.
 
 Phần còn lại của mục này sẽ giới thiệu ngắn gọn hai phương pháp biểu diễn số thực trong nhị phân:  
@@ -21,7 +21,7 @@ Phần còn lại của mục này sẽ giới thiệu ngắn gọn hai phương
 
 Trong **fixed-point representation** (biểu diễn dấu chấm cố định), vị trí của **binary point** (dấu chấm nhị phân) là **cố định** và không thay đổi.  
 Tương tự như **decimal point** (dấu chấm thập phân) trong số thập phân, binary point cho biết phần thập phân bắt đầu từ đâu.  
-Quy tắc mã hóa fixed-point giống với [unsigned integer](bases.html#_unsigned_binary_numbers), ngoại trừ việc các chữ số sau binary point biểu diễn **lũy thừa âm** của 2.
+Quy tắc code hóa fixed-point giống với [unsigned integer](bases.html#_unsigned_binary_numbers), ngoại trừ việc các chữ số sau binary point biểu diễn **lũy thừa âm** của 2.
 
 Ví dụ: xét chuỗi 8 bit `0b000101.10`, trong đó 6 bit đầu biểu diễn phần nguyên, 2 bit sau binary point biểu diễn phần thập phân.  
 Hình 1 minh họa vị trí các chữ số và giá trị của từng chữ số.
@@ -69,7 +69,7 @@ Cấu trúc gồm 3 phần:
 
 3. **Sign bit**: bit cao nhất (d~31~), 0 = số dương, 1 = số âm.
 
-**Ví dụ giải mã:**  
+**Ví dụ giải code:**  
 `0b11000001101101000000000000000000`
 
 - Significand: `0b01101000000000000000000` = 1.40625  

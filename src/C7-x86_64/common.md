@@ -50,7 +50,7 @@ int adder2(int a) {
 }
 ```
 
-và mã assembly tương ứng của nó:
+và code assembly tương ứng của nó:
 
 ```
 0000000000400526 <adder2>:

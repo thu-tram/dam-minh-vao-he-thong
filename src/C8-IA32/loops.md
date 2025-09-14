@@ -20,7 +20,7 @@ int sumUp(int n) {
 }
 ```
 
-Khi biên dịch đoạn code này với tùy chọn `-m32` và dùng GDB để disassemble, ta thu được mã assembly sau:
+Khi biên dịch đoạn code này với tùy chọn `-m32` và dùng GDB để disassemble, ta thu được code assembly sau:
 
 ```asm
 (gdb) disas sumUp
@@ -84,7 +84,7 @@ Bảy lệnh tiếp theo trong hàm `sumUp` là phần lõi của vòng lặp:
   - `add $0x1,-0x4(%ebp)` → tăng `i` thêm 1
   - Quay lại so sánh `i` với `n` và lặp lại.
 
-Nếu điều kiện `i <= n` **không** thỏa mãn, `total` sẽ được đưa vào thanh ghi trả về `%eax` và hàm kết thúc.
+Nếu điều kiện `i <= n` **không** thỏa coden, `total` sẽ được đưa vào thanh ghi trả về `%eax` và hàm kết thúc.
 
 #### **Bảng so sánh Assembly và dạng C dùng goto**
 
@@ -161,8 +161,8 @@ int sumUp2(int n) {
 }
 ```
 
-Phiên bản này tạo ra mã assembly **giống hệt** với ví dụ vòng lặp `while`.  
-Dưới đây là mã assembly và chú thích từng dòng:
+Phiên bản này tạo ra code assembly **giống hệt** với ví dụ vòng lặp `while`.  
+Dưới đây là code assembly và chú thích từng dòng:
 
 ```asm
 0x8048438 <+0>:  push   %ebp                  # lưu ebp
@@ -182,7 +182,7 @@ Dưới đây là mã assembly và chú thích từng dòng:
 0x8048464 <+44>: ret                          # trả về total
 ```
 
-Để hiểu tại sao phiên bản `for` tạo ra mã assembly giống hệt với phiên bản `while`, hãy nhớ rằng vòng lặp `for` có dạng:
+Để hiểu tại sao phiên bản `for` tạo ra code assembly giống hệt với phiên bản `while`, hãy nhớ rằng vòng lặp `for` có dạng:
 
 ```c
 for (<khởi tạo>; <biểu thức điều kiện>; <bước lặp>) {

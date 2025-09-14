@@ -2,23 +2,23 @@
 
 Cho đến giờ, chúng ta mới chỉ giới hạn việc thảo luận về số nhị phân ở dạng **unsigned** (chỉ gồm các số không âm).  
 Phần này giới thiệu một cách diễn giải khác của nhị phân để biểu diễn cả số âm.  
-Vì biến có dung lượng lưu trữ hữu hạn, một cách mã hóa nhị phân có dấu phải phân biệt được giữa số âm, số 0 và số dương.  
+Vì biến có dung lượng lưu trữ hữu hạn, một cách code hóa nhị phân có dấu phải phân biệt được giữa số âm, số 0 và số dương.  
 Việc thao tác với số có dấu cũng đòi hỏi một **procedure** (thủ tục) để thực hiện phép phủ định (negation).
 
-Một cách mã hóa nhị phân có dấu phải chia tập hợp các chuỗi bit thành hai nhóm: số âm và số không âm.  
+Một cách code hóa nhị phân có dấu phải chia tập hợp các chuỗi bit thành hai nhóm: số âm và số không âm.  
 Trong thực tế, các nhà thiết kế hệ thống thường xây dựng hệ thống **general-purpose** (đa dụng), nên việc chia đôi 50% / 50% là lựa chọn cân bằng.  
-Vì vậy, các cách mã hóa số có dấu được trình bày trong chương này sẽ biểu diễn số lượng giá trị âm và không âm bằng nhau.
+Vì vậy, các cách code hóa số có dấu được trình bày trong chương này sẽ biểu diễn số lượng giá trị âm và không âm bằng nhau.
 
 > **Lưu ý:** Có sự khác biệt tinh tế nhưng quan trọng giữa *non-negative* (không âm) và *positive* (dương).  
 > Tập hợp số dương loại trừ số 0, trong khi tập hợp số không âm bao gồm cả 0.  
 > Ngay cả khi chia đều 50% số chuỗi bit cho số âm và số không âm, vẫn cần dành một giá trị không âm để biểu diễn số 0.  
 > Do đó, với số bit cố định, hệ thống số có thể biểu diễn nhiều số âm hơn số dương (ví dụ: trong hệ **two’s complement**).
 
-Các cách mã hóa số có dấu sử dụng **một bit** để phân biệt giữa nhóm số âm và nhóm số không âm.  
+Các cách code hóa số có dấu sử dụng **một bit** để phân biệt giữa nhóm số âm và nhóm số không âm.  
 Theo quy ước, **bit ngoài cùng bên trái** cho biết số đó là âm (1) hay không âm (0).  
 Bit này được gọi là **high-order bit** hoặc **most significant bit**.
 
-Chương này sẽ giới thiệu hai cách mã hóa số có dấu: **signed magnitude** và **two’s complement**.  
+Chương này sẽ giới thiệu hai cách code hóa số có dấu: **signed magnitude** và **two’s complement**.  
 Mặc dù chỉ có **two’s complement** còn được sử dụng trong thực tế, việc so sánh cả hai sẽ giúp minh họa các đặc điểm quan trọng.
 
 ### 4.3.1. Signed Magnitude

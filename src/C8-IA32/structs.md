@@ -24,7 +24,7 @@ Hình 1 minh họa cách `student` được bố trí trong bộ nhớ.
 
 Các *field* được lưu trữ liên tiếp nhau trong bộ nhớ theo đúng thứ tự mà chúng được khai báo. Trong Hình 1, *field* `age` được cấp phát ngay sau *field* `name` (tại byte offset x~64~), tiếp theo là `grad_yr` (byte offset x~68~) và `gpa` (byte offset x~72~). Cách tổ chức này cho phép truy cập các *field* một cách hiệu quả về mặt bộ nhớ.
 
-Để hiểu cách **compiler** (trình biên dịch) sinh mã Assembly để làm việc với một `struct`, hãy xem xét hàm `initStudent`:
+Để hiểu cách **compiler** (trình biên dịch) sinh code Assembly để làm việc với một `struct`, hãy xem xét hàm `initStudent`:
 
 ```c
 void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
@@ -63,7 +63,7 @@ Nói chung, tham số thứ *i* của hàm `initStudent` nằm tại địa ch�
 ```
 
 
-Việc chú ý đến **byte offset** (độ lệch tính theo byte) của từng *field* là chìa khóa để hiểu đoạn mã này. Dưới đây là một số điểm cần lưu ý:
+Việc chú ý đến **byte offset** (độ lệch tính theo byte) của từng *field* là chìa khóa để hiểu đoạn code này. Dưới đây là một số điểm cần lưu ý:
 
 - Lời gọi `strncpy` nhận ba đối số: địa chỉ cơ sở của *field* `name` trong `s`, địa chỉ của mảng `nm`, và một giá trị chỉ định độ dài. Hãy nhớ rằng vì `name` là *field* đầu tiên trong `struct studentT`, nên địa chỉ của `s` cũng chính là địa chỉ của `s→name`.
 
@@ -76,7 +76,7 @@ Việc chú ý đến **byte offset** (độ lệch tính theo byte) của từn
  <+23>:  call  0x8048320 <strncpy@plt>  # gọi strncpy(s->name, nm, 64)
 ```
 
-- Phần tiếp theo của mã (các lệnh `<initStudent+28>` đến `<initStudent+35>`) đặt giá trị của tham số `gr` tại vị trí cách đầu `s` **68 byte**. Xem lại sơ đồ bố trí bộ nhớ trong Hình 1 cho thấy địa chỉ này tương ứng với `s→grad_yr`.
+- Phần tiếp theo của code (các lệnh `<initStudent+28>` đến `<initStudent+35>`) đặt giá trị của tham số `gr` tại vị trí cách đầu `s` **68 byte**. Xem lại sơ đồ bố trí bộ nhớ trong Hình 1 cho thấy địa chỉ này tương ứng với `s→grad_yr`.
 
 ```
  <+28>:  mov   0x8(%ebp),%eax           # copy s vào eax
@@ -84,7 +84,7 @@ Việc chú ý đến **byte offset** (độ lệch tính theo byte) của từn
  <+35>:  mov   %edx,0x44(%eax)          # copy gr vào offset eax+68 (s->grad_yr)
 ```
 
-- Phần tiếp theo của mã (các lệnh `<initStudent+38>` đến `<initStudent+53>`) sao chép tham số `ag` vào *field* `s→age`. Sau đó, giá trị của tham số `g` được sao chép vào *field* `s→gpa` (byte offset 72):
+- Phần tiếp theo của code (các lệnh `<initStudent+38>` đến `<initStudent+53>`) sao chép tham số `ag` vào *field* `s→age`. Sau đó, giá trị của tham số `g` được sao chép vào *field* `s→gpa` (byte offset 72):
 
 ```
  <+38>:  mov   0x8(%ebp),%eax           # copy s vào eax

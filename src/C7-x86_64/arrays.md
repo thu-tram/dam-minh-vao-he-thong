@@ -44,7 +44,7 @@ int sumArray(int *array, int length) {
 }
 ```
 
-Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem đoạn mã assembly tương ứng của hàm `sumArray`:
+Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem đoạn code assembly tương ứng của hàm `sumArray`:
 
 ```
 0x400686 <+0>:   push %rbp                   # save %rbp
@@ -71,7 +71,7 @@ Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương �
 ```
 
 
-Khi lần theo đoạn mã assembly này, hãy xem xét liệu dữ liệu được truy cập là một **địa chỉ** hay một **giá trị**. Ví dụ, lệnh tại `<sumArray+11>` khiến vị trí `%rbp-0x4` chứa một biến kiểu `int`, ban đầu được gán giá trị 0. Ngược lại, đối số được lưu tại `%rbp-0x18` là đối số thứ nhất của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ gốc (base address) của mảng. Một biến khác (mà ta gọi là `i`) được lưu tại vị trí `%rbp-0x8`. Cuối cùng, lưu ý rằng **size suffix** (hậu tố kích thước) chỉ được thêm vào cuối các lệnh như `add` và `mov` khi cần thiết. Trong các trường hợp liên quan đến hằng số, compiler cần chỉ rõ số byte của hằng số sẽ được di chuyển.
+Khi lần theo đoạn code assembly này, hãy xem xét liệu dữ liệu được truy cập là một **địa chỉ** hay một **giá trị**. Ví dụ, lệnh tại `<sumArray+11>` khiến vị trí `%rbp-0x4` chứa một biến kiểu `int`, ban đầu được gán giá trị 0. Ngược lại, đối số được lưu tại `%rbp-0x18` là đối số thứ nhất của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ gốc (base address) của mảng. Một biến khác (mà ta gọi là `i`) được lưu tại vị trí `%rbp-0x8`. Cuối cùng, lưu ý rằng **size suffix** (hậu tố kích thước) chỉ được thêm vào cuối các lệnh như `add` và `mov` khi cần thiết. Trong các trường hợp liên quan đến hằng số, compiler cần chỉ rõ số byte của hằng số sẽ được di chuyển.
 
 Người đọc tinh ý sẽ nhận thấy một lệnh chưa từng thấy trước đây tại dòng `<sumArray+30>` có tên `cltq`. Lệnh `cltq` là viết tắt của *convert long to quad* (chuyển từ long sang quad) và chuyển giá trị `int` 32-bit được lưu trong `%eax` thành giá trị số nguyên 64-bit được lưu trong `%rax`. Thao tác này là cần thiết vì các lệnh tiếp theo sẽ thực hiện **pointer arithmetic** (tính toán trên con trỏ). Hãy nhớ rằng trên hệ thống 64-bit, con trỏ chiếm 8 byte. Việc compiler sử dụng `cltq` giúp đơn giản hóa quá trình bằng cách đảm bảo tất cả dữ liệu được lưu trong các thanh ghi 64-bit thay vì các thành phần 32-bit.
 

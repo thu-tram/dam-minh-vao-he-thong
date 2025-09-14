@@ -24,7 +24,7 @@ Trong ví dụ này, phép AND từng bit của `%rax` với chính nó sẽ cho
 cmp $0, %rax
 ```
 
-Không giống các lệnh số học đã đề cập trước đó, `cmp` và `test` **không** thay đổi thanh ghi đích. Thay vào đó, cả hai lệnh này thay đổi một tập hợp các giá trị 1-bit gọi là **condition code flags** (cờ mã điều kiện).  
+Không giống các lệnh số học đã đề cập trước đó, `cmp` và `test` **không** thay đổi thanh ghi đích. Thay vào đó, cả hai lệnh này thay đổi một tập hợp các giá trị 1-bit gọi là **condition code flags** (cờ code điều kiện).  
 Ví dụ, `cmp` sẽ thay đổi các cờ này dựa trên việc giá trị R2 - R1 là dương (greater), âm (less) hay bằng 0 (equal). Hãy nhớ rằng [condition code](../C5-Arch/cpu.html#_the_alu) lưu trữ thông tin về một phép toán trong ALU. Các condition code flags là một phần của thanh ghi `FLAGS` trên hệ thống x86.
 
 | Flag  | Translation |
@@ -48,7 +48,7 @@ Mặc dù việc tìm hiểu sâu về condition code flags vượt ra ngoài ph
 
 ### Các lệnh nhảy (Jump Instructions)
 
-**Jump instruction** cho phép chương trình “nhảy” tới một vị trí mới trong mã lệnh. Trong các chương trình assembly mà ta đã phân tích, `%rip` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép `%rip` được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
+**Jump instruction** cho phép chương trình “nhảy” tới một vị trí mới trong code lệnh. Trong các chương trình assembly mà ta đã phân tích, `%rip` luôn trỏ tới lệnh kế tiếp trong bộ nhớ chương trình. Lệnh nhảy cho phép `%rip` được đặt tới một lệnh mới chưa từng thực thi (như trong câu lệnh `if`) hoặc tới một lệnh đã thực thi trước đó (như trong vòng lặp).
 
 #### Lệnh nhảy trực tiếp (Direct jump instructions)
 
@@ -109,9 +109,9 @@ Nếu bạn đọc thành tiếng các lệnh này, điều đó sẽ giúp gi�
 
 ### Câu lệnh `goto`
 
-Trong các tiểu mục tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và phân tích ngược chúng trở lại thành C. Khi dịch mã assembly của các câu lệnh điều kiện và vòng lặp về C, sẽ hữu ích nếu hiểu được dạng `goto` tương ứng trong ngôn ngữ C.  
+Trong các tiểu mục tiếp theo, chúng ta sẽ xem xét các câu lệnh điều kiện và vòng lặp trong assembly và phân tích ngược chúng trở lại thành C. Khi dịch code assembly của các câu lệnh điều kiện và vòng lặp về C, sẽ hữu ích nếu hiểu được dạng `goto` tương ứng trong ngôn ngữ C.  
 
-Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong mã. Lệnh assembly tương ứng với câu lệnh `goto` là `jmp`.
+Câu lệnh `goto` là một primitive trong C, buộc chương trình chuyển luồng thực thi sang một dòng khác trong code. Lệnh assembly tương ứng với câu lệnh `goto` là `jmp`.
 
 Câu lệnh `goto` bao gồm từ khóa `goto` theo sau là một **goto label** (nhãn goto), là một loại nhãn chương trình cho biết nơi thực thi sẽ tiếp tục. Ví dụ, `goto done` nghĩa là chương trình sẽ nhảy tới dòng được đánh dấu bằng nhãn `done`.  
 
@@ -169,13 +169,13 @@ done:
 
 Dạng `goto` của hàm này có thể trông hơi phản trực giác, nhưng hãy phân tích chính xác điều gì đang diễn ra. Câu lệnh điều kiện kiểm tra xem biến `x` có nhỏ hơn hoặc bằng `y` hay không.
 
-- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa câu lệnh duy nhất `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục thực thi phần mã dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
+- Nếu `x` nhỏ hơn hoặc bằng `y`, chương trình sẽ chuyển quyền điều khiển tới nhãn `else_statement`, nơi chứa câu lệnh duy nhất `smallest = x`. Vì chương trình thực thi tuần tự, nó sẽ tiếp tục thực thi phần code dưới nhãn `done`, trả về giá trị của `smallest` (`x`).
 
 - Nếu `x` lớn hơn `y`, `smallest` được gán giá trị `y`. Sau đó, chương trình thực thi câu lệnh `goto done`, chuyển quyền điều khiển tới nhãn `done`, trả về giá trị của `smallest` (`y`).
 
-Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng `goto` trong mã hiện đại được coi là **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của mã. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
+Mặc dù câu lệnh `goto` từng được sử dụng phổ biến trong những ngày đầu của lập trình, nhưng việc sử dụng `goto` trong code hiện đại được coi là **thói quen xấu**, vì nó làm giảm khả năng đọc hiểu của code. Thực tế, nhà khoa học máy tính Edsger Dijkstra đã viết một bài báo nổi tiếng chỉ trích việc sử dụng `goto` với tiêu đề *Go To Statement Considered Harmful*[^1].
 
-Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng để không viết ra mã khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh `goto` trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi mã C có điều kiện sang dạng `goto` trước khi dịch sang assembly, bao gồm cả mã chứa câu lệnh `if` và vòng lặp.
+Nói chung, các chương trình C được thiết kế tốt sẽ không sử dụng `goto`, và lập trình viên được khuyến cáo tránh dùng để không viết ra code khó đọc, khó gỡ lỗi và khó bảo trì. Tuy nhiên, câu lệnh `goto` trong C vẫn quan trọng để hiểu, vì GCC thường chuyển đổi code C có điều kiện sang dạng `goto` trước khi dịch sang assembly, bao gồm cả code chứa câu lệnh `if` và vòng lặp.
 
 Các tiểu mục tiếp theo sẽ trình bày chi tiết hơn về cách biểu diễn câu lệnh `if` và vòng lặp trong assembly:
 

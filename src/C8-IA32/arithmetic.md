@@ -1,6 +1,6 @@
 ## 8.3. Arithmetic Instructions (Các lệnh số học)
 
-**IA32 ISA** triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi **ALU**. [Bảng 1](#OtherArithmetic32) liệt kê một số lệnh số học thường gặp khi đọc mã assembly.
+**IA32 ISA** triển khai một số lệnh tương ứng với các phép toán số học được thực hiện bởi **ALU**. [Bảng 1](#OtherArithmetic32) liệt kê một số lệnh số học thường gặp khi đọc code assembly.
 
 | Instruction  | Translation |
 |--------------|-------------|
@@ -44,7 +44,7 @@ Mỗi lệnh dịch nhận hai toán hạng:
 - Một toán hạng thường là thanh ghi (ký hiệu D).  
 - Toán hạng còn lại là giá trị dịch (*v*).  
 
-Trên hệ thống 32-bit, giá trị dịch được mã hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).  
+Trên hệ thống 32-bit, giá trị dịch được code hóa trong 1 byte (vì không có ý nghĩa khi dịch quá 31 bit).  
 Giá trị dịch *v* phải là một hằng số hoặc được lưu trong thanh ghi `%cl`.
 
 **Ghi chú:**  

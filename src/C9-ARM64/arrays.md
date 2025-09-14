@@ -3,7 +3,7 @@
 
 Hãy nhớ rằng [array](../C1-C_intro/arrays_strings.html#_introduction_to_arrays) là tập hợp có thứ tự của các phần tử dữ liệu cùng kiểu, được lưu trữ liên tiếp nhau trong bộ nhớ. **Single-dimension array** (mảng một chiều) được cấp phát tĩnh có dạng `Type arr[N]`, trong đó `Type` là kiểu dữ liệu, `arr` là tên định danh của mảng, và `N` là số phần tử dữ liệu. Khai báo mảng tĩnh như `Type arr[N]` hoặc cấp phát động như `arr = malloc(N*sizeof(Type))` sẽ chiếm tổng cộng *N* × `sizeof`(*Type*) byte bộ nhớ.
 
-Để truy cập phần tử tại chỉ số `i` trong mảng `arr`, sử dụng cú pháp `arr[i]`. **Compiler** (trình biên dịch) thường chuyển đổi các truy cập mảng thành [pointer arithmetic](../C2-C_depth/pointers.html#_pointer_variables) trước khi dịch sang mã assembly. Do đó, `arr+i` tương đương với `&arr[i]`, và `*(arr+i)` tương đương với `arr[i]`. Vì mỗi phần tử dữ liệu trong `arr` có kiểu `Type`, nên `arr+i` ngụ ý rằng phần tử `i` được lưu tại địa chỉ `arr + sizeof(Type) * i`.
+Để truy cập phần tử tại chỉ số `i` trong mảng `arr`, sử dụng cú pháp `arr[i]`. **Compiler** (trình biên dịch) thường chuyển đổi các truy cập mảng thành [pointer arithmetic](../C2-C_depth/pointers.html#_pointer_variables) trước khi dịch sang code assembly. Do đó, `arr+i` tương đương với `&arr[i]`, và `*(arr+i)` tương đương với `arr[i]`. Vì mỗi phần tử dữ liệu trong `arr` có kiểu `Type`, nên `arr+i` ngụ ý rằng phần tử `i` được lưu tại địa chỉ `arr + sizeof(Type) * i`.
 
 Bảng 1 dưới đây tóm tắt một số thao tác mảng thường gặp và lệnh assembly tương ứng. Trong các ví dụ, giả sử ta khai báo một mảng `int` có độ dài 10 (ví dụ: `int arr[10]`). Giả sử thanh ghi `x1` lưu địa chỉ của `arr`, thanh ghi `x2` lưu giá trị `i` kiểu `int`, và thanh ghi `x0` biểu diễn một biến `x` (cũng kiểu `int`). Hãy nhớ rằng biến `int` chiếm 4 byte, trong khi biến `int *` chiếm 8 byte.
 
@@ -42,7 +42,7 @@ int sumArray(int *array, int length) {
 }
 ```
 
-Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem mã assembly tương ứng của hàm `sumArray`:
+Hàm `sumArray` nhận địa chỉ của một mảng và độ dài tương ứng, sau đó cộng dồn tất cả các phần tử trong mảng. Bây giờ, hãy xem code assembly tương ứng của hàm `sumArray`:
 
 
 ```
@@ -73,7 +73,7 @@ Dump of assembler code for function sumArray:
 0x8d0 <+92>:  ret                        // trả về (total)
 ```
 
-Khi lần theo đoạn mã assembly này, hãy cân nhắc xem dữ liệu được truy cập là **pointer** (con trỏ) hay **value** (giá trị).  
+Khi lần theo đoạn code assembly này, hãy cân nhắc xem dữ liệu được truy cập là **pointer** (con trỏ) hay **value** (giá trị).  
 Ví dụ, lệnh tại `<sumArray+12>` khiến vị trí `sp + 28` trên stack chứa một biến kiểu `int`, ban đầu được gán giá trị `0`. Ngược lại, đối số được lưu tại `sp + 8` là đối số đầu tiên của hàm (`array`), có kiểu `int *` và tương ứng với địa chỉ cơ sở của mảng. Một biến khác (gọi là `i`) được lưu tại `sp + 24` và ban đầu được gán giá trị 0.
 
 Người đọc tinh ý sẽ nhận thấy một lệnh mới chưa gặp trước đây tại dòng `<sumArray+24>` là `ldrsw`. Lệnh `ldrsw` (viết tắt của *load register signed word*) sẽ lấy giá trị `int` 32-bit được lưu tại `sp + 24`, chuyển nó thành số nguyên 64-bit và lưu vào `x0`. Thao tác này là cần thiết vì các lệnh tiếp theo sẽ thực hiện **pointer arithmetic** (tính toán trên con trỏ). Hãy nhớ rằng trên hệ thống 64-bit, con trỏ chiếm 8 byte. Việc compiler sử dụng `ldrsw` giúp đơn giản hóa quá trình bằng cách đảm bảo mọi dữ liệu đều được lưu trong thanh ghi 64-bit đầy đủ thay vì chỉ ở dạng 32-bit.

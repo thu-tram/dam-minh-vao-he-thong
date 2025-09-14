@@ -42,7 +42,7 @@ Lưu ý rằng **vẫn** có thể xảy ra trường hợp một thread in thô
 
 #### Condition Variables
 
-**Condition variable** buộc một thread phải **block** (chặn) cho đến khi một điều kiện cụ thể được thỏa mãn.  
+**Condition variable** buộc một thread phải **block** (chặn) cho đến khi một điều kiện cụ thể được thỏa coden.  
 Cấu trúc này hữu ích trong các tình huống mà một điều kiện phải được đáp ứng trước khi thread thực hiện công việc.  
 Nếu không có condition variable, thread sẽ phải liên tục kiểm tra xem điều kiện đã được đáp ứng chưa, gây tốn CPU.  
 
@@ -71,7 +71,7 @@ Thông thường, condition variable hữu ích nhất khi một nhóm thread đ
 Trong ví dụ sau, chúng ta sử dụng nhiều thread để mô phỏng một nhóm **nông dân** thu thập trứng từ một nhóm **gà**.  
 "Chicken" và "Farmer" đại diện cho hai lớp thread riêng biệt.  
 Toàn bộ mã nguồn của chương trình này có thể tải tại [layeggs.c](_attachments/layeggs.c).  
-Lưu ý rằng đoạn mã liệt kê ở đây đã lược bỏ nhiều phần chú thích/xử lý lỗi để ngắn gọn.
+Lưu ý rằng đoạn code liệt kê ở đây đã lược bỏ nhiều phần chú thích/xử lý lỗi để ngắn gọn.
 
 ```c
 int main(int argc, char **argv){
@@ -269,7 +269,7 @@ Câu trả lời là **không** — vòng lặp `while` này **hoàn toàn cần
 1. **Điều kiện có thể thay đổi** trước khi thread vừa được đánh thức kịp tiếp tục thực thi.  
    Vòng lặp `while` đảm bảo điều kiện được kiểm tra lại một lần cuối.
 
-2. Hàm `pthread_cond_wait` có thể gặp **spurious wakeups** — tình huống một thread bị đánh thức **nhầm** ngay cả khi điều kiện chưa được thỏa mãn.  
+2. Hàm `pthread_cond_wait` có thể gặp **spurious wakeups** — tình huống một thread bị đánh thức **nhầm** ngay cả khi điều kiện chưa được thỏa coden.  
 
 Vòng lặp `while` ở đây chính là một ví dụ của **predicate loop**, buộc phải kiểm tra lại condition variable trước khi nhả mutex.  
 Vì vậy, việc sử dụng **predicate loop** là **thực hành đúng đắn** khi làm việc với condition variable.

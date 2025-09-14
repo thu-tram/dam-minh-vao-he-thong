@@ -18,20 +18,20 @@ int main(void){
 }
 ```
 
-Để biên dịch đoạn mã này, sử dụng lệnh sau:
+Để biên dịch đoạn code này, sử dụng lệnh sau:
 
 ```
 $ gcc -o adder adder.c
 ```
 
-Tiếp theo, hãy xem mã assembly tương ứng của chương trình này bằng cách sử dụng lệnh `objdump`:
+Tiếp theo, hãy xem code assembly tương ứng của chương trình này bằng cách sử dụng lệnh `objdump`:
 
 ```
 $ objdump -d adder > output
 $ less output
 ```
 
-Tìm đoạn mã liên quan đến hàm `adder2` bằng cách gõ `/adder2` khi đang xem tệp `output` với `less`. Phần liên quan đến `adder2` sẽ trông tương tự như sau:
+Tìm đoạn code liên quan đến hàm `adder2` bằng cách gõ `/adder2` khi đang xem tệp `output` với `less`. Phần liên quan đến `adder2` sẽ trông tương tự như sau:
 
 **Kết quả assembly cho hàm `adder2`**
 
@@ -48,16 +48,16 @@ Tìm đoạn mã liên quan đến hàm `adder2` bằng cách gõ `/adder2` khi 
 
 Đừng lo nếu bạn chưa hiểu chuyện gì đang xảy ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly trong các phần sau. Hiện tại, hãy nghiên cứu cấu trúc của từng lệnh riêng lẻ.
 
-Mỗi dòng trong ví dụ trên chứa **địa chỉ 64-bit** của lệnh trong bộ nhớ chương trình, **các byte** tương ứng với lệnh đó, và **dạng văn bản** (plaintext) của chính lệnh. Ví dụ, `55` là dạng **machine code** (mã máy) của lệnh `push %rbp`, và lệnh này nằm tại địa chỉ `0x400526` trong bộ nhớ chương trình. Lưu ý rằng `0x400526` là dạng rút gọn của địa chỉ 64-bit đầy đủ của lệnh `push %rbp`; các số 0 ở đầu bị lược bỏ để dễ đọc hơn.
+Mỗi dòng trong ví dụ trên chứa **địa chỉ 64-bit** của lệnh trong bộ nhớ chương trình, **các byte** tương ứng với lệnh đó, và **dạng văn bản** (plaintext) của chính lệnh. Ví dụ, `55` là dạng **machine code** (code máy) của lệnh `push %rbp`, và lệnh này nằm tại địa chỉ `0x400526` trong bộ nhớ chương trình. Lưu ý rằng `0x400526` là dạng rút gọn của địa chỉ 64-bit đầy đủ của lệnh `push %rbp`; các số 0 ở đầu bị lược bỏ để dễ đọc hơn.
 
-Điều quan trọng cần lưu ý là một dòng mã C thường được dịch thành nhiều lệnh assembly. Chẳng hạn, phép toán `a + 2` được biểu diễn bằng hai lệnh: `mov -0x4(%rbp), %eax` và `add $0x2, %eax`.
+Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành nhiều lệnh assembly. Chẳng hạn, phép toán `a + 2` được biểu diễn bằng hai lệnh: `mov -0x4(%rbp), %eax` và `add $0x2, %eax`.
 
 > **Assembly của bạn có thể trông khác!**  
-> Nếu bạn đang biên dịch mã của mình cùng với chúng tôi, bạn có thể nhận thấy rằng một số ví dụ assembly của bạn trông khác so với những gì được hiển thị trong sách này. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành bên dưới. Hầu hết các ví dụ assembly trong sách này được tạo ra trên các hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).  
+> Nếu bạn đang biên dịch code của mình cùng với chúng tôi, bạn có thể nhận thấy rằng một số ví dụ assembly của bạn trông khác so với những gì được hiển thị trong sách này. Các lệnh assembly chính xác mà compiler xuất ra phụ thuộc vào phiên bản compiler và hệ điều hành bên dưới. Hầu hết các ví dụ assembly trong sách này được tạo ra trên các hệ thống chạy Ubuntu hoặc Red Hat Enterprise Linux (RHEL).  
 >  
-> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ tệp ví dụ nào (`example.c`) bằng lệnh:  
+> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ optimization flag hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ tệp ví dụ nào (`example.c`) bằng lệnh:  
 > `gcc -o example example.c`  
-> Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch mã dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong [một chương sau](../C12-CodeOpt/index.html#_code_optimization).
+> Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường. Các compiler tối ưu hóa sẽ loại bỏ nhiều lệnh dư thừa này trong quá trình tối ưu hóa, nội dung sẽ được đề cập trong [một chương sau](../C12-CodeOpt/index.html#_code_optimization).
 
 
 
@@ -106,14 +106,14 @@ ISA cung cấp một cơ chế riêng để truy cập các thành phần 8-bit 
 
 
 > **Compiler có thể chọn component register tùy thuộc vào kiểu dữ liệu**  
-> Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng các **component register** 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.  
+> Khi đọc code assembly, hãy nhớ rằng compiler thường sử dụng các thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng các **component register** 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`). Trong x86-64, việc thấy các component register 32-bit xen kẽ với các thanh ghi 64-bit đầy đủ là rất phổ biến.  
 > Ví dụ, trong hàm `adder2` ở ví dụ trước, compiler tham chiếu đến component register `%eax` thay vì `%rax` vì kiểu `int` thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm `adder2` có tham số kiểu `long` thay vì `int`, compiler sẽ lưu `a` trong thanh ghi `%rax` thay vì `%eax`.
 
 Tám thanh ghi cuối (`%r8`–`%r15`) không thuộc **IA32 ISA**. Tuy nhiên, chúng cũng có cơ chế để truy cập các thành phần byte khác nhau. Để truy cập 32 bit thấp, 16 bit thấp hoặc byte thấp nhất của tám thanh ghi này, lần lượt thêm các hậu tố `d`, `w` hoặc `b` vào cuối tên thanh ghi. Ví dụ, `%r9d` truy cập 32 bit thấp của `%r9`, `%r9w` truy cập 16 bit thấp, và `%r9b` truy cập byte thấp nhất của `%r9`.
 
 ### 7.1.3. Cấu trúc lệnh (Instruction Structure)
 
-Mỗi **instruction** (lệnh) bao gồm một **operation code** hay **opcode** (mã thao tác) xác định lệnh đó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết lệnh sẽ thực hiện như thế nào.  
+Mỗi **instruction** (lệnh) bao gồm một **operation code** hay **opcode** (code thao tác) xác định lệnh đó làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết lệnh sẽ thực hiện như thế nào.  
 Ví dụ, lệnh `add $0x2, %eax` có opcode là `add` và các operand là `$0x2` và `%eax`.
 
 Mỗi operand tương ứng với một vị trí nguồn hoặc đích cho một thao tác cụ thể. Các lệnh có hai toán hạng thường tuân theo định dạng **source, destination** (`S`, `D`), trong đó toán hạng đầu tiên chỉ nguồn (source register) và toán hạng thứ hai chỉ đích (destination).
@@ -171,11 +171,11 @@ Một vài lưu ý quan trọng trước khi tiếp tục: mặc dù **Bảng 2*
 - Dạng **memory** không thể đồng thời là cả nguồn (source) và đích (destination) trong cùng một lệnh.
 - Trong các phép toán có **scaling** (tỉ lệ nhân — xem hai toán hạng cuối trong [Bảng 2](#Operands)), hệ số nhân là tham số thứ ba trong dấu ngoặc. Hệ số nhân có thể là 1, 2, 4 hoặc 8.
 
-**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích mã assembly.
+**Bảng 2** được cung cấp để tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp người đọc tăng tốc độ phân tích code assembly.
 
 ### 7.1.5. Hậu tố của lệnh (Instruction Suffixes)
 
-Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có một **suffix** (hậu tố) cho biết *kích thước* (gắn liền với *kiểu dữ liệu*) của dữ liệu được thao tác ở mức mã lệnh. Compiler sẽ tự động dịch mã sang các lệnh có hậu tố phù hợp. **Bảng 3** cho thấy các hậu tố thông dụng của lệnh trong x86-64.
+Trong một số trường hợp ở các ví dụ tiếp theo, các lệnh thông dụng và lệnh số học có một **suffix** (hậu tố) cho biết *kích thước* (gắn liền với *kiểu dữ liệu*) của dữ liệu được thao tác ở mức code lệnh. Compiler sẽ tự động dịch code sang các lệnh có hậu tố phù hợp. **Bảng 3** cho thấy các hậu tố thông dụng của lệnh trong x86-64.
 
 | Suffix | C Type                         | Size (bytes) |
 |--------|--------------------------------|--------------|

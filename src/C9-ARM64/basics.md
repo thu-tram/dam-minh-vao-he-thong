@@ -25,14 +25,14 @@ int main(void) {
 $ gcc -o adder adder.c
 ```
 
-Tiếp theo, hãy xem mã assembly tương ứng của đoạn code này bằng cách sử dụng lệnh `objdump`:
+Tiếp theo, hãy xem code assembly tương ứng của đoạn code này bằng cách sử dụng lệnh `objdump`:
 
 ```
 $ objdump -d adder > output
 $ less output
 ```
 
-Tìm đoạn mã liên quan đến hàm `adder2` bằng cách gõ `/adder` khi đang xem file `output` với `less`. Phần liên quan đến `adder` sẽ trông tương tự như sau:
+Tìm đoạn code liên quan đến hàm `adder2` bằng cách gõ `/adder` khi đang xem file `output` với `less`. Phần liên quan đến `adder` sẽ trông tương tự như sau:
 
 **Kết quả assembly cho hàm `adder2`**:
 
@@ -49,7 +49,7 @@ Tìm đoạn mã liên quan đến hàm `adder2` bằng cách gõ `/adder` khi �
 Đừng lo nếu bạn chưa hiểu chuyện gì đang diễn ra. Chúng ta sẽ tìm hiểu chi tiết hơn về assembly trong các phần sau. Hiện tại, hãy nghiên cứu cấu trúc của từng lệnh riêng lẻ.
 
 Mỗi dòng trong ví dụ trên bao gồm: địa chỉ 64-bit của lệnh trong bộ nhớ chương trình (được rút gọn xuống 3 chữ số cuối để tiết kiệm không gian), các byte tương ứng với lệnh, và dạng biểu diễn văn bản của chính lệnh đó.  
-Ví dụ: `d10043ff` là dạng mã máy của lệnh `sub sp, sp, #0x10`, và lệnh này nằm tại địa chỉ `0x724` trong bộ nhớ mã lệnh. Lưu ý rằng `0x724` là dạng rút gọn của địa chỉ 64-bit đầy đủ; `objdump` bỏ các số 0 ở đầu để dễ đọc hơn.
+Ví dụ: `d10043ff` là dạng code máy của lệnh `sub sp, sp, #0x10`, và lệnh này nằm tại địa chỉ `0x724` trong bộ nhớ code lệnh. Lưu ý rằng `0x724` là dạng rút gọn của địa chỉ 64-bit đầy đủ; `objdump` bỏ các số 0 ở đầu để dễ đọc hơn.
 
 Điều quan trọng cần lưu ý là một dòng code C thường được dịch thành nhiều lệnh assembly.  
 Ví dụ, phép toán `a + 2` được biểu diễn bởi ba lệnh tại các địa chỉ `0x728` đến `0x730`:  
@@ -60,7 +60,7 @@ Ví dụ, phép toán `a + 2` được biểu diễn bởi ba lệnh tại các 
 > Nếu bạn biên dịch code cùng với chúng tôi, bạn có thể nhận thấy một số ví dụ assembly của mình trông khác. Các lệnh assembly chính xác mà compiler tạo ra phụ thuộc vào phiên bản compiler, kiến trúc phần cứng cụ thể, và hệ điều hành đang sử dụng.  
 > Hầu hết các ví dụ assembly trong chương này được tạo trên Raspberry Pi 3B+ chạy hệ điều hành Ubuntu Mate 64-bit và sử dụng GCC. Nếu bạn dùng hệ điều hành khác, compiler khác, hoặc một Raspberry Pi hay máy tính nhúng khác, kết quả assembly của bạn có thể khác.  
 >  
-> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ cờ tối ưu hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (ví dụ: `example.c`) bằng lệnh:  
+> Trong các ví dụ tiếp theo, chúng tôi **không** sử dụng bất kỳ optimization flag hóa nào. Ví dụ, chúng tôi biên dịch bất kỳ file ví dụ nào (ví dụ: `example.c`) bằng lệnh:  
 > `gcc -o example example.c`  
 >  
 > Do đó, sẽ có nhiều lệnh trông như dư thừa trong các ví dụ. Hãy nhớ rằng compiler không “thông minh” — nó chỉ đơn giản tuân theo một loạt quy tắc để dịch code dễ đọc của con người sang ngôn ngữ máy. Trong quá trình dịch này, việc xuất hiện một số lệnh dư thừa là điều bình thường.  
@@ -82,7 +82,7 @@ Vì ARMv8-A là phần mở rộng của kiến trúc ARMv7-A 32-bit, **A64 ISA*
 
 > **Compiler có thể chọn *component register* tùy theo kiểu dữ liệu**  
 >  
-> Khi đọc mã assembly, hãy nhớ rằng compiler thường sử dụng thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng *component register* 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`).  
+> Khi đọc code assembly, hãy nhớ rằng compiler thường sử dụng thanh ghi 64-bit khi làm việc với giá trị 64-bit (ví dụ: con trỏ hoặc kiểu `long`) và sử dụng *component register* 32-bit khi làm việc với giá trị 32-bit (ví dụ: kiểu `int`).  
 > Trong A64, việc xen kẽ giữa *component register* 32-bit và thanh ghi đầy đủ 64-bit là rất phổ biến. Ví dụ, trong hàm `adder2` đã trình bày trước đó, compiler tham chiếu tới *component register* `w0` thay vì `x0` vì kiểu `int` thường chiếm 32 bit (4 byte) trên hệ thống 64-bit. Nếu hàm `adder2` có tham số kiểu `long` thay vì `int`, compiler sẽ lưu `a` trong thanh ghi `x0` thay vì *component register* `w0`.
 
 Đối với những người đã quen với **A32 ISA**, cần lưu ý rằng các thanh ghi đa dụng 32-bit `r0` đến `r12` trong A32 ISA được ánh xạ sang các *component register* `w0` đến `w12` trong A64. **A64 ISA** tăng hơn gấp đôi số lượng thanh ghi khả dụng so với A32.
@@ -91,7 +91,7 @@ Vì ARMv8-A là phần mở rộng của kiến trúc ARMv7-A 32-bit, **A64 ISA*
 
 ### 9.1.3. Cấu trúc lệnh (Instruction Structure) 
 
-Mỗi **instruction** (lệnh) bao gồm một **operation code** hay **opcode** (mã thao tác) xác định lệnh sẽ làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện.  
+Mỗi **instruction** (lệnh) bao gồm một **operation code** hay **opcode** (code thao tác) xác định lệnh sẽ làm gì, và một hoặc nhiều **operand** (toán hạng) cho biết cách thực hiện.  
 Đối với hầu hết các lệnh A64, định dạng thường dùng như sau:
 
 ```
@@ -100,7 +100,7 @@ opcode D, O1, O2
 
 Trong đó:
 
-- `opcode` là mã thao tác.
+- `opcode` là code thao tác.
 - `D` là **destination register** (thanh ghi đích).
 - `O1` là toán hạng thứ nhất.
 - `O2` là toán hạng thứ hai.
@@ -173,5 +173,5 @@ Một số lưu ý quan trọng:
 - Dữ liệu không thể đọc hoặc ghi trực tiếp từ bộ nhớ; ARM tuân theo mô hình **load/store**, yêu cầu dữ liệu phải được nạp vào thanh ghi trước khi thao tác, và ghi trở lại bộ nhớ sau khi hoàn tất.
 - Thành phần đích (destination) của một lệnh luôn phải là một thanh ghi.
 
-Bảng 1 được cung cấp như tài liệu tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn và chính xác hơn khi phân tích mã assembly.
+Bảng 1 được cung cấp như tài liệu tham khảo; tuy nhiên, việc hiểu rõ các dạng toán hạng chính sẽ giúp bạn đọc nhanh hơn và chính xác hơn khi phân tích code assembly.
 

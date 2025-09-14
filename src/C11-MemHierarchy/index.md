@@ -5,7 +5,7 @@ Có thể bạn sẽ ngạc nhiên khi biết rằng hai thuật toán có **asy
 Sự khác biệt này thường bắt nguồn từ cách các thuật toán truy cập bộ nhớ, đặc biệt là vị trí lưu trữ dữ liệu và kiểu mẫu (pattern) truy cập dữ liệu. Các kiểu mẫu này được gọi là **memory locality** (tính cục bộ bộ nhớ), và để đạt hiệu năng tốt nhất, kiểu truy cập của chương trình cần phù hợp với cách bố trí bộ nhớ của phần cứng.
 
 Ví dụ, hãy xem xét hai biến thể của một hàm tính trung bình các giá trị trong ma trận *N*×*N*, như minh họa trong [Bảng 1](#TabMatrixVersions).  
-Mặc dù cả hai phiên bản đều truy cập cùng số lượng vị trí bộ nhớ như nhau (N²), nhưng mã bên trái chạy nhanh hơn khoảng 5 lần trên hệ thống thực tế so với mã bên phải.  
+Mặc dù cả hai phiên bản đều truy cập cùng số lượng vị trí bộ nhớ như nhau (N²), nhưng code bên trái chạy nhanh hơn khoảng 5 lần trên hệ thống thực tế so với code bên phải.  
 Sự khác biệt đến từ cách chúng truy cập các vị trí bộ nhớ đó. Ở cuối chương này, chúng ta sẽ phân tích ví dụ này bằng công cụ **Cachegrind** (công cụ phân tích hiệu năng cache).
 
 #### averageMat_v1

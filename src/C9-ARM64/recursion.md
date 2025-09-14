@@ -38,7 +38,7 @@ int sumr(int n) {
 Trong hàm đệ quy `sumr`, **trường hợp cơ sở** (base case) xử lý mọi giá trị *n* nhỏ hơn hoặc bằng 0.  
 **Bước đệ quy** cộng giá trị hiện tại của *n* với kết quả của lời gọi `sumr(n - 1)`.
 
-Khi biên dịch `sumr` và dùng GDB để disassemble, ta thu được mã assembly sau:
+Khi biên dịch `sumr` và dùng GDB để disassemble, ta thu được code assembly sau:
 
 ```
 Dump of assembler code for function sumr:

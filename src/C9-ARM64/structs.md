@@ -27,7 +27,7 @@ Mỗi field được lưu liên tiếp nhau trong bộ nhớ theo đúng thứ t
 Trong Hình 1, field `age` được cấp phát ngay sau field `name` (tại byte offset a~64~), tiếp theo là `grad_yr` (byte offset a~68~) và `gpa` (byte offset a~72~).  
 Cách tổ chức này cho phép truy cập các field một cách hiệu quả về mặt bộ nhớ.
 
-Để hiểu cách compiler sinh mã assembly làm việc với một `struct`, hãy xem xét hàm `initStudent`:
+Để hiểu cách compiler sinh code assembly làm việc với một `struct`, hãy xem xét hàm `initStudent`:
 
 ```c
 void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
@@ -40,7 +40,7 @@ void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
 
 Hàm `initStudent` nhận địa chỉ cơ sở của một `struct studentT` làm tham số đầu tiên,  
 và các giá trị mong muốn cho từng field làm các tham số còn lại.  
-Danh sách dưới đây là mã assembly tương ứng của hàm:
+Danh sách dưới đây là code assembly tương ứng của hàm:
 
 ```
 Dump of assembler code for function initStudent:
@@ -68,7 +68,7 @@ Dump of assembler code for function initStudent:
 0x848 <+88>: ret                         // return (void)
 ```
 
-Việc chú ý đến **byte offset** của từng field là chìa khóa để hiểu đoạn mã này.  
+Việc chú ý đến **byte offset** của từng field là chìa khóa để hiểu đoạn code này.  
 Dưới đây là một vài điểm cần lưu ý:
 
 - Lời gọi `strncpy` nhận ba đối số: địa chỉ cơ sở của field `name` trong `s`, địa chỉ của mảng `nm`, và một **length specifier** (chỉ định độ dài).  
@@ -86,7 +86,7 @@ Dưới đây là một vài điểm cần lưu ý:
 0x818 <+40>: bl   0x6e0 <strncpy@plt>    // gọi strncpy(s, nm, 64) (s->name)
 ```
 
-- Đoạn mã trên có sử dụng một thanh ghi chưa được đề cập trước đó (`s0`). Thanh ghi `s0` là ví dụ về thanh ghi dành riêng cho giá trị **floating point**.
+- Đoạn code trên có sử dụng một thanh ghi chưa được đề cập trước đó (`s0`). Thanh ghi `s0` là ví dụ về thanh ghi dành riêng cho giá trị **floating point**.
 
 - Phần tiếp theo (các lệnh `<initStudent+44>` đến `<initStudent+52>`) ghi giá trị của tham số `gr` vào vị trí cách đầu `s` 68 byte.  
   Xem lại sơ đồ bố trí bộ nhớ của struct trong Hình 1 cho thấy địa chỉ này tương ứng với `s→grad_yr`.
@@ -149,7 +149,7 @@ Chính sách **alignment** của A64 yêu cầu:
 - Các kiểu dữ liệu 4 byte (ví dụ: `int`) phải nằm ở địa chỉ là bội số của 4.
 - Các kiểu dữ liệu 64-bit (`long`, `double`, và con trỏ) phải nằm ở địa chỉ là bội số của 8.
 
-Đối với một `struct`, compiler sẽ thêm các byte trống gọi là **padding** giữa các field để đảm bảo mỗi field thỏa mãn yêu cầu alignment.  
+Đối với một `struct`, compiler sẽ thêm các byte trống gọi là **padding** giữa các field để đảm bảo mỗi field thỏa coden yêu cầu alignment.  
 Ví dụ, trong `struct` ở đoạn code trên, compiler thêm 1 byte padding tại byte a~63~ để đảm bảo field `age` bắt đầu ở địa chỉ là bội số của 4.  
 Các giá trị được **align** đúng trong bộ nhớ có thể được đọc hoặc ghi chỉ với một thao tác, giúp tăng hiệu suất.
 

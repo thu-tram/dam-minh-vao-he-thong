@@ -27,7 +27,7 @@ Các field được lưu liên tiếp nhau trong bộ nhớ theo đúng thứ t�
 Trong **Hình 1**, field `age` được cấp phát ngay sau field `name` (tại byte offset x~64~), tiếp theo là `grad_yr` (offset x~68~) và `gpa` (offset x~72~).  
 Cách tổ chức này cho phép truy cập field hiệu quả về mặt bộ nhớ.
 
-Để hiểu cách compiler sinh mã assembly làm việc với một `struct`, hãy xét hàm `initStudent`:
+Để hiểu cách compiler sinh code assembly làm việc với một `struct`, hãy xét hàm `initStudent`:
 
 ```c
 void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
@@ -40,7 +40,7 @@ void initStudent(struct studentT *s, char *nm, int ag, int gr, float g) {
 
 Hàm `initStudent` nhận địa chỉ cơ sở của một `struct studentT` làm tham số đầu tiên,  
 và các giá trị mong muốn cho từng field làm các tham số còn lại.  
-Đoạn mã assembly dưới đây thể hiện hàm này:
+Đoạn code assembly dưới đây thể hiện hàm này:
 
 ```
 Dump of assembler code for function initStudent:
@@ -71,7 +71,7 @@ Dump of assembler code for function initStudent:
 0x400701 <+87>: retq                         # return (void, %rax bị bỏ qua)
 ```
 
-Việc chú ý tới **byte offset** của từng field là chìa khóa để hiểu đoạn mã này.  
+Việc chú ý tới **byte offset** của từng field là chìa khóa để hiểu đoạn code này.  
 Một số điểm cần lưu ý:
 
 - Lời gọi `strncpy` nhận địa chỉ cơ sở của field `name` trong `s`, địa chỉ mảng `nm`, và độ dài cần copy làm ba tham số.  
@@ -91,9 +91,9 @@ Một số điểm cần lưu ý:
 0x4006d8 <+46>: callq 0x400460 <strncpy@plt> # gọi strncpy(s->name, nm, 64)
 ```
 
-- Đoạn mã này chứa một thanh ghi (`%xmm0`) và lệnh (`movss`) chưa được đề cập trước đó. `%xmm0` là ví dụ về thanh ghi dành riêng cho giá trị **floating-point**. Lệnh `movss` cho biết dữ liệu được di chuyển là kiểu **floating-point đơn chính xác** (single-precision).
+- Đoạn code này chứa một thanh ghi (`%xmm0`) và lệnh (`movss`) chưa được đề cập trước đó. `%xmm0` là ví dụ về thanh ghi dành riêng cho giá trị **floating-point**. Lệnh `movss` cho biết dữ liệu được di chuyển là kiểu **floating-point đơn chính xác** (single-precision).
 
-- Phần tiếp theo của mã (từ `<initStudent+51>` đến `<initStudent+58>`) đặt giá trị của tham số `gr` tại offset `0x44` (68) tính từ đầu `s`.  
+- Phần tiếp theo của code (từ `<initStudent+51>` đến `<initStudent+58>`) đặt giá trị của tham số `gr` tại offset `0x44` (68) tính từ đầu `s`.  
   Xem lại bố cục bộ nhớ trong **Hình 1** cho thấy địa chỉ này tương ứng với `s->grad_yr`:
 
 ```
@@ -102,7 +102,7 @@ Một số điểm cần lưu ý:
 0x4006e4 <+58>: mov   %edx,0x44(%rax)        # copy gr vào %rax+0x44 (s->grad_yr)
 ```
 
-- Phần tiếp theo của mã (từ `<initStudent+61>` đến `<initStudent+68>`) đặt giá trị của tham số `ag` tại offset `0x40` (64) tính từ đầu `s`.  
+- Phần tiếp theo của code (từ `<initStudent+61>` đến `<initStudent+68>`) đặt giá trị của tham số `ag` tại offset `0x40` (64) tính từ đầu `s`.  
   Trong **Hình 1**, địa chỉ này tương ứng với `s->age`:
 
 ```
@@ -126,7 +126,7 @@ Như vậy, bằng cách quan sát các **byte offset** và cách compiler sử 
 Điều này cũng cho thấy lợi ích của việc khai báo các field liên tiếp trong bộ nhớ: compiler chỉ cần cộng thêm offset cố định vào địa chỉ cơ sở của struct để truy cập từng field, giúp việc truy cập dữ liệu nhanh và hiệu quả hơn.
 
 
-- Phần tiếp theo của đoạn mã (từ `<initStudent+61>` đến `<initStudent+68>`) sao chép giá trị tham số `ag` vào field `s→age` của `struct`, field này nằm tại offset `0x40` (hoặc 64 byte) tính từ địa chỉ của `s`:
+- Phần tiếp theo của đoạn code (từ `<initStudent+61>` đến `<initStudent+68>`) sao chép giá trị tham số `ag` vào field `s→age` của `struct`, field này nằm tại offset `0x40` (hoặc 64 byte) tính từ địa chỉ của `s`:
 
 ```
 0x4006e7 <+61>: mov   -0x8(%rbp),%rax        # copy s vào %rax
@@ -173,7 +173,7 @@ Chính sách căn chỉnh (alignment policy) của kiến trúc x64 yêu cầu:
 - Các kiểu dữ liệu 4 byte (ví dụ `int`, `float`, `unsigned`) phải nằm ở địa chỉ chia hết cho 4.
 - Các kiểu dữ liệu lớn hơn (ví dụ `long`, `double`, và con trỏ) phải nằm ở địa chỉ chia hết cho 8.
 
-Đối với một `struct`, compiler sẽ thêm các byte trống (**padding**) giữa các field để đảm bảo mỗi field thỏa mãn yêu cầu căn chỉnh của nó.  
+Đối với một `struct`, compiler sẽ thêm các byte trống (**padding**) giữa các field để đảm bảo mỗi field thỏa coden yêu cầu căn chỉnh của nó.  
 Ví dụ, trong `struct` được khai báo ở **Hình 3**, compiler thêm 1 byte padding tại byte x~63~ để đảm bảo field `age` bắt đầu ở một địa chỉ là bội số của 4.  
 Các giá trị được căn chỉnh đúng trong bộ nhớ có thể được đọc hoặc ghi chỉ với một thao tác, giúp tăng hiệu suất.
 

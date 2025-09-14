@@ -3,7 +3,7 @@
 ## 11.2. Thiết bị lưu trữ (Storage Devices)
 
 Các nhà thiết kế hệ thống phân loại các thiết bị trong [memory hierarchy](mem_hierarchy.html#_the_memory_hierarchy) (hệ phân cấp bộ nhớ) dựa trên cách chương trình truy cập dữ liệu của chúng.  
-**Primary storage** (bộ nhớ chính) là các thiết bị có thể được truy cập trực tiếp bởi một chương trình đang chạy trên CPU. Nói cách khác, các **assembly instruction** (lệnh hợp ngữ) của CPU mã hóa chính xác vị trí dữ liệu mà lệnh cần lấy. Ví dụ về **primary storage** bao gồm **CPU register** và **main memory** (RAM), mà các lệnh assembly tham chiếu trực tiếp (ví dụ, trong IA32 assembly là `%reg` và `(%reg)` tương ứng).
+**Primary storage** (bộ nhớ chính) là các thiết bị có thể được truy cập trực tiếp bởi một chương trình đang chạy trên CPU. Nói cách khác, các **assembly instruction** (lệnh hợp ngữ) của CPU code hóa chính xác vị trí dữ liệu mà lệnh cần lấy. Ví dụ về **primary storage** bao gồm **CPU register** và **main memory** (RAM), mà các lệnh assembly tham chiếu trực tiếp (ví dụ, trong IA32 assembly là `%reg` và `(%reg)` tương ứng).
 
 Ngược lại, các lệnh CPU không thể trực tiếp tham chiếu đến **secondary storage** (bộ nhớ phụ). Để truy cập nội dung của một thiết bị secondary storage, chương trình trước tiên phải yêu cầu thiết bị sao chép dữ liệu của nó vào primary storage (thường là bộ nhớ chính). Các loại secondary storage quen thuộc nhất là các thiết bị đĩa như **hard disk drive (HDD)** và **solid-state drive (SSD)**, vốn lưu trữ dữ liệu tệp một cách lâu dài. Các ví dụ khác bao gồm **floppy disk**, **magnetic tape cartridge** (băng từ), hoặc thậm chí **remote file server** (máy chủ tệp từ xa).
 
@@ -88,7 +88,7 @@ Mặc dù hầu hết người dùng máy tính ngày nay ít gặp chúng, tape
 
 Các **removable media** (phương tiện lưu trữ rời) như [floppy disk](https://en.wikipedia.org/wiki/Floppy_disk) và [optical disc](https://en.wikipedia.org/wiki/Optical_disc) là một dạng secondary storage phổ biến khác.  
 Floppy disk chứa một trục quay của vật liệu ghi từ, quay dưới một **disk head** (đầu đọc/ghi) để đọc và ghi nội dung.  
-Optical disc như CD, DVD và Blu-ray lưu thông tin thông qua các vết lõm nhỏ trên bề mặt đĩa. Ổ đọc đĩa chiếu tia laser vào bề mặt, và sự có hoặc không có vết lõm sẽ làm tia phản xạ (hoặc không), mã hóa thành các bit 0 và 1.
+Optical disc như CD, DVD và Blu-ray lưu thông tin thông qua các vết lõm nhỏ trên bề mặt đĩa. Ổ đọc đĩa chiếu tia laser vào bề mặt, và sự có hoặc không có vết lõm sẽ làm tia phản xạ (hoặc không), code hóa thành các bit 0 và 1.
 
 #### Modern Secondary Storage (Bộ nhớ phụ hiện đại)
 

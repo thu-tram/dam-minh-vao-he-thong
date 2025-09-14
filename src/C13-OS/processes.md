@@ -3,7 +3,7 @@
 Một trong những **abstraction** (trừu tượng hóa) chính mà **operating system** (OS – hệ điều hành) triển khai là **process** (tiến trình).  
 Một process đại diện cho một **instance** (phiên bản) của một chương trình đang chạy trong hệ thống, bao gồm:
 
-- **Binary executable code** (mã thực thi nhị phân) của chương trình.
+- **Binary executable code** (code thực thi nhị phân) của chương trình.
 - **Data** (dữ liệu) của chương trình.
 - **Execution context** (ngữ cảnh thực thi).
 
@@ -60,22 +60,22 @@ Có hai bước chính để thực hiện một CPU context switch:
 2. **OS khôi phục context** đã lưu của một process khác lên CPU và bắt đầu cho CPU chạy process này, tiếp tục thực thi từ lệnh mà nó đã dừng trước đó.
 
 
-Một phần của **context switching** (chuyển ngữ cảnh) có thể khiến bạn nghĩ là “bất khả thi” đó là: mã của OS thực hiện context switching phải chạy trên CPU **trong khi** nó lưu (hoặc khôi phục) **execution context** (ngữ cảnh thực thi) của một process từ (hoặc lên) CPU.  
-Các lệnh của mã context switching cần sử dụng **CPU hardware register** (thanh ghi phần cứng của CPU) để thực thi, nhưng giá trị các thanh ghi của process đang bị chuyển ra khỏi CPU lại cần được chính mã context switching lưu lại.  
+Một phần của **context switching** (chuyển ngữ cảnh) có thể khiến bạn nghĩ là “bất khả thi” đó là: code của OS thực hiện context switching phải chạy trên CPU **trong khi** nó lưu (hoặc khôi phục) **execution context** (ngữ cảnh thực thi) của một process từ (hoặc lên) CPU.  
+Các lệnh của code context switching cần sử dụng **CPU hardware register** (thanh ghi phần cứng của CPU) để thực thi, nhưng giá trị các thanh ghi của process đang bị chuyển ra khỏi CPU lại cần được chính code context switching lưu lại.  
 Phần cứng máy tính cung cấp một số hỗ trợ để điều này khả thi.
 
-Khi khởi động (**boot time**), OS khởi tạo phần cứng, bao gồm cả việc khởi tạo trạng thái CPU, để khi CPU chuyển sang **kernel mode** do một **interrupt**, mã **interrupt handler** của OS sẽ bắt đầu thực thi và trạng thái thực thi của process bị ngắt được bảo vệ khỏi việc bị ghi đè.  
+Khi khởi động (**boot time**), OS khởi tạo phần cứng, bao gồm cả việc khởi tạo trạng thái CPU, để khi CPU chuyển sang **kernel mode** do một **interrupt**, code **interrupt handler** của OS sẽ bắt đầu thực thi và trạng thái thực thi của process bị ngắt được bảo vệ khỏi việc bị ghi đè.  
 
-Phần cứng máy tính và OS phối hợp thực hiện một phần việc lưu ban đầu **user-level execution context** (ngữ cảnh thực thi ở mức người dùng), đủ để mã OS có thể chạy trên CPU mà không làm mất trạng thái thực thi của process bị ngắt.  
+Phần cứng máy tính và OS phối hợp thực hiện một phần việc lưu ban đầu **user-level execution context** (ngữ cảnh thực thi ở mức người dùng), đủ để code OS có thể chạy trên CPU mà không làm mất trạng thái thực thi của process bị ngắt.  
 
 Ví dụ: các giá trị thanh ghi của process bị ngắt cần được lưu lại để khi process chạy lại trên CPU, nó có thể tiếp tục từ đúng vị trí trước đó, sử dụng các giá trị thanh ghi của mình.  
-Tùy thuộc vào hỗ trợ phần cứng, việc lưu giá trị thanh ghi của process ở mức người dùng có thể được thực hiện hoàn toàn bởi phần cứng, hoặc gần như hoàn toàn bằng phần mềm như là phần đầu tiên của mã xử lý ngắt trong kernel.  
+Tùy thuộc vào hỗ trợ phần cứng, việc lưu giá trị thanh ghi của process ở mức người dùng có thể được thực hiện hoàn toàn bởi phần cứng, hoặc gần như hoàn toàn bằng phần mềm như là phần đầu tiên của code xử lý ngắt trong kernel.  
 Tối thiểu, giá trị **program counter (PC)** của process cần được lưu lại để không bị mất khi địa chỉ của kernel interrupt handler được nạp vào PC.
 
-Khi OS bắt đầu chạy, nó thực thi toàn bộ mã context switching của process, lưu toàn bộ trạng thái thực thi của process đang chạy trên CPU và khôi phục trạng thái thực thi đã lưu của một process khác lên CPU.  
+Khi OS bắt đầu chạy, nó thực thi toàn bộ code context switching của process, lưu toàn bộ trạng thái thực thi của process đang chạy trên CPU và khôi phục trạng thái thực thi đã lưu của một process khác lên CPU.  
 Vì OS chạy ở kernel mode, nó có thể truy cập bất kỳ phần nào của bộ nhớ máy tính, thực thi các lệnh đặc quyền và truy cập bất kỳ thanh ghi phần cứng nào.  
 
-Do đó, mã context switching của OS có thể truy cập và lưu trạng thái thực thi CPU của bất kỳ process nào vào bộ nhớ, và có thể khôi phục từ bộ nhớ trạng thái thực thi của bất kỳ process nào lên CPU.  
+Do đó, code context switching của OS có thể truy cập và lưu trạng thái thực thi CPU của bất kỳ process nào vào bộ nhớ, và có thể khôi phục từ bộ nhớ trạng thái thực thi của bất kỳ process nào lên CPU.  
 Mã context switching của OS kết thúc bằng việc thiết lập CPU để thực thi trạng thái thực thi đã khôi phục của process và chuyển CPU sang user mode.  
 Khi đã chuyển sang user mode, CPU sẽ thực thi các lệnh và sử dụng trạng thái thực thi từ process mà OS vừa chuyển lên CPU.
 
@@ -210,7 +210,7 @@ Từ góc nhìn của lập trình viên, **một lời gọi `fork` sẽ trả 
 - Child process **luôn** nhận giá trị trả về là `0`.  
 - Parent process nhận giá trị là **PID của child** (hoặc `-1` nếu `fork` thất bại).
 
-Ví dụ, đoạn mã sau minh họa lời gọi system call `fork` tạo một child process mới từ process gọi nó:
+Ví dụ, đoạn code sau minh họa lời gọi system call `fork` tạo một child process mới từ process gọi nó:
 
 ```c
 pid_t pid;
@@ -224,7 +224,7 @@ Sau khi `fork` tạo child process mới, cả parent và child sẽ tiếp tụ
 Cả hai process sẽ gán giá trị trả về của `fork` cho biến `pid` và đều gọi `printf`.  
 Child process sẽ in ra `0`, còn parent process sẽ in ra **PID của child**.
 
-**Hình 3** minh họa ví dụ về cây tiến trình sau khi đoạn mã trên được thực thi.  
+**Hình 3** minh họa ví dụ về cây tiến trình sau khi đoạn code trên được thực thi.  
 Child process nhận **bản sao chính xác** của trạng thái thực thi của parent tại thời điểm `fork`, nhưng giá trị trong biến `pid` của nó khác với parent vì `fork` trả về **PID của child** (14 trong ví dụ này) cho parent, và `0` cho child.
 
 ![forked child process gets copy of parent state, but fork returns a different value to the child and parent process](_images/fork.png)
@@ -234,9 +234,9 @@ Child process nhận bản sao chính xác của address space và trạng thái
 `fork` trả về `0` cho child và trả về PID của child (14) cho parent.
 
 Thông thường, lập trình viên muốn child và parent thực hiện **các tác vụ khác nhau** sau khi gọi `fork`.  
-Có thể sử dụng giá trị trả về khác nhau của `fork` để phân nhánh, cho phép parent và child thực thi các đoạn mã khác nhau.  
+Có thể sử dụng giá trị trả về khác nhau của `fork` để phân nhánh, cho phép parent và child thực thi các đoạn code khác nhau.  
 
-Ví dụ, đoạn mã sau tạo một child process mới và dùng giá trị trả về của `fork` để phân nhánh thực thi:
+Ví dụ, đoạn code sau tạo một child process mới và dùng giá trị trả về của `fork` để phân nhánh thực thi:
 
 ```c
 pid_t pid;
@@ -244,18 +244,18 @@ pid_t pid;
 pid = fork();   /* tạo một child process mới */
 
 if (pid == 0) {
-    /* chỉ child process thực thi đoạn mã này */
+    /* chỉ child process thực thi đoạn code này */
     ...
 } else if (pid != -1)  {
-    /* chỉ parent process thực thi đoạn mã này */
+    /* chỉ parent process thực thi đoạn code này */
     ...
 }
 ```
 
 Điều quan trọng cần nhớ là **ngay khi được tạo**, child và parent sẽ chạy **đồng thời** trong ngữ cảnh thực thi riêng của mình,  
-thay đổi các bản sao biến chương trình riêng biệt và có thể thực thi các nhánh mã khác nhau.
+thay đổi các bản sao biến chương trình riêng biệt và có thể thực thi các nhánh code khác nhau.
 
-Hãy xem [chương trình sau](_attachments/fork.c), trong đó có lời gọi `fork` kết hợp với phân nhánh dựa trên giá trị `pid` để kích hoạt parent và child thực thi các đoạn mã khác nhau (ví dụ này cũng minh họa lời gọi `getpid` trả về PID của process đang gọi):
+Hãy xem [chương trình sau](_attachments/fork.c), trong đó có lời gọi `fork` kết hợp với phân nhánh dựa trên giá trị `pid` để kích hoạt parent và child thực thi các đoạn code khác nhau (ví dụ này cũng minh họa lời gọi `getpid` trả về PID của process đang gọi):
 
 
 ```c
@@ -350,7 +350,7 @@ int execvp(char *filename, char *argv[]);
 - Tham số `filename` chỉ định tên của chương trình thực thi nhị phân để khởi tạo image của process.
 - `argv` chứa các đối số dòng lệnh sẽ được truyền vào hàm `main` của chương trình khi nó bắt đầu thực thi.
 
-Dưới đây là ví dụ đoạn mã, khi chạy sẽ tạo một child process mới để chạy `a.out`:
+Dưới đây là ví dụ đoạn code, khi chạy sẽ tạo một child process mới để chạy `a.out`:
 
 
 ```c
@@ -380,17 +380,17 @@ int main(int argc, char *argv) { ... }
 
 `execvp` sẽ xác định giá trị cần truyền cho `argc` dựa trên giá trị `argv` này (trong trường hợp này là 1).
 
-**Hình 5** cho thấy cây phân cấp tiến trình (**process hierarchy**) sẽ trông như thế nào sau khi thực thi đoạn mã này:
+**Hình 5** cho thấy cây phân cấp tiến trình (**process hierarchy**) sẽ trông như thế nào sau khi thực thi đoạn code này:
 
 ![after fork child calls exec](_images/exec.png)
 
 **Hình 5.** Khi **child process** gọi `execvp` (bên trái), OS sẽ thay thế **image** của nó bằng `a.out` (bên phải) và khởi tạo child process để bắt đầu chạy chương trình `a.out` từ đầu.
 
-Một điểm cần lưu ý trong ví dụ mã trên là thông báo lỗi có vẻ “lạ” ngay sau lời gọi `execvp`: tại sao việc **trả về** từ một system call `exec` lại là lỗi?  
-Nếu system call `exec` thành công, thì đoạn mã phát hiện và xử lý lỗi ngay sau đó sẽ **không bao giờ** được thực thi, vì process lúc này sẽ đang thực thi mã trong chương trình `a.out` thay vì đoạn mã hiện tại (nội dung **address space** của process đã bị thay đổi bởi `exec`).  
+Một điểm cần lưu ý trong ví dụ code trên là thông báo lỗi có vẻ “lạ” ngay sau lời gọi `execvp`: tại sao việc **trả về** từ một system call `exec` lại là lỗi?  
+Nếu system call `exec` thành công, thì đoạn code phát hiện và xử lý lỗi ngay sau đó sẽ **không bao giờ** được thực thi, vì process lúc này sẽ đang thực thi code trong chương trình `a.out` thay vì đoạn code hiện tại (nội dung **address space** của process đã bị thay đổi bởi `exec`).  
 
 Nói cách khác, khi một lời gọi hàm `exec` thành công, process **không** tiếp tục thực thi tại điểm trả về của lời gọi `exec`.  
-Chính vì hành vi này, đoạn mã sau tương đương với đoạn mã ở trên (tuy nhiên, đoạn ở trên thường dễ hiểu hơn):
+Chính vì hành vi này, đoạn code sau tương đương với đoạn code ở trên (tuy nhiên, đoạn ở trên thường dễ hiểu hơn):
 
 ```c
 pid_t pid;
@@ -407,12 +407,12 @@ if (pid == 0) { /* child process */
 ### 13.2.5. exit và wait
 
 Để kết thúc, một process sẽ gọi system call `exit`, yêu cầu OS dọn dẹp hầu hết trạng thái của process.  
-Sau khi chạy mã thoát (**exit code**), process sẽ thông báo cho **parent process** rằng nó đã thoát.  
+Sau khi chạy code thoát (**exit code**), process sẽ thông báo cho **parent process** rằng nó đã thoát.  
 Parent chịu trách nhiệm dọn dẹp phần trạng thái còn lại của child process đã thoát khỏi hệ thống.
 
 Process có thể bị yêu cầu thoát theo nhiều cách:
 
-1. Process hoàn thành toàn bộ mã ứng dụng của nó.  
+1. Process hoàn thành toàn bộ code ứng dụng của nó.  
    Việc trả về từ hàm `main` sẽ dẫn đến việc process gọi system call `exit`.
 
 2. Process thực hiện một hành động không hợp lệ, chẳng hạn như chia cho 0 hoặc dereference một **null pointer**, dẫn đến việc nó bị thoát.
@@ -426,9 +426,9 @@ Process có thể bị yêu cầu thoát theo nhiều cách:
 Signal là một phương thức để các process có liên quan giao tiếp với nhau.  
 OS cung cấp một **interface** để một process gửi signal tới process khác, và để OS giao tiếp với process (ví dụ: gửi signal `SIGSEGV` khi process dereference một null pointer).
 
-Khi một process nhận được signal, nó sẽ bị ngắt để chạy mã **signal handler** đặc biệt.  
+Khi một process nhận được signal, nó sẽ bị ngắt để chạy code **signal handler** đặc biệt.  
 Một hệ thống định nghĩa một số lượng cố định các signal để truyền đạt các ý nghĩa khác nhau, mỗi signal được phân biệt bằng một số hiệu duy nhất.  
-OS triển khai các **default signal handler** (trình xử lý tín hiệu mặc định) cho từng loại signal, nhưng lập trình viên có thể đăng ký mã signal handler ở mức người dùng để ghi đè hành động mặc định của hầu hết các signal trong ứng dụng của họ.
+OS triển khai các **default signal handler** (trình xử lý tín hiệu mặc định) cho từng loại signal, nhưng lập trình viên có thể đăng ký code signal handler ở mức người dùng để ghi đè hành động mặc định của hầu hết các signal trong ứng dụng của họ.
 
 Phần **Signals** sẽ chứa thêm thông tin chi tiết về signal và cách xử lý signal.
 
@@ -462,7 +462,7 @@ Vì parent và child process chạy **concurrently** (đồng thời), nên pare
 - Nếu child vẫn đang chạy khi parent gọi `wait`, parent sẽ bị block cho đến khi child thoát (parent chuyển sang trạng thái **Blocked** chờ sự kiện signal `SIGCHLD`).  
 - Hành vi block này có thể quan sát được nếu bạn chạy một chương trình (`a.out`) ở **foreground** của shell — shell sẽ không in ra prompt cho đến khi `a.out` kết thúc, cho thấy shell (parent) đang bị block trong lời gọi `wait`, chờ nhận `SIGCHLD` từ child process đang chạy `a.out`.
 
-Lập trình viên cũng có thể thiết kế mã của parent process sao cho nó **không bao giờ** bị block khi chờ child process thoát.  
+Lập trình viên cũng có thể thiết kế code của parent process sao cho nó **không bao giờ** bị block khi chờ child process thoát.  
 Nếu parent triển khai một **signal handler** cho `SIGCHLD` và bên trong có lời gọi `wait`, thì parent chỉ gọi `wait` khi thực sự có child process đã thoát để thu hồi, và do đó sẽ không bị block trong lời gọi `wait`.  
 
 Hành vi này có thể thấy khi chạy một chương trình ở **background** trong shell (`a.out &`).  
@@ -477,7 +477,7 @@ $ a.out &      # shell process fork child nhưng không gọi wait
 $ ps           # shell có thể chạy ps và a.out đồng thời
 ```
 
-Dưới đây là ví dụ đoạn mã chứa các system call `fork`, `exec`, `exit` và `wait` (đã bỏ phần xử lý lỗi để dễ đọc).  
+Dưới đây là ví dụ đoạn code chứa các system call `fork`, `exec`, `exit` và `wait` (đã bỏ phần xử lý lỗi để dễ đọc).  
 Ví dụ này được thiết kế để kiểm tra mức độ hiểu của bạn về các system call này và tác động của chúng đến quá trình thực thi của các process.  
 
 Trong ví dụ:  
